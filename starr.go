@@ -36,12 +36,12 @@ func (c *Config) Req(path string, params url.Values) ([]byte, error) {
 		return nil, errors.Wrap(err, "http.NewRequest(path)")
 	}
 
-	params.Add("apikey", c.APIKey)
+	params.Set("apikey", c.APIKey)
 	req.URL.RawQuery = params.Encode()
 	// This app allows http auth, in addition to api key (nginx proxy).
-	if c.HTTPUser += ":" + c.HTTPPass; c.HTTPUser != ":" {
-		auth := "Basic " + base64.StdEncoding.EncodeToString([]byte(c.HTTPUser))
-		req.Header.Add("Authorization", auth)
+	if auth := c.HTTPUser + ":" + c.HTTPPass; auth != ":" {
+		auth = "Basic " + base64.StdEncoding.EncodeToString([]byte(auth))
+		req.Header.Set("Authorization", auth)
 	}
 
 	resp, err := client.Do(req)

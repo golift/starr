@@ -96,13 +96,14 @@ type SonarQueue struct {
 
 // SonarrQueue returns the Sonarr Queue
 func (c *Config) SonarrQueue() ([]*SonarQueue, error) {
-	var q []*SonarQueue
-	if params, err := url.ParseQuery("sort_by=timeleft&order=asc"); err != nil {
-		return q, errors.Wrap(err, "url.ParseQuery")
-	} else if rawJSON, err := c.Req("queue", params); err != nil {
-		return q, errors.Wrap(err, "c.Req(queue)")
-	} else if err = json.Unmarshal(rawJSON, &q); err != nil {
-		return q, errors.Wrap(err, "json.Unmarshal(response)")
+	var queue []*SonarQueue
+	params := make(url.Values)
+	params.Set("sort_by", "timeleft")
+	params.Set("order", "asc")
+	if rawJSON, err := c.Req("queue", params); err != nil {
+		return queue, errors.Wrap(err, "c.Req(queue)")
+	} else if err = json.Unmarshal(rawJSON, &queue); err != nil {
+		return queue, errors.Wrap(err, "json.Unmarshal(response)")
 	}
-	return q, nil
+	return queue, nil
 }

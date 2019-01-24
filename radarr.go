@@ -177,27 +177,30 @@ type RadarQueue struct {
 
 // RadarrHistory returns the Radarr History (grabs/failures/completed)
 func (c *Config) RadarrHistory() ([]*RadarRecord, error) {
-	var h RadarHistory
-	if params, err := url.ParseQuery("sortKey=date&sortDir=asc&page=1&pageSize=0"); err != nil {
-		return nil, errors.Wrap(err, "url.ParseQuery")
-	} else if rawJSON, err := c.Req("history", params); err != nil {
+	var history RadarHistory
+	params := make(url.Values)
+	params.Set("sortKey", "date")
+	params.Set("sortDir", "asc")
+	params.Set("page", "1")
+	params.Set("pageSize", "0")
+	if rawJSON, err := c.Req("history", params); err != nil {
 		return nil, errors.Wrap(err, "c.Req(queue)")
-	} else if err = json.Unmarshal(rawJSON, &h); err != nil {
+	} else if err = json.Unmarshal(rawJSON, &history); err != nil {
 		return nil, errors.Wrap(err, "json.Unmarshal(response)")
 	}
-	// This isn't used, but it's included because I wasted my time playing with it.
-	return h.Records, nil
+	return history.Records, nil
 }
 
-// RadarrQueue returns the Radarr Queue
+// RadarrQueue returns the Radarr Queue (processing, but not yet imported)
 func (c *Config) RadarrQueue() ([]*RadarQueue, error) {
-	var h []*RadarQueue
-	if params, err := url.ParseQuery("sort_by=timeleft&order=asc"); err != nil {
-		return nil, errors.Wrap(err, "url.ParseQuery")
-	} else if rawJSON, err := c.Req("queue", params); err != nil {
+	var queue []*RadarQueue
+	params := make(url.Values)
+	params.Set("sort_by", "timeleft")
+	params.Set("order", "asc")
+	if rawJSON, err := c.Req("queue", params); err != nil {
 		return nil, errors.Wrap(err, "c.Req(queue)")
-	} else if err = json.Unmarshal(rawJSON, &h); err != nil {
+	} else if err = json.Unmarshal(rawJSON, &queue); err != nil {
 		return nil, errors.Wrap(err, "json.Unmarshal(response)")
 	}
-	return h, nil
+	return queue, nil
 }
