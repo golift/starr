@@ -56,26 +56,28 @@ type RadarRecord struct {
 		TorrentInfoHash []string  `json:"torrentInfoHash"`
 	} `json:"data"`
 	Movie struct {
-		Title      string    `json:"title"`
-		SortTitle  string    `json:"sortTitle"`
-		SizeOnDisk int64     `json:"sizeOnDisk"`
-		Status     string    `json:"status"`
-		Overview   string    `json:"overview"`
-		InCinemas  time.Time `json:"inCinemas"`
-		Images     []struct {
+		Downloaded       bool      `json:"downloaded"`
+		Monitored        bool      `json:"monitored"`
+		HasFile          bool      `json:"hasFile"`
+		Year             int       `json:"year"`
+		ProfileID        int       `json:"profileId"`
+		Runtime          int       `json:"runtime"`
+		QualityProfileID int       `json:"qualityProfileId"`
+		ID               int64     `json:"id"`
+		SizeOnDisk       int64     `json:"sizeOnDisk"`
+		Title            string    `json:"title"`
+		SortTitle        string    `json:"sortTitle"`
+		Status           string    `json:"status"`
+		Overview         string    `json:"overview"`
+		InCinemas        time.Time `json:"inCinemas"`
+		Images           []struct {
 			CoverType string `json:"coverType"`
 			URL       string `json:"url"`
 		} `json:"images"`
 		Website          string    `json:"website"`
-		Downloaded       bool      `json:"downloaded"`
-		Year             int       `json:"year"`
-		HasFile          bool      `json:"hasFile"`
 		YouTubeTrailerID string    `json:"youTubeTrailerId"`
 		Studio           string    `json:"studio"`
 		Path             string    `json:"path"`
-		ProfileID        int       `json:"profileId"`
-		Monitored        bool      `json:"monitored"`
-		Runtime          int       `json:"runtime"`
 		LastInfoSync     time.Time `json:"lastInfoSync"`
 		CleanTitle       string    `json:"cleanTitle"`
 		ImdbID           string    `json:"imdbId"`
@@ -89,17 +91,56 @@ type RadarRecord struct {
 			Value float64 `json:"value"`
 		} `json:"ratings"`
 		AlternativeTitles []string `json:"alternativeTitles"`
-		QualityProfileID  int      `json:"qualityProfileId"`
-		ID                int64    `json:"id"`
 	} `json:"movie"`
 	ID int `json:"id"`
 }
 
 // RadarQueue is the /api/queue endpoint.
 type RadarQueue struct {
-	Movie struct {
-		Title             string `json:"title"`
-		AlternativeTitles []struct {
+	ID                      int64     `json:"id"`
+	Size                    float64   `json:"size"`
+	Sizeleft                float64   `json:"sizeleft"`
+	EstimatedCompletionTime time.Time `json:"estimatedCompletionTime"`
+	Title                   string    `json:"title"`
+	Timeleft                string    `json:"timeleft"`
+	Status                  string    `json:"status"`
+	TrackedDownloadStatus   string    `json:"trackedDownloadStatus"`
+	DownloadID              string    `json:"downloadId"`
+	Protocol                string    `json:"protocol"`
+	Movie                   struct {
+		Downloaded            bool      `json:"downloaded"`
+		HasFile               bool      `json:"hasFile"`
+		Monitored             bool      `json:"monitored"`
+		IsAvailable           bool      `json:"isAvailable"`
+		SecondaryYearSourceID int       `json:"secondaryYearSourceId"`
+		Year                  int       `json:"year"`
+		ProfileID             int       `json:"profileId"`
+		Runtime               int       `json:"runtime"`
+		QualityProfileID      int64     `json:"qualityProfileId"`
+		ID                    int64     `json:"id"`
+		TmdbID                int64     `json:"tmdbId"`
+		SizeOnDisk            int64     `json:"sizeOnDisk"`
+		InCinemas             time.Time `json:"inCinemas"`
+		PhysicalRelease       time.Time `json:"physicalRelease"`
+		LastInfoSync          time.Time `json:"lastInfoSync"`
+		Added                 time.Time `json:"added"`
+		Title                 string    `json:"title"`
+		SortTitle             string    `json:"sortTitle"`
+		Status                string    `json:"status"`
+		Overview              string    `json:"overview"`
+		Website               string    `json:"website"`
+		YouTubeTrailerID      string    `json:"youTubeTrailerId"`
+		Studio                string    `json:"studio"`
+		Path                  string    `json:"path"`
+		PathState             string    `json:"pathState"`
+		MinimumAvailability   string    `json:"minimumAvailability"`
+		FolderName            string    `json:"folderName"`
+		CleanTitle            string    `json:"cleanTitle"`
+		ImdbID                string    `json:"imdbId"`
+		TitleSlug             string    `json:"titleSlug"`
+		Genres                []string  `json:"genres"`
+		Tags                  []string  `json:"tags"`
+		AlternativeTitles     []struct {
 			SourceType string `json:"sourceType"`
 			MovieID    int64  `json:"movieId"`
 			Title      string `json:"title"`
@@ -109,45 +150,14 @@ type RadarQueue struct {
 			Language   string `json:"language"`
 			ID         int64  `json:"id"`
 		} `json:"alternativeTitles"`
-		SecondaryYearSourceID int       `json:"secondaryYearSourceId"`
-		SortTitle             string    `json:"sortTitle"`
-		SizeOnDisk            int64     `json:"sizeOnDisk"`
-		Status                string    `json:"status"`
-		Overview              string    `json:"overview"`
-		InCinemas             time.Time `json:"inCinemas"`
-		PhysicalRelease       time.Time `json:"physicalRelease"`
-		Images                []struct {
+		Images []struct {
 			CoverType string `json:"coverType"`
 			URL       string `json:"url"`
 		} `json:"images"`
-		Website             string    `json:"website"`
-		Downloaded          bool      `json:"downloaded"`
-		Year                int       `json:"year"`
-		HasFile             bool      `json:"hasFile"`
-		YouTubeTrailerID    string    `json:"youTubeTrailerId"`
-		Studio              string    `json:"studio"`
-		Path                string    `json:"path"`
-		ProfileID           int       `json:"profileId"`
-		PathState           string    `json:"pathState"`
-		Monitored           bool      `json:"monitored"`
-		MinimumAvailability string    `json:"minimumAvailability"`
-		IsAvailable         bool      `json:"isAvailable"`
-		FolderName          string    `json:"folderName"`
-		Runtime             int       `json:"runtime"`
-		LastInfoSync        time.Time `json:"lastInfoSync"`
-		CleanTitle          string    `json:"cleanTitle"`
-		ImdbID              string    `json:"imdbId"`
-		TmdbID              int64     `json:"tmdbId"`
-		TitleSlug           string    `json:"titleSlug"`
-		Genres              []string  `json:"genres"`
-		Tags                []string  `json:"tags"`
-		Added               time.Time `json:"added"`
-		Ratings             struct {
+		Ratings struct {
 			Votes int64   `json:"votes"`
 			Value float64 `json:"value"`
 		} `json:"ratings"`
-		QualityProfileID int64 `json:"qualityProfileId"`
-		ID               int64 `json:"id"`
 	} `json:"movie"`
 	Quality struct {
 		Quality struct {
@@ -159,48 +169,52 @@ type RadarQueue struct {
 			Real    int64 `json:"real"`
 		} `json:"revision"`
 	} `json:"quality"`
-	Size                    float64   `json:"size"`
-	Title                   string    `json:"title"`
-	Sizeleft                float64   `json:"sizeleft"`
-	Timeleft                string    `json:"timeleft"`
-	EstimatedCompletionTime time.Time `json:"estimatedCompletionTime"`
-	Status                  string    `json:"status"`
-	TrackedDownloadStatus   string    `json:"trackedDownloadStatus"`
-	StatusMessages          []struct {
+	StatusMessages []struct {
 		Title    string   `json:"title"`
 		Messages []string `json:"messages"`
 	} `json:"statusMessages"`
-	DownloadID string `json:"downloadId"`
-	Protocol   string `json:"protocol"`
-	ID         int64  `json:"id"`
 }
 
 // RadarrHistory returns the Radarr History (grabs/failures/completed)
 func (c *Config) RadarrHistory() ([]*RadarRecord, error) {
 	var history RadarHistory
+
 	params := make(url.Values)
+
 	params.Set("sortKey", "date")
 	params.Set("sortDir", "asc")
 	params.Set("page", "1")
 	params.Set("pageSize", "0")
-	if rawJSON, err := c.Req("history", params); err != nil {
+
+	rawJSON, err := c.Req("history", params)
+	if err != nil {
 		return nil, errors.Wrap(err, "c.Req(queue)")
-	} else if err = json.Unmarshal(rawJSON, &history); err != nil {
+	}
+
+	if err = json.Unmarshal(rawJSON, &history); err != nil {
 		return nil, errors.Wrap(err, "json.Unmarshal(response)")
 	}
+
 	return history.Records, nil
 }
 
 // RadarrQueue returns the Radarr Queue (processing, but not yet imported)
 func (c *Config) RadarrQueue() ([]*RadarQueue, error) {
 	var queue []*RadarQueue
+
 	params := make(url.Values)
+
 	params.Set("sort_by", "timeleft")
 	params.Set("order", "asc")
-	if rawJSON, err := c.Req("queue", params); err != nil {
+
+	rawJSON, err := c.Req("queue", params)
+	if err != nil {
 		return nil, errors.Wrap(err, "c.Req(queue)")
-	} else if err = json.Unmarshal(rawJSON, &queue); err != nil {
+	}
+
+	if err = json.Unmarshal(rawJSON, &queue); err != nil {
 		return nil, errors.Wrap(err, "json.Unmarshal(response)")
 	}
+
 	return queue, nil
 }

@@ -46,7 +46,9 @@ func (c *Config) Req(path string, params url.Values) ([]byte, error) {
 	}
 
 	params.Set("apikey", c.APIKey)
+
 	req.URL.RawQuery = params.Encode()
+
 	// This app allows http auth, in addition to api key (nginx proxy).
 	if auth := c.HTTPUser + ":" + c.HTTPPass; auth != ":" {
 		auth = "Basic " + base64.StdEncoding.EncodeToString([]byte(auth))
@@ -57,17 +59,20 @@ func (c *Config) Req(path string, params url.Values) ([]byte, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "d.Do(req)")
 	}
+
 	defer func() {
 		_ = resp.Body.Close()
 	}()
+
 	if resp.StatusCode != http.StatusOK {
-		return nil, errors.Errorf("failed: %v (status: %v/%v)",
-			path, resp.StatusCode, resp.Status)
+		return nil, errors.Errorf("failed: %v (status: %v/%v)", path, resp.StatusCode, resp.Status)
 	}
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, errors.Wrap(err, "ioutil.ReadAll")
 	}
+
 	//log.Println(string(body))
 	return body, nil
 }
@@ -76,10 +81,10 @@ func (c *Config) fixPath(path string) string {
 	if !strings.HasPrefix(path, "/") {
 		path = "/" + path
 	}
+
 	if strings.HasSuffix(c.URL, "/") {
-		path = c.URL + "api" + path
-	} else {
-		path = c.URL + "/api" + path
+		return c.URL + "api" + path
 	}
-	return path
+
+	return c.URL + "/api" + path
 }

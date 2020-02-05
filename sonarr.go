@@ -10,34 +10,33 @@ import (
 
 // SonarQueue is the /api/queue endpoint.
 type SonarQueue struct {
-	Series struct {
-		Title       string `json:"title"`
-		SortTitle   string `json:"sortTitle"`
-		SeasonCount int    `json:"seasonCount"`
-		Status      string `json:"status"`
-		Overview    string `json:"overview"`
-		Network     string `json:"network"`
-		AirTime     string `json:"airTime"`
-		Images      []struct {
-			CoverType string `json:"coverType"`
-			URL       string `json:"url"`
-		} `json:"images"`
-		Seasons []struct {
-			SeasonNumber int  `json:"seasonNumber"`
-			Monitored    bool `json:"monitored"`
-		} `json:"seasons"`
-		Year              int           `json:"year"`
-		Path              string        `json:"path"`
-		ProfileID         int           `json:"profileId"`
+	ID                      int64     `json:"id"`
+	EstimatedCompletionTime time.Time `json:"estimatedCompletionTime"`
+	Size                    float64   `json:"size"`
+	Sizeleft                float64   `json:"sizeleft"`
+	Title                   string    `json:"title"`
+	Timeleft                string    `json:"timeleft"`
+	Status                  string    `json:"status"`
+	TrackedDownloadStatus   string    `json:"trackedDownloadStatus"`
+	DownloadID              string    `json:"downloadId"`
+	Protocol                string    `json:"protocol"`
+	Series                  struct {
 		SeasonFolder      bool          `json:"seasonFolder"`
 		Monitored         bool          `json:"monitored"`
 		UseSceneNumbering bool          `json:"useSceneNumbering"`
+		Year              int           `json:"year"`
+		ProfileID         int           `json:"profileId"`
 		Runtime           int           `json:"runtime"`
+		QualityProfileID  int           `json:"qualityProfileId"`
+		ID                int           `json:"id"`
+		SeasonCount       int           `json:"seasonCount"`
 		TvdbID            int64         `json:"tvdbId"`
 		TvRageID          int64         `json:"tvRageId"`
 		TvMazeID          int64         `json:"tvMazeId"`
 		FirstAired        time.Time     `json:"firstAired"`
 		LastInfoSync      time.Time     `json:"lastInfoSync"`
+		Added             time.Time     `json:"added"`
+		Path              string        `json:"path"`
 		SeriesType        string        `json:"seriesType"`
 		CleanTitle        string        `json:"cleanTitle"`
 		ImdbID            string        `json:"imdbId"`
@@ -45,28 +44,39 @@ type SonarQueue struct {
 		Certification     string        `json:"certification"`
 		Genres            []string      `json:"genres"`
 		Tags              []interface{} `json:"tags"` // used to []string and now []int (sonarr v3)
-		Added             time.Time     `json:"added"`
-		Ratings           struct {
+		Title             string        `json:"title"`
+		SortTitle         string        `json:"sortTitle"`
+		Status            string        `json:"status"`
+		Overview          string        `json:"overview"`
+		Network           string        `json:"network"`
+		AirTime           string        `json:"airTime"`
+		Images            []struct {
+			CoverType string `json:"coverType"`
+			URL       string `json:"url"`
+		} `json:"images"`
+		Seasons []struct {
+			SeasonNumber int  `json:"seasonNumber"`
+			Monitored    bool `json:"monitored"`
+		} `json:"seasons"`
+		Ratings struct {
 			Votes int64   `json:"votes"`
 			Value float64 `json:"value"`
 		} `json:"ratings"`
-		QualityProfileID int `json:"qualityProfileId"`
-		ID               int `json:"id"`
 	} `json:"series"`
 	Episode struct {
+		HasFile                  bool      `json:"hasFile"`
+		Monitored                bool      `json:"monitored"`
+		UnverifiedSceneNumbering bool      `json:"unverifiedSceneNumbering"`
 		SeriesID                 int       `json:"seriesId"`
 		EpisodeFileID            int       `json:"episodeFileId"`
 		SeasonNumber             int       `json:"seasonNumber"`
 		EpisodeNumber            int       `json:"episodeNumber"`
+		AbsoluteEpisodeNumber    int       `json:"absoluteEpisodeNumber"`
+		ID                       int64     `json:"id"`
+		AirDateUtc               time.Time `json:"airDateUtc"`
 		Title                    string    `json:"title"`
 		AirDate                  string    `json:"airDate"`
-		AirDateUtc               time.Time `json:"airDateUtc"`
 		Overview                 string    `json:"overview"`
-		HasFile                  bool      `json:"hasFile"`
-		Monitored                bool      `json:"monitored"`
-		AbsoluteEpisodeNumber    int       `json:"absoluteEpisodeNumber"`
-		UnverifiedSceneNumbering bool      `json:"unverifiedSceneNumbering"`
-		ID                       int64     `json:"id"`
 	} `json:"episode"`
 	Quality struct {
 		Quality struct {
@@ -78,32 +88,30 @@ type SonarQueue struct {
 			Real    int `json:"real"`
 		} `json:"revision"`
 	} `json:"quality"`
-	Size                    float64   `json:"size"`
-	Title                   string    `json:"title"`
-	Sizeleft                float64   `json:"sizeleft"`
-	Timeleft                string    `json:"timeleft"`
-	EstimatedCompletionTime time.Time `json:"estimatedCompletionTime"`
-	Status                  string    `json:"status"`
-	TrackedDownloadStatus   string    `json:"trackedDownloadStatus"`
-	StatusMessages          []struct {
+
+	StatusMessages []struct {
 		Title    string   `json:"title"`
 		Messages []string `json:"messages"`
 	} `json:"statusMessages"`
-	DownloadID string `json:"downloadId"`
-	Protocol   string `json:"protocol"`
-	ID         int64  `json:"id"`
 }
 
 // SonarrQueue returns the Sonarr Queue
 func (c *Config) SonarrQueue() ([]*SonarQueue, error) {
 	var queue []*SonarQueue
+
 	params := make(url.Values)
+
 	params.Set("sort_by", "timeleft")
 	params.Set("order", "asc")
-	if rawJSON, err := c.Req("queue", params); err != nil {
+
+	rawJSON, err := c.Req("queue", params)
+	if err != nil {
 		return queue, errors.Wrap(err, "c.Req(queue)")
-	} else if err = json.Unmarshal(rawJSON, &queue); err != nil {
+	}
+
+	if err = json.Unmarshal(rawJSON, &queue); err != nil {
 		return queue, errors.Wrap(err, "json.Unmarshal(response)")
 	}
+
 	return queue, nil
 }
