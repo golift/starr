@@ -2,10 +2,9 @@ package starr
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/url"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // RadarHistory is the /api/history endpoint.
@@ -188,11 +187,11 @@ func (c *Config) RadarrHistory() ([]*RadarRecord, error) {
 
 	rawJSON, err := c.Req("history", params)
 	if err != nil {
-		return nil, errors.Wrap(err, "c.Req(queue)")
+		return nil, fmt.Errorf("c.Req(queue): %v", err)
 	}
 
 	if err = json.Unmarshal(rawJSON, &history); err != nil {
-		return nil, errors.Wrap(err, "json.Unmarshal(response)")
+		return nil, fmt.Errorf("json.Unmarshal(response): %v", err)
 	}
 
 	return history.Records, nil
@@ -209,11 +208,11 @@ func (c *Config) RadarrQueue() ([]*RadarQueue, error) {
 
 	rawJSON, err := c.Req("queue", params)
 	if err != nil {
-		return nil, errors.Wrap(err, "c.Req(queue)")
+		return nil, fmt.Errorf("c.Req(queue): %v", err)
 	}
 
 	if err = json.Unmarshal(rawJSON, &queue); err != nil {
-		return nil, errors.Wrap(err, "json.Unmarshal(response)")
+		return nil, fmt.Errorf("json.Unmarshal(response): %v", err)
 	}
 
 	return queue, nil

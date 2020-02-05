@@ -2,10 +2,9 @@ package starr
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/url"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // SonarQueue is the /api/queue endpoint.
@@ -106,11 +105,11 @@ func (c *Config) SonarrQueue() ([]*SonarQueue, error) {
 
 	rawJSON, err := c.Req("queue", params)
 	if err != nil {
-		return queue, errors.Wrap(err, "c.Req(queue)")
+		return queue, fmt.Errorf("c.Req(queue): %v", err)
 	}
 
 	if err = json.Unmarshal(rawJSON, &queue); err != nil {
-		return queue, errors.Wrap(err, "json.Unmarshal(response)")
+		return queue, fmt.Errorf("json.Unmarshal(response): %v", err)
 	}
 
 	return queue, nil

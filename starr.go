@@ -3,13 +3,12 @@ package starr
 import (
 	"crypto/tls"
 	"encoding/base64"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 // Config is the data needed to poll Radarr or Sonarr.
@@ -42,7 +41,7 @@ func (c *Config) Req(path string, params url.Values) ([]byte, error) {
 
 	req, err := http.NewRequest("GET", path, nil)
 	if err != nil {
-		return nil, errors.Wrap(err, "http.NewRequest(path)")
+		return nil, fmt.Errorf("http.NewRequest(path): %v", err)
 	}
 
 	params.Set("apikey", c.APIKey)
@@ -57,20 +56,18 @@ func (c *Config) Req(path string, params url.Values) ([]byte, error) {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, errors.Wrap(err, "d.Do(req)")
+		return nil, fmt.Errorf("d.Do(req): %v", err)
 	}
 
-	defer func() {
-		_ = resp.Body.Close()
-	}()
+	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, errors.Errorf("failed: %v (status: %v/%v)", path, resp.StatusCode, resp.Status)
+		return nil, fmt.Errorf("failed: %v (status: %v/%v)", path, resp.StatusCode, resp.Status)
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, errors.Wrap(err, "ioutil.ReadAll")
+		return nil, fmt.Errorf("ioutil.ReadAll: %v", err)
 	}
 
 	//log.Println(string(body))
