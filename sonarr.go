@@ -26,26 +26,26 @@ type SonarQueue struct {
 			SeasonNumber int  `json:"seasonNumber"`
 			Monitored    bool `json:"monitored"`
 		} `json:"seasons"`
-		Year              int       `json:"year"`
-		Path              string    `json:"path"`
-		ProfileID         int       `json:"profileId"`
-		SeasonFolder      bool      `json:"seasonFolder"`
-		Monitored         bool      `json:"monitored"`
-		UseSceneNumbering bool      `json:"useSceneNumbering"`
-		Runtime           int       `json:"runtime"`
-		TvdbID            int64     `json:"tvdbId"`
-		TvRageID          int64     `json:"tvRageId"`
-		TvMazeID          int64     `json:"tvMazeId"`
-		FirstAired        time.Time `json:"firstAired"`
-		LastInfoSync      time.Time `json:"lastInfoSync"`
-		SeriesType        string    `json:"seriesType"`
-		CleanTitle        string    `json:"cleanTitle"`
-		ImdbID            string    `json:"imdbId"`
-		TitleSlug         string    `json:"titleSlug"`
-		Certification     string    `json:"certification"`
-		Genres            []string  `json:"genres"`
-		Tags              []string  `json:"tags"`
-		Added             time.Time `json:"added"`
+		Year              int           `json:"year"`
+		Path              string        `json:"path"`
+		ProfileID         int           `json:"profileId"`
+		SeasonFolder      bool          `json:"seasonFolder"`
+		Monitored         bool          `json:"monitored"`
+		UseSceneNumbering bool          `json:"useSceneNumbering"`
+		Runtime           int           `json:"runtime"`
+		TvdbID            int64         `json:"tvdbId"`
+		TvRageID          int64         `json:"tvRageId"`
+		TvMazeID          int64         `json:"tvMazeId"`
+		FirstAired        time.Time     `json:"firstAired"`
+		LastInfoSync      time.Time     `json:"lastInfoSync"`
+		SeriesType        string        `json:"seriesType"`
+		CleanTitle        string        `json:"cleanTitle"`
+		ImdbID            string        `json:"imdbId"`
+		TitleSlug         string        `json:"titleSlug"`
+		Certification     string        `json:"certification"`
+		Genres            []string      `json:"genres"`
+		Tags              []interface{} `json:"tags"` // used to []string and now []int (sonarr v3)
+		Added             time.Time     `json:"added"`
 		Ratings           struct {
 			Votes int64   `json:"votes"`
 			Value float64 `json:"value"`
