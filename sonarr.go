@@ -20,35 +20,35 @@ type SonarQueue struct {
 	DownloadID              string    `json:"downloadId"`
 	Protocol                string    `json:"protocol"`
 	Series                  struct {
-		SeasonFolder      bool          `json:"seasonFolder"`
-		Monitored         bool          `json:"monitored"`
-		UseSceneNumbering bool          `json:"useSceneNumbering"`
-		Year              int           `json:"year"`
-		ProfileID         int           `json:"profileId"`
-		Runtime           int           `json:"runtime"`
-		QualityProfileID  int           `json:"qualityProfileId"`
-		ID                int           `json:"id"`
-		SeasonCount       int           `json:"seasonCount"`
-		TvdbID            int64         `json:"tvdbId"`
-		TvRageID          int64         `json:"tvRageId"`
-		TvMazeID          int64         `json:"tvMazeId"`
-		FirstAired        time.Time     `json:"firstAired"`
-		LastInfoSync      time.Time     `json:"lastInfoSync"`
-		Added             time.Time     `json:"added"`
-		Path              string        `json:"path"`
-		SeriesType        string        `json:"seriesType"`
-		CleanTitle        string        `json:"cleanTitle"`
-		ImdbID            string        `json:"imdbId"`
-		TitleSlug         string        `json:"titleSlug"`
-		Certification     string        `json:"certification"`
-		Genres            []string      `json:"genres"`
-		Tags              []interface{} `json:"tags"` // used to []string and now []int (sonarr v3)
-		Title             string        `json:"title"`
-		SortTitle         string        `json:"sortTitle"`
-		Status            string        `json:"status"`
-		Overview          string        `json:"overview"`
-		Network           string        `json:"network"`
-		AirTime           string        `json:"airTime"`
+		SeasonFolder      bool      `json:"seasonFolder"`
+		Monitored         bool      `json:"monitored"`
+		UseSceneNumbering bool      `json:"useSceneNumbering"`
+		Year              int       `json:"year"`
+		ProfileID         int       `json:"profileId"`
+		Runtime           int       `json:"runtime"`
+		QualityProfileID  int       `json:"qualityProfileId"`
+		ID                int       `json:"id"`
+		SeasonCount       int       `json:"seasonCount"`
+		TvdbID            int64     `json:"tvdbId"`
+		TvRageID          int64     `json:"tvRageId"`
+		TvMazeID          int64     `json:"tvMazeId"`
+		FirstAired        time.Time `json:"firstAired"`
+		LastInfoSync      time.Time `json:"lastInfoSync"`
+		Added             time.Time `json:"added"`
+		Path              string    `json:"path"`
+		SeriesType        string    `json:"seriesType"`
+		CleanTitle        string    `json:"cleanTitle"`
+		ImdbID            string    `json:"imdbId"`
+		TitleSlug         string    `json:"titleSlug"`
+		Certification     string    `json:"certification"`
+		Genres            []string  `json:"genres"`
+		Tags              []string  `json:"tags"`
+		Title             string    `json:"title"`
+		SortTitle         string    `json:"sortTitle"`
+		Status            string    `json:"status"`
+		Overview          string    `json:"overview"`
+		Network           string    `json:"network"`
+		AirTime           string    `json:"airTime"`
 		Images            []struct {
 			CoverType string `json:"coverType"`
 			URL       string `json:"url"`

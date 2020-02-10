@@ -107,49 +107,40 @@ type RadarQueue struct {
 	DownloadID              string    `json:"downloadId"`
 	Protocol                string    `json:"protocol"`
 	Movie                   struct {
-		Downloaded            bool      `json:"downloaded"`
-		HasFile               bool      `json:"hasFile"`
-		Monitored             bool      `json:"monitored"`
-		IsAvailable           bool      `json:"isAvailable"`
-		SecondaryYearSourceID int       `json:"secondaryYearSourceId"`
-		Year                  int       `json:"year"`
-		ProfileID             int       `json:"profileId"`
-		Runtime               int       `json:"runtime"`
-		QualityProfileID      int64     `json:"qualityProfileId"`
-		ID                    int64     `json:"id"`
-		TmdbID                int64     `json:"tmdbId"`
-		SizeOnDisk            int64     `json:"sizeOnDisk"`
-		InCinemas             time.Time `json:"inCinemas"`
-		PhysicalRelease       time.Time `json:"physicalRelease"`
-		LastInfoSync          time.Time `json:"lastInfoSync"`
-		Added                 time.Time `json:"added"`
-		Title                 string    `json:"title"`
-		SortTitle             string    `json:"sortTitle"`
-		Status                string    `json:"status"`
-		Overview              string    `json:"overview"`
-		Website               string    `json:"website"`
-		YouTubeTrailerID      string    `json:"youTubeTrailerId"`
-		Studio                string    `json:"studio"`
-		Path                  string    `json:"path"`
-		PathState             string    `json:"pathState"`
-		MinimumAvailability   string    `json:"minimumAvailability"`
-		FolderName            string    `json:"folderName"`
-		CleanTitle            string    `json:"cleanTitle"`
-		ImdbID                string    `json:"imdbId"`
-		TitleSlug             string    `json:"titleSlug"`
-		Genres                []string  `json:"genres"`
-		Tags                  []string  `json:"tags"`
-		AlternativeTitles     []struct {
-			SourceType string `json:"sourceType"`
-			MovieID    int64  `json:"movieId"`
-			Title      string `json:"title"`
-			SourceID   int64  `json:"sourceId"`
-			Votes      int64  `json:"votes"`
-			VoteCount  int64  `json:"voteCount"`
-			Language   string `json:"language"`
-			ID         int64  `json:"id"`
-		} `json:"alternativeTitles"`
-		Images []struct {
+		Downloaded            bool          `json:"downloaded"`
+		HasFile               bool          `json:"hasFile"`
+		Monitored             bool          `json:"monitored"`
+		IsAvailable           bool          `json:"isAvailable"`
+		SecondaryYearSourceID int           `json:"secondaryYearSourceId"`
+		Year                  int           `json:"year"`
+		ProfileID             int           `json:"profileId"`
+		Runtime               int           `json:"runtime"`
+		QualityProfileID      int64         `json:"qualityProfileId"`
+		ID                    int64         `json:"id"`
+		TmdbID                int64         `json:"tmdbId"`
+		SizeOnDisk            int64         `json:"sizeOnDisk"`
+		InCinemas             time.Time     `json:"inCinemas"`
+		PhysicalRelease       time.Time     `json:"physicalRelease"`
+		LastInfoSync          time.Time     `json:"lastInfoSync"`
+		Added                 time.Time     `json:"added"`
+		Title                 string        `json:"title"`
+		SortTitle             string        `json:"sortTitle"`
+		Status                string        `json:"status"`
+		Overview              string        `json:"overview"`
+		Website               string        `json:"website"`
+		YouTubeTrailerID      string        `json:"youTubeTrailerId"`
+		Studio                string        `json:"studio"`
+		Path                  string        `json:"path"`
+		PathState             string        `json:"pathState"`
+		MinimumAvailability   string        `json:"minimumAvailability"`
+		FolderName            string        `json:"folderName"`
+		CleanTitle            string        `json:"cleanTitle"`
+		ImdbID                string        `json:"imdbId"`
+		TitleSlug             string        `json:"titleSlug"`
+		Genres                []string      `json:"genres"`
+		Tags                  []string      `json:"tags"`
+		AlternativeTitles     []interface{} `json:"alternativeTitles"`
+		Images                []struct {
 			CoverType string `json:"coverType"`
 			URL       string `json:"url"`
 		} `json:"images"`
