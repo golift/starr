@@ -73,18 +73,18 @@ type RadarRecord struct {
 			CoverType string `json:"coverType"`
 			URL       string `json:"url"`
 		} `json:"images"`
-		Website          string    `json:"website"`
-		YouTubeTrailerID string    `json:"youTubeTrailerId"`
-		Studio           string    `json:"studio"`
-		Path             string    `json:"path"`
-		LastInfoSync     time.Time `json:"lastInfoSync"`
-		CleanTitle       string    `json:"cleanTitle"`
-		ImdbID           string    `json:"imdbId"`
-		TmdbID           int64     `json:"tmdbId"`
-		TitleSlug        string    `json:"titleSlug"`
-		Genres           []string  `json:"genres"`
-		Tags             []string  `json:"tags"`
-		Added            time.Time `json:"added"`
+		Website          string        `json:"website"`
+		YouTubeTrailerID string        `json:"youTubeTrailerId"`
+		Studio           string        `json:"studio"`
+		Path             string        `json:"path"`
+		LastInfoSync     time.Time     `json:"lastInfoSync"`
+		CleanTitle       string        `json:"cleanTitle"`
+		ImdbID           string        `json:"imdbId"`
+		TmdbID           int64         `json:"tmdbId"`
+		TitleSlug        string        `json:"titleSlug"`
+		Genres           []string      `json:"genres"`
+		Tags             []interface{} `json:"tags"`
+		Added            time.Time     `json:"added"`
 		Ratings          struct {
 			Votes int64   `json:"votes"`
 			Value float64 `json:"value"`
@@ -138,7 +138,7 @@ type RadarQueue struct {
 		ImdbID                string        `json:"imdbId"`
 		TitleSlug             string        `json:"titleSlug"`
 		Genres                []string      `json:"genres"`
-		Tags                  []string      `json:"tags"`
+		Tags                  []interface{} `json:"tags"`
 		AlternativeTitles     []interface{} `json:"alternativeTitles"`
 		Images                []struct {
 			CoverType string `json:"coverType"`
