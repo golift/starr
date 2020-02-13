@@ -20,11 +20,11 @@ type LidarQueue struct {
 
 // LidarrRecord represents the records returns by the /api/v1/queue endpoint.
 type LidarrRecord struct {
-	ArtistID int `json:"artistId"`
-	AlbumID  int `json:"albumId"`
+	ArtistID int64 `json:"artistId"`
+	AlbumID  int64 `json:"albumId"`
 	Quality  struct {
 		Quality struct {
-			ID   int    `json:"id"`
+			ID   int64  `json:"id"`
 			Name string `json:"name"`
 		} `json:"quality"`
 		Revision struct {
@@ -33,9 +33,9 @@ type LidarrRecord struct {
 			IsRepack bool `json:"isRepack"`
 		} `json:"revision"`
 	} `json:"quality"`
-	Size                    int           `json:"size"`
+	Size                    int64         `json:"size"`
 	Title                   string        `json:"title"`
-	Sizeleft                int           `json:"sizeleft"`
+	Sizeleft                int64         `json:"sizeleft"`
 	Timeleft                string        `json:"timeleft"`
 	EstimatedCompletionTime time.Time     `json:"estimatedCompletionTime"`
 	Status                  string        `json:"status"`
@@ -47,7 +47,7 @@ type LidarrRecord struct {
 	Indexer                 string        `json:"indexer"`
 	OutputPath              string        `json:"outputPath"`
 	DownloadForced          bool          `json:"downloadForced"`
-	ID                      int           `json:"id"`
+	ID                      int64         `json:"id"`
 }
 
 // LidarrQueue returns the Lidarr Queue
