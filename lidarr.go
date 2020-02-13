@@ -33,9 +33,9 @@ type LidarrRecord struct {
 			IsRepack bool `json:"isRepack"`
 		} `json:"revision"`
 	} `json:"quality"`
-	Size                    int64         `json:"size"`
+	Size                    float64       `json:"size"`
 	Title                   string        `json:"title"`
-	Sizeleft                int64         `json:"sizeleft"`
+	Sizeleft                float64       `json:"sizeleft"`
 	Timeleft                string        `json:"timeleft"`
 	EstimatedCompletionTime time.Time     `json:"estimatedCompletionTime"`
 	Status                  string        `json:"status"`
