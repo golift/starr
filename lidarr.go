@@ -9,16 +9,16 @@ import (
 
 // LidarQueue is the /api/v1/queue endpoint.
 type LidarQueue struct {
-	Page          int              `json:"page"`
-	PageSize      int              `json:"pageSize"`
-	SortKey       string           `json:"sortKey"`
-	SortDirection string           `json:"sortDirection"`
-	TotalRecords  int              `json:"totalRecords"`
-	Records       []*LidarrRecords `json:"records"`
+	Page          int             `json:"page"`
+	PageSize      int             `json:"pageSize"`
+	SortKey       string          `json:"sortKey"`
+	SortDirection string          `json:"sortDirection"`
+	TotalRecords  int             `json:"totalRecords"`
+	Records       []*LidarrRecord `json:"records"`
 }
 
-// LidarrRecords represents the records returns by the /api/v1/queue endpoint.
-type LidarrRecords struct {
+// LidarrRecord represents the records returns by the /api/v1/queue endpoint.
+type LidarrRecord struct {
 	ArtistID int `json:"artistId"`
 	AlbumID  int `json:"albumId"`
 	Quality  struct {
@@ -45,7 +45,7 @@ type LidarrRecords struct {
 }
 
 // LidarrQueue returns the Lidarr Queue
-func (c *Config) LidarrQueue(maxRecords int) ([]*LidarrRecords, error) {
+func (c *Config) LidarrQueue(maxRecords int) ([]*LidarrRecord, error) {
 	var queue *LidarQueue
 
 	if maxRecords < 1 {
