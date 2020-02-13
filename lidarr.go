@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/url"
 	"strconv"
+	"time"
 )
 
 // LidarQueue is the /api/v1/queue endpoint.
@@ -27,21 +28,26 @@ type LidarrRecord struct {
 			Name string `json:"name"`
 		} `json:"quality"`
 		Revision struct {
-			Version int `json:"version"`
-			Real    int `json:"real"`
+			Version  int  `json:"version"`
+			Real     int  `json:"real"`
+			IsRepack bool `json:"isRepack"`
 		} `json:"revision"`
 	} `json:"quality"`
-	Size                  float64       `json:"size"`
-	Title                 string        `json:"title"`
-	Sizeleft              float64       `json:"sizeleft"`
-	Status                string        `json:"status"`
-	TrackedDownloadStatus string        `json:"trackedDownloadStatus"`
-	StatusMessages        []interface{} `json:"statusMessages"`
-	DownloadID            string        `json:"downloadId"`
-	Protocol              string        `json:"protocol"`
-	DownloadClient        string        `json:"downloadClient"`
-	ID                    int           `json:"id"`
-	Indexer               string        `json:"indexer,omitempty"`
+	Size                    int           `json:"size"`
+	Title                   string        `json:"title"`
+	Sizeleft                int           `json:"sizeleft"`
+	Timeleft                string        `json:"timeleft"`
+	EstimatedCompletionTime time.Time     `json:"estimatedCompletionTime"`
+	Status                  string        `json:"status"`
+	TrackedDownloadStatus   string        `json:"trackedDownloadStatus"`
+	StatusMessages          []interface{} `json:"statusMessages"`
+	DownloadID              string        `json:"downloadId"`
+	Protocol                string        `json:"protocol"`
+	DownloadClient          string        `json:"downloadClient"`
+	Indexer                 string        `json:"indexer"`
+	OutputPath              string        `json:"outputPath"`
+	DownloadForced          bool          `json:"downloadForced"`
+	ID                      int           `json:"id"`
 }
 
 // LidarrQueue returns the Lidarr Queue
