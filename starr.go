@@ -15,7 +15,6 @@ import (
 type Config struct {
 	APIKey   string   `json:"api_key" toml:"api_key" xml:"api_key" yaml:"api_key"`
 	URL      string   `json:"url" toml:"url" xml:"url" yaml:"url"`
-	Path     string   `json:"path" toml:"path" xml:"path" yaml:"path"` // not used
 	HTTPPass string   `json:"http_pass" toml:"http_pass" xml:"http_pass" yaml:"http_pass"`
 	HTTPUser string   `json:"http_user" toml:"http_user" xml:"http_user" yaml:"http_user"`
 	Timeout  Duration `json:"timeout" toml:"timeout" xml:"timeout" yaml:"timeout"`
