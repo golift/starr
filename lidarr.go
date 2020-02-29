@@ -33,21 +33,21 @@ type LidarrRecord struct {
 			IsRepack bool `json:"isRepack"`
 		} `json:"revision"`
 	} `json:"quality"`
-	Size                    float64       `json:"size"`
-	Title                   string        `json:"title"`
-	Sizeleft                float64       `json:"sizeleft"`
-	Timeleft                string        `json:"timeleft"`
-	EstimatedCompletionTime time.Time     `json:"estimatedCompletionTime"`
-	Status                  string        `json:"status"`
-	TrackedDownloadStatus   string        `json:"trackedDownloadStatus"`
-	StatusMessages          []interface{} `json:"statusMessages"`
-	DownloadID              string        `json:"downloadId"`
-	Protocol                string        `json:"protocol"`
-	DownloadClient          string        `json:"downloadClient"`
-	Indexer                 string        `json:"indexer"`
-	OutputPath              string        `json:"outputPath"`
-	DownloadForced          bool          `json:"downloadForced"`
-	ID                      int64         `json:"id"`
+	Size                    float64         `json:"size"`
+	Title                   string          `json:"title"`
+	Sizeleft                float64         `json:"sizeleft"`
+	Timeleft                string          `json:"timeleft"`
+	EstimatedCompletionTime time.Time       `json:"estimatedCompletionTime"`
+	Status                  string          `json:"status"`
+	TrackedDownloadStatus   string          `json:"trackedDownloadStatus"`
+	StatusMessages          []StatusMessage `json:"statusMessages"`
+	DownloadID              string          `json:"downloadId"`
+	Protocol                string          `json:"protocol"`
+	DownloadClient          string          `json:"downloadClient"`
+	Indexer                 string          `json:"indexer"`
+	OutputPath              string          `json:"outputPath"`
+	DownloadForced          bool            `json:"downloadForced"`
+	ID                      int64           `json:"id"`
 }
 
 // LidarrQueue returns the Lidarr Queue

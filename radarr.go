@@ -159,10 +159,7 @@ type RadarQueue struct {
 			Real    int64 `json:"real"`
 		} `json:"revision"`
 	} `json:"quality"`
-	StatusMessages []struct {
-		Title    string   `json:"title"`
-		Messages []string `json:"messages"`
-	} `json:"statusMessages"`
+	StatusMessages []StatusMessage `json:"statusMessages"`
 }
 
 // RadarrHistory returns the Radarr History (grabs/failures/completed)

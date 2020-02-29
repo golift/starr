@@ -84,3 +84,9 @@ func (c *Config) fixPath(path string) string {
 
 	return c.URL + "/api" + path
 }
+
+// StatusMessage represents the status of the item. All apps use this.
+type StatusMessage struct {
+	Title    string   `json:"title"`
+	Messages []string `json:"messages"`
+}

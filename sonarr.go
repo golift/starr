@@ -87,11 +87,7 @@ type SonarQueue struct {
 			Real    int `json:"real"`
 		} `json:"revision"`
 	} `json:"quality"`
-
-	StatusMessages []struct {
-		Title    string   `json:"title"`
-		Messages []string `json:"messages"`
-	} `json:"statusMessages"`
+	StatusMessages []StatusMessage `json:"statusMessages"`
 }
 
 // SonarrQueue returns the Sonarr Queue
