@@ -90,7 +90,7 @@ type SonarQueue struct {
 	StatusMessages []StatusMessage `json:"statusMessages"`
 }
 
-// SonarrQueue returns the Sonarr Queue
+// SonarrQueue returns the Sonarr Queue.
 func (c *Config) SonarrQueue() ([]*SonarQueue, error) {
 	var queue []*SonarQueue
 
@@ -101,11 +101,11 @@ func (c *Config) SonarrQueue() ([]*SonarQueue, error) {
 
 	rawJSON, err := c.Req("queue", params)
 	if err != nil {
-		return queue, fmt.Errorf("c.Req(queue): %v", err)
+		return queue, fmt.Errorf("c.Req(queue): %w", err)
 	}
 
 	if err = json.Unmarshal(rawJSON, &queue); err != nil {
-		return queue, fmt.Errorf("json.Unmarshal(response): %v", err)
+		return queue, fmt.Errorf("json.Unmarshal(response): %w", err)
 	}
 
 	return queue, nil

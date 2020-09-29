@@ -17,7 +17,7 @@ type RadarHistory struct {
 	Records       []*RadarRecord `json:"Records"`
 }
 
-// RadarRecord is a record in Radarr History
+// RadarRecord is a record in Radarr History.
 type RadarRecord struct {
 	EpisodeID   int64  `json:"episodeId"`
 	MovieID     int64  `json:"movieId"`
@@ -162,7 +162,7 @@ type RadarQueue struct {
 	StatusMessages []StatusMessage `json:"statusMessages"`
 }
 
-// RadarrHistory returns the Radarr History (grabs/failures/completed)
+// RadarrHistory returns the Radarr History (grabs/failures/completed).
 func (c *Config) RadarrHistory() ([]*RadarRecord, error) {
 	var history RadarHistory
 
@@ -175,17 +175,17 @@ func (c *Config) RadarrHistory() ([]*RadarRecord, error) {
 
 	rawJSON, err := c.Req("history", params)
 	if err != nil {
-		return nil, fmt.Errorf("c.Req(queue): %v", err)
+		return nil, fmt.Errorf("c.Req(queue): %w", err)
 	}
 
 	if err = json.Unmarshal(rawJSON, &history); err != nil {
-		return nil, fmt.Errorf("json.Unmarshal(response): %v", err)
+		return nil, fmt.Errorf("json.Unmarshal(response): %w", err)
 	}
 
 	return history.Records, nil
 }
 
-// RadarrQueue returns the Radarr Queue (processing, but not yet imported)
+// RadarrQueue returns the Radarr Queue (processing, but not yet imported).
 func (c *Config) RadarrQueue() ([]*RadarQueue, error) {
 	var queue []*RadarQueue
 
@@ -196,11 +196,11 @@ func (c *Config) RadarrQueue() ([]*RadarQueue, error) {
 
 	rawJSON, err := c.Req("queue", params)
 	if err != nil {
-		return nil, fmt.Errorf("c.Req(queue): %v", err)
+		return nil, fmt.Errorf("c.Req(queue): %w", err)
 	}
 
 	if err = json.Unmarshal(rawJSON, &queue); err != nil {
-		return nil, fmt.Errorf("json.Unmarshal(response): %v", err)
+		return nil, fmt.Errorf("json.Unmarshal(response): %w", err)
 	}
 
 	return queue, nil

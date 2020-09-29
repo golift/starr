@@ -50,7 +50,7 @@ type LidarrRecord struct {
 	ID                      int64           `json:"id"`
 }
 
-// LidarrQueue returns the Lidarr Queue
+// LidarrQueue returns the Lidarr Queue.
 func (c *Config) LidarrQueue(maxRecords int) ([]*LidarrRecord, error) {
 	var queue *LidarQueue
 
@@ -66,11 +66,11 @@ func (c *Config) LidarrQueue(maxRecords int) ([]*LidarrRecord, error) {
 
 	rawJSON, err := c.Req("v1/queue", params)
 	if err != nil {
-		return nil, fmt.Errorf("c.Req(queue): %v", err)
+		return nil, fmt.Errorf("c.Req(queue): %w", err)
 	}
 
 	if err = json.Unmarshal(rawJSON, &queue); err != nil {
-		return nil, fmt.Errorf("json.Unmarshal(response): %v", err)
+		return nil, fmt.Errorf("json.Unmarshal(response): %w", err)
 	}
 
 	return queue.Records, nil
