@@ -22,7 +22,7 @@ type ReadarQueue struct {
 type BookRecord struct {
 	AuthorID                int64           `json:"authorId"`
 	BookID                  int64           `json:"bookId"`
-	Quality                 BookQuality     `json:"quality"`
+	Quality                 Quality         `json:"quality"`
 	Size                    float64         `json:"size"`
 	Title                   string          `json:"title"`
 	Sizeleft                float64         `json:"sizeleft"`
@@ -41,22 +41,9 @@ type BookRecord struct {
 	ID                      int64           `json:"id"`
 }
 
-// BookQuality is attached to each BookRecord.
-type BookQuality struct {
-	Quality struct {
-		ID   int64  `json:"id"`
-		Name string `json:"name"`
-	} `json:"quality"`
-	Revision struct {
-		Version  int64 `json:"version"`
-		Real     int64 `json:"real"`
-		IsRepack bool  `json:"isRepack"`
-	} `json:"revision"`
-}
-
 // ReadarrQueue returns the Readarr Queue (processing, but not yet imported).
-func (c *Config) ReadarrQueue(maxRecords int) ([]*ReadarQueue, error) {
-	var queue []*ReadarQueue
+func (c *Config) ReadarrQueue(maxRecords int) (*ReadarQueue, error) {
+	var queue *ReadarQueue
 
 	if maxRecords < 1 {
 		maxRecords = 1

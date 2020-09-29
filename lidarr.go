@@ -20,19 +20,9 @@ type LidarQueue struct {
 
 // LidarrRecord represents the records returns by the /api/v1/queue endpoint.
 type LidarrRecord struct {
-	ArtistID int64 `json:"artistId"`
-	AlbumID  int64 `json:"albumId"`
-	Quality  struct {
-		Quality struct {
-			ID   int64  `json:"id"`
-			Name string `json:"name"`
-		} `json:"quality"`
-		Revision struct {
-			Version  int  `json:"version"`
-			Real     int  `json:"real"`
-			IsRepack bool `json:"isRepack"`
-		} `json:"revision"`
-	} `json:"quality"`
+	ArtistID                int64           `json:"artistId"`
+	AlbumID                 int64           `json:"albumId"`
+	Quality                 Quality         `json:"quality"`
 	Size                    float64         `json:"size"`
 	Title                   string          `json:"title"`
 	Sizeleft                float64         `json:"sizeleft"`
@@ -51,7 +41,7 @@ type LidarrRecord struct {
 }
 
 // LidarrQueue returns the Lidarr Queue.
-func (c *Config) LidarrQueue(maxRecords int) ([]*LidarrRecord, error) {
+func (c *Config) LidarrQueue(maxRecords int) (*LidarQueue, error) {
 	var queue *LidarQueue
 
 	if maxRecords < 1 {
@@ -73,5 +63,5 @@ func (c *Config) LidarrQueue(maxRecords int) ([]*LidarrRecord, error) {
 		return nil, fmt.Errorf("json.Unmarshal(response): %w", err)
 	}
 
-	return queue.Records, nil
+	return queue, nil
 }

@@ -19,20 +19,11 @@ type RadarHistory struct {
 
 // RadarRecord is a record in Radarr History.
 type RadarRecord struct {
-	EpisodeID   int64  `json:"episodeId"`
-	MovieID     int64  `json:"movieId"`
-	SeriesID    int64  `json:"seriesId"`
-	SourceTitle string `json:"sourceTitle"`
-	Quality     struct {
-		Quality struct {
-			ID   int64  `json:"id"`
-			Name string `json:"name"`
-		} `json:"quality"`
-		Revision struct {
-			Version int64 `json:"version"`
-			Real    int64 `json:"real"`
-		} `json:"revision"`
-	} `json:"quality"`
+	EpisodeID           int64  `json:"episodeId"`
+	MovieID             int64  `json:"movieId"`
+	SeriesID            int64  `json:"seriesId"`
+	SourceTitle         string `json:"sourceTitle"`
+	Quality             Quality
 	QualityCutoffNotMet bool      `json:"qualityCutoffNotMet"`
 	Date                time.Time `json:"date"`
 	DownloadID          string    `json:"downloadId"`

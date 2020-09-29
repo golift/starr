@@ -77,16 +77,7 @@ type SonarQueue struct {
 		AirDate                  string    `json:"airDate"`
 		Overview                 string    `json:"overview"`
 	} `json:"episode"`
-	Quality struct {
-		Quality struct {
-			ID   int    `json:"id"`
-			Name string `json:"name"`
-		} `json:"quality"`
-		Revision struct {
-			Version int `json:"version"`
-			Real    int `json:"real"`
-		} `json:"revision"`
-	} `json:"quality"`
+	Quality        Quality         `json:"quality"`
 	StatusMessages []StatusMessage `json:"statusMessages"`
 }
 
