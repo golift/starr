@@ -1,10 +1,12 @@
 package starr
 
 import (
+	"bytes"
 	"context"
 	"crypto/tls"
 	"encoding/base64"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -13,7 +15,7 @@ import (
 )
 
 // ErrInvalidStatusCode is returned when the server (*arr app) returns a bad status code during an API request.
-var ErrInvalidStatusCode = fmt.Errorf("invalid status code, not 200")
+var ErrInvalidStatusCode = fmt.Errorf("invalid status code, <200||>299")
 
 // Config is the data needed to poll Radarr or Sonarr or Lidarr or Readarr.
 // At a minimum, provide a URL and API Key.
@@ -40,7 +42,7 @@ func (d *Duration) UnmarshalText(data []byte) (err error) {
 
 // Req makes a http request, with some additions.
 // path = "/query", params = "sort_by=timeleft&order=asc" (as url.Values).
-func (c *Config) Req(path string, params url.Values) ([]byte, error) {
+func (c *Config) Req(path string, params url.Values, body ...byte) ([]byte, error) {
 	client := &http.Client{
 		Timeout: c.Timeout.Duration,
 		Transport: &http.Transport{
@@ -48,17 +50,32 @@ func (c *Config) Req(path string, params url.Values) ([]byte, error) {
 		},
 	}
 	path = c.fixPath(path)
+	bodyReader := io.Reader(nil)
+
+	method := http.MethodGet
+	if len(body) > 0 {
+		bodyReader = bytes.NewBuffer(body)
+		method = http.MethodPost
+	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), c.Timeout.Duration)
 	defer cancel()
 
-	req, err := http.NewRequestWithContext(ctx, "GET", path, nil)
+	req, err := http.NewRequestWithContext(ctx, method, path, bodyReader)
 	if err != nil {
 		return nil, fmt.Errorf("http.NewRequestWithContext(path): %w", err)
 	}
 
-	params["apikey"] = []string{c.APIKey}
+	if params == nil {
+		params = make(url.Values)
+	}
+
+	params.Add("apikey", c.APIKey)
 	req.URL.RawQuery = params.Encode()
+
+	if len(body) > 0 {
+		req.Header.Set("content-type", "application/json")
+	}
 
 	// This app allows http auth, in addition to api key (nginx proxy).
 	if auth := c.HTTPUser + ":" + c.HTTPPass; auth != ":" {
@@ -72,18 +89,18 @@ func (c *Config) Req(path string, params url.Values) ([]byte, error) {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed: %v (status: %v/%v): %w",
-			path, resp.StatusCode, resp.Status, ErrInvalidStatusCode)
-	}
-
-	body, err := ioutil.ReadAll(resp.Body)
+	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("ioutil.ReadAll: %w", err)
 	}
 
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		return nil, fmt.Errorf("failed: %v (status: %s): %w: %s",
+			path, resp.Status, ErrInvalidStatusCode, string(b))
+	}
+
 	// log.Println(string(body))
-	return body, nil
+	return b, nil
 }
 
 func (c *Config) fixPath(path string) string {
