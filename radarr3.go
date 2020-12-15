@@ -296,6 +296,33 @@ type Radar3Movie struct {
 	ID int `json:"id"`
 }
 
+type Radar3QualityProfile struct {
+	Name           string `json:"name"`
+	UpgradeAllowed bool   `json:"upgradeAllowed"`
+	Cutoff         int    `json:"cutoff"`
+	Items          []struct {
+		Quality struct {
+			ID         int    `json:"id"`
+			Name       string `json:"name"`
+			Source     string `json:"source"`
+			Resolution int    `json:"resolution"`
+			Modifier   string `json:"modifier"`
+		} `json:"quality,omitempty"`
+		Items   []interface{} `json:"items"`
+		Allowed bool          `json:"allowed"`
+		Name    string        `json:"name,omitempty"`
+		ID      int           `json:"id,omitempty"`
+	} `json:"items"`
+	MinFormatScore    int           `json:"minFormatScore"`
+	CutoffFormatScore int           `json:"cutoffFormatScore"`
+	FormatItems       []interface{} `json:"formatItems"`
+	Language          struct {
+		ID   int    `json:"id"`
+		Name string `json:"name"`
+	} `json:"language"`
+	ID int `json:"id"`
+}
+
 // Radarr3History returns the Radarr History (grabs/failures/completed)
 func (c *Config) Radarr3History() ([]*Radar3Record, error) {
 	var history Radar3History
@@ -360,6 +387,22 @@ func (c *Config) Radarr3Movie(tmdbID int) ([]*Radar3Movie, error) {
 	return movie, nil
 }
 
+// Radarr3QualityProfiles returns all configured quality profiles.
+func (c *Config) Radarr3QualityProfiles() ([]*Radar3QualityProfile, error) {
+	var profiles []*Radar3QualityProfile
+
+	rawJSON, err := c.Req("v3/qualityProfile", nil)
+	if err != nil {
+		return nil, fmt.Errorf("c.Req(movie): %w", err)
+	}
+
+	if err = json.Unmarshal(rawJSON, &profiles); err != nil {
+		return nil, fmt.Errorf("json.Unmarshal(response): %w", err)
+	}
+
+	return profiles, nil
+}
+
 // Radarr3AddMovie adds a movie to the queue.
 func (c *Config) Radarr3AddMovie(movie *AddMovie) error {
 	body, err := json.Marshal(movie)
@@ -367,7 +410,10 @@ func (c *Config) Radarr3AddMovie(movie *AddMovie) error {
 		return fmt.Errorf("json.Marshal(movie): %w", err)
 	}
 
-	if _, err = c.Req("v3/movie", nil, body...); err != nil {
+	params := make(url.Values)
+	params.Add("moveFiles", "true")
+
+	if _, err = c.Req("v3/movie", params, body...); err != nil {
 		return fmt.Errorf("c.Req(movie): %w", err)
 	}
 
