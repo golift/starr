@@ -12,22 +12,34 @@ import (
 
 // AddMovie is the input for a new movie.
 type AddMovie struct {
-	Title               string          `json:"title"`
-	TitleSlug           string          `json:"titleSlug"`
-	TmdbID              int             `json:"tmdbId"`
-	Images              interface{}     `json:"images"`
-	Monitored           bool            `json:"monitored"`
-	QualityProfileID    int             `json:"qualityProfileId"`
-	ProfileID           int             `json:"profileId"`
-	Year                int             `json:"year"`
-	MinimumAvailability string          `json:"minimumAvailability"`
+	Title               string          `json:"title,omitempty"`
+	TitleSlug           string          `json:"titleSlug,omitempty"`
+	MinimumAvailability string          `json:"minimumAvailability,omitempty"`
 	RootFolderPath      string          `json:"rootFolderPath"`
+	TmdbID              int             `json:"tmdbId"`
+	QualityProfileID    int             `json:"qualityProfileId"`
+	ProfileID           int             `json:"profileId,omitempty"`
+	Year                int             `json:"year,omitempty"`
+	Images              interface{}     `json:"images,omitempty"`
 	AddMovieOptions     AddMovieOptions `json:"addOptions"`
+	Monitored           bool            `json:"monitored,omitempty"`
 }
 
 // AddMovieOptions are the options for finding a new movie.
 type AddMovieOptions struct {
 	SearchForMovie bool `json:"searchForMovie"`
+}
+
+// RadarrRootFolder is the /rootFolder endpoint.
+type RadarrRootFolder struct {
+	Path            string `json:"path"`
+	Accessible      bool   `json:"accessible"`
+	FreeSpace       int64  `json:"freeSpace"`
+	UnmappedFolders []struct {
+		Name string `json:"name"`
+		Path string `json:"path"`
+	} `json:"unmappedFolders"`
+	ID int `json:"id"`
 }
 
 // Radar3History is the /api/history endpoint.
@@ -40,7 +52,7 @@ type Radar3History struct {
 	Records       []*Radar3Record `json:"Records"`
 }
 
-// Radar3Record is a record in Radarr History
+// Radar3Record is a record in Radarr History.
 type Radar3Record struct {
 	EpisodeID   int64  `json:"episodeId"`
 	MovieID     int64  `json:"movieId"`
@@ -323,7 +335,7 @@ type Radar3QualityProfile struct {
 	ID int `json:"id"`
 }
 
-// Radarr3History returns the Radarr History (grabs/failures/completed)
+// Radarr3History returns the Radarr History (grabs/failures/completed).
 func (c *Config) Radarr3History() ([]*Radar3Record, error) {
 	var history Radar3History
 
@@ -346,7 +358,7 @@ func (c *Config) Radarr3History() ([]*Radar3Record, error) {
 	return history.Records, nil
 }
 
-// Radarr3Queue returns the Radarr Queue (processing, but not yet imported)
+// Radarr3Queue returns the Radarr Queue (processing, but not yet imported).
 func (c *Config) Radarr3Queue() ([]*Radar3Queue, error) {
 	var queue []*Radar3Queue
 
@@ -392,6 +404,22 @@ func (c *Config) Radarr3QualityProfiles() ([]*Radar3QualityProfile, error) {
 	var profiles []*Radar3QualityProfile
 
 	rawJSON, err := c.Req("v3/qualityProfile", nil)
+	if err != nil {
+		return nil, fmt.Errorf("c.Req(movie): %w", err)
+	}
+
+	if err = json.Unmarshal(rawJSON, &profiles); err != nil {
+		return nil, fmt.Errorf("json.Unmarshal(response): %w", err)
+	}
+
+	return profiles, nil
+}
+
+// Radarr3RootFolders returns all configured root folders.
+func (c *Config) Radarr3RootFolders() ([]*RadarrRootFolder, error) {
+	var profiles []*RadarrRootFolder
+
+	rawJSON, err := c.Req("v3/rootFolder", nil)
 	if err != nil {
 		return nil, fmt.Errorf("c.Req(movie): %w", err)
 	}
