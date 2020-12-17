@@ -6,9 +6,11 @@ Library for interacting with APIs for:
 -   Radarr
 -   Readarr
 
-This library is still reasonably featureless and could use more time and energy.
-It is currently used for a [small CLI app](https://github.com/davidnewhall/unpackerr)
-that just extracts torrent downloads.
+This library is slowly updated as new methods are needed or requested. If you have
+specific needs this library doesn't currently meet, but should or could, please
+[let me know](https://github.com/golift/starr/issues/new)!
 
-Can be easily expanded by adding more structs and methods to `Config`. It could
-also use a `Get()` function to return an interface.
+This library is currently in use by:
+
+-   [Unpackerr](https://github.com/davidnewhall/unpackerr/)
+-   [DiscordNotifier-Client](https://github.com/Go-Lift-TV/discordnotifier-client/)
