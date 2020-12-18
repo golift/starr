@@ -9,8 +9,6 @@ import (
 
 // GetQueue returns the Readarr Queue (processing, but not yet imported).
 func (r *Readarr) GetQueue(maxRecords int) (*Queue, error) {
-	var queue *Queue
-
 	if maxRecords < 1 {
 		maxRecords = 1
 	}
@@ -18,13 +16,9 @@ func (r *Readarr) GetQueue(maxRecords int) (*Queue, error) {
 	params := make(url.Values)
 	params["pageSize"] = []string{strconv.Itoa(maxRecords)}
 
-	rawJSON, err := r.config.Req("v1/queue", params)
-	if err != nil {
-		return nil, fmt.Errorf("c.Req(queue): %w", err)
-	}
-
-	if err = json.Unmarshal(rawJSON, &queue); err != nil {
-		return nil, fmt.Errorf("json.Unmarshal(response): %w", err)
+	var queue *Queue
+	if err := r.GetInto("v1/queue", params, queue); err != nil {
+		return nil, fmt.Errorf("api.Get(queue): %w", err)
 	}
 
 	return queue, nil
@@ -33,14 +27,8 @@ func (r *Readarr) GetQueue(maxRecords int) (*Queue, error) {
 // GetSystemStatus returns system status.
 func (r *Readarr) GetSystemStatus() (*SystemStatus, error) {
 	var status *SystemStatus
-
-	rawJSON, err := r.config.Req("v1/system/status", nil)
-	if err != nil {
-		return status, fmt.Errorf("c.Req(system/status): %w", err)
-	}
-
-	if err = json.Unmarshal(rawJSON, &status); err != nil {
-		return status, fmt.Errorf("json.Unmarshal(response): %w", err)
+	if err := r.GetInto("v1/system/status", nil, status); err != nil {
+		return status, fmt.Errorf("api.Get(system/status): %w", err)
 	}
 
 	return status, nil
@@ -49,14 +37,8 @@ func (r *Readarr) GetSystemStatus() (*SystemStatus, error) {
 // GetRootFolders returns all configured root folders.
 func (r *Readarr) GetRootFolders() ([]*RootFolder, error) {
 	var folders []*RootFolder
-
-	rawJSON, err := r.config.Req("v1/rootFolder", nil)
-	if err != nil {
-		return nil, fmt.Errorf("c.Req(rootFolder): %w", err)
-	}
-
-	if err = json.Unmarshal(rawJSON, &folders); err != nil {
-		return nil, fmt.Errorf("json.Unmarshal(response): %w", err)
+	if err := r.GetInto("v1/rootFolder", nil, &folders); err != nil {
+		return nil, fmt.Errorf("api.Get(rootFolder): %w", err)
 	}
 
 	return folders, nil
@@ -65,14 +47,8 @@ func (r *Readarr) GetRootFolders() ([]*RootFolder, error) {
 // GetMetadataProfiles returns the metadata profiles.
 func (r *Readarr) GetMetadataProfiles() ([]*MetadataProfile, error) {
 	var profiles []*MetadataProfile
-
-	rawJSON, err := r.config.Req("v1/metadataprofile", nil)
-	if err != nil {
-		return nil, fmt.Errorf("c.Req(metadataprofile): %w", err)
-	}
-
-	if err = json.Unmarshal(rawJSON, &profiles); err != nil {
-		return nil, fmt.Errorf("json.Unmarshal(response): %w", err)
+	if err := r.GetInto("v1/metadataprofile", nil, &profiles); err != nil {
+		return nil, fmt.Errorf("api.Get(metadataprofile): %w", err)
 	}
 
 	return profiles, nil
@@ -81,14 +57,8 @@ func (r *Readarr) GetMetadataProfiles() ([]*MetadataProfile, error) {
 // GetQualityProfiles returns the quality profiles.
 func (r *Readarr) GetQualityProfiles() ([]*QualityProfile, error) {
 	var profiles []*QualityProfile
-
-	rawJSON, err := r.config.Req("v1/qualityprofile", nil)
-	if err != nil {
-		return nil, fmt.Errorf("c.Req(qualityprofile): %w", err)
-	}
-
-	if err = json.Unmarshal(rawJSON, &profiles); err != nil {
-		return nil, fmt.Errorf("json.Unmarshal(response): %w", err)
+	if err := r.GetInto("v1/qualityprofile", nil, &profiles); err != nil {
+		return nil, fmt.Errorf("api.Get(qualityprofile): %w", err)
 	}
 
 	return profiles, nil
@@ -96,21 +66,15 @@ func (r *Readarr) GetQualityProfiles() ([]*QualityProfile, error) {
 
 // GetBook returns books. All if gridID is 0.
 func (r *Readarr) GetBook(gridID int) ([]*Book, error) {
-	var books []*Book
-
 	params := make(url.Values)
 
 	if gridID > 0 {
 		params.Add("titleSlug", strconv.Itoa(gridID)) // this may change, but works for now.
 	}
 
-	rawJSON, err := r.config.Req("v1/book", params)
-	if err != nil {
-		return nil, fmt.Errorf("c.Req(book): %w", err)
-	}
-
-	if err = json.Unmarshal(rawJSON, &books); err != nil {
-		return nil, fmt.Errorf("json.Unmarshal(response): %w", err)
+	var books []*Book
+	if err := r.GetInto("v1/book", params, &books); err != nil {
+		return nil, fmt.Errorf("api.Get(book): %w", err)
 	}
 
 	return books, nil
@@ -126,15 +90,9 @@ func (r *Readarr) AddBook(book *AddBookInput) (*AddBookOutput, error) {
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
-	rawJSON, err := r.config.Req("v1/book", params, body...)
-	if err != nil {
-		return nil, fmt.Errorf("c.Req(book): %w", err)
-	}
-
 	var bookOutput *AddBookOutput
-
-	if err = json.Unmarshal(rawJSON, &bookOutput); err != nil {
-		return nil, fmt.Errorf("json.Unmarshal(response): %w", err)
+	if err := r.PostInto("v1/book", params, body, bookOutput); err != nil {
+		return nil, fmt.Errorf("api.Post(book): %w", err)
 	}
 
 	return bookOutput, nil

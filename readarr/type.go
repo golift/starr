@@ -1,17 +1,28 @@
 package readarr
 
 import (
+	"crypto/tls"
+	"net/http"
 	"time"
 
 	"golift.io/starr"
 )
 
 type Readarr struct {
-	config *starr.Config
+	starr.APIer
 }
 
 func New(c *starr.Config) *Readarr {
-	return &Readarr{config: c}
+	if c.Client == nil {
+		c.Client = &http.Client{ // nolint: exhaustivestruct
+			Timeout: c.Timeout.Duration,
+			Transport: &http.Transport{ // nolint: exhaustivestruct
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: !c.ValidSSL}, // nolint: gosec, exhaustivestruct
+			},
+		}
+	}
+
+	return &Readarr{APIer: c}
 }
 
 // Queue is the /api/v1/queue endpoint.

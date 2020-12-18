@@ -1,17 +1,28 @@
 package sonarr
 
 import (
+	"crypto/tls"
+	"net/http"
 	"time"
 
 	"golift.io/starr"
 )
 
 type Sonarr struct {
-	config *starr.Config
+	starr.APIer
 }
 
 func New(c *starr.Config) *Sonarr {
-	return &Sonarr{config: c}
+	if c.Client == nil {
+		c.Client = &http.Client{ // nolint: exhaustivestruct
+			Timeout: c.Timeout.Duration,
+			Transport: &http.Transport{ // nolint: exhaustivestruct
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: !c.ValidSSL}, // nolint: gosec, exhaustivestruct
+			},
+		}
+	}
+
+	return &Sonarr{APIer: c}
 }
 
 // QualityProfile is the /api/v3/qualityprofile endpoint.

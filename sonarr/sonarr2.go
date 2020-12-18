@@ -1,7 +1,6 @@
 package sonarr
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/url"
 	"strconv"
@@ -85,20 +84,13 @@ type QueueV2 struct {
 
 // GetQueueV2 returns the Sonarr Queue.
 func (s *Sonarr) GetQueueV2() ([]*QueueV2, error) {
-	var queue []*QueueV2
-
 	params := make(url.Values)
-
 	params.Set("sort_by", "timeleft")
 	params.Set("order", "asc")
 
-	rawJSON, err := s.config.Req("queue", params)
-	if err != nil {
-		return queue, fmt.Errorf("c.Req(queue): %w", err)
-	}
-
-	if err = json.Unmarshal(rawJSON, &queue); err != nil {
-		return queue, fmt.Errorf("json.Unmarshal(response): %w", err)
+	var queue []*QueueV2
+	if err := s.GetInto("queue", params, &queue); err != nil {
+		return queue, fmt.Errorf("api.Get(queue): %w", err)
 	}
 
 	return queue, nil
@@ -132,14 +124,8 @@ type SystemStatusV2 struct {
 // GetSystemStatusV2 returns system status.
 func (s *Sonarr) GetSystemStatusV2() (*SystemStatusV2, error) {
 	var status *SystemStatusV2
-
-	rawJSON, err := s.config.Req("system/status", nil)
-	if err != nil {
-		return status, fmt.Errorf("c.Req(system/status): %w", err)
-	}
-
-	if err = json.Unmarshal(rawJSON, &status); err != nil {
-		return status, fmt.Errorf("json.Unmarshal(response): %w", err)
+	if err := s.GetInto("system/status", nil, status); err != nil {
+		return status, fmt.Errorf("api.Get(system/status): %w", err)
 	}
 
 	return status, nil
@@ -170,14 +156,8 @@ type QualityProfileV2 struct {
 // GetQualityProfilesV2 returns all configured quality profiles.
 func (s *Sonarr) GetQualityProfilesV2() ([]*QualityProfileV2, error) {
 	var profiles []*QualityProfileV2
-
-	rawJSON, err := s.config.Req("profile", nil)
-	if err != nil {
-		return nil, fmt.Errorf("c.Req(profile): %w", err)
-	}
-
-	if err = json.Unmarshal(rawJSON, &profiles); err != nil {
-		return nil, fmt.Errorf("json.Unmarshal(response): %w", err)
+	if err := s.GetInto("profile", nil, &profiles); err != nil {
+		return nil, fmt.Errorf("api.Get(profile): %w", err)
 	}
 
 	return profiles, nil
@@ -198,14 +178,8 @@ type RootFolderV2 struct {
 // RootFoldersV2 returns all configured root folders.
 func (s *Sonarr) GetRootFoldersV2() ([]*RootFolderV2, error) {
 	var folders []*RootFolderV2
-
-	rawJSON, err := s.config.Req("rootFolder", nil)
-	if err != nil {
-		return nil, fmt.Errorf("c.Req(rootFolder): %w", err)
-	}
-
-	if err = json.Unmarshal(rawJSON, &folders); err != nil {
-		return nil, fmt.Errorf("json.Unmarshal(response): %w", err)
+	if err := s.GetInto("rootFolder", nil, &folders); err != nil {
+		return nil, fmt.Errorf("api.Get(rootFolder): %w", err)
 	}
 
 	return folders, nil
@@ -275,14 +249,8 @@ type SeasonV2 struct {
 // GetAllSeriesV2 returns all configured series.
 func (s *Sonarr) GetAllSeriesV2() ([]*SeriesV2, error) {
 	var series []*SeriesV2
-
-	rawJSON, err := s.config.Req("series", nil)
-	if err != nil {
-		return nil, fmt.Errorf("c.Req(series): %w", err)
-	}
-
-	if err = json.Unmarshal(rawJSON, &series); err != nil {
-		return nil, fmt.Errorf("json.Unmarshal(response): %w", err)
+	if err := s.GetInto("series", nil, &series); err != nil {
+		return nil, fmt.Errorf("api.Get(series): %w", err)
 	}
 
 	return series, nil
@@ -331,8 +299,6 @@ type SeriesLookupV2 struct {
 // GetSeriesLookupV2 searches for a series using a search term or a tvdbid.
 // Provide a search term or a tvdbid. If you provide both, tvdbID is used.
 func (s *Sonarr) GetSeriesLookupV2(term string, tvdbID int) ([]*SeriesLookupV2, error) {
-	var series []*SeriesLookupV2
-
 	params := make(url.Values)
 
 	if tvdbID > 0 {
@@ -341,13 +307,9 @@ func (s *Sonarr) GetSeriesLookupV2(term string, tvdbID int) ([]*SeriesLookupV2, 
 		params.Add("term", term)
 	}
 
-	rawJSON, err := s.config.Req("series/lookup", nil)
-	if err != nil {
-		return nil, fmt.Errorf("c.Req(series/lookup): %w", err)
-	}
-
-	if err = json.Unmarshal(rawJSON, &series); err != nil {
-		return nil, fmt.Errorf("json.Unmarshal(response): %w", err)
+	var series []*SeriesLookupV2
+	if err := s.GetInto("series/lookup", nil, &series); err != nil {
+		return nil, fmt.Errorf("api.Get(series/lookup): %w", err)
 	}
 
 	return series, nil

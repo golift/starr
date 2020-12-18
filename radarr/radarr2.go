@@ -1,7 +1,6 @@
 package radarr
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/url"
 	"time"
@@ -159,22 +158,15 @@ type QueueV2 struct {
 
 // GetHistoryV2 returns the Radarr History (grabs/failures/completed).
 func (r *Radarr) GetHistoryV2() ([]*Record, error) {
-	var history History
-
 	params := make(url.Values)
-
 	params.Set("sortKey", "date")
 	params.Set("sortDir", "asc")
 	params.Set("page", "1")
 	params.Set("pageSize", "0")
 
-	rawJSON, err := r.config.Req("history", params)
-	if err != nil {
-		return nil, fmt.Errorf("c.Req(queue): %w", err)
-	}
-
-	if err = json.Unmarshal(rawJSON, &history); err != nil {
-		return nil, fmt.Errorf("json.Unmarshal(response): %w", err)
+	var history History
+	if err := r.GetInto("history", params, &history); err != nil {
+		return nil, fmt.Errorf("api.Get(history): %w", err)
 	}
 
 	return history.Records, nil
@@ -182,20 +174,13 @@ func (r *Radarr) GetHistoryV2() ([]*Record, error) {
 
 // GetQueueV2 returns the Radarr Queue (processing, but not yet imported).
 func (r *Radarr) GetQueueV2() ([]*Queue, error) {
-	var queue []*Queue
-
 	params := make(url.Values)
-
 	params.Set("sort_by", "timeleft")
 	params.Set("order", "asc")
 
-	rawJSON, err := r.config.Req("queue", params)
-	if err != nil {
-		return nil, fmt.Errorf("c.Req(queue): %w", err)
-	}
-
-	if err = json.Unmarshal(rawJSON, &queue); err != nil {
-		return nil, fmt.Errorf("json.Unmarshal(response): %w", err)
+	var queue []*Queue
+	if err := r.GetInto("queue", params, &queue); err != nil {
+		return nil, fmt.Errorf("api.Get(queue): %w", err)
 	}
 
 	return queue, nil

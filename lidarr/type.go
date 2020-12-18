@@ -1,17 +1,28 @@
 package lidarr
 
 import (
+	"crypto/tls"
+	"net/http"
 	"time"
 
 	"golift.io/starr"
 )
 
 type Lidarr struct {
-	config *starr.Config
+	starr.APIer
 }
 
 func New(c *starr.Config) *Lidarr {
-	return &Lidarr{config: c}
+	if c.Client == nil {
+		c.Client = &http.Client{ // nolint: exhaustivestruct
+			Timeout: c.Timeout.Duration,
+			Transport: &http.Transport{ // nolint: exhaustivestruct
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: !c.ValidSSL}, // nolint: gosec, exhaustivestruct
+			},
+		}
+	}
+
+	return &Lidarr{APIer: c}
 }
 
 // Queue is the /api/v1/queue endpoint.
@@ -28,7 +39,7 @@ type Queue struct {
 type Record struct {
 	ArtistID                int64                  `json:"artistId"`
 	AlbumID                 int64                  `json:"albumId"`
-	Quality                 starr.Quality          `json:"quality"`
+	Quality                 *starr.Quality         `json:"quality"`
 	Size                    float64                `json:"size"`
 	Title                   string                 `json:"title"`
 	Sizeleft                float64                `json:"sizeleft"`

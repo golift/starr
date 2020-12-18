@@ -1,17 +1,28 @@
 package radarr
 
 import (
+	"crypto/tls"
+	"net/http"
 	"time"
 
 	"golift.io/starr"
 )
 
 type Radarr struct {
-	config *starr.Config
+	starr.APIer
 }
 
 func New(c *starr.Config) *Radarr {
-	return &Radarr{config: c}
+	if c.Client == nil {
+		c.Client = &http.Client{ // nolint: exhaustivestruct
+			Timeout: c.Timeout.Duration,
+			Transport: &http.Transport{ // nolint: exhaustivestruct
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: !c.ValidSSL}, // nolint: gosec, exhaustivestruct
+			},
+		}
+	}
+
+	return &Radarr{APIer: c}
 }
 
 // AddMovieInput is the input for a new movie.
