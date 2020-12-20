@@ -21,7 +21,14 @@ type Quality struct {
 		Version  int64 `json:"version"`
 		Real     int64 `json:"real"`
 		IsRepack bool  `json:"isRepack,omitempty"`
-	} `json:"revision"`
+	} `json:"revision,omitempty"`
+}
+
+// Ratings belong to a few types.
+type Ratings struct {
+	Votes      int64   `json:"votes"`
+	Value      float64 `json:"value"`
+	Popularity float64 `json:"popularity,omitempty"`
 }
 
 // Link is used in a few places.

@@ -110,18 +110,11 @@ type RootFolder struct {
 
 // QualityProfile is the /api/v1/qualityprofile endpoint.
 type QualityProfile struct {
-	Name           string `json:"name"`
-	UpgradeAllowed bool   `json:"upgradeAllowed"`
-	Cutoff         int    `json:"cutoff"`
-	Items          []struct {
-		Quality struct {
-			ID   int    `json:"id"`
-			Name string `json:"name"`
-		} `json:"quality"`
-		Items   []interface{} `json:"items"`
-		Allowed bool          `json:"allowed"`
-	} `json:"items"`
-	ID int `json:"id"`
+	Name           string           `json:"name"`
+	UpgradeAllowed bool             `json:"upgradeAllowed"`
+	Cutoff         int              `json:"cutoff"`
+	Qualities      []*starr.Quality `json:"items"`
+	ID             int              `json:"id"`
 }
 
 // MetadataProfile is the /api/v1/metadataProfile endpoint.
@@ -146,7 +139,7 @@ type Book struct {
 	TitleSlug      string          `json:"titleSlug"`
 	Monitored      bool            `json:"monitored"`
 	AnyEditionOk   bool            `json:"anyEditionOk"`
-	Ratings        *Ratings        `json:"ratings"`
+	Ratings        *starr.Ratings  `json:"ratings"`
 	ReleaseDate    time.Time       `json:"releaseDate"`
 	PageCount      int             `json:"pageCount"`
 	Genres         []interface{}   `json:"genres"`
@@ -157,13 +150,6 @@ type Book struct {
 	Editions       []*BookEditions `json:"editions"`
 	ID             int             `json:"id"`
 	Disambiguation string          `json:"disambiguation,omitempty"`
-}
-
-// Ratings belong to a Book.
-type Ratings struct {
-	Votes      int     `json:"votes"`
-	Value      float64 `json:"value"`
-	Popularity float64 `json:"popularity"`
 }
 
 // Statistics for a Book, or maybe an author.
@@ -194,7 +180,7 @@ type BookAuthor struct {
 	SortName          string         `json:"sortName"`
 	Tags              []interface{}  `json:"tags"`
 	Added             time.Time      `json:"added"`
-	Ratings           *Ratings       `json:"ratings"`
+	Ratings           *starr.Ratings `json:"ratings"`
 	Statistics        *Statistics    `json:"statistics"`
 	ID                int            `json:"id"`
 }
@@ -215,7 +201,7 @@ type BookEditions struct {
 	ReleaseDate      time.Time      `json:"releaseDate"`
 	Images           []*starr.Image `json:"images"`
 	Links            []*starr.Link  `json:"links"`
-	Ratings          *Ratings       `json:"ratings"`
+	Ratings          *starr.Ratings `json:"ratings"`
 	Monitored        bool           `json:"monitored"`
 	ManualAdd        bool           `json:"manualAdd"`
 	ID               int            `json:"id"`
@@ -254,4 +240,4 @@ type AddBookEdition struct {
 }
 
 // AddBookOutput is a placeholder until I know what this looks like.
-type AddBookOutput interface{}
+type AddBookOutput struct{}

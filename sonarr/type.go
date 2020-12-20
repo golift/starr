@@ -27,22 +27,11 @@ func New(c *starr.Config) *Sonarr {
 
 // QualityProfile is the /api/v3/qualityprofile endpoint.
 type QualityProfile struct {
-	Name           string `json:"name"`
-	UpgradeAllowed bool   `json:"upgradeAllowed"`
-	Cutoff         int    `json:"cutoff"`
-	Items          []struct {
-		Quality struct {
-			ID         int    `json:"id"`
-			Name       string `json:"name"`
-			Source     string `json:"source"`
-			Resolution int    `json:"resolution"`
-		} `json:"quality,omitempty"`
-		Items   []interface{} `json:"items"`
-		Allowed bool          `json:"allowed"`
-		Name    string        `json:"name,omitempty"`
-		ID      int           `json:"id,omitempty"`
-	} `json:"items"`
-	ID int `json:"id"`
+	Name           string           `json:"name"`
+	UpgradeAllowed bool             `json:"upgradeAllowed"`
+	Cutoff         int              `json:"cutoff"`
+	Qualities      []*starr.Quality `json:"items"`
+	ID             int              `json:"id"`
 }
 
 // SystemStatus is the /api/v3/system/status endpoint.
@@ -153,7 +142,7 @@ type Series struct {
 	Genres            []string       `json:"genres"`
 	Tags              []interface{}  `json:"tags"`
 	Added             time.Time      `json:"added"`
-	Ratings           *Ratings       `json:"ratings"`
+	Ratings           *starr.Ratings `json:"ratings"`
 	Statistics        *Statistics    `json:"statistics"`
 	ID                int            `json:"id"`
 	NextAiring        time.Time      `json:"nextAiring,omitempty"`
@@ -176,12 +165,6 @@ type Season struct {
 	SeasonNumber int         `json:"seasonNumber"`
 	Monitored    bool        `json:"monitored"`
 	Statistics   *Statistics `json:"statistics,omitempty"`
-}
-
-// Ratings for a series or episode.
-type Ratings struct {
-	Votes int     `json:"votes"`
-	Value float64 `json:"value"`
 }
 
 // SeriesLookup is the /api/v3/series/lookup endpoint.
@@ -216,7 +199,7 @@ type SeriesLookup struct {
 	Genres            []string       `json:"genres"`
 	Tags              []interface{}  `json:"tags"`
 	Added             time.Time      `json:"added"`
-	Ratings           *Ratings       `json:"ratings"`
+	Ratings           *starr.Ratings `json:"ratings"`
 	Statistics        *Statistics    `json:"statistics"`
 }
 
@@ -262,4 +245,4 @@ type AddSeriesOptions struct {
 }
 
 // AddSeriesOutput is currently an unknown format.
-type AddSeriesOutput interface{}
+type AddSeriesOutput struct{}

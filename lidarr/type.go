@@ -59,20 +59,11 @@ type Record struct {
 
 // QualityProfile is the /api/v1/qualityprofile endpoint.
 type QualityProfile struct {
-	Name           string `json:"name"`
-	UpgradeAllowed bool   `json:"upgradeAllowed"`
-	Cutoff         int    `json:"cutoff"`
-	Items          []struct {
-		Quality struct {
-			ID   int    `json:"id"`
-			Name string `json:"name"`
-		} `json:"quality,omitempty"`
-		Items   []interface{} `json:"items"`
-		Allowed bool          `json:"allowed"`
-		Name    string        `json:"name,omitempty"`
-		ID      int           `json:"id,omitempty"`
-	} `json:"items"`
-	ID int `json:"id"`
+	Name           string           `json:"name"`
+	UpgradeAllowed bool             `json:"upgradeAllowed"`
+	Cutoff         int              `json:"cutoff"`
+	Qualities      []*starr.Quality `json:"items"`
+	ID             int              `json:"id"`
 }
 
 // RootFolder is the /api/v1/rootfolder endpoint.
@@ -127,4 +118,109 @@ type SystemStatus struct {
 	RuntimeVersion    string    `json:"runtimeVersion"`
 	RuntimeName       string    `json:"runtimeName"`
 	StartTime         time.Time `json:"startTime"`
+}
+
+// Artist represents the /api/v1/artist endpoint.
+type Artist struct {
+	Status            string         `json:"status"`
+	Ended             bool           `json:"ended"`
+	LastInfoSync      time.Time      `json:"lastInfoSync"`
+	ArtistName        string         `json:"artistName"`
+	ForeignArtistID   string         `json:"foreignArtistId"`
+	TadbID            int            `json:"tadbId"`
+	DiscogsID         int            `json:"discogsId"`
+	Overview          string         `json:"overview"`
+	ArtistType        string         `json:"artistType,omitempty"`
+	Disambiguation    string         `json:"disambiguation"`
+	Links             []*starr.Link  `json:"links"`
+	Images            []*starr.Image `json:"images"`
+	Path              string         `json:"path"`
+	QualityProfileID  int            `json:"qualityProfileId"`
+	MetadataProfileID int            `json:"metadataProfileId"`
+	AlbumFolder       bool           `json:"albumFolder"`
+	Monitored         bool           `json:"monitored"`
+	Genres            []string       `json:"genres"`
+	CleanName         string         `json:"cleanName"`
+	SortName          string         `json:"sortName"`
+	Tags              []interface{}  `json:"tags"`
+	Added             time.Time      `json:"added"`
+	Ratings           *starr.Ratings `json:"ratings"`
+	Statistics        *Statistics    `json:"statistics"`
+	ID                int            `json:"id"`
+	LastAlbum         *Album         `json:"lastAlbum,omitempty"`
+	NextAlbum         *Album         `json:"nextAlbum,omitempty"`
+}
+
+// Statistics is part of Artist
+type Statistics struct {
+	AlbumCount      int     `json:"albumCount,omitempty"`
+	TrackFileCount  int     `json:"trackFileCount"`
+	TrackCount      int     `json:"trackCount"`
+	TotalTrackCount int     `json:"totalTrackCount"`
+	SizeOnDisk      int     `json:"sizeOnDisk"`
+	PercentOfTracks float64 `json:"percentOfTracks"`
+}
+
+// Album is the /api/v1/album endpoint.
+type Album struct {
+	ArtistMetadataID   int            `json:"artistMetadataId,omitempty"`
+	ForeignAlbumID     string         `json:"foreignAlbumId"`
+	OldForeignAlbumIds []interface{}  `json:"oldForeignAlbumIds,omitempty"`
+	Title              string         `json:"title"`
+	Overview           string         `json:"overview,omitempty"`
+	Disambiguation     string         `json:"disambiguation"`
+	ReleaseDate        time.Time      `json:"releaseDate"`
+	Images             []*starr.Image `json:"images"`
+	Links              []*starr.Link  `json:"links"`
+	Genres             []string       `json:"genres"`
+	AlbumType          string         `json:"albumType"`
+	SecondaryTypes     []interface{}  `json:"secondaryTypes"`
+	CleanTitle         string         `json:"cleanTitle,omitempty"`
+	ProfileID          int            `json:"profileId"`
+	Monitored          bool           `json:"monitored"`
+	AnyReleaseOk       bool           `json:"anyReleaseOk"`
+	LastInfoSync       time.Time      `json:"lastInfoSync,omitempty"`
+	Added              time.Time      `json:"added,omitempty"`
+	ArtistMetadata     struct {
+		IsLoaded bool `json:"isLoaded"`
+	} `json:"artistMetadata"`
+	AlbumReleases struct {
+		IsLoaded bool `json:"isLoaded"`
+	} `json:"albumReleases"`
+	Artist struct {
+		IsLoaded bool `json:"isLoaded"`
+	} `json:"artist"`
+	ArtistID    int            `json:"artistId"`
+	ID          int            `json:"id"`
+	Ratings     *starr.Ratings `json:"ratings"`
+	Duration    int            `json:"duration,omitempty"`
+	MediumCount int            `json:"mediumCount,omitempty"`
+	Releases    []*Releases    `json:"releases,omitempty"`
+	Media       []*Media       `json:"media,omitempty"`
+	Statistics  *Statistics    `json:"statistics,omitempty"`
+}
+
+// Releases is part of an Album.
+type Releases struct {
+	ID               int      `json:"id"`
+	AlbumID          int      `json:"albumId"`
+	ForeignReleaseID string   `json:"foreignReleaseId"`
+	Title            string   `json:"title"`
+	Status           string   `json:"status"`
+	Duration         int      `json:"duration"`
+	TrackCount       int      `json:"trackCount"`
+	Media            []*Media `json:"media"`
+	MediumCount      int      `json:"mediumCount"`
+	Disambiguation   string   `json:"disambiguation"`
+	Country          []string `json:"country"`
+	Label            []string `json:"label"`
+	Format           string   `json:"format"`
+	Monitored        bool     `json:"monitored"`
+}
+
+// Media is part of an Album.
+type Media struct {
+	MediumNumber int    `json:"mediumNumber"`
+	MediumName   string `json:"mediumName"`
+	MediumFormat string `json:"mediumFormat"`
 }

@@ -82,11 +82,8 @@ type AddMovieOutput struct {
 		IgnoreEpisodesWithFiles    bool `json:"ignoreEpisodesWithFiles"`
 		IgnoreEpisodesWithoutFiles bool `json:"ignoreEpisodesWithoutFiles"`
 	} `json:"addOptions"`
-	Ratings struct {
-		Votes int     `json:"votes"`
-		Value float64 `json:"value"`
-	} `json:"ratings"`
-	ID int `json:"id"`
+	Ratings *starr.Ratings `json:"ratings"`
+	ID      int            `json:"id"`
 }
 
 // RootFolder is the /rootFolder endpoint.
@@ -113,24 +110,15 @@ type History struct {
 
 // Record is a record in Radarr History.
 type Record struct {
-	EpisodeID   int64  `json:"episodeId"`
-	MovieID     int64  `json:"movieId"`
-	SeriesID    int64  `json:"seriesId"`
-	SourceTitle string `json:"sourceTitle"`
-	Quality     struct {
-		Quality struct {
-			ID   int64  `json:"id"`
-			Name string `json:"name"`
-		} `json:"quality"`
-		Revision struct {
-			Version int64 `json:"version"`
-			Real    int64 `json:"real"`
-		} `json:"revision"`
-	} `json:"quality"`
-	QualityCutoffNotMet bool      `json:"qualityCutoffNotMet"`
-	Date                time.Time `json:"date"`
-	DownloadID          string    `json:"downloadId"`
-	EventType           string    `json:"eventType"`
+	EpisodeID           int64          `json:"episodeId"`
+	MovieID             int64          `json:"movieId"`
+	SeriesID            int64          `json:"seriesId"`
+	SourceTitle         string         `json:"sourceTitle"`
+	Quality             *starr.Quality `json:"quality"`
+	QualityCutoffNotMet bool           `json:"qualityCutoffNotMet"`
+	Date                time.Time      `json:"date"`
+	DownloadID          string         `json:"downloadId"`
+	EventType           string         `json:"eventType"`
 	Data                struct {
 		Indexer         string    `json:"indexer"`
 		NzbInfoURL      string    `json:"nzbInfoUrl"`
@@ -149,38 +137,35 @@ type Record struct {
 		TorrentInfoHash []string  `json:"torrentInfoHash"`
 	} `json:"data"`
 	Movie struct {
-		Downloaded       bool           `json:"downloaded"`
-		Monitored        bool           `json:"monitored"`
-		HasFile          bool           `json:"hasFile"`
-		Year             int            `json:"year"`
-		ProfileID        int            `json:"profileId"`
-		Runtime          int            `json:"runtime"`
-		QualityProfileID int            `json:"qualityProfileId"`
-		ID               int64          `json:"id"`
-		SizeOnDisk       int64          `json:"sizeOnDisk"`
-		Title            string         `json:"title"`
-		SortTitle        string         `json:"sortTitle"`
-		Status           string         `json:"status"`
-		Overview         string         `json:"overview"`
-		InCinemas        time.Time      `json:"inCinemas"`
-		Images           []*starr.Image `json:"images"`
-		Website          string         `json:"website"`
-		YouTubeTrailerID string         `json:"youTubeTrailerId"`
-		Studio           string         `json:"studio"`
-		Path             string         `json:"path"`
-		LastInfoSync     time.Time      `json:"lastInfoSync"`
-		CleanTitle       string         `json:"cleanTitle"`
-		ImdbID           string         `json:"imdbId"`
-		TmdbID           int64          `json:"tmdbId"`
-		TitleSlug        string         `json:"titleSlug"`
-		Genres           []string       `json:"genres"`
-		Tags             []string       `json:"tags"`
-		Added            time.Time      `json:"added"`
-		Ratings          struct {
-			Votes int64   `json:"votes"`
-			Value float64 `json:"value"`
-		} `json:"ratings"`
-		AlternativeTitles []string `json:"alternativeTitles"`
+		Downloaded        bool           `json:"downloaded"`
+		Monitored         bool           `json:"monitored"`
+		HasFile           bool           `json:"hasFile"`
+		Year              int            `json:"year"`
+		ProfileID         int            `json:"profileId"`
+		Runtime           int            `json:"runtime"`
+		QualityProfileID  int            `json:"qualityProfileId"`
+		ID                int64          `json:"id"`
+		SizeOnDisk        int64          `json:"sizeOnDisk"`
+		Title             string         `json:"title"`
+		SortTitle         string         `json:"sortTitle"`
+		Status            string         `json:"status"`
+		Overview          string         `json:"overview"`
+		InCinemas         time.Time      `json:"inCinemas"`
+		Images            []*starr.Image `json:"images"`
+		Website           string         `json:"website"`
+		YouTubeTrailerID  string         `json:"youTubeTrailerId"`
+		Studio            string         `json:"studio"`
+		Path              string         `json:"path"`
+		LastInfoSync      time.Time      `json:"lastInfoSync"`
+		CleanTitle        string         `json:"cleanTitle"`
+		ImdbID            string         `json:"imdbId"`
+		TmdbID            int64          `json:"tmdbId"`
+		TitleSlug         string         `json:"titleSlug"`
+		Genres            []string       `json:"genres"`
+		Tags              []string       `json:"tags"`
+		Added             time.Time      `json:"added"`
+		Ratings           *starr.Ratings `json:"ratings"`
+		AlternativeTitles []string       `json:"alternativeTitles"`
 	} `json:"movie"`
 	ID int `json:"id"`
 }
@@ -231,10 +216,7 @@ type Queue struct {
 		Genres                []string       `json:"genres"`
 		Tags                  []string       `json:"tags"`
 		Images                []*starr.Image `json:"images"`
-		Ratings               struct {
-			Votes int64   `json:"votes"`
-			Value float64 `json:"value"`
-		} `json:"ratings"`
+		Ratings               *starr.Ratings `json:"ratings"`
 	} `json:"movie"`
 	Quality        *starr.Quality         `json:"quality"`
 	StatusMessages []*starr.StatusMessage `json:"statusMessages"`
@@ -286,11 +268,8 @@ type Movie struct {
 	Genres                []string       `json:"genres"`
 	Tags                  []interface{}  `json:"tags"`
 	Added                 time.Time      `json:"added"`
-	Ratings               struct {
-		Votes int     `json:"votes"`
-		Value float64 `json:"value"`
-	} `json:"ratings"`
-	MovieFile struct {
+	Ratings               *starr.Ratings `json:"ratings"`
+	MovieFile             struct {
 		MovieID      int            `json:"movieId"`
 		RelativePath string         `json:"relativePath"`
 		Path         string         `json:"path"`
@@ -333,25 +312,13 @@ type Movie struct {
 }
 
 type QualityProfile struct {
-	Name           string `json:"name"`
-	UpgradeAllowed bool   `json:"upgradeAllowed"`
-	Cutoff         int    `json:"cutoff"`
-	Items          []struct {
-		Quality struct {
-			ID         int    `json:"id"`
-			Name       string `json:"name"`
-			Source     string `json:"source"`
-			Resolution int    `json:"resolution"`
-			Modifier   string `json:"modifier"`
-		} `json:"quality,omitempty"`
-		Items   []interface{} `json:"items"`
-		Allowed bool          `json:"allowed"`
-		Name    string        `json:"name,omitempty"`
-		ID      int           `json:"id,omitempty"`
-	} `json:"items"`
-	MinFormatScore    int           `json:"minFormatScore"`
-	CutoffFormatScore int           `json:"cutoffFormatScore"`
-	FormatItems       []interface{} `json:"formatItems"`
+	Name              string           `json:"name"`
+	UpgradeAllowed    bool             `json:"upgradeAllowed"`
+	Cutoff            int              `json:"cutoff"`
+	Qualities         []*starr.Quality `json:"items"`
+	MinFormatScore    int              `json:"minFormatScore"`
+	CutoffFormatScore int              `json:"cutoffFormatScore"`
+	FormatItems       []interface{}    `json:"formatItems"`
 	Language          struct {
 		ID   int    `json:"id"`
 		Name string `json:"name"`

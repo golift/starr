@@ -65,27 +65,36 @@ func (l *Lidarr) GetSystemStatus() (*SystemStatus, error) {
 	return status, nil
 }
 
-/* unknown structure/input data format
-type Album struct{}
-
-func (l *Lidarr) GetAlbum(albumID string) ([]*Album, error) {
-	var albums []*Album
-
+// GetArtist returns an artist or all artists.
+// TODO: has unknown structure/input data format.
+func (l *Lidarr) GetArtist(artistID int) ([]*Artist, error) {
 	params := make(url.Values)
 
-	if albumID != "" {
-		params.Add("albumID", albumID)
+	if artistID != 0 {
+		params.Add("artistId", strconv.Itoa(artistID))
 	}
 
-	rawJSON, err := l.config.Req("v1/system/status", nil)
-	if err != nil {
+	var artist []*Artist
+	if err := l.GetInto("v1/artist", params, &artist); err != nil {
+		return artist, fmt.Errorf("api.Get(artist): %w", err)
+	}
+
+	return artist, nil
+}
+
+// GetAlbum returns an album or all albums if albumID is 0.
+// TODO: has unknown structure/input data format.
+func (l *Lidarr) GetAlbum(albumID int) ([]*Album, error) {
+	params := make(url.Values)
+
+	if albumID != 0 {
+		params.Add("albumId", strconv.Itoa(albumID))
+	}
+
+	albums := []*Album{}
+	if err := l.GetInto("v1/album", params, &albums); err != nil {
 		return nil, fmt.Errorf("api.Get(status): %w", err)
-	}
-
-	if err = json.Unmarshal(rawJSON, &albums); err != nil {
-		return nil, fmt.Errorf("json.Unmarshal(response): %w", err)
 	}
 
 	return albums, nil
 }
-*/
