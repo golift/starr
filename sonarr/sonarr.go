@@ -30,8 +30,8 @@ func (s *Sonarr) GetLanguageProfiles() ([]*LanguageProfile, error) {
 // GetQualityProfiles returns all configured quality profiles.
 func (s *Sonarr) GetQualityProfiles() ([]*QualityProfile, error) {
 	var profiles []*QualityProfile
-	if err := s.GetInto("v3/profile", nil, &profiles); err != nil {
-		return nil, fmt.Errorf("api.Get(profile): %w", err)
+	if err := s.GetInto("v3/qualityprofile", nil, &profiles); err != nil {
+		return nil, fmt.Errorf("api.Get(qualityprofile): %w", err)
 	}
 
 	return profiles, nil

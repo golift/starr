@@ -98,11 +98,11 @@ type RootFolder struct {
 	DefaultQualityProfileID  int           `json:"defaultQualityProfileId"`
 	DefaultMonitorOption     string        `json:"defaultMonitorOption"`
 	DefaultTags              []interface{} `json:"defaultTags"`
-	IsCalibreLibrary         bool          `json:"isCalibreLibrary"`
 	Port                     int           `json:"port"`
 	OutputProfile            int           `json:"outputProfile"`
 	UseSsl                   bool          `json:"useSsl"`
 	Accessible               bool          `json:"accessible"`
+	IsCalibreLibrary         bool          `json:"isCalibreLibrary"`
 	FreeSpace                int64         `json:"freeSpace"`
 	TotalSpace               int64         `json:"totalSpace"`
 	ID                       int           `json:"id"`
@@ -134,7 +134,7 @@ type Book struct {
 	Title          string          `json:"title"`
 	SeriesTitle    string          `json:"seriesTitle"`
 	Overview       string          `json:"overview"`
-	AuthorID       int             `json:"authorId"`
+	AuthorID       int64           `json:"authorId"`
 	ForeignBookID  string          `json:"foreignBookId"`
 	TitleSlug      string          `json:"titleSlug"`
 	Monitored      bool            `json:"monitored"`
@@ -164,7 +164,6 @@ type Statistics struct {
 // BookAuthor of a Book.
 type BookAuthor struct {
 	Status            string         `json:"status"`
-	Ended             bool           `json:"ended"`
 	AuthorName        string         `json:"authorName"`
 	ForeignAuthorID   string         `json:"foreignAuthorId"`
 	TitleSlug         string         `json:"titleSlug"`
@@ -174,7 +173,6 @@ type BookAuthor struct {
 	Path              string         `json:"path"`
 	QualityProfileID  int            `json:"qualityProfileId"`
 	MetadataProfileID int            `json:"metadataProfileId"`
-	Monitored         bool           `json:"monitored"`
 	Genres            []interface{}  `json:"genres"`
 	CleanName         string         `json:"cleanName"`
 	SortName          string         `json:"sortName"`
@@ -183,10 +181,13 @@ type BookAuthor struct {
 	Ratings           *starr.Ratings `json:"ratings"`
 	Statistics        *Statistics    `json:"statistics"`
 	ID                int            `json:"id"`
+	Monitored         bool           `json:"monitored"`
+	Ended             bool           `json:"ended"`
 }
 
 // BookEditions is more Book meta data.
 type BookEditions struct {
+	ID               int            `json:"id"`
 	BookID           int            `json:"bookId"`
 	ForeignEditionID string         `json:"foreignEditionId"`
 	TitleSlug        string         `json:"titleSlug"`
@@ -195,7 +196,6 @@ type BookEditions struct {
 	Title            string         `json:"title"`
 	Overview         string         `json:"overview"`
 	Format           string         `json:"format"`
-	IsEbook          bool           `json:"isEbook"`
 	Publisher        string         `json:"publisher"`
 	PageCount        int            `json:"pageCount"`
 	ReleaseDate      time.Time      `json:"releaseDate"`
@@ -204,7 +204,7 @@ type BookEditions struct {
 	Ratings          *starr.Ratings `json:"ratings"`
 	Monitored        bool           `json:"monitored"`
 	ManualAdd        bool           `json:"manualAdd"`
-	ID               int            `json:"id"`
+	IsEbook          bool           `json:"isEbook"`
 }
 
 /* These AddBook types are highly incomplete as Readarr is alpha atm and still changing. */

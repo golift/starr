@@ -90,7 +90,7 @@ type Queue struct {
 type QueueRecord struct {
 	SeriesID                int                    `json:"seriesId"`
 	EpisodeID               int                    `json:"episodeId"`
-	Language                *Language              `json:"language"`
+	Language                *starr.Value           `json:"language"`
 	Quality                 *starr.Quality         `json:"quality"`
 	Size                    float64                `json:"size"`
 	Title                   string                 `json:"title"`
@@ -111,11 +111,11 @@ type QueueRecord struct {
 
 // Series the /api/v3/series endpoint.
 type Series struct {
+	ID                int            `json:"id"`
 	Title             string         `json:"title"`
 	AlternateTitles   []interface{}  `json:"alternateTitles"`
 	SortTitle         string         `json:"sortTitle"`
 	Status            string         `json:"status"`
-	Ended             bool           `json:"ended"`
 	Overview          string         `json:"overview"`
 	PreviousAiring    time.Time      `json:"previousAiring,omitempty"`
 	Network           string         `json:"network"`
@@ -125,9 +125,6 @@ type Series struct {
 	Path              string         `json:"path"`
 	QualityProfileID  int            `json:"qualityProfileId"`
 	LanguageProfileID int            `json:"languageProfileId"`
-	SeasonFolder      bool           `json:"seasonFolder"`
-	Monitored         bool           `json:"monitored"`
-	UseSceneNumbering bool           `json:"useSceneNumbering"`
 	Runtime           int            `json:"runtime"`
 	TvdbID            int            `json:"tvdbId"`
 	TvRageID          int            `json:"tvRageId"`
@@ -144,9 +141,12 @@ type Series struct {
 	Added             time.Time      `json:"added"`
 	Ratings           *starr.Ratings `json:"ratings"`
 	Statistics        *Statistics    `json:"statistics"`
-	ID                int            `json:"id"`
 	NextAiring        time.Time      `json:"nextAiring,omitempty"`
 	AirTime           string         `json:"airTime,omitempty"`
+	Ended             bool           `json:"ended"`
+	SeasonFolder      bool           `json:"seasonFolder"`
+	Monitored         bool           `json:"monitored"`
+	UseSceneNumbering bool           `json:"useSceneNumbering"`
 }
 
 // Statistics is part of Queue.
@@ -172,7 +172,6 @@ type SeriesLookup struct {
 	Title             string         `json:"title"`
 	SortTitle         string         `json:"sortTitle"`
 	Status            string         `json:"status"`
-	Ended             bool           `json:"ended"`
 	Overview          string         `json:"overview"`
 	Network           string         `json:"network"`
 	AirTime           string         `json:"airTime"`
@@ -182,9 +181,6 @@ type SeriesLookup struct {
 	Year              int            `json:"year"`
 	QualityProfileID  int            `json:"qualityProfileId"`
 	LanguageProfileID int            `json:"languageProfileId"`
-	SeasonFolder      bool           `json:"seasonFolder"`
-	Monitored         bool           `json:"monitored"`
-	UseSceneNumbering bool           `json:"useSceneNumbering"`
 	Runtime           int            `json:"runtime"`
 	TvdbID            int            `json:"tvdbId"`
 	TvRageID          int            `json:"tvRageId"`
@@ -201,48 +197,83 @@ type SeriesLookup struct {
 	Added             time.Time      `json:"added"`
 	Ratings           *starr.Ratings `json:"ratings"`
 	Statistics        *Statistics    `json:"statistics"`
+	Ended             bool           `json:"ended"`
+	SeasonFolder      bool           `json:"seasonFolder"`
+	Monitored         bool           `json:"monitored"`
+	UseSceneNumbering bool           `json:"useSceneNumbering"`
 }
 
 // LanguageProfile is the /api/v3/languageprofile endpoint.
 type LanguageProfile struct {
-	Name           string    `json:"name"`
-	UpgradeAllowed bool      `json:"upgradeAllowed"`
-	Cutoff         *Language `json:"cutoff"`
-	Languages      Languages `json:"languages"`
-	ID             int       `json:"id"`
+	Name           string       `json:"name"`
+	UpgradeAllowed bool         `json:"upgradeAllowed"`
+	Cutoff         *starr.Value `json:"cutoff"`
+	Languages      Languages    `json:"languages"`
+	ID             int          `json:"id"`
 }
 
 // Language is part of LanguageProfile.
 type Languages []struct {
-	Language *Language `json:"language"`
-	Allowed  bool      `json:"allowed"`
-}
-
-// Language is part of LanguageProfile.
-type Language struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	Language *starr.Value `json:"language"`
+	Allowed  bool         `json:"allowed"`
 }
 
 // AddSeriesInput is the input for a POST to the /api/v3/series endpoint.
 type AddSeriesInput struct {
-	ID                int              `json:"id,omitempty"`
-	TvdbID            int              `json:"tvdbId"`
-	QualityProfileID  int              `json:"qualityProfileId"`
-	LanguageProfileID int              `json:"languageProfileID"`
-	RootFolderPath    string           `json:"rootFolderPath"`
-	Title             string           `json:"title,omitempty"`
-	SeasonFolder      string           `json:"seasonFolder"`
-	SeriesType        string           `json:"seriesType,omitempty"`
-	Seasons           []*Season        `json:"seasons"`
-	AddOptions        AddSeriesOptions `json:"addOptions"`
-	Monitored         bool             `json:"monitored"`
+	ID                int               `json:"id,omitempty"`
+	TvdbID            int               `json:"tvdbId"`
+	QualityProfileID  int               `json:"qualityProfileId"`
+	LanguageProfileID int               `json:"languageProfileID"`
+	RootFolderPath    string            `json:"rootFolderPath"`
+	Title             string            `json:"title,omitempty"`
+	SeriesType        string            `json:"seriesType,omitempty"`
+	Seasons           []*Season         `json:"seasons"`
+	AddOptions        *AddSeriesOptions `json:"addOptions"`
+	SeasonFolder      bool              `json:"seasonFolder"`
+	Monitored         bool              `json:"monitored"`
 }
 
 // AddSeriesOptions is part of AddSeriesInput.
 type AddSeriesOptions struct {
-	SearchForMissingEpisodes bool `json:"searchForMissingEpisodes"`
+	SearchForMissingEpisodes     bool `json:"searchForMissingEpisodes"`
+	SearchForCutoffUnmetEpisodes bool `json:"searchForCutoffUnmetEpisodes,omitempty"`
+	IgnoreEpisodesWithFiles      bool `json:"ignoreEpisodesWithFiles,omitempty"`
+	IgnoreEpisodesWithoutFiles   bool `json:"ignoreEpisodesWithoutFiles,omitempty"`
 }
 
 // AddSeriesOutput is currently an unknown format.
-type AddSeriesOutput struct{}
+type AddSeriesOutput struct {
+	ID                int               `json:"id"`
+	Title             string            `json:"title"`
+	AlternateTitles   []interface{}     `json:"alternateTitles"`
+	SortTitle         string            `json:"sortTitle"`
+	Status            string            `json:"status"`
+	Overview          string            `json:"overview"`
+	Network           string            `json:"network"`
+	Images            []*starr.Image    `json:"images"`
+	Seasons           []*Season         `json:"seasons"`
+	Year              int               `json:"year"`
+	Path              string            `json:"path"`
+	QualityProfileID  int               `json:"qualityProfileId"`
+	LanguageProfileID int               `json:"languageProfileId"`
+	Runtime           int               `json:"runtime"`
+	TvdbID            int               `json:"tvdbId"`
+	TvRageID          int               `json:"tvRageId"`
+	TvMazeID          int               `json:"tvMazeId"`
+	FirstAired        time.Time         `json:"firstAired"`
+	SeriesType        string            `json:"seriesType"`
+	CleanTitle        string            `json:"cleanTitle"`
+	ImdbID            string            `json:"imdbId"`
+	TitleSlug         string            `json:"titleSlug"`
+	RootFolderPath    string            `json:"rootFolderPath"`
+	Genres            []string          `json:"genres"`
+	Tags              []interface{}     `json:"tags"`
+	Added             time.Time         `json:"added"`
+	AddOptions        *AddSeriesOptions `json:"addOptions"`
+	Ratings           *starr.Ratings    `json:"ratings"`
+	Statistics        *Statistics       `json:"statistics"`
+	Ended             bool              `json:"ended"`
+	SeasonFolder      bool              `json:"seasonFolder"`
+	Monitored         bool              `json:"monitored"`
+	UseSceneNumbering bool              `json:"useSceneNumbering"`
+}

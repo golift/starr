@@ -90,10 +90,12 @@ func (r *Readarr) AddBook(book *AddBookInput) (*AddBookOutput, error) {
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
-	added := &AddBookOutput{}
-	if err := r.PostInto("v1/book", params, body, added); err != nil {
+	b, err := r.Post("v1/book", params, body)
+	if err != nil {
 		return nil, fmt.Errorf("api.Post(book): %w", err)
 	}
 
-	return added, nil
+	fmt.Println("show this to captain plz:\n" + string(b) + "\n")
+
+	return &AddBookOutput{}, nil
 }

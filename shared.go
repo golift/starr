@@ -44,3 +44,9 @@ type Image struct {
 	RemoteURL string `json:"remoteUrl,omitempty"`
 	Extension string `json:"extension,omitempty"`
 }
+
+// Value is generic ID/Name struct applied to a few places.
+type Value struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}

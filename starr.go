@@ -125,7 +125,7 @@ func (c *Config) getBody(resp *http.Response) ([]byte, error) {
 	// log.Println(string(body))
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		err = fmt.Errorf("failed: %v (status: %s): %w",
-			resp.Request.RequestURI, resp.Status, ErrInvalidStatusCode)
+			resp.Request.RequestURI, resp.Status, fmt.Errorf("%w: %s", ErrInvalidStatusCode, string(b)))
 	}
 
 	return b, err
