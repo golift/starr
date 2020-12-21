@@ -59,33 +59,30 @@ type Record struct {
 
 // QualityProfile is the /api/v1/qualityprofile endpoint.
 type QualityProfile struct {
+	ID             int64            `json:"id"`
 	Name           string           `json:"name"`
 	UpgradeAllowed bool             `json:"upgradeAllowed"`
-	Cutoff         int              `json:"cutoff"`
+	Cutoff         int64            `json:"cutoff"`
 	Qualities      []*starr.Quality `json:"items"`
-	ID             int              `json:"id"`
 }
 
 // RootFolder is the /api/v1/rootfolder endpoint.
 type RootFolder struct {
-	Path            string `json:"path"`
-	FreeSpace       int64  `json:"freeSpace"`
-	TotalSpace      int64  `json:"totalSpace"`
-	UnmappedFolders []struct {
-		Name string `json:"name"`
-		Path string `json:"path"`
-	} `json:"unmappedFolders"`
-	ID int `json:"id"`
+	ID              int64         `json:"id"`
+	Path            string        `json:"path"`
+	FreeSpace       int64         `json:"freeSpace"`
+	TotalSpace      int64         `json:"totalSpace"`
+	UnmappedFolders []*starr.Path `json:"unmappedFolders"`
 }
 
 // QualityDefinition is the /api/v1/qualitydefinition endpoint.
 type QualityDefinition struct {
+	ID      int64        `json:"id"`
 	Quality *starr.Value `json:"quality"`
 	Title   string       `json:"title"`
-	Weight  int          `json:"weight"`
+	Weight  int64        `json:"weight"`
 	MinSize float64      `json:"minSize"`
 	MaxSize float64      `json:"maxSize,omitempty"`
-	ID      int          `json:"id"`
 }
 
 // SystemStatus is the /api/v1/system/status endpoint.
@@ -110,7 +107,7 @@ type SystemStatus struct {
 	Branch            string    `json:"branch"`
 	Authentication    string    `json:"authentication"`
 	SqliteVersion     string    `json:"sqliteVersion"`
-	MigrationVersion  int       `json:"migrationVersion"`
+	MigrationVersion  int64     `json:"migrationVersion"`
 	URLBase           string    `json:"urlBase"`
 	RuntimeVersion    string    `json:"runtimeVersion"`
 	RuntimeName       string    `json:"runtimeName"`
@@ -119,21 +116,21 @@ type SystemStatus struct {
 
 // Artist represents the /api/v1/artist endpoint.
 type Artist struct {
-	ID                int            `json:"id"`
+	ID                int64          `json:"id"`
 	Status            string         `json:"status"`
 	LastInfoSync      time.Time      `json:"lastInfoSync"`
 	ArtistName        string         `json:"artistName"`
 	ForeignArtistID   string         `json:"foreignArtistId"`
-	TadbID            int            `json:"tadbId"`
-	DiscogsID         int            `json:"discogsId"`
+	TadbID            int64          `json:"tadbId"`
+	DiscogsID         int64          `json:"discogsId"`
 	Overview          string         `json:"overview"`
 	ArtistType        string         `json:"artistType,omitempty"`
 	Disambiguation    string         `json:"disambiguation"`
 	Links             []*starr.Link  `json:"links"`
 	Images            []*starr.Image `json:"images"`
 	Path              string         `json:"path"`
-	QualityProfileID  int            `json:"qualityProfileId"`
-	MetadataProfileID int            `json:"metadataProfileId"`
+	QualityProfileID  int64          `json:"qualityProfileId"`
+	MetadataProfileID int64          `json:"metadataProfileId"`
 	Genres            []string       `json:"genres"`
 	CleanName         string         `json:"cleanName"`
 	SortName          string         `json:"sortName"`
@@ -160,8 +157,10 @@ type Statistics struct {
 
 // Album is the /api/v1/album endpoint.
 type Album struct {
-	ProfileID          int            `json:"profileId"`
-	ArtistMetadataID   int            `json:"artistMetadataId,omitempty"`
+	ID                 int64          `json:"id"`
+	ArtistID           int64          `json:"artistId"`
+	ProfileID          int64          `json:"profileId"`
+	ArtistMetadataID   int64          `json:"artistMetadataId,omitempty"`
 	ForeignAlbumID     string         `json:"foreignAlbumId"`
 	OldForeignAlbumIds []interface{}  `json:"oldForeignAlbumIds,omitempty"`
 	Title              string         `json:"title"`
@@ -176,31 +175,28 @@ type Album struct {
 	LastInfoSync       time.Time      `json:"lastInfoSync,omitempty"`
 	Added              time.Time      `json:"added,omitempty"`
 	SecondaryTypes     []interface{}  `json:"secondaryTypes"`
-	ArtistID           int            `json:"artistId"`
-	ID                 int            `json:"id"`
 	Duration           int            `json:"duration,omitempty"`
 	MediumCount        int            `json:"mediumCount,omitempty"`
 	Ratings            *starr.Ratings `json:"ratings"`
 	Releases           []*Releases    `json:"releases,omitempty"`
 	Media              []*Media       `json:"media,omitempty"`
 	Statistics         *Statistics    `json:"statistics,omitempty"`
-	ArtistMetadata     struct {
-		IsLoaded bool `json:"isLoaded"`
-	} `json:"artistMetadata"`
-	AlbumReleases struct {
-		IsLoaded bool `json:"isLoaded"`
-	} `json:"albumReleases"`
-	Artist struct {
-		IsLoaded bool `json:"isLoaded"`
-	} `json:"artist"`
-	Monitored    bool `json:"monitored"`
-	AnyReleaseOk bool `json:"anyReleaseOk"`
+	ArtistMetadata     *IsLoaded      `json:"artistMetadata"`
+	AlbumReleases      *IsLoaded      `json:"albumReleases"`
+	Artist             *IsLoaded      `json:"artist"`
+	Monitored          bool           `json:"monitored"`
+	AnyReleaseOk       bool           `json:"anyReleaseOk"`
+}
+
+// IsLoaded is a generic struct used in a few places.
+type IsLoaded struct {
+	IsLoaded bool `json:"isLoaded"`
 }
 
 // Releases is part of an Album.
 type Releases struct {
-	ID               int      `json:"id"`
-	AlbumID          int      `json:"albumId"`
+	ID               int64    `json:"id"`
+	AlbumID          int64    `json:"albumId"`
 	ForeignReleaseID string   `json:"foreignReleaseId"`
 	Title            string   `json:"title"`
 	Status           string   `json:"status"`
@@ -217,7 +213,7 @@ type Releases struct {
 
 // Media is part of an Album.
 type Media struct {
-	MediumNumber int    `json:"mediumNumber"`
+	MediumNumber int64  `json:"mediumNumber"`
 	MediumName   string `json:"mediumName"`
 	MediumFormat string `json:"mediumFormat"`
 }

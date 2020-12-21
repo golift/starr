@@ -45,8 +45,14 @@ type Image struct {
 	Extension string `json:"extension,omitempty"`
 }
 
+// Path is for unmanaged folder paths.
+type Path struct {
+	Name string `json:"name"`
+	Path string `json:"path"`
+}
+
 // Value is generic ID/Name struct applied to a few places.
 type Value struct {
-	ID   int    `json:"id"`
+	ID   int64  `json:"id"`
 	Name string `json:"name"`
 }

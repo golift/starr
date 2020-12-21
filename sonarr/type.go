@@ -27,11 +27,11 @@ func New(c *starr.Config) *Sonarr {
 
 // QualityProfile is the /api/v3/qualityprofile endpoint.
 type QualityProfile struct {
+	ID             int64            `json:"id"`
 	Name           string           `json:"name"`
-	UpgradeAllowed bool             `json:"upgradeAllowed"`
-	Cutoff         int              `json:"cutoff"`
+	Cutoff         int64            `json:"cutoff"`
 	Qualities      []*starr.Quality `json:"items"`
-	ID             int              `json:"id"`
+	UpgradeAllowed bool             `json:"upgradeAllowed"`
 }
 
 // SystemStatus is the /api/v3/system/status endpoint.
@@ -66,14 +66,11 @@ type SystemStatus struct {
 
 // RootFolder is the /api/v3/rootfolder endpoint.
 type RootFolder struct {
-	Path            string `json:"path"`
-	Accessible      bool   `json:"accessible"`
-	FreeSpace       int64  `json:"freeSpace"`
-	UnmappedFolders []struct {
-		Name string `json:"name"`
-		Path string `json:"path"`
-	} `json:"unmappedFolders"`
-	ID int `json:"id"`
+	ID              int64         `json:"id"`
+	Path            string        `json:"path"`
+	Accessible      bool          `json:"accessible"`
+	FreeSpace       int64         `json:"freeSpace"`
+	UnmappedFolders []*starr.Path `json:"unmappedFolders"`
 }
 
 // Queue is the /api/v3/queue endpoint.
@@ -88,8 +85,9 @@ type Queue struct {
 
 // QueueRecord is part of Queue.
 type QueueRecord struct {
-	SeriesID                int                    `json:"seriesId"`
-	EpisodeID               int                    `json:"episodeId"`
+	ID                      int64                  `json:"id"`
+	SeriesID                int64                  `json:"seriesId"`
+	EpisodeID               int64                  `json:"episodeId"`
 	Language                *starr.Value           `json:"language"`
 	Quality                 *starr.Quality         `json:"quality"`
 	Size                    float64                `json:"size"`
@@ -106,12 +104,11 @@ type QueueRecord struct {
 	DownloadClient          string                 `json:"downloadClient"`
 	Indexer                 string                 `json:"indexer"`
 	OutputPath              string                 `json:"outputPath"`
-	ID                      int                    `json:"id"`
 }
 
 // Series the /api/v3/series endpoint.
 type Series struct {
-	ID                int            `json:"id"`
+	ID                int64          `json:"id"`
 	Title             string         `json:"title"`
 	AlternateTitles   []interface{}  `json:"alternateTitles"`
 	SortTitle         string         `json:"sortTitle"`
@@ -123,12 +120,12 @@ type Series struct {
 	Seasons           []*Season      `json:"seasons"`
 	Year              int            `json:"year"`
 	Path              string         `json:"path"`
-	QualityProfileID  int            `json:"qualityProfileId"`
-	LanguageProfileID int            `json:"languageProfileId"`
+	QualityProfileID  int64          `json:"qualityProfileId"`
+	LanguageProfileID int64          `json:"languageProfileId"`
 	Runtime           int            `json:"runtime"`
-	TvdbID            int            `json:"tvdbId"`
-	TvRageID          int            `json:"tvRageId"`
-	TvMazeID          int            `json:"tvMazeId"`
+	TvdbID            int64          `json:"tvdbId"`
+	TvRageID          int64          `json:"tvRageId"`
+	TvMazeID          int64          `json:"tvMazeId"`
 	FirstAired        time.Time      `json:"firstAired"`
 	SeriesType        string         `json:"seriesType"`
 	CleanTitle        string         `json:"cleanTitle"`
@@ -179,12 +176,12 @@ type SeriesLookup struct {
 	RemotePoster      string         `json:"remotePoster"`
 	Seasons           []*Season      `json:"seasons"`
 	Year              int            `json:"year"`
-	QualityProfileID  int            `json:"qualityProfileId"`
-	LanguageProfileID int            `json:"languageProfileId"`
+	QualityProfileID  int64          `json:"qualityProfileId"`
+	LanguageProfileID int64          `json:"languageProfileId"`
 	Runtime           int            `json:"runtime"`
-	TvdbID            int            `json:"tvdbId"`
-	TvRageID          int            `json:"tvRageId"`
-	TvMazeID          int            `json:"tvMazeId"`
+	TvdbID            int64          `json:"tvdbId"`
+	TvRageID          int64          `json:"tvRageId"`
+	TvMazeID          int64          `json:"tvMazeId"`
 	FirstAired        time.Time      `json:"firstAired"`
 	SeriesType        string         `json:"seriesType"`
 	CleanTitle        string         `json:"cleanTitle"`
@@ -209,7 +206,7 @@ type LanguageProfile struct {
 	UpgradeAllowed bool         `json:"upgradeAllowed"`
 	Cutoff         *starr.Value `json:"cutoff"`
 	Languages      Languages    `json:"languages"`
-	ID             int          `json:"id"`
+	ID             int64        `json:"id"`
 }
 
 // Language is part of LanguageProfile.
@@ -220,10 +217,10 @@ type Languages []struct {
 
 // AddSeriesInput is the input for a POST to the /api/v3/series endpoint.
 type AddSeriesInput struct {
-	ID                int               `json:"id,omitempty"`
-	TvdbID            int               `json:"tvdbId"`
-	QualityProfileID  int               `json:"qualityProfileId"`
-	LanguageProfileID int               `json:"languageProfileID"`
+	ID                int64             `json:"id,omitempty"`
+	TvdbID            int64             `json:"tvdbId"`
+	QualityProfileID  int64             `json:"qualityProfileId"`
+	LanguageProfileID int64             `json:"languageProfileID"`
 	RootFolderPath    string            `json:"rootFolderPath"`
 	Title             string            `json:"title,omitempty"`
 	SeriesType        string            `json:"seriesType,omitempty"`
@@ -243,7 +240,7 @@ type AddSeriesOptions struct {
 
 // AddSeriesOutput is currently an unknown format.
 type AddSeriesOutput struct {
-	ID                int               `json:"id"`
+	ID                int64             `json:"id"`
 	Title             string            `json:"title"`
 	AlternateTitles   []interface{}     `json:"alternateTitles"`
 	SortTitle         string            `json:"sortTitle"`
@@ -254,12 +251,12 @@ type AddSeriesOutput struct {
 	Seasons           []*Season         `json:"seasons"`
 	Year              int               `json:"year"`
 	Path              string            `json:"path"`
-	QualityProfileID  int               `json:"qualityProfileId"`
-	LanguageProfileID int               `json:"languageProfileId"`
+	QualityProfileID  int64             `json:"qualityProfileId"`
+	LanguageProfileID int64             `json:"languageProfileId"`
 	Runtime           int               `json:"runtime"`
-	TvdbID            int               `json:"tvdbId"`
-	TvRageID          int               `json:"tvRageId"`
-	TvMazeID          int               `json:"tvMazeId"`
+	TvdbID            int64             `json:"tvdbId"`
+	TvRageID          int64             `json:"tvRageId"`
+	TvMazeID          int64             `json:"tvMazeId"`
 	FirstAired        time.Time         `json:"firstAired"`
 	SeriesType        string            `json:"seriesType"`
 	CleanTitle        string            `json:"cleanTitle"`

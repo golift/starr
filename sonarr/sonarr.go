@@ -49,11 +49,11 @@ func (s *Sonarr) GetRootFolders() ([]*RootFolder, error) {
 
 // GetSeriesLookup searches for a series using a search term or a tvdbid.
 // Provide a search term or a tvdbid. If you provide both, tvdbID is used.
-func (s *Sonarr) GetSeriesLookup(term string, tvdbID int) ([]*SeriesLookup, error) {
+func (s *Sonarr) GetSeriesLookup(term string, tvdbID int64) ([]*SeriesLookup, error) {
 	params := make(url.Values)
 
 	if tvdbID > 0 {
-		params.Add("term", "tvdbid:"+strconv.Itoa(tvdbID))
+		params.Add("term", "tvdbid:"+strconv.FormatInt(tvdbID, 10))
 	} else {
 		params.Add("term", term)
 	}
@@ -67,11 +67,11 @@ func (s *Sonarr) GetSeriesLookup(term string, tvdbID int) ([]*SeriesLookup, erro
 }
 
 // GetSeries locates and returns a series by tvdbID. If tvdbID is 0, returns all series.
-func (s *Sonarr) GetSeries(tvdbID int) ([]*Series, error) {
+func (s *Sonarr) GetSeries(tvdbID int64) ([]*Series, error) {
 	params := make(url.Values)
 
 	if tvdbID != 0 {
-		params.Add("tvdbId", strconv.Itoa(tvdbID))
+		params.Add("tvdbId", strconv.FormatInt(tvdbID, 10))
 	}
 
 	var series []*Series

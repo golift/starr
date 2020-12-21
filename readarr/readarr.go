@@ -65,11 +65,11 @@ func (r *Readarr) GetQualityProfiles() ([]*QualityProfile, error) {
 }
 
 // GetBook returns books. All if gridID is 0.
-func (r *Readarr) GetBook(gridID int) ([]*Book, error) {
+func (r *Readarr) GetBook(gridID int64) ([]*Book, error) {
 	params := make(url.Values)
 
 	if gridID > 0 {
-		params.Add("titleSlug", strconv.Itoa(gridID)) // this may change, but works for now.
+		params.Add("titleSlug", strconv.FormatInt(gridID, 10)) // this may change, but works for now.
 	}
 
 	var books []*Book
@@ -90,12 +90,10 @@ func (r *Readarr) AddBook(book *AddBookInput) (*AddBookOutput, error) {
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
-	b, err := r.Post("v1/book", params, body)
-	if err != nil {
+	added := &AddBookOutput{}
+	if err := r.PostInto("v1/book", params, body, added); err != nil {
 		return nil, fmt.Errorf("api.Post(book): %w", err)
 	}
 
-	fmt.Println("show this to captain plz:\n" + string(b) + "\n")
-
-	return &AddBookOutput{}, nil
+	return added, nil
 }

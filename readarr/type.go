@@ -92,33 +92,34 @@ type SystemStatus struct {
 
 // RootFolder is the /api/v1/rootfolder endpoint.
 type RootFolder struct {
+	ID                       int64         `json:"id"`
 	Name                     string        `json:"name"`
 	Path                     string        `json:"path"`
-	DefaultMetadataProfileID int           `json:"defaultMetadataProfileId"`
-	DefaultQualityProfileID  int           `json:"defaultQualityProfileId"`
+	DefaultMetadataProfileID int64         `json:"defaultMetadataProfileId"`
+	DefaultQualityProfileID  int64         `json:"defaultQualityProfileId"`
 	DefaultMonitorOption     string        `json:"defaultMonitorOption"`
 	DefaultTags              []interface{} `json:"defaultTags"`
 	Port                     int           `json:"port"`
-	OutputProfile            int           `json:"outputProfile"`
+	OutputProfile            int64         `json:"outputProfile"`
 	UseSsl                   bool          `json:"useSsl"`
 	Accessible               bool          `json:"accessible"`
 	IsCalibreLibrary         bool          `json:"isCalibreLibrary"`
 	FreeSpace                int64         `json:"freeSpace"`
 	TotalSpace               int64         `json:"totalSpace"`
-	ID                       int           `json:"id"`
 }
 
 // QualityProfile is the /api/v1/qualityprofile endpoint.
 type QualityProfile struct {
 	Name           string           `json:"name"`
 	UpgradeAllowed bool             `json:"upgradeAllowed"`
-	Cutoff         int              `json:"cutoff"`
+	Cutoff         int64            `json:"cutoff"`
 	Qualities      []*starr.Quality `json:"items"`
-	ID             int              `json:"id"`
+	ID             int64            `json:"id"`
 }
 
 // MetadataProfile is the /api/v1/metadataProfile endpoint.
 type MetadataProfile struct {
+	ID                  int64   `json:"id"`
 	Name                string  `json:"name"`
 	MinPopularity       float64 `json:"minPopularity"`
 	SkipMissingDate     bool    `json:"skipMissingDate"`
@@ -126,30 +127,29 @@ type MetadataProfile struct {
 	SkipPartsAndSets    bool    `json:"skipPartsAndSets"`
 	SkipSeriesSecondary bool    `json:"skipSeriesSecondary"`
 	AllowedLanguages    string  `json:"allowedLanguages,omitempty"`
-	ID                  int     `json:"id"`
 }
 
 // Book is the /api/v1/book endpoint.
 type Book struct {
-	Title          string          `json:"title"`
-	SeriesTitle    string          `json:"seriesTitle"`
-	Overview       string          `json:"overview"`
-	AuthorID       int64           `json:"authorId"`
-	ForeignBookID  string          `json:"foreignBookId"`
-	TitleSlug      string          `json:"titleSlug"`
-	Monitored      bool            `json:"monitored"`
-	AnyEditionOk   bool            `json:"anyEditionOk"`
-	Ratings        *starr.Ratings  `json:"ratings"`
-	ReleaseDate    time.Time       `json:"releaseDate"`
-	PageCount      int             `json:"pageCount"`
-	Genres         []interface{}   `json:"genres"`
-	Author         *BookAuthor     `json:"author,omitempty"`
-	Images         []*starr.Image  `json:"images"`
-	Links          []*starr.Link   `json:"links"`
-	Statistics     *Statistics     `json:"statistics,omitempty"`
-	Editions       []*BookEditions `json:"editions"`
-	ID             int             `json:"id"`
-	Disambiguation string          `json:"disambiguation,omitempty"`
+	Title          string         `json:"title"`
+	SeriesTitle    string         `json:"seriesTitle"`
+	Overview       string         `json:"overview"`
+	AuthorID       int64          `json:"authorId"`
+	ForeignBookID  string         `json:"foreignBookId"`
+	TitleSlug      string         `json:"titleSlug"`
+	Monitored      bool           `json:"monitored"`
+	AnyEditionOk   bool           `json:"anyEditionOk"`
+	Ratings        *starr.Ratings `json:"ratings"`
+	ReleaseDate    time.Time      `json:"releaseDate"`
+	PageCount      int            `json:"pageCount"`
+	Genres         []interface{}  `json:"genres"`
+	Author         *BookAuthor    `json:"author,omitempty"`
+	Images         []*starr.Image `json:"images"`
+	Links          []*starr.Link  `json:"links"`
+	Statistics     *Statistics    `json:"statistics,omitempty"`
+	Editions       []*Edition     `json:"editions"`
+	ID             int64          `json:"id"`
+	Disambiguation string         `json:"disambiguation,omitempty"`
 }
 
 // Statistics for a Book, or maybe an author.
@@ -163,6 +163,7 @@ type Statistics struct {
 
 // BookAuthor of a Book.
 type BookAuthor struct {
+	ID                int64          `json:"id"`
 	Status            string         `json:"status"`
 	AuthorName        string         `json:"authorName"`
 	ForeignAuthorID   string         `json:"foreignAuthorId"`
@@ -171,8 +172,8 @@ type BookAuthor struct {
 	Links             []*starr.Link  `json:"links"`
 	Images            []*starr.Image `json:"images"`
 	Path              string         `json:"path"`
-	QualityProfileID  int            `json:"qualityProfileId"`
-	MetadataProfileID int            `json:"metadataProfileId"`
+	QualityProfileID  int64          `json:"qualityProfileId"`
+	MetadataProfileID int64          `json:"metadataProfileId"`
 	Genres            []interface{}  `json:"genres"`
 	CleanName         string         `json:"cleanName"`
 	SortName          string         `json:"sortName"`
@@ -180,15 +181,14 @@ type BookAuthor struct {
 	Added             time.Time      `json:"added"`
 	Ratings           *starr.Ratings `json:"ratings"`
 	Statistics        *Statistics    `json:"statistics"`
-	ID                int            `json:"id"`
 	Monitored         bool           `json:"monitored"`
 	Ended             bool           `json:"ended"`
 }
 
-// BookEditions is more Book meta data.
-type BookEditions struct {
-	ID               int            `json:"id"`
-	BookID           int            `json:"bookId"`
+// Edition is more Book meta data.
+type Edition struct {
+	ID               int64          `json:"id"`
+	BookID           int64          `json:"bookId"`
 	ForeignEditionID string         `json:"foreignEditionId"`
 	TitleSlug        string         `json:"titleSlug"`
 	Isbn13           string         `json:"isbn13"`
@@ -207,37 +207,63 @@ type BookEditions struct {
 	IsEbook          bool           `json:"isEbook"`
 }
 
-/* These AddBook types are highly incomplete as Readarr is alpha atm and still changing. */
-
 // AddBookInput is the input to add a book.
 type AddBookInput struct {
-	Monitored     bool             `json:"monitored"`
-	AddOptions    AddBookOptions   `json:"addOptions"`    // Contains Search.
-	Author        AddBookAuthor    `json:"author"`        // Contains Author ID
-	Editions      []AddBookEdition `json:"editions"`      // contains GRID Edition ID
-	ForeignBookID int              `json:"foreignBookId"` // GRID Book ID.
+	Monitored     bool              `json:"monitored"`
+	AddOptions    *AddBookOptions   `json:"addOptions"`    // Contains Search.
+	Author        *AddBookAuthor    `json:"author"`        // Contains Author ID
+	Editions      []*AddBookEdition `json:"editions"`      // contains GRID Edition ID
+	ForeignBookID int64             `json:"foreignBookId"` // GRID Book ID.
 }
 
 // AddBookAuthor is part of AddBookInput.
 type AddBookAuthor struct {
-	Monitored         bool   `json:"monitored"`         // true?
-	QualityProfileID  int    `json:"qualityProfileId"`  // required
-	MetadataProfileID int    `json:"metadataProfileId"` // required
-	ForeignAuthorID   string `json:"foreignAuthorId"`   // required
-	RootFolderPath    string `json:"rootFolderPath"`    // required
+	Monitored         bool              `json:"monitored"`         // true?
+	QualityProfileID  int64             `json:"qualityProfileId"`  // required
+	MetadataProfileID int64             `json:"metadataProfileId"` // required
+	ForeignAuthorID   string            `json:"foreignAuthorId"`   // required
+	RootFolderPath    string            `json:"rootFolderPath"`    // required
+	AddOptions        *AddAuthorOptions `json:"addOptions"`
+}
+
+// AddAuthorOptions is part of AddBookAuthor.
+type AddAuthorOptions struct {
+	SearchForMissingBooks bool    `json:"searchForMissingBooks"`
+	Monitored             bool    `json:"monitored"`
+	Monitor               string  `json:"monitor"`
+	BooksToMonitor        []int64 `json:"booksToMonitor"`
 }
 
 // AddBookOptions is part of AddBookInput.
 type AddBookOptions struct {
-	SearchForNewBook bool `json:"addOptions"` // true
+	SearchForNewBook bool `json:"searchForNewBook"`
 }
 
 // AddBookEdition is part of AddBookInput.
 type AddBookEdition struct {
-	Monitored        bool `json:"monitored"`        // true
-	ManualAdd        bool `json:"manualAdd"`        // true
-	ForeignEditionID int  `json:"foreignEditionId"` // GRID ID
+	Monitored        bool   `json:"monitored"`        // true
+	ManualAdd        bool   `json:"manualAdd"`        // true
+	ForeignEditionID string `json:"foreignEditionId"` // GRID ID
 }
 
-// AddBookOutput is a placeholder until I know what this looks like.
-type AddBookOutput struct{}
+// AddBookOutput is returned when a book is added.
+type AddBookOutput struct {
+	ID            int64          `json:"id"`
+	AuthorID      int64          `json:"authorId"`
+	PageCount     int            `json:"pageCount"`
+	Title         string         `json:"title"`
+	SeriesTitle   string         `json:"seriesTitle"`
+	Overview      string         `json:"overview"`
+	ForeignBookID string         `json:"foreignBookId"`
+	TitleSlug     string         `json:"titleSlug"`
+	Ratings       *starr.Ratings `json:"ratings"`
+	ReleaseDate   time.Time      `json:"releaseDate"`
+	Genres        []interface{}  `json:"genres"`
+	Author        *BookAuthor    `json:"author"`
+	Images        []*starr.Image `json:"images"`
+	Links         []*starr.Link  `json:"links"`
+	Statistics    *Statistics    `json:"statistics"`
+	Editions      []*Edition     `json:"editions"`
+	Monitored     bool           `json:"monitored"`
+	AnyEditionOk  bool           `json:"anyEditionOk"`
+}

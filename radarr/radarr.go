@@ -40,9 +40,9 @@ func (r *Radarr) GetQueue() ([]*Queue, error) {
 }
 
 // GetMovie grabs a movie from the queue, or all movies if tmdbId is 0.
-func (r *Radarr) GetMovie(tmdbID int) ([]*Movie, error) {
+func (r *Radarr) GetMovie(tmdbID int64) ([]*Movie, error) {
 	params := make(url.Values)
-	params.Set("tmdbId", strconv.Itoa(tmdbID))
+	params.Set("tmdbId", strconv.FormatInt(tmdbID, 10))
 
 	var movie []*Movie
 	if err := r.GetInto("v3/movie", params, &movie); err != nil {
