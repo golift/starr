@@ -1,18 +1,35 @@
+// Package starr is a library for interacting with the APIs in Radarr, Lidarr, Sonarr
+// and Readarr. It consists of the main starr package and one sub package for each
+// starr application. In the basic use, you create a starr Config that contains an
+// API key and an App URL. Pass this into one of the other packages (like radarr),
+// and it's used as an interface to make API calls.
+//
+// You can either call starr.New() to build an http.Client for you, or create a
+// starr.Config that contains one you control. If you pass a starr.Config into
+// a sub package without an http Client, it will be created for you. There are
+// a lot of option to set this code up from simple and easy to more advanced.
+//
+// The sub package contain methods and data structures for a number of API endpoints.
+// Each app has somewhere between 50 and 100 API endpoints. This library currently
+// covers about 10% of those. You can retrieve things like movies, albums, series
+// and books. You can retrieve server status, authors, artists and items in queues.
+// You can also add new media to each application with this library.
+//
 package starr
 
 import (
-	"bytes"
-	"context"
-	"encoding/base64"
-	"encoding/json"
+	"crypto/tls"
 	"fmt"
-	"io/ioutil"
 	"net/http"
-	"net/url"
-	"strings"
 	"time"
 )
 
+// Defaults for New().
+const (
+	DefaultTimeout = 5 * time.Second
+)
+
+// Errors you may receive from this package.
 var (
 	// ErrInvalidStatusCode is returned when the server (*arr app) returns a bad status code during an API request.
 	ErrInvalidStatusCode = fmt.Errorf("invalid status code, <200||>299")
@@ -31,141 +48,39 @@ type Config struct {
 	HTTPUser string       `json:"http_user" toml:"http_user" xml:"http_user" yaml:"http_user"`
 	Timeout  Duration     `json:"timeout" toml:"timeout" xml:"timeout" yaml:"timeout"`
 	ValidSSL bool         `json:"valid_ssl" toml:"valid_ssl" xml:"valid_ssl" yaml:"valid_ssl"`
-	Client   *http.Client `json:"-" toml:"-" xml:"-" yaml:"-"` // required!
+	Client   *http.Client `json:"-" toml:"-" xml:"-" yaml:"-"`
 }
 
-// Duration is used to UnmarshalTOML into a time.Duration value.
+// Duration is used to Unmarshal text into a time.Duration value.
 type Duration struct{ time.Duration }
+
+// New returns a *starr.Config pointer. This pointer is safe to modify
+// further before passing it into one of the arr app New() procedures.
+func New(apiKey, appURL string, timeout time.Duration) *Config {
+	if timeout == 0 {
+		timeout = DefaultTimeout
+	}
+
+	return &Config{
+		APIKey:   apiKey,
+		URL:      appURL,
+		HTTPUser: "",
+		HTTPPass: "",
+		ValidSSL: false,
+		Timeout:  Duration{Duration: timeout},
+		//nolint:exhaustivestruct,gosec
+		Client: &http.Client{
+			Timeout: timeout,
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			},
+		},
+	}
+}
 
 // UnmarshalText parses a duration type from a config file.
 func (d *Duration) UnmarshalText(data []byte) (err error) {
 	d.Duration, err = time.ParseDuration(string(data))
 
 	return
-}
-
-// Req does an HTTP GET. Provided for legacy apps.
-func (c *Config) Req(path string, params url.Values) ([]byte, error) {
-	return c.Get(path, params)
-}
-
-// GetInto performs an HTTP GET against an API path and unmarshals the payload into the provided pointer interface.
-func (c *Config) GetInto(path string, params url.Values, v interface{}) error {
-	if data, err := c.Get(path, params); err != nil {
-		return err
-	} else if err = json.Unmarshal(data, v); err != nil {
-		return fmt.Errorf("json parse error: %w", err)
-	}
-
-	return nil
-}
-
-// PostInto performs an HTTP POST against an API path and unmarshals the payload into the provided pointer interface.
-func (c *Config) PostInto(path string, params url.Values, body []byte, v interface{}) error {
-	if data, err := c.Post(path, params, body); err != nil {
-		return err
-	} else if err = json.Unmarshal(data, v); err != nil {
-		return fmt.Errorf("json parse error: %w", err)
-	}
-
-	return nil
-}
-
-// Get makes a GET http request and returns the body.
-func (c *Config) Get(path string, params url.Values) ([]byte, error) {
-	path = c.fixPath(path)
-
-	ctx, cancel := context.WithTimeout(context.Background(), c.Timeout.Duration)
-	defer cancel()
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, path, nil)
-	if err != nil {
-		return nil, fmt.Errorf("http.NewRequestWithContext(path): %w", err)
-	}
-
-	resp, err := c.getResp(path, params, req)
-	if err != nil {
-		return nil, fmt.Errorf("client.Do(): %w", err)
-	}
-	defer resp.Body.Close()
-
-	return c.getBody(resp)
-}
-
-// Post makes a POST http request and returns the body.
-func (c *Config) Post(path string, params url.Values, body []byte) ([]byte, error) {
-	path = c.fixPath(path)
-	bodyReader := bytes.NewBuffer(body)
-
-	ctx, cancel := context.WithTimeout(context.Background(), c.Timeout.Duration)
-	defer cancel()
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, path, bodyReader)
-	if err != nil {
-		return nil, fmt.Errorf("http.NewRequestWithContext(path): %w", err)
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err := c.getResp(path, params, req)
-	if err != nil {
-		return nil, fmt.Errorf("client.Do(): %w", err)
-	}
-	defer resp.Body.Close()
-
-	return c.getBody(resp)
-}
-
-func (c *Config) getBody(resp *http.Response) ([]byte, error) {
-	b, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("ioutil.ReadAll: %w", err)
-	}
-
-	// log.Println(string(body))
-	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		err = fmt.Errorf("failed: %v (status: %s): %w",
-			resp.Request.RequestURI, resp.Status, fmt.Errorf("%w: %s", ErrInvalidStatusCode, string(b)))
-	}
-
-	return b, err
-}
-
-func (c *Config) getResp(path string, params url.Values, req *http.Request) (*http.Response, error) {
-	if c.Client == nil {
-		return nil, ErrNilClient
-	}
-
-	if params == nil {
-		params = make(url.Values)
-	}
-
-	if strings.HasPrefix(path, "/api/v") {
-		// api paths with /v1 or /v3 in them use a header.
-		req.Header.Set("X-API-Key", c.APIKey)
-	} else {
-		params.Add("apikey", c.APIKey)
-	}
-
-	req.URL.RawQuery = params.Encode()
-
-	// This app allows http auth, in addition to api key (nginx proxy).
-	if auth := c.HTTPUser + ":" + c.HTTPPass; auth != ":" {
-		auth = "Basic " + base64.StdEncoding.EncodeToString([]byte(auth))
-		req.Header.Set("Authorization", auth)
-	}
-
-	return c.Client.Do(req)
-}
-
-func (c *Config) fixPath(path string) string {
-	if !strings.HasPrefix(path, "/") {
-		path = "/" + path
-	}
-
-	if strings.HasSuffix(c.URL, "/") {
-		return c.URL + "api" + path
-	}
-
-	return c.URL + "/api" + path
 }

@@ -8,21 +8,24 @@ import (
 	"golift.io/starr"
 )
 
+// Lidarr contains all the methods to interact with a Lidarr server.
 type Lidarr struct {
-	starr.APIer
+	a starr.APIer
 }
 
+// New returns a Lidarr object used to interact with the Lidarr API.
 func New(c *starr.Config) *Lidarr {
 	if c.Client == nil {
-		c.Client = &http.Client{ // nolint: exhaustivestruct
+		//nolint:exhaustivestruct,gosec
+		c.Client = &http.Client{
 			Timeout: c.Timeout.Duration,
-			Transport: &http.Transport{ // nolint: exhaustivestruct
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: !c.ValidSSL}, // nolint: gosec, exhaustivestruct
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: !c.ValidSSL},
 			},
 		}
 	}
 
-	return &Lidarr{APIer: c}
+	return &Lidarr{c}
 }
 
 // Queue is the /api/v1/queue endpoint.
@@ -217,3 +220,11 @@ type Media struct {
 	MediumName   string `json:"mediumName"`
 	MediumFormat string `json:"mediumFormat"`
 }
+
+// XXX: fix these.
+
+// AddAlbumInput is currently unknown.
+type AddAlbumInput interface{}
+
+// AddAlbumOutput is currently unknown.
+type AddAlbumOutput interface{}

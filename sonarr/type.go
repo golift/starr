@@ -8,21 +8,24 @@ import (
 	"golift.io/starr"
 )
 
+// Sonarr contains all the methods to interact with a Sonarr server.
 type Sonarr struct {
-	starr.APIer
+	a starr.APIer
 }
 
+// New returns a Sonarr object used to interact with the Sonarr API.
 func New(c *starr.Config) *Sonarr {
 	if c.Client == nil {
-		c.Client = &http.Client{ // nolint: exhaustivestruct
+		//nolint:exhaustivestruct,gosec
+		c.Client = &http.Client{
 			Timeout: c.Timeout.Duration,
-			Transport: &http.Transport{ // nolint: exhaustivestruct
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: !c.ValidSSL}, // nolint: gosec, exhaustivestruct
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: !c.ValidSSL},
 			},
 		}
 	}
 
-	return &Sonarr{APIer: c}
+	return &Sonarr{c}
 }
 
 // QualityProfile is the /api/v3/qualityprofile endpoint.

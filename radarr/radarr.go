@@ -18,7 +18,7 @@ func (r *Radarr) GetHistory() ([]*Record, error) {
 	params.Set("pageSize", "0")
 
 	var history History
-	if err := r.GetInto("v3/history", params, &history); err != nil {
+	if err := r.a.GetInto("v3/history", params, &history); err != nil {
 		return nil, fmt.Errorf("api.Get(history): %w", err)
 	}
 
@@ -32,7 +32,7 @@ func (r *Radarr) GetQueue() ([]*Queue, error) {
 	params.Set("order", "asc")
 
 	var queue []*Queue
-	if err := r.GetInto("v3/queue", params, &queue); err != nil {
+	if err := r.a.GetInto("v3/queue", params, &queue); err != nil {
 		return nil, fmt.Errorf("api.Get(queue): %w", err)
 	}
 
@@ -45,7 +45,7 @@ func (r *Radarr) GetMovie(tmdbID int64) ([]*Movie, error) {
 	params.Set("tmdbId", strconv.FormatInt(tmdbID, 10))
 
 	var movie []*Movie
-	if err := r.GetInto("v3/movie", params, &movie); err != nil {
+	if err := r.a.GetInto("v3/movie", params, &movie); err != nil {
 		return nil, fmt.Errorf("api.Get(movie): %w", err)
 	}
 
@@ -55,7 +55,7 @@ func (r *Radarr) GetMovie(tmdbID int64) ([]*Movie, error) {
 // GetQualityProfiles returns all configured quality profiles.
 func (r *Radarr) GetQualityProfiles() ([]*QualityProfile, error) {
 	var profiles []*QualityProfile
-	if err := r.GetInto("v3/qualityProfile", nil, &profiles); err != nil {
+	if err := r.a.GetInto("v3/qualityProfile", nil, &profiles); err != nil {
 		return nil, fmt.Errorf("api.Get(qualityProfile): %w", err)
 	}
 
@@ -65,7 +65,7 @@ func (r *Radarr) GetQualityProfiles() ([]*QualityProfile, error) {
 // RootFolders returns all configured root folders.
 func (r *Radarr) GetRootFolders() ([]*RootFolder, error) {
 	var folders []*RootFolder
-	if err := r.GetInto("v3/rootFolder", nil, &folders); err != nil {
+	if err := r.a.GetInto("v3/rootFolder", nil, &folders); err != nil {
 		return nil, fmt.Errorf("api.Get(rootFolder): %w", err)
 	}
 
@@ -83,7 +83,7 @@ func (r *Radarr) AddMovie(movie *AddMovieInput) (*AddMovieOutput, error) {
 	params.Add("moveFiles", "true")
 
 	added := &AddMovieOutput{}
-	if err := r.PostInto("v3/movie", params, body, added); err != nil {
+	if err := r.a.PostInto("v3/movie", params, body, added); err != nil {
 		return nil, fmt.Errorf("api.Post(movie): %w", err)
 	}
 

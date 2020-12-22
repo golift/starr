@@ -12,4 +12,5 @@ type APIer interface {
 	PostInto(path string, params url.Values, body []byte, v interface{}) error
 }
 
+// Config must satify the APIer struct
 var _ APIer = (*Config)(nil)

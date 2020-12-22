@@ -165,7 +165,7 @@ func (r *Radarr) GetHistoryV2() ([]*Record, error) {
 	params.Set("pageSize", "0")
 
 	var history History
-	if err := r.GetInto("history", params, &history); err != nil {
+	if err := r.a.GetInto("history", params, &history); err != nil {
 		return nil, fmt.Errorf("api.Get(history): %w", err)
 	}
 
@@ -179,7 +179,7 @@ func (r *Radarr) GetQueueV2() ([]*Queue, error) {
 	params.Set("order", "asc")
 
 	var queue []*Queue
-	if err := r.GetInto("queue", params, &queue); err != nil {
+	if err := r.a.GetInto("queue", params, &queue); err != nil {
 		return nil, fmt.Errorf("api.Get(queue): %w", err)
 	}
 

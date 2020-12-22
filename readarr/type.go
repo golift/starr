@@ -8,21 +8,24 @@ import (
 	"golift.io/starr"
 )
 
+// Readarr contains all the methods to interact with a Readarr server.
 type Readarr struct {
-	starr.APIer
+	a starr.APIer
 }
 
+// New returns a Readarr object used to interact with the Readarr API.
 func New(c *starr.Config) *Readarr {
 	if c.Client == nil {
-		c.Client = &http.Client{ // nolint: exhaustivestruct
+		//nolint:exhaustivestruct,gosec
+		c.Client = &http.Client{
 			Timeout: c.Timeout.Duration,
-			Transport: &http.Transport{ // nolint: exhaustivestruct
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: !c.ValidSSL}, // nolint: gosec, exhaustivestruct
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: !c.ValidSSL},
 			},
 		}
 	}
 
-	return &Readarr{APIer: c}
+	return &Readarr{c}
 }
 
 // Queue is the /api/v1/queue endpoint.

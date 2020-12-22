@@ -8,21 +8,24 @@ import (
 	"golift.io/starr"
 )
 
+// Radarr contains all the methods to interact with a Radarr server.
 type Radarr struct {
-	starr.APIer
+	a starr.APIer
 }
 
+// New returns a Radarr object used to interact with the Radarr API.
 func New(c *starr.Config) *Radarr {
 	if c.Client == nil {
-		c.Client = &http.Client{ // nolint: exhaustivestruct
+		//nolint:exhaustivestruct,gosec
+		c.Client = &http.Client{
 			Timeout: c.Timeout.Duration,
-			Transport: &http.Transport{ // nolint: exhaustivestruct
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: !c.ValidSSL}, // nolint: gosec, exhaustivestruct
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: !c.ValidSSL},
 			},
 		}
 	}
 
-	return &Radarr{APIer: c}
+	return &Radarr{c}
 }
 
 // AddMovieInput is the input for a new movie.
