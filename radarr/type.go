@@ -10,7 +10,7 @@ import (
 
 // Radarr contains all the methods to interact with a Radarr server.
 type Radarr struct {
-	a starr.APIer
+	starr.APIer
 }
 
 // New returns a Radarr object used to interact with the Radarr API.
@@ -25,7 +25,7 @@ func New(c *starr.Config) *Radarr {
 		}
 	}
 
-	return &Radarr{c}
+	return &Radarr{APIer: c}
 }
 
 // AddMovieInput is the input for a new movie.

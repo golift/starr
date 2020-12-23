@@ -18,7 +18,6 @@
 package starr
 
 import (
-	"crypto/tls"
 	"fmt"
 	"net/http"
 	"time"
@@ -26,7 +25,7 @@ import (
 
 // Defaults for New().
 const (
-	DefaultTimeout = 5 * time.Second
+	DefaultTimeout = 10 * time.Second
 )
 
 // Errors you may receive from this package.
@@ -35,12 +34,17 @@ var (
 	ErrInvalidStatusCode = fmt.Errorf("invalid status code, <200||>299")
 	// ErrNilClient is returned if you attempt a request with a nil http.Client.
 	ErrNilClient = fmt.Errorf("http.Client must not be nil")
+	// ErrNilInterface is returned by *Into() methods when a nil interface is provided.
+	ErrNilInterface = fmt.Errorf("cannot unmarshal data into a nil or empty interface")
 )
 
 // Config is the data needed to poll Radarr or Sonarr or Lidarr or Readarr.
 // At a minimum, provide a URL and API Key.
 // Set ValidSSL to true if the app has a valid SSL certificate.
 // HTTPUser and HTTPPass are used for Basic HTTP auth, if enabled (not common).
+// Timeout and ValidSSL are used to create the http Client by sub packages. You
+// may set those and call New() in the sub packages to create the http.Client
+// pointer, or you can create your own http.Client before calling subpackage.New().
 type Config struct {
 	APIKey   string       `json:"api_key" toml:"api_key" xml:"api_key" yaml:"api_key"`
 	URL      string       `json:"url" toml:"url" xml:"url" yaml:"url"`
@@ -68,13 +72,7 @@ func New(apiKey, appURL string, timeout time.Duration) *Config {
 		HTTPPass: "",
 		ValidSSL: false,
 		Timeout:  Duration{Duration: timeout},
-		//nolint:exhaustivestruct,gosec
-		Client: &http.Client{
-			Timeout: timeout,
-			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-			},
-		},
+		Client:   nil, // Let each sub package handle its own client.
 	}
 }
 

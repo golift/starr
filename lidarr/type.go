@@ -10,7 +10,7 @@ import (
 
 // Lidarr contains all the methods to interact with a Lidarr server.
 type Lidarr struct {
-	a starr.APIer
+	starr.APIer
 }
 
 // New returns a Lidarr object used to interact with the Lidarr API.
@@ -25,7 +25,7 @@ func New(c *starr.Config) *Lidarr {
 		}
 	}
 
-	return &Lidarr{c}
+	return &Lidarr{APIer: c}
 }
 
 // Queue is the /api/v1/queue endpoint.
@@ -222,6 +222,12 @@ type Media struct {
 }
 
 // XXX: fix these.
+
+// AddArtistInput is currently unknown.
+type AddArtistInput interface{}
+
+// AddArtistOutput is currently unknown.
+type AddArtistOutput interface{}
 
 // AddAlbumInput is currently unknown.
 type AddAlbumInput interface{}

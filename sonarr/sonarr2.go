@@ -89,7 +89,7 @@ func (s *Sonarr) GetQueueV2() ([]*QueueV2, error) {
 	params.Set("order", "asc")
 
 	var queue []*QueueV2
-	if err := s.a.GetInto("queue", params, &queue); err != nil {
+	if err := s.GetInto("queue", params, &queue); err != nil {
 		return queue, fmt.Errorf("api.Get(queue): %w", err)
 	}
 
@@ -124,7 +124,7 @@ type SystemStatusV2 struct {
 // GetSystemStatusV2 returns system status.
 func (s *Sonarr) GetSystemStatusV2() (*SystemStatusV2, error) {
 	var status *SystemStatusV2
-	if err := s.a.GetInto("system/status", nil, status); err != nil {
+	if err := s.GetInto("system/status", nil, status); err != nil {
 		return status, fmt.Errorf("api.Get(system/status): %w", err)
 	}
 
@@ -156,7 +156,7 @@ type QualityProfileV2 struct {
 // GetQualityProfilesV2 returns all configured quality profiles.
 func (s *Sonarr) GetQualityProfilesV2() ([]*QualityProfileV2, error) {
 	var profiles []*QualityProfileV2
-	if err := s.a.GetInto("profile", nil, &profiles); err != nil {
+	if err := s.GetInto("profile", nil, &profiles); err != nil {
 		return nil, fmt.Errorf("api.Get(profile): %w", err)
 	}
 
@@ -178,7 +178,7 @@ type RootFolderV2 struct {
 // RootFoldersV2 returns all configured root folders.
 func (s *Sonarr) GetRootFoldersV2() ([]*RootFolderV2, error) {
 	var folders []*RootFolderV2
-	if err := s.a.GetInto("rootFolder", nil, &folders); err != nil {
+	if err := s.GetInto("rootFolder", nil, &folders); err != nil {
 		return nil, fmt.Errorf("api.Get(rootFolder): %w", err)
 	}
 
@@ -249,7 +249,7 @@ type SeasonV2 struct {
 // GetAllSeriesV2 returns all configured series.
 func (s *Sonarr) GetAllSeriesV2() ([]*SeriesV2, error) {
 	var series []*SeriesV2
-	if err := s.a.GetInto("series", nil, &series); err != nil {
+	if err := s.GetInto("series", nil, &series); err != nil {
 		return nil, fmt.Errorf("api.Get(series): %w", err)
 	}
 
@@ -308,7 +308,7 @@ func (s *Sonarr) GetSeriesLookupV2(term string, tvdbID int) ([]*SeriesLookupV2, 
 	}
 
 	var series []*SeriesLookupV2
-	if err := s.a.GetInto("series/lookup", nil, &series); err != nil {
+	if err := s.GetInto("series/lookup", nil, &series); err != nil {
 		return nil, fmt.Errorf("api.Get(series/lookup): %w", err)
 	}
 

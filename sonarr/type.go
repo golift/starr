@@ -10,7 +10,7 @@ import (
 
 // Sonarr contains all the methods to interact with a Sonarr server.
 type Sonarr struct {
-	a starr.APIer
+	starr.APIer
 }
 
 // New returns a Sonarr object used to interact with the Sonarr API.
@@ -25,7 +25,7 @@ func New(c *starr.Config) *Sonarr {
 		}
 	}
 
-	return &Sonarr{c}
+	return &Sonarr{APIer: c}
 }
 
 // QualityProfile is the /api/v3/qualityprofile endpoint.

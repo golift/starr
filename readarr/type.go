@@ -10,7 +10,7 @@ import (
 
 // Readarr contains all the methods to interact with a Readarr server.
 type Readarr struct {
-	a starr.APIer
+	starr.APIer
 }
 
 // New returns a Readarr object used to interact with the Readarr API.
@@ -25,7 +25,7 @@ func New(c *starr.Config) *Readarr {
 		}
 	}
 
-	return &Readarr{c}
+	return &Readarr{APIer: c}
 }
 
 // Queue is the /api/v1/queue endpoint.
