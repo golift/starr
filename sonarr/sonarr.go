@@ -47,7 +47,7 @@ func (s *Sonarr) GetRootFolders() ([]*RootFolder, error) {
 	return folders, nil
 }
 
-// GetSeriesLookup searches for a series using a search term or a tvdbid.
+// GetSeriesLookup searches for a series [in Servarr] using a search term or a tvdbid.
 // Provide a search term or a tvdbid. If you provide both, tvdbID is used.
 func (s *Sonarr) GetSeriesLookup(term string, tvdbID int64) ([]*SeriesLookup, error) {
 	params := make(url.Values)
