@@ -18,7 +18,9 @@ func (r *Radarr) GetHistory() ([]*Record, error) {
 	params.Set("pageSize", "0")
 
 	var history History
-	if err := r.GetInto("v3/history", params, &history); err != nil {
+
+	err := r.GetInto("v3/history", params, &history)
+	if err != nil {
 		return nil, fmt.Errorf("api.Get(history): %w", err)
 	}
 
@@ -32,7 +34,9 @@ func (r *Radarr) GetQueue() ([]*Queue, error) {
 	params.Set("order", "asc")
 
 	var queue []*Queue
-	if err := r.GetInto("v3/queue", params, &queue); err != nil {
+
+	err := r.GetInto("v3/queue", params, &queue)
+	if err != nil {
 		return nil, fmt.Errorf("api.Get(queue): %w", err)
 	}
 
@@ -45,17 +49,33 @@ func (r *Radarr) GetMovie(tmdbID int64) ([]*Movie, error) {
 	params.Set("tmdbId", strconv.FormatInt(tmdbID, 10))
 
 	var movie []*Movie
-	if err := r.GetInto("v3/movie", params, &movie); err != nil {
+
+	err := r.GetInto("v3/movie", params, &movie)
+	if err != nil {
 		return nil, fmt.Errorf("api.Get(movie): %w", err)
 	}
 
 	return movie, nil
 }
 
+// GetMovieByID grabs a movie from the database by DB [movie] ID.
+func (r *Radarr) GetMovieByID(movieID int64) (*Movie, error) {
+	var movie Movie
+
+	err := r.GetInto("v3/movie/"+strconv.FormatInt(movieID, 10), nil, &movie)
+	if err != nil {
+		return nil, fmt.Errorf("api.Get(movie): %w", err)
+	}
+
+	return &movie, nil
+}
+
 // GetQualityProfiles returns all configured quality profiles.
 func (r *Radarr) GetQualityProfiles() ([]*QualityProfile, error) {
 	var profiles []*QualityProfile
-	if err := r.GetInto("v3/qualityProfile", nil, &profiles); err != nil {
+
+	err := r.GetInto("v3/qualityProfile", nil, &profiles)
+	if err != nil {
 		return nil, fmt.Errorf("api.Get(qualityProfile): %w", err)
 	}
 
@@ -65,11 +85,33 @@ func (r *Radarr) GetQualityProfiles() ([]*QualityProfile, error) {
 // RootFolders returns all configured root folders.
 func (r *Radarr) GetRootFolders() ([]*RootFolder, error) {
 	var folders []*RootFolder
-	if err := r.GetInto("v3/rootFolder", nil, &folders); err != nil {
+
+	err := r.GetInto("v3/rootFolder", nil, &folders)
+	if err != nil {
 		return nil, fmt.Errorf("api.Get(rootFolder): %w", err)
 	}
 
 	return folders, nil
+}
+
+// UpdateMovie sends a PUT request to update a movie in place.
+func (r *Radarr) UpdateMovie(movieID int64, movie *Movie) error {
+	put, err := json.Marshal(movie)
+	if err != nil {
+		return fmt.Errorf("json.Marshal(movie): %w", err)
+	}
+
+	params := make(url.Values)
+	params.Add("moveFiles", "true")
+
+	b, err := r.Put("v3/movie/"+strconv.FormatInt(movieID, 10), params, put)
+	if err != nil {
+		return fmt.Errorf("api.Put(movie): %w", err)
+	}
+
+	fmt.Println("SHOW THIS TO CAPTAIN plz:", string(b))
+
+	return nil
 }
 
 // AddMovie adds a movie to the queue.
@@ -82,10 +124,10 @@ func (r *Radarr) AddMovie(movie *AddMovieInput) (*AddMovieOutput, error) {
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
-	added := &AddMovieOutput{}
-	if err := r.PostInto("v3/movie", params, body, added); err != nil {
+	var added AddMovieOutput
+	if err := r.PostInto("v3/movie", params, body, &added); err != nil {
 		return nil, fmt.Errorf("api.Post(movie): %w", err)
 	}
 
-	return added, nil
+	return &added, nil
 }

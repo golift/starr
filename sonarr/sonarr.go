@@ -9,18 +9,22 @@ import (
 
 // GetSystemStatus returns system status.
 func (s *Sonarr) GetSystemStatus() (*SystemStatus, error) {
-	var status *SystemStatus
-	if err := s.GetInto("v3/system/status", nil, status); err != nil {
-		return status, fmt.Errorf("api.Get(system/status): %w", err)
+	var status SystemStatus
+
+	err := s.GetInto("v3/system/status", nil, &status)
+	if err != nil {
+		return nil, fmt.Errorf("api.Get(system/status): %w", err)
 	}
 
-	return status, nil
+	return &status, nil
 }
 
 // GetLanguageProfiles returns all configured language profiles.
 func (s *Sonarr) GetLanguageProfiles() ([]*LanguageProfile, error) {
 	var profiles []*LanguageProfile
-	if err := s.GetInto("v3/languageprofile", nil, &profiles); err != nil {
+
+	err := s.GetInto("v3/languageprofile", nil, &profiles)
+	if err != nil {
 		return nil, fmt.Errorf("api.Get(languageprofile): %w", err)
 	}
 
@@ -30,7 +34,9 @@ func (s *Sonarr) GetLanguageProfiles() ([]*LanguageProfile, error) {
 // GetQualityProfiles returns all configured quality profiles.
 func (s *Sonarr) GetQualityProfiles() ([]*QualityProfile, error) {
 	var profiles []*QualityProfile
-	if err := s.GetInto("v3/qualityprofile", nil, &profiles); err != nil {
+
+	err := s.GetInto("v3/qualityprofile", nil, &profiles)
+	if err != nil {
 		return nil, fmt.Errorf("api.Get(qualityprofile): %w", err)
 	}
 
@@ -40,7 +46,9 @@ func (s *Sonarr) GetQualityProfiles() ([]*QualityProfile, error) {
 // RootFolders returns all configured root folders.
 func (s *Sonarr) GetRootFolders() ([]*RootFolder, error) {
 	var folders []*RootFolder
-	if err := s.GetInto("v3/rootfolder", nil, &folders); err != nil {
+
+	err := s.GetInto("v3/rootfolder", nil, &folders)
+	if err != nil {
 		return nil, fmt.Errorf("api.Get(rootfolder): %w", err)
 	}
 
@@ -59,7 +67,9 @@ func (s *Sonarr) GetSeriesLookup(term string, tvdbID int64) ([]*SeriesLookup, er
 	}
 
 	var series []*SeriesLookup
-	if err := s.GetInto("v3/series/lookup", params, &series); err != nil {
+
+	err := s.GetInto("v3/series/lookup", params, &series)
+	if err != nil {
 		return nil, fmt.Errorf("api.Get(series/lookup): %w", err)
 	}
 
@@ -75,17 +85,51 @@ func (s *Sonarr) GetSeries(tvdbID int64) ([]*Series, error) {
 	}
 
 	var series []*Series
-	if err := s.GetInto("v3/series", params, &series); err != nil {
+
+	err := s.GetInto("v3/series", params, &series)
+	if err != nil {
 		return nil, fmt.Errorf("api.Get(series): %w", err)
 	}
 
 	return series, nil
 }
 
+// GetSeriesByID locates and returns a series by DB [series] ID.
+func (s *Sonarr) GetSeriesByID(seriesID int64) (*Series, error) {
+	var series Series
+
+	err := s.GetInto("v3/series/"+strconv.FormatInt(seriesID, 10), nil, &series)
+	if err != nil {
+		return nil, fmt.Errorf("api.Get(series): %w", err)
+	}
+
+	return &series, nil
+}
+
 // GetAllSeries returns all configured series.
 // This may not deal well with pagination atm.
 func (s *Sonarr) GetAllSeries() ([]*Series, error) {
 	return s.GetSeries(0)
+}
+
+// UpdateSeries updates a series to in place.
+func (s *Sonarr) UpdateSeries(seriesID int64, series *Series) error {
+	put, err := json.Marshal(series)
+	if err != nil {
+		return fmt.Errorf("json.Marshal(series): %w", err)
+	}
+
+	params := make(url.Values)
+	params.Add("moveFiles", "true")
+
+	b, err := s.Put("v3/series/"+strconv.FormatInt(seriesID, 10), params, put)
+	if err != nil {
+		return fmt.Errorf("api.Put(series): %w", err)
+	}
+
+	fmt.Println("SHOW THIS TO CAPTAIN plz:", string(b))
+
+	return nil
 }
 
 // AddSeries adds a new series to Sonarr.
@@ -98,10 +142,10 @@ func (s *Sonarr) AddSeries(series *AddSeriesInput) (*AddSeriesOutput, error) {
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
-	added := &AddSeriesOutput{}
-	if err = s.PostInto("v3/series", params, body, added); err != nil {
+	var added AddSeriesOutput
+	if err = s.PostInto("v3/series", params, body, &added); err != nil {
 		return nil, fmt.Errorf("api.Post(series): %w", err)
 	}
 
-	return added, nil
+	return &added, nil
 }

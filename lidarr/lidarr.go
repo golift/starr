@@ -10,7 +10,9 @@ import (
 // GetQualityDefinition returns the Quality Definitions.
 func (l *Lidarr) GetQualityDefinition() ([]*QualityDefinition, error) {
 	var definition []*QualityDefinition
-	if err := l.GetInto("v1/qualitydefinition", nil, &definition); err != nil {
+
+	err := l.GetInto("v1/qualitydefinition", nil, &definition)
+	if err != nil {
 		return nil, fmt.Errorf("api.Get(qualitydefinition): %w", err)
 	}
 
@@ -20,7 +22,9 @@ func (l *Lidarr) GetQualityDefinition() ([]*QualityDefinition, error) {
 // GetQualityProfiles returns the quality profiles.
 func (l *Lidarr) GetQualityProfiles() ([]*QualityProfile, error) {
 	var profiles []*QualityProfile
-	if err := l.GetInto("v1/qualityprofile", nil, &profiles); err != nil {
+
+	err := l.GetInto("v1/qualityprofile", nil, &profiles)
+	if err != nil {
 		return nil, fmt.Errorf("api.Get(qualityprofile): %w", err)
 	}
 
@@ -30,7 +34,9 @@ func (l *Lidarr) GetQualityProfiles() ([]*QualityProfile, error) {
 // GetRootFolders returns all configured root folders.
 func (l *Lidarr) GetRootFolders() ([]*RootFolder, error) {
 	var folders []*RootFolder
-	if err := l.GetInto("v1/rootFolder", nil, &folders); err != nil {
+
+	err := l.GetInto("v1/rootFolder", nil, &folders)
+	if err != nil {
 		return nil, fmt.Errorf("api.Get(rootFolder): %w", err)
 	}
 
@@ -48,22 +54,26 @@ func (l *Lidarr) GetQueue(maxRecords int) (*Queue, error) {
 	params.Set("sortDir", "asc")
 	params.Set("pageSize", strconv.Itoa(maxRecords))
 
-	var queue *Queue
-	if err := l.GetInto("v1/queue", params, queue); err != nil {
+	var queue Queue
+
+	err := l.GetInto("v1/queue", params, &queue)
+	if err != nil {
 		return nil, fmt.Errorf("api.Get(queue): %w", err)
 	}
 
-	return queue, nil
+	return &queue, nil
 }
 
 // GetSystemStatus returns system status.
 func (l *Lidarr) GetSystemStatus() (*SystemStatus, error) {
-	var status *SystemStatus
-	if err := l.GetInto("v1/system/status", nil, status); err != nil {
-		return status, fmt.Errorf("api.Get(system/status): %w", err)
+	var status SystemStatus
+
+	err := l.GetInto("v1/system/status", nil, &status)
+	if err != nil {
+		return nil, fmt.Errorf("api.Get(system/status): %w", err)
 	}
 
-	return status, nil
+	return &status, nil
 }
 
 // GetArtist returns an artist or all artists.
@@ -76,7 +86,9 @@ func (l *Lidarr) GetArtist(artistUUID string) ([]*Artist, error) {
 	}
 
 	var artist []*Artist
-	if err := l.GetInto("v1/artist", params, &artist); err != nil {
+
+	err := l.GetInto("v1/artist", params, &artist)
+	if err != nil {
 		return artist, fmt.Errorf("api.Get(artist): %w", err)
 	}
 
@@ -94,7 +106,9 @@ func (l *Lidarr) AddArtist(artist *AddArtistInput) (*AddArtistOutput, error) {
 	params.Add("moveFiles", "true")
 
 	var added AddArtistOutput
-	if err := l.PostInto("v1/album", params, body, &added); err != nil {
+
+	err = l.PostInto("v1/album", params, body, &added)
+	if err != nil {
 		return nil, fmt.Errorf("api.Post(artist): %w", err)
 	}
 
@@ -110,8 +124,10 @@ func (l *Lidarr) GetAlbum(albumUUID string) ([]*Album, error) {
 		params.Add("ForeignAlbumId", albumUUID)
 	}
 
-	albums := []*Album{}
-	if err := l.GetInto("v1/album", params, &albums); err != nil {
+	var albums []*Album
+
+	err := l.GetInto("v1/album", params, &albums)
+	if err != nil {
 		return nil, fmt.Errorf("api.Get(album): %w", err)
 	}
 
@@ -129,7 +145,9 @@ func (l *Lidarr) AddAlbum(album *AddAlbumInput) (*AddAlbumOutput, error) {
 	params.Add("moveFiles", "true")
 
 	var added AddAlbumOutput
-	if err := l.PostInto("v1/album", params, body, &added); err != nil {
+
+	err = l.PostInto("v1/album", params, body, &added)
+	if err != nil {
 		return nil, fmt.Errorf("api.Post(album): %w", err)
 	}
 

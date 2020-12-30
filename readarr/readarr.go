@@ -16,28 +16,34 @@ func (r *Readarr) GetQueue(maxRecords int) (*Queue, error) {
 	params := make(url.Values)
 	params["pageSize"] = []string{strconv.Itoa(maxRecords)}
 
-	var queue *Queue
-	if err := r.GetInto("v1/queue", params, queue); err != nil {
+	var queue Queue
+
+	err := r.GetInto("v1/queue", params, &queue)
+	if err != nil {
 		return nil, fmt.Errorf("api.Get(queue): %w", err)
 	}
 
-	return queue, nil
+	return &queue, nil
 }
 
 // GetSystemStatus returns system status.
 func (r *Readarr) GetSystemStatus() (*SystemStatus, error) {
-	var status *SystemStatus
-	if err := r.GetInto("v1/system/status", nil, status); err != nil {
-		return status, fmt.Errorf("api.Get(system/status): %w", err)
+	var status SystemStatus
+
+	err := r.GetInto("v1/system/status", nil, &status)
+	if err != nil {
+		return &status, fmt.Errorf("api.Get(system/status): %w", err)
 	}
 
-	return status, nil
+	return &status, nil
 }
 
 // GetRootFolders returns all configured root folders.
 func (r *Readarr) GetRootFolders() ([]*RootFolder, error) {
 	var folders []*RootFolder
-	if err := r.GetInto("v1/rootFolder", nil, &folders); err != nil {
+
+	err := r.GetInto("v1/rootFolder", nil, &folders)
+	if err != nil {
 		return nil, fmt.Errorf("api.Get(rootFolder): %w", err)
 	}
 
@@ -47,7 +53,9 @@ func (r *Readarr) GetRootFolders() ([]*RootFolder, error) {
 // GetMetadataProfiles returns the metadata profiles.
 func (r *Readarr) GetMetadataProfiles() ([]*MetadataProfile, error) {
 	var profiles []*MetadataProfile
-	if err := r.GetInto("v1/metadataprofile", nil, &profiles); err != nil {
+
+	err := r.GetInto("v1/metadataprofile", nil, &profiles)
+	if err != nil {
 		return nil, fmt.Errorf("api.Get(metadataprofile): %w", err)
 	}
 
@@ -57,7 +65,9 @@ func (r *Readarr) GetMetadataProfiles() ([]*MetadataProfile, error) {
 // GetQualityProfiles returns the quality profiles.
 func (r *Readarr) GetQualityProfiles() ([]*QualityProfile, error) {
 	var profiles []*QualityProfile
-	if err := r.GetInto("v1/qualityprofile", nil, &profiles); err != nil {
+
+	err := r.GetInto("v1/qualityprofile", nil, &profiles)
+	if err != nil {
 		return nil, fmt.Errorf("api.Get(qualityprofile): %w", err)
 	}
 
@@ -73,11 +83,45 @@ func (r *Readarr) GetBook(gridID int64) ([]*Book, error) {
 	}
 
 	var books []*Book
-	if err := r.GetInto("v1/book", params, &books); err != nil {
+
+	err := r.GetInto("v1/book", params, &books)
+	if err != nil {
 		return nil, fmt.Errorf("api.Get(book): %w", err)
 	}
 
 	return books, nil
+}
+
+// GetBookByID return a book.
+func (r *Readarr) GetBookByID(bookID int64) (*Book, error) {
+	var book Book
+
+	err := r.GetInto("v1/book/"+strconv.FormatInt(bookID, 10), nil, &book)
+	if err != nil {
+		return nil, fmt.Errorf("api.Get(book): %w", err)
+	}
+
+	return &book, nil
+}
+
+// UpdateBook adds a new book to the library.
+func (r *Readarr) UpdateBook(bookID int64, book *Book) error {
+	put, err := json.Marshal(book)
+	if err != nil {
+		return fmt.Errorf("json.Marshal(book): %w", err)
+	}
+
+	params := make(url.Values)
+	params.Add("moveFiles", "true")
+
+	b, err := r.Put("v1/book/"+strconv.FormatInt(bookID, 10), params, put)
+	if err != nil {
+		return fmt.Errorf("api.Put(book): %w", err)
+	}
+
+	fmt.Println("SHOW THIS TO CAPTAIN plz:", string(b))
+
+	return nil
 }
 
 // AddBook adds a new book to the library.
@@ -90,10 +134,12 @@ func (r *Readarr) AddBook(book *AddBookInput) (*AddBookOutput, error) {
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
-	added := &AddBookOutput{}
-	if err := r.PostInto("v1/book", params, body, added); err != nil {
+	var added AddBookOutput
+
+	err = r.PostInto("v1/book", params, body, &added)
+	if err != nil {
 		return nil, fmt.Errorf("api.Post(book): %w", err)
 	}
 
-	return added, nil
+	return &added, nil
 }
