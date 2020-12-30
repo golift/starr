@@ -244,44 +244,44 @@ type QueueMovie struct {
 // Movie is the /api/v3/movie endpoint.
 type Movie struct {
 	ID                    int64               `json:"id"`
-	Title                 string              `json:"title"`
-	OriginalTitle         string              `json:"originalTitle"`
-	AlternateTitles       []*AlternativeTitle `json:"alternateTitles"`
-	SecondaryYearSourceID int                 `json:"secondaryYearSourceId"`
-	SortTitle             string              `json:"sortTitle"`
-	SizeOnDisk            int64               `json:"sizeOnDisk"`
-	Status                string              `json:"status"`
-	Overview              string              `json:"overview"`
-	InCinemas             time.Time           `json:"inCinemas"`
-	PhysicalRelease       time.Time           `json:"physicalRelease"`
-	DigitalRelease        time.Time           `json:"digitalRelease"`
-	Images                []*starr.Image      `json:"images"`
-	Website               string              `json:"website"`
-	Year                  int                 `json:"year"`
-	YouTubeTrailerID      string              `json:"youTubeTrailerId"`
-	Studio                string              `json:"studio"`
-	Path                  string              `json:"path"`
-	QualityProfileID      int64               `json:"qualityProfileId"`
-	MinimumAvailability   string              `json:"minimumAvailability"`
-	FolderName            string              `json:"folderName"`
-	Runtime               int                 `json:"runtime"`
-	CleanTitle            string              `json:"cleanTitle"`
-	ImdbID                string              `json:"imdbId"`
-	TmdbID                int64               `json:"tmdbId"`
-	TitleSlug             string              `json:"titleSlug"`
-	Certification         string              `json:"certification"`
-	Genres                []string            `json:"genres"`
-	Tags                  []interface{}       `json:"tags"`
-	Added                 time.Time           `json:"added"`
-	Ratings               *starr.Ratings      `json:"ratings"`
-	MovieFile             *MovieFile          `json:"movieFile"`
-	Collection            *Collection         `json:"collection"`
-	HasFile               bool                `json:"hasFile"`
-	Monitored             bool                `json:"monitored"`
-	IsAvailable           bool                `json:"isAvailable"`
+	Title                 string              `json:"title,omitempty"`
+	Path                  string              `json:"path,omitempty"`
+	MinimumAvailability   string              `json:"minimumAvailability,omitempty"`
+	QualityProfileID      int64               `json:"qualityProfileId,omitempty"`
+	Monitored             bool                `json:"monitored,omitempty"`
+	TmdbID                int64               `json:"tmdbId,omitempty"`
+	OriginalTitle         string              `json:"originalTitle,omitempty"`
+	AlternateTitles       []*AlternativeTitle `json:"alternateTitles,omitempty"`
+	SecondaryYearSourceID int                 `json:"secondaryYearSourceId,omitempty"`
+	SortTitle             string              `json:"sortTitle,omitempty"`
+	SizeOnDisk            int64               `json:"sizeOnDisk,omitempty"`
+	Status                string              `json:"status,omitempty"`
+	Overview              string              `json:"overview,omitempty"`
+	InCinemas             time.Time           `json:"inCinemas,omitempty"`
+	PhysicalRelease       time.Time           `json:"physicalRelease,omitempty"`
+	DigitalRelease        time.Time           `json:"digitalRelease,omitempty"`
+	Images                []*starr.Image      `json:"images,omitempty"`
+	Website               string              `json:"website,omitempty"`
+	Year                  int                 `json:"year,omitempty"`
+	YouTubeTrailerID      string              `json:"youTubeTrailerId,omitempty"`
+	Studio                string              `json:"studio,omitempty"`
+	FolderName            string              `json:"folderName,omitempty"`
+	Runtime               int                 `json:"runtime,omitempty"`
+	CleanTitle            string              `json:"cleanTitle,omitempty"`
+	ImdbID                string              `json:"imdbId,omitempty"`
+	TitleSlug             string              `json:"titleSlug,omitempty"`
+	Certification         string              `json:"certification,omitempty"`
+	Genres                []string            `json:"genres,omitempty"`
+	Tags                  []interface{}       `json:"tags,omitempty"`
+	Added                 time.Time           `json:"added,omitempty"`
+	Ratings               *starr.Ratings      `json:"ratings,omitempty"`
+	MovieFile             *MovieFile          `json:"movieFile,omitempty"`
+	Collection            *Collection         `json:"collection,omitempty"`
+	HasFile               bool                `json:"hasFile,omitempty"`
+	IsAvailable           bool                `json:"isAvailable,omitempty"`
 }
 
-// Collections belong to a Movie.
+// Collection belongs to a Movie.
 type Collection struct {
 	Name   string         `json:"name"`
 	TmdbID int64          `json:"tmdbId"`
@@ -324,7 +324,7 @@ type MediaInfo struct {
 	Subtitles               string  `json:"subtitles"`
 }
 
-// QualityProfiles are applied to Movies.
+// QualityProfile is applied to Movies.
 type QualityProfile struct {
 	ID                int64            `json:"id"`
 	Name              string           `json:"name"`

@@ -3,6 +3,7 @@ package sonarr
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/url"
 	"strconv"
 )
@@ -43,7 +44,7 @@ func (s *Sonarr) GetQualityProfiles() ([]*QualityProfile, error) {
 	return profiles, nil
 }
 
-// RootFolders returns all configured root folders.
+// GetRootFolders returns all configured root folders.
 func (s *Sonarr) GetRootFolders() ([]*RootFolder, error) {
 	var folders []*RootFolder
 
@@ -127,7 +128,7 @@ func (s *Sonarr) UpdateSeries(seriesID int64, series *Series) error {
 		return fmt.Errorf("api.Put(series): %w", err)
 	}
 
-	fmt.Println("SHOW THIS TO CAPTAIN plz:", string(b))
+	log.Println("SHOW THIS TO CAPTAIN plz:", string(b))
 
 	return nil
 }

@@ -3,6 +3,7 @@ package lidarr
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/url"
 	"strconv"
 )
@@ -111,7 +112,7 @@ func (l *Lidarr) AddArtist(artist *AddArtistInput) (*AddArtistOutput, error) {
 		return nil, fmt.Errorf("api.Post(artist): %w", err)
 	}
 
-	fmt.Println("SHOW THIS TO CAPTAIN plz:", string(b))
+	log.Println("SHOW THIS TO CAPTAIN plz:", string(b))
 
 	if err = json.Unmarshal(b, &output); err != nil {
 		return nil, fmt.Errorf("json.Unmarshal(artist): %w", err)
@@ -166,7 +167,7 @@ func (l *Lidarr) UpdateAlbum(albumID int64, album *Album) error {
 		return fmt.Errorf("api.Put(album): %w", err)
 	}
 
-	fmt.Println("SHOW THIS TO CAPTAIN plz:", string(b))
+	log.Println("SHOW THIS TO CAPTAIN plz:", string(b))
 
 	return nil
 }
@@ -188,7 +189,7 @@ func (l *Lidarr) AddAlbum(album *AddAlbumInput) (*AddAlbumOutput, error) {
 		return nil, fmt.Errorf("api.Post(album): %w", err)
 	}
 
-	fmt.Println("SHOW THIS TO CAPTAIN plz:", string(b))
+	log.Println("SHOW THIS TO CAPTAIN plz:", string(b))
 
 	err = json.Unmarshal(b, &output)
 	if err != nil {

@@ -5,6 +5,7 @@ package radarr
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/url"
 	"strconv"
 )
@@ -82,7 +83,7 @@ func (r *Radarr) GetQualityProfiles() ([]*QualityProfile, error) {
 	return profiles, nil
 }
 
-// RootFolders returns all configured root folders.
+// GetRootFolders returns all configured root folders.
 func (r *Radarr) GetRootFolders() ([]*RootFolder, error) {
 	var folders []*RootFolder
 
@@ -109,7 +110,7 @@ func (r *Radarr) UpdateMovie(movieID int64, movie *Movie) error {
 		return fmt.Errorf("api.Put(movie): %w", err)
 	}
 
-	fmt.Println("SHOW THIS TO CAPTAIN plz:", string(b))
+	log.Println("SHOW THIS TO CAPTAIN plz:", string(b))
 
 	return nil
 }

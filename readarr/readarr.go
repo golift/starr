@@ -3,6 +3,7 @@ package readarr
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/url"
 	"strconv"
 )
@@ -101,7 +102,7 @@ func (r *Readarr) UpdateAuthor(authorID int64, author *Author) error {
 		return fmt.Errorf("api.Put(author): %w", err)
 	}
 
-	fmt.Println("SHOW THIS TO CAPTAIN plz:", string(b))
+	log.Println("SHOW THIS TO CAPTAIN plz:", string(b))
 
 	return nil
 }
@@ -151,7 +152,7 @@ func (r *Readarr) UpdateBook(bookID int64, book *Book) error {
 		return fmt.Errorf("api.Put(book): %w", err)
 	}
 
-	fmt.Println("SHOW THIS TO CAPTAIN plz:", string(b))
+	log.Println("SHOW THIS TO CAPTAIN plz:", string(b))
 
 	return nil
 }

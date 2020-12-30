@@ -135,26 +135,26 @@ type MetadataProfile struct {
 // Author is the /api/v1/author endpoint.
 type Author struct {
 	ID                int64          `json:"id"`
-	Status            string         `json:"status"`
-	Ended             bool           `json:"ended"`
-	AuthorName        string         `json:"authorName"`
-	ForeignAuthorID   string         `json:"foreignAuthorId"`
-	TitleSlug         string         `json:"titleSlug"`
+	Status            string         `json:"status,omitempty"`
+	Ended             bool           `json:"ended,omitempty"`
+	AuthorName        string         `json:"authorName,omitempty"`
+	ForeignAuthorID   string         `json:"foreignAuthorId,omitempty"`
+	TitleSlug         string         `json:"titleSlug,omitempty"`
 	Overview          string         `json:"overview,omitempty"`
-	Links             []*starr.Link  `json:"links"`
-	Images            []*starr.Image `json:"images"`
-	Path              string         `json:"path"`
-	QualityProfileID  int            `json:"qualityProfileId"`
-	MetadataProfileID int            `json:"metadataProfileId"`
-	Monitored         bool           `json:"monitored"`
-	Genres            []interface{}  `json:"genres"`
-	CleanName         string         `json:"cleanName"`
-	SortName          string         `json:"sortName"`
-	Tags              []interface{}  `json:"tags"`
-	Added             time.Time      `json:"added"`
-	Ratings           *starr.Ratings `json:"ratings"`
-	Statistics        *Statistics    `json:"statistics"`
-	LastBook          *AuthorBook    `json:"lastBook"`
+	Links             []*starr.Link  `json:"links,omitempty"`
+	Images            []*starr.Image `json:"images,omitempty"`
+	Path              string         `json:"path,omitempty"`
+	QualityProfileID  int            `json:"qualityProfileId,omitempty"`
+	MetadataProfileID int            `json:"metadataProfileId,omitempty"`
+	Monitored         bool           `json:"monitored,omitempty"`
+	Genres            []interface{}  `json:"genres,omitempty"`
+	CleanName         string         `json:"cleanName,omitempty"`
+	SortName          string         `json:"sortName,omitempty"`
+	Tags              []interface{}  `json:"tags,omitempty"`
+	Added             time.Time      `json:"added,omitempty"`
+	Ratings           *starr.Ratings `json:"ratings,omitempty"`
+	Statistics        *Statistics    `json:"statistics,omitempty"`
+	LastBook          *AuthorBook    `json:"lastBook,omitempty"`
 	NextBook          *AuthorBook    `json:"nextBook,omitempty"`
 }
 

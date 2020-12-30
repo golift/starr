@@ -175,7 +175,7 @@ type RootFolderV2 struct {
 	ID int `json:"id"`
 }
 
-// RootFoldersV2 returns all configured root folders.
+// GetRootFoldersV2 returns all configured root folders.
 func (s *Sonarr) GetRootFoldersV2() ([]*RootFolderV2, error) {
 	var folders []*RootFolderV2
 	if err := s.GetInto("rootFolder", nil, &folders); err != nil {
@@ -234,6 +234,7 @@ type SeriesV2 struct {
 	AirTime          string    `json:"airTime,omitempty"`
 }
 
+// SeasonV2 is part of a Series.
 type SeasonV2 struct {
 	SeasonNumber int  `json:"seasonNumber"`
 	Monitored    bool `json:"monitored"`
