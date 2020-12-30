@@ -134,6 +134,38 @@ func (l *Lidarr) GetAlbum(albumUUID string) ([]*Album, error) {
 	return albums, nil
 }
 
+// GetAlbumByID returns an album by DB ID.
+func (l *Lidarr) GetAlbumByID(albumID int64) (*Album, error) {
+	var album Album
+
+	err := l.GetInto("v1/album"+strconv.FormatInt(albumID, 10), nil, &album)
+	if err != nil {
+		return nil, fmt.Errorf("api.Get(album): %w", err)
+	}
+
+	return &album, nil
+}
+
+// UpdateAlbum updates an album in place.
+func (l *Lidarr) UpdateAlbum(albumID int64, album *Album) error {
+	put, err := json.Marshal(album)
+	if err != nil {
+		return fmt.Errorf("json.Marshal(album): %w", err)
+	}
+
+	params := make(url.Values)
+	params.Add("moveFiles", "true")
+
+	b, err := l.Put("v1/album/"+strconv.FormatInt(albumID, 10), params, put)
+	if err != nil {
+		return fmt.Errorf("api.Put(album): %w", err)
+	}
+
+	fmt.Println("SHOW THIS TO CAPTAIN plz:", string(b))
+
+	return nil
+}
+
 // AddAlbum adds a new album to Lidarr, and probably does not yet work.
 func (l *Lidarr) AddAlbum(album *AddAlbumInput) (*AddAlbumOutput, error) {
 	body, err := json.Marshal(album)
