@@ -160,40 +160,35 @@ type Statistics struct {
 
 // Album is the /api/v1/album endpoint.
 type Album struct {
-	ID                 int64          `json:"id"`
-	ArtistID           int64          `json:"artistId"`
-	ProfileID          int64          `json:"profileId"`
-	ArtistMetadataID   int64          `json:"artistMetadataId,omitempty"`
-	ForeignAlbumID     string         `json:"foreignAlbumId"`
-	OldForeignAlbumIds []interface{}  `json:"oldForeignAlbumIds,omitempty"`
-	Title              string         `json:"title"`
-	Overview           string         `json:"overview,omitempty"`
-	Disambiguation     string         `json:"disambiguation"`
-	ReleaseDate        time.Time      `json:"releaseDate"`
-	Images             []*starr.Image `json:"images"`
-	Links              []*starr.Link  `json:"links"`
-	Genres             []string       `json:"genres"`
-	AlbumType          string         `json:"albumType"`
-	CleanTitle         string         `json:"cleanTitle,omitempty"`
-	LastInfoSync       time.Time      `json:"lastInfoSync,omitempty"`
-	Added              time.Time      `json:"added,omitempty"`
-	SecondaryTypes     []interface{}  `json:"secondaryTypes"`
-	Duration           int            `json:"duration,omitempty"`
-	MediumCount        int            `json:"mediumCount,omitempty"`
-	Ratings            *starr.Ratings `json:"ratings"`
-	Releases           []*Releases    `json:"releases,omitempty"`
-	Media              []*Media       `json:"media,omitempty"`
-	Statistics         *Statistics    `json:"statistics,omitempty"`
-	ArtistMetadata     *IsLoaded      `json:"artistMetadata"`
-	AlbumReleases      *IsLoaded      `json:"albumReleases"`
-	Artist             *IsLoaded      `json:"artist"`
-	Monitored          bool           `json:"monitored"`
-	AnyReleaseOk       bool           `json:"anyReleaseOk"`
-}
-
-// IsLoaded is a generic struct used in a few places.
-type IsLoaded struct {
-	IsLoaded bool `json:"isLoaded"`
+	ID                 int64           `json:"id"`
+	ArtistID           int64           `json:"artistId"`
+	ProfileID          int64           `json:"profileId"`
+	ArtistMetadataID   int64           `json:"artistMetadataId,omitempty"`
+	ForeignAlbumID     string          `json:"foreignAlbumId"`
+	OldForeignAlbumIds []interface{}   `json:"oldForeignAlbumIds,omitempty"`
+	Title              string          `json:"title"`
+	Overview           string          `json:"overview,omitempty"`
+	Disambiguation     string          `json:"disambiguation"`
+	ReleaseDate        time.Time       `json:"releaseDate"`
+	Images             []*starr.Image  `json:"images"`
+	Links              []*starr.Link   `json:"links"`
+	Genres             []string        `json:"genres"`
+	AlbumType          string          `json:"albumType"`
+	CleanTitle         string          `json:"cleanTitle,omitempty"`
+	LastInfoSync       time.Time       `json:"lastInfoSync,omitempty"`
+	Added              time.Time       `json:"added,omitempty"`
+	SecondaryTypes     []interface{}   `json:"secondaryTypes"`
+	Duration           int             `json:"duration,omitempty"`
+	MediumCount        int             `json:"mediumCount,omitempty"`
+	Ratings            *starr.Ratings  `json:"ratings"`
+	Releases           []*Releases     `json:"releases,omitempty"`
+	Media              []*Media        `json:"media,omitempty"`
+	Statistics         *Statistics     `json:"statistics,omitempty"`
+	ArtistMetadata     *starr.IsLoaded `json:"artistMetadata"`
+	AlbumReleases      *starr.IsLoaded `json:"albumReleases"`
+	Artist             *starr.IsLoaded `json:"artist"`
+	Monitored          bool            `json:"monitored"`
+	AnyReleaseOk       bool            `json:"anyReleaseOk"`
 }
 
 // Releases is part of an Album.

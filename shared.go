@@ -31,6 +31,11 @@ type Ratings struct {
 	Popularity float64 `json:"popularity,omitempty"`
 }
 
+// IsLoaded is a generic struct used in a few places.
+type IsLoaded struct {
+	IsLoaded bool `json:"isLoaded"`
+}
+
 // Link is used in a few places.
 type Link struct {
 	URL  string `json:"url"`

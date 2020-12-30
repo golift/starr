@@ -74,6 +74,38 @@ func (r *Readarr) GetQualityProfiles() ([]*QualityProfile, error) {
 	return profiles, nil
 }
 
+// GetAuthorByID returns an author.
+func (r *Readarr) GetAuthorByID(authorID int64) (*Author, error) {
+	var author Author
+
+	err := r.GetInto("v1/author/"+strconv.FormatInt(authorID, 10), nil, &author)
+	if err != nil {
+		return nil, fmt.Errorf("api.Get(author): %w", err)
+	}
+
+	return &author, nil
+}
+
+// UpdateAuthor updates an author in place.
+func (r *Readarr) UpdateAuthor(authorID int64, author *Author) error {
+	put, err := json.Marshal(author)
+	if err != nil {
+		return fmt.Errorf("json.Marshal(author): %w", err)
+	}
+
+	params := make(url.Values)
+	params.Add("moveFiles", "true")
+
+	b, err := r.Put("v1/author/"+strconv.FormatInt(authorID, 10), params, put)
+	if err != nil {
+		return fmt.Errorf("api.Put(author): %w", err)
+	}
+
+	fmt.Println("SHOW THIS TO CAPTAIN plz:", string(b))
+
+	return nil
+}
+
 // GetBook returns books. All if gridID is 0.
 func (r *Readarr) GetBook(gridID int64) ([]*Book, error) {
 	params := make(url.Values)
@@ -92,7 +124,7 @@ func (r *Readarr) GetBook(gridID int64) ([]*Book, error) {
 	return books, nil
 }
 
-// GetBookByID return a book.
+// GetBookByID returns a book.
 func (r *Readarr) GetBookByID(bookID int64) (*Book, error) {
 	var book Book
 
@@ -104,7 +136,7 @@ func (r *Readarr) GetBookByID(bookID int64) (*Book, error) {
 	return &book, nil
 }
 
-// UpdateBook adds a new book to the library.
+// UpdateBook updates a book in place.
 func (r *Readarr) UpdateBook(bookID int64, book *Book) error {
 	put, err := json.Marshal(book)
 	if err != nil {

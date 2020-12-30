@@ -77,12 +77,11 @@ func (l *Lidarr) GetSystemStatus() (*SystemStatus, error) {
 }
 
 // GetArtist returns an artist or all artists.
-// mbID is the music brainz UUID for an "artist".
-func (l *Lidarr) GetArtist(artistUUID string) ([]*Artist, error) {
+func (l *Lidarr) GetArtist(mbID string) ([]*Artist, error) {
 	params := make(url.Values)
 
-	if artistUUID != "" {
-		params.Add("mbId", artistUUID)
+	if mbID != "" {
+		params.Add("mbId", mbID)
 	}
 
 	var artist []*Artist

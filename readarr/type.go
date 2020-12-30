@@ -132,6 +132,56 @@ type MetadataProfile struct {
 	AllowedLanguages    string  `json:"allowedLanguages,omitempty"`
 }
 
+// Author is the /api/v1/author endpoint.
+type Author struct {
+	ID                int64          `json:"id"`
+	Status            string         `json:"status"`
+	Ended             bool           `json:"ended"`
+	AuthorName        string         `json:"authorName"`
+	ForeignAuthorID   string         `json:"foreignAuthorId"`
+	TitleSlug         string         `json:"titleSlug"`
+	Overview          string         `json:"overview,omitempty"`
+	Links             []*starr.Link  `json:"links"`
+	Images            []*starr.Image `json:"images"`
+	Path              string         `json:"path"`
+	QualityProfileID  int            `json:"qualityProfileId"`
+	MetadataProfileID int            `json:"metadataProfileId"`
+	Monitored         bool           `json:"monitored"`
+	Genres            []interface{}  `json:"genres"`
+	CleanName         string         `json:"cleanName"`
+	SortName          string         `json:"sortName"`
+	Tags              []interface{}  `json:"tags"`
+	Added             time.Time      `json:"added"`
+	Ratings           *starr.Ratings `json:"ratings"`
+	Statistics        *Statistics    `json:"statistics"`
+	LastBook          *AuthorBook    `json:"lastBook"`
+	NextBook          *AuthorBook    `json:"nextBook,omitempty"`
+}
+
+// AuthorBook is part of an Author.
+type AuthorBook struct {
+	ID               int64           `json:"id"`
+	AuthorMetadataID int             `json:"authorMetadataId"`
+	ForeignBookID    string          `json:"foreignBookId"`
+	TitleSlug        string          `json:"titleSlug"`
+	Title            string          `json:"title"`
+	ReleaseDate      time.Time       `json:"releaseDate"`
+	Links            []*starr.Link   `json:"links"`
+	Genres           []interface{}   `json:"genres"`
+	Ratings          *starr.Ratings  `json:"ratings"`
+	CleanTitle       string          `json:"cleanTitle"`
+	Monitored        bool            `json:"monitored"`
+	AnyEditionOk     bool            `json:"anyEditionOk"`
+	LastInfoSync     time.Time       `json:"lastInfoSync"`
+	Added            time.Time       `json:"added"`
+	AddOptions       *AddBookOptions `json:"addOptions"`
+	AuthorMetadata   *starr.IsLoaded `json:"authorMetadata"`
+	Author           *starr.IsLoaded `json:"author"`
+	Editions         *starr.IsLoaded `json:"editions"`
+	BookFiles        *starr.IsLoaded `json:"bookFiles"`
+	SeriesLinks      *starr.IsLoaded `json:"seriesLinks"`
+}
+
 // Book is the /api/v1/book endpoint.
 type Book struct {
 	Title          string         `json:"title"`
@@ -239,7 +289,8 @@ type AddAuthorOptions struct {
 
 // AddBookOptions is part of AddBookInput.
 type AddBookOptions struct {
-	SearchForNewBook bool `json:"searchForNewBook"`
+	AddType          string `json:"addType,omitempty"`
+	SearchForNewBook bool   `json:"searchForNewBook"`
 }
 
 // AddBookEdition is part of AddBookInput.
