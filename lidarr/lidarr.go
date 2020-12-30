@@ -105,23 +105,29 @@ func (l *Lidarr) AddArtist(artist *AddArtistInput) (*AddArtistOutput, error) {
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
-	var added AddArtistOutput
+	var output AddArtistOutput
 
-	err = l.PostInto("v1/album", params, body, &added)
+	b, err := l.Post("v1/album", params, body)
 	if err != nil {
 		return nil, fmt.Errorf("api.Post(artist): %w", err)
 	}
 
-	return &added, nil
+	fmt.Println("SHOW THIS TO CAPTAIN plz:", string(b))
+
+	if err = json.Unmarshal(b, &output); err != nil {
+		return nil, fmt.Errorf("json.Unmarshal(artist): %w", err)
+	}
+
+	return &output, nil
 }
 
 // GetAlbum returns an album or all albums if mbID is 0.
 // mbID is the music brainz UUID for a "release-group".
-func (l *Lidarr) GetAlbum(albumUUID string) ([]*Album, error) {
+func (l *Lidarr) GetAlbum(mbID string) ([]*Album, error) {
 	params := make(url.Values)
 
-	if albumUUID != "" {
-		params.Add("ForeignAlbumId", albumUUID)
+	if mbID != "" {
+		params.Add("ForeignAlbumId", mbID)
 	}
 
 	var albums []*Album
@@ -176,12 +182,19 @@ func (l *Lidarr) AddAlbum(album *AddAlbumInput) (*AddAlbumOutput, error) {
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
-	var added AddAlbumOutput
+	var output AddAlbumOutput
 
-	err = l.PostInto("v1/album", params, body, &added)
+	b, err := l.Post("v1/album", params, body)
 	if err != nil {
 		return nil, fmt.Errorf("api.Post(album): %w", err)
 	}
 
-	return &added, nil
+	fmt.Println("SHOW THIS TO CAPTAIN plz:", string(b))
+
+	err = json.Unmarshal(b, &output)
+	if err != nil {
+		return nil, fmt.Errorf("json.Unmarshal(album): %w", err)
+	}
+
+	return &output, nil
 }

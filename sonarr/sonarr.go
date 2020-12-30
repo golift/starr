@@ -142,10 +142,10 @@ func (s *Sonarr) AddSeries(series *AddSeriesInput) (*AddSeriesOutput, error) {
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
-	var added AddSeriesOutput
-	if err = s.PostInto("v3/series", params, body, &added); err != nil {
+	var output AddSeriesOutput
+	if err = s.PostInto("v3/series", params, body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(series): %w", err)
 	}
 
-	return &added, nil
+	return &output, nil
 }

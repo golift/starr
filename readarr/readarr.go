@@ -134,12 +134,12 @@ func (r *Readarr) AddBook(book *AddBookInput) (*AddBookOutput, error) {
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
-	var added AddBookOutput
+	var output AddBookOutput
 
-	err = r.PostInto("v1/book", params, body, &added)
+	err = r.PostInto("v1/book", params, body, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Post(book): %w", err)
 	}
 
-	return &added, nil
+	return &output, nil
 }

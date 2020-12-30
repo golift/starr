@@ -124,10 +124,10 @@ func (r *Radarr) AddMovie(movie *AddMovieInput) (*AddMovieOutput, error) {
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
-	var added AddMovieOutput
-	if err := r.PostInto("v3/movie", params, body, &added); err != nil {
+	var output AddMovieOutput
+	if err := r.PostInto("v3/movie", params, body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(movie): %w", err)
 	}
 
-	return &added, nil
+	return &output, nil
 }

@@ -1,5 +1,5 @@
 all:
-	@echo "try make test"
+	@echo "try: make test"
 
 test: lint nopollution
 	go test -race -covermode=atomic ./...
