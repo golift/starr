@@ -44,6 +44,18 @@ func (l *Lidarr) GetRootFolders() ([]*RootFolder, error) {
 	return folders, nil
 }
 
+// GetMetadataProfiles returns the metadata profiles.
+func (l *Lidarr) GetMetadataProfiles() ([]*MetadataProfile, error) {
+	var profiles []*MetadataProfile
+
+	err := l.GetInto("v1/metadataprofile", nil, &profiles)
+	if err != nil {
+		return nil, fmt.Errorf("api.Get(metadataprofile): %w", err)
+	}
+
+	return profiles, nil
+}
+
 // GetQueue returns the Lidarr Queue.
 func (l *Lidarr) GetQueue(maxRecords int) (*Queue, error) {
 	if maxRecords < 1 {
