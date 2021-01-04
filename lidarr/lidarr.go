@@ -119,15 +119,9 @@ func (l *Lidarr) AddArtist(artist *AddArtistInput) (*AddArtistOutput, error) {
 
 	var output AddArtistOutput
 
-	b, err := l.Post("v1/album", params, body)
+	err = l.PostInto("v1/artist", params, body, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Post(artist): %w", err)
-	}
-
-	log.Println("SHOW THIS TO CAPTAIN plz:", string(b))
-
-	if err = json.Unmarshal(b, &output); err != nil {
-		return nil, fmt.Errorf("json.Unmarshal(artist): %w", err)
 	}
 
 	return &output, nil
@@ -186,6 +180,10 @@ func (l *Lidarr) UpdateAlbum(albumID int64, album *Album) error {
 
 // AddAlbum adds a new album to Lidarr, and probably does not yet work.
 func (l *Lidarr) AddAlbum(album *AddAlbumInput) (*AddAlbumOutput, error) {
+	if album.Releases == nil {
+		album.Releases = make([]*AddAlbumInputRelease, 0)
+	}
+
 	body, err := json.Marshal(album)
 	if err != nil {
 		return nil, fmt.Errorf("json.Marshal(album): %w", err)
@@ -196,16 +194,9 @@ func (l *Lidarr) AddAlbum(album *AddAlbumInput) (*AddAlbumOutput, error) {
 
 	var output AddAlbumOutput
 
-	b, err := l.Post("v1/album", params, body)
+	err = l.PostInto("v1/album", params, body, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Post(album): %w", err)
-	}
-
-	log.Println("SHOW THIS TO CAPTAIN plz:", string(b))
-
-	err = json.Unmarshal(b, &output)
-	if err != nil {
-		return nil, fmt.Errorf("json.Unmarshal(album): %w", err)
 	}
 
 	return &output, nil

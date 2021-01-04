@@ -287,10 +287,19 @@ type ArtistAddOptions struct {
 
 // AddAlbumInput is currently unknown.
 type AddAlbumInput struct {
-	ForeignAlbumID string           `json:"foreignAlbumId"`
-	Monitored      bool             `json:"monitored"`
-	AddOptions     *AlbumAddOptions `json:"addOptions"`
-	Artist         *AddArtistInput  `json:"artist"`
+	ForeignAlbumID string                  `json:"foreignAlbumId"`
+	Monitored      bool                    `json:"monitored"`
+	Releases       []*AddAlbumInputRelease `json:"releases"`
+	AddOptions     *AlbumAddOptions        `json:"addOptions"`
+	Artist         *AddArtistInput         `json:"artist"`
+}
+
+// AddAlbumInputRelease is part of AddAlbumInput.
+type AddAlbumInputRelease struct {
+	ForeignReleaseID string   `json:"foreignReleaseId"`
+	Title            string   `json:"title"`
+	Media            []*Media `json:"media"`
+	Monitored        bool     `json:"monitored"`
 }
 
 // AddAlbumOutput is currently unknown.
