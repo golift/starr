@@ -127,7 +127,7 @@ func (l *Lidarr) AddArtist(artist *AddArtistInput) (*AddArtistOutput, error) {
 	return &output, nil
 }
 
-// GetAlbum returns an album or all albums if mbID is 0.
+// GetAlbum returns an album or all albums if mbID is "" (empty).
 // mbID is the music brainz UUID for a "release-group".
 func (l *Lidarr) GetAlbum(mbID string) ([]*Album, error) {
 	params := make(url.Values)
@@ -158,7 +158,7 @@ func (l *Lidarr) GetAlbumByID(albumID int64) (*Album, error) {
 	return &album, nil
 }
 
-// UpdateAlbum updates an album in place.
+// UpdateAlbum updates an album in place; the output of this is currently unknown!!!!
 func (l *Lidarr) UpdateAlbum(albumID int64, album *Album) error {
 	put, err := json.Marshal(album)
 	if err != nil {
