@@ -248,7 +248,6 @@ type Movie struct {
 	Path                  string              `json:"path,omitempty"`
 	MinimumAvailability   string              `json:"minimumAvailability,omitempty"`
 	QualityProfileID      int64               `json:"qualityProfileId,omitempty"`
-	Monitored             bool                `json:"monitored,omitempty"`
 	TmdbID                int64               `json:"tmdbId,omitempty"`
 	OriginalTitle         string              `json:"originalTitle,omitempty"`
 	AlternateTitles       []*AlternativeTitle `json:"alternateTitles,omitempty"`
@@ -279,6 +278,7 @@ type Movie struct {
 	Collection            *Collection         `json:"collection,omitempty"`
 	HasFile               bool                `json:"hasFile,omitempty"`
 	IsAvailable           bool                `json:"isAvailable,omitempty"`
+	Monitored             bool                `json:"monitored,omitempty"`
 }
 
 // Collection belongs to a Movie.

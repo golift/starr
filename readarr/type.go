@@ -136,7 +136,6 @@ type MetadataProfile struct {
 type Author struct {
 	ID                int64          `json:"id"`
 	Status            string         `json:"status,omitempty"`
-	Ended             bool           `json:"ended,omitempty"`
 	AuthorName        string         `json:"authorName,omitempty"`
 	ForeignAuthorID   string         `json:"foreignAuthorId,omitempty"`
 	TitleSlug         string         `json:"titleSlug,omitempty"`
@@ -146,7 +145,6 @@ type Author struct {
 	Path              string         `json:"path,omitempty"`
 	QualityProfileID  int            `json:"qualityProfileId,omitempty"`
 	MetadataProfileID int            `json:"metadataProfileId,omitempty"`
-	Monitored         bool           `json:"monitored,omitempty"`
 	Genres            []interface{}  `json:"genres,omitempty"`
 	CleanName         string         `json:"cleanName,omitempty"`
 	SortName          string         `json:"sortName,omitempty"`
@@ -156,6 +154,8 @@ type Author struct {
 	Statistics        *Statistics    `json:"statistics,omitempty"`
 	LastBook          *AuthorBook    `json:"lastBook,omitempty"`
 	NextBook          *AuthorBook    `json:"nextBook,omitempty"`
+	Ended             bool           `json:"ended,omitempty"`
+	Monitored         bool           `json:"monitored,omitempty"`
 }
 
 // AuthorBook is part of an Author.

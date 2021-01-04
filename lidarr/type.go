@@ -140,33 +140,35 @@ type SystemStatus struct {
 
 // Artist represents the /api/v1/artist endpoint, and it's part of an Album.
 type Artist struct {
-	ID                int64          `json:"id"`
-	Status            string         `json:"status,omitempty"`
-	LastInfoSync      time.Time      `json:"lastInfoSync,omitempty"`
-	ArtistName        string         `json:"artistName,omitempty"`
-	ForeignArtistID   string         `json:"foreignArtistId,omitempty"`
-	TadbID            int64          `json:"tadbId,omitempty"`
-	DiscogsID         int64          `json:"discogsId,omitempty"`
-	Overview          string         `json:"overview,omitempty"`
-	ArtistType        string         `json:"artistType,omitempty"`
-	Disambiguation    string         `json:"disambiguation,omitempty"`
-	Links             []*starr.Link  `json:"links,omitempty"`
-	Images            []*starr.Image `json:"images,omitempty"`
-	Path              string         `json:"path,omitempty"`
-	QualityProfileID  int64          `json:"qualityProfileId,omitempty"`
-	MetadataProfileID int64          `json:"metadataProfileId,omitempty"`
-	Genres            []string       `json:"genres,omitempty"`
-	CleanName         string         `json:"cleanName,omitempty"`
-	SortName          string         `json:"sortName,omitempty"`
-	Tags              []interface{}  `json:"tags,omitempty"`
-	Added             time.Time      `json:"added,omitempty"`
-	Ratings           *starr.Ratings `json:"ratings,omitempty"`
-	Statistics        *Statistics    `json:"statistics,omitempty"`
-	LastAlbum         *Album         `json:"lastAlbum,omitempty"`
-	NextAlbum         *Album         `json:"nextAlbum,omitempty"`
-	Ended             bool           `json:"ended,omitempty"`
-	AlbumFolder       bool           `json:"albumFolder,omitempty"`
-	Monitored         bool           `json:"monitored,omitempty"`
+	ID                int64             `json:"id"`
+	Status            string            `json:"status,omitempty"`
+	LastInfoSync      time.Time         `json:"lastInfoSync,omitempty"`
+	ArtistName        string            `json:"artistName,omitempty"`
+	ForeignArtistID   string            `json:"foreignArtistId,omitempty"`
+	TadbID            int64             `json:"tadbId,omitempty"`
+	DiscogsID         int64             `json:"discogsId,omitempty"`
+	QualityProfileID  int64             `json:"qualityProfileId,omitempty"`
+	MetadataProfileID int64             `json:"metadataProfileId,omitempty"`
+	Overview          string            `json:"overview,omitempty"`
+	ArtistType        string            `json:"artistType,omitempty"`
+	Disambiguation    string            `json:"disambiguation,omitempty"`
+	RootFolderPath    string            `json:"rootFolderPath,omitempty"`
+	Path              string            `json:"path,omitempty"`
+	CleanName         string            `json:"cleanName,omitempty"`
+	SortName          string            `json:"sortName,omitempty"`
+	Links             []*starr.Link     `json:"links,omitempty"`
+	Images            []*starr.Image    `json:"images,omitempty"`
+	Genres            []string          `json:"genres,omitempty"`
+	Tags              []interface{}     `json:"tags,omitempty"`
+	Added             time.Time         `json:"added,omitempty"`
+	Ratings           *starr.Ratings    `json:"ratings,omitempty"`
+	Statistics        *Statistics       `json:"statistics,omitempty"`
+	LastAlbum         *Album            `json:"lastAlbum,omitempty"`
+	NextAlbum         *Album            `json:"nextAlbum,omitempty"`
+	AddOptions        *ArtistAddOptions `json:"addOptions,omitempty"`
+	AlbumFolder       bool              `json:"albumFolder,omitempty"`
+	Monitored         bool              `json:"monitored,omitempty"`
+	Ended             bool              `json:"ended,omitempty"`
 }
 
 // Statistics is part of Artist.
@@ -181,28 +183,30 @@ type Statistics struct {
 
 // Album is the /api/v1/album endpoint.
 type Album struct {
-	ID             int64          `json:"id"`
-	Title          string         `json:"title"`
-	Disambiguation string         `json:"disambiguation"`
-	Overview       string         `json:"overview"`
-	ArtistID       int64          `json:"artistId"`
-	ForeignAlbumID string         `json:"foreignAlbumId"`
-	Monitored      bool           `json:"monitored"`
-	AnyReleaseOk   bool           `json:"anyReleaseOk"`
-	ProfileID      int64          `json:"profileId"`
-	Duration       int            `json:"duration"`
-	AlbumType      string         `json:"albumType"`
-	SecondaryTypes []interface{}  `json:"secondaryTypes"`
-	MediumCount    int            `json:"mediumCount"`
-	Ratings        *starr.Ratings `json:"ratings"`
-	ReleaseDate    time.Time      `json:"releaseDate"`
-	Releases       []*Release     `json:"releases"`
-	Genres         []interface{}  `json:"genres"`
-	Media          []*Media       `json:"media"`
-	Artist         *Artist        `json:"artist"`
-	Links          []*starr.Link  `json:"links"`
-	Images         []*starr.Image `json:"images"`
-	Statistics     *Statistics    `json:"statistics"`
+	ID             int64            `json:"id,omitempty"`
+	Title          string           `json:"title"`
+	Disambiguation string           `json:"disambiguation"`
+	Overview       string           `json:"overview"`
+	ArtistID       int64            `json:"artistId"`
+	ForeignAlbumID string           `json:"foreignAlbumId"`
+	ProfileID      int64            `json:"profileId"`
+	Duration       int              `json:"duration"`
+	AlbumType      string           `json:"albumType"`
+	SecondaryTypes []interface{}    `json:"secondaryTypes"`
+	MediumCount    int              `json:"mediumCount"`
+	Ratings        *starr.Ratings   `json:"ratings"`
+	ReleaseDate    time.Time        `json:"releaseDate"`
+	Releases       []*Release       `json:"releases"`
+	Genres         []interface{}    `json:"genres"`
+	Media          []*Media         `json:"media"`
+	Artist         *Artist          `json:"artist"`
+	Links          []*starr.Link    `json:"links"`
+	Images         []*starr.Image   `json:"images"`
+	Statistics     *Statistics      `json:"statistics"`
+	RemoteCover    string           `json:"remoteCover,omitempty"`
+	AddOptions     *AlbumAddOptions `json:"addOptions,omitempty"`
+	Monitored      bool             `json:"monitored"`
+	AnyReleaseOk   bool             `json:"anyReleaseOk"`
 }
 
 // Release is part of an Album.
@@ -230,47 +234,6 @@ type Media struct {
 	MediumFormat string `json:"mediumFormat"`
 }
 
-// XXX: fix these.
-
-// AddArtistInput is currently unknown.
-type AddArtistInput struct {
-	RootFolderPath    string            `json:"rootFolderPath"`
-	QualityProfileID  int               `json:"qualityProfileId"`
-	MetadataProfileID int               `json:"metadataProfileId"`
-	ForeignArtistID   string            `json:"foreignArtistId"`
-	Monitored         bool              `json:"monitored"`
-	AddOptions        *ArtistAddOptions `json:"addOptions"`
-}
-
-// AddArtistOutput is currently unknown.
-type AddArtistOutput struct {
-	Status            string            `json:"status"`
-	Ended             bool              `json:"ended"`
-	ArtistName        string            `json:"artistName"`
-	ForeignArtistID   string            `json:"foreignArtistId"`
-	TadbID            int               `json:"tadbId"`
-	DiscogsID         int               `json:"discogsId"`
-	Overview          string            `json:"overview"`
-	Disambiguation    string            `json:"disambiguation"`
-	Links             []*starr.Link     `json:"links"`
-	Images            []*starr.Image    `json:"images"`
-	Path              string            `json:"path"`
-	QualityProfileID  int               `json:"qualityProfileId"`
-	MetadataProfileID int               `json:"metadataProfileId"`
-	AlbumFolder       bool              `json:"albumFolder"`
-	Monitored         bool              `json:"monitored"`
-	Genres            []string          `json:"genres"`
-	CleanName         string            `json:"cleanName"`
-	SortName          string            `json:"sortName"`
-	Tags              []interface{}     `json:"tags"`
-	Added             time.Time         `json:"added"`
-	Ratings           *starr.Ratings    `json:"ratings"`
-	Statistics        *Statistics       `json:"statistics"`
-	ID                int               `json:"id"`
-	AddOptions        *ArtistAddOptions `json:"addOptions"`
-	RootFolderPath    string            `json:"rootFolderPath"`
-}
-
 // ArtistAddOptions is part of an artist and an album.
 type ArtistAddOptions struct {
 	Monitor                string `json:"monitor,omitempty"`
@@ -284,7 +247,7 @@ type AddAlbumInput struct {
 	Monitored      bool                    `json:"monitored"`
 	Releases       []*AddAlbumInputRelease `json:"releases"`
 	AddOptions     *AlbumAddOptions        `json:"addOptions"`
-	Artist         *AddArtistInput         `json:"artist"`
+	Artist         *Artist                 `json:"artist"`
 }
 
 // AddAlbumInputRelease is part of AddAlbumInput.
@@ -293,32 +256,6 @@ type AddAlbumInputRelease struct {
 	Title            string   `json:"title"`
 	Media            []*Media `json:"media"`
 	Monitored        bool     `json:"monitored"`
-}
-
-// AddAlbumOutput is currently unknown.
-type AddAlbumOutput struct {
-	Title          string           `json:"title"`
-	Disambiguation string           `json:"disambiguation"`
-	Overview       string           `json:"overview"`
-	ArtistID       int              `json:"artistId"`
-	ForeignAlbumID string           `json:"foreignAlbumId"`
-	Monitored      bool             `json:"monitored"`
-	AnyReleaseOk   bool             `json:"anyReleaseOk"`
-	ProfileID      int              `json:"profileId"`
-	Duration       int              `json:"duration"`
-	AlbumType      string           `json:"albumType"`
-	SecondaryTypes []interface{}    `json:"secondaryTypes"`
-	MediumCount    int              `json:"mediumCount"`
-	Ratings        *starr.Ratings   `json:"ratings"`
-	ReleaseDate    time.Time        `json:"releaseDate"`
-	Releases       []*Release       `json:"releases"`
-	Genres         []string         `json:"genres"`
-	Media          []*Media         `json:"media"`
-	Artist         *AddArtistOutput `json:"artist"`
-	Images         []*starr.Image   `json:"images"`
-	Links          []*starr.Link    `json:"links"`
-	RemoteCover    string           `json:"remoteCover"`
-	AddOptions     *AlbumAddOptions `json:"addOptions"`
 }
 
 // AlbumAddOptions is part of an Album.

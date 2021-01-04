@@ -8,10 +8,10 @@ test: lint nopollution
 	GOOS=freebsd GOARCH=386 go build .
 
 lint:
-	GOOS=linux golangci-lint run --enable-all -D forbidigo
-	GOOS=darwin golangci-lint run --enable-all -D forbidigo
-	GOOS=windows golangci-lint run --enable-all -D forbidigo
-	GOOS=freebsd golangci-lint run --enable-all -D forbidigo
+	GOOS=linux golangci-lint run --enable-all
+	GOOS=darwin golangci-lint run --enable-all
+	GOOS=windows golangci-lint run --enable-all
+	GOOS=freebsd golangci-lint run --enable-all
 
 nopollution:
 	# Avoid cross pollution.
