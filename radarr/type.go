@@ -28,6 +28,32 @@ func New(c *starr.Config) *Radarr {
 	return &Radarr{APIer: c}
 }
 
+// SystemStatus is the /api/v1/system/status endpoint.
+type SystemStatus struct {
+	Version           string    `json:"version"`
+	BuildTime         time.Time `json:"buildTime"`
+	StartupPath       string    `json:"startupPath"`
+	AppData           string    `json:"appData"`
+	OsName            string    `json:"osName"`
+	OsVersion         string    `json:"osVersion"`
+	Branch            string    `json:"branch"`
+	Authentication    string    `json:"authentication"`
+	SqliteVersion     string    `json:"sqliteVersion"`
+	URLBase           string    `json:"urlBase"`
+	RuntimeVersion    string    `json:"runtimeVersion"`
+	RuntimeName       string    `json:"runtimeName"`
+	MigrationVersion  int       `json:"migrationVersion"`
+	IsDebug           bool      `json:"isDebug"`
+	IsProduction      bool      `json:"isProduction"`
+	IsAdmin           bool      `json:"isAdmin"`
+	IsUserInteractive bool      `json:"isUserInteractive"`
+	IsNetCore         bool      `json:"isNetCore"`
+	IsMono            bool      `json:"isMono"`
+	IsLinux           bool      `json:"isLinux"`
+	IsOsx             bool      `json:"isOsx"`
+	IsWindows         bool      `json:"isWindows"`
+}
+
 // AddMovieInput is the input for a new movie.
 type AddMovieInput struct {
 	Title               string           `json:"title,omitempty"`
@@ -78,7 +104,7 @@ type AddMovieOutput struct {
 	TmdbID                int64               `json:"tmdbId"`
 	TitleSlug             string              `json:"titleSlug"`
 	Genres                []string            `json:"genres"`
-	Tags                  []interface{}       `json:"tags"`
+	Tags                  []int               `json:"tags"`
 	Added                 time.Time           `json:"added"`
 	AddOptions            *AddMovieOptions    `json:"addOptions"`
 	Ratings               *starr.Ratings      `json:"ratings"`
@@ -161,7 +187,7 @@ type RecordMovie struct {
 	TmdbID            int64          `json:"tmdbId"`
 	TitleSlug         string         `json:"titleSlug"`
 	Genres            []string       `json:"genres"`
-	Tags              []string       `json:"tags"`
+	Tags              []int          `json:"tags"`
 	Added             time.Time      `json:"added"`
 	Ratings           *starr.Ratings `json:"ratings"`
 	AlternativeTitles []string       `json:"alternativeTitles"`
@@ -236,7 +262,7 @@ type QueueMovie struct {
 	ImdbID                string         `json:"imdbId"`
 	TitleSlug             string         `json:"titleSlug"`
 	Genres                []string       `json:"genres"`
-	Tags                  []string       `json:"tags"`
+	Tags                  []int          `json:"tags"`
 	Images                []*starr.Image `json:"images"`
 	Ratings               *starr.Ratings `json:"ratings"`
 }
@@ -271,7 +297,7 @@ type Movie struct {
 	TitleSlug             string              `json:"titleSlug,omitempty"`
 	Certification         string              `json:"certification,omitempty"`
 	Genres                []string            `json:"genres,omitempty"`
-	Tags                  []interface{}       `json:"tags,omitempty"`
+	Tags                  []int               `json:"tags,omitempty"`
 	Added                 time.Time           `json:"added,omitempty"`
 	Ratings               *starr.Ratings      `json:"ratings,omitempty"`
 	MovieFile             *MovieFile          `json:"movieFile,omitempty"`

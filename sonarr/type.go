@@ -137,7 +137,7 @@ type Series struct {
 	RootFolderPath    string            `json:"rootFolderPath,omitempty"`
 	Certification     string            `json:"certification,omitempty"`
 	Genres            []string          `json:"genres,omitempty"`
-	Tags              []interface{}     `json:"tags,omitempty"`
+	Tags              []int             `json:"tags,omitempty"`
 	Added             time.Time         `json:"added,omitempty"`
 	Ratings           *starr.Ratings    `json:"ratings,omitempty"`
 	Statistics        *Statistics       `json:"statistics,omitempty"`
@@ -193,7 +193,7 @@ type SeriesLookup struct {
 	Folder            string         `json:"folder"`
 	Certification     string         `json:"certification"`
 	Genres            []string       `json:"genres"`
-	Tags              []interface{}  `json:"tags"`
+	Tags              []int          `json:"tags"`
 	Added             time.Time      `json:"added"`
 	Ratings           *starr.Ratings `json:"ratings"`
 	Statistics        *Statistics    `json:"statistics"`
@@ -267,7 +267,7 @@ type AddSeriesOutput struct {
 	TitleSlug         string            `json:"titleSlug"`
 	RootFolderPath    string            `json:"rootFolderPath"`
 	Genres            []string          `json:"genres"`
-	Tags              []interface{}     `json:"tags"`
+	Tags              []int             `json:"tags"`
 	Added             time.Time         `json:"added"`
 	AddOptions        *AddSeriesOptions `json:"addOptions"`
 	Ratings           *starr.Ratings    `json:"ratings"`

@@ -42,6 +42,12 @@ type Link struct {
 	Name string `json:"name"`
 }
 
+// Tag may be applied to nearly anything.
+type Tag struct {
+	ID    int
+	Label string
+}
+
 // Image is used in a few places.
 type Image struct {
 	CoverType string `json:"coverType"`

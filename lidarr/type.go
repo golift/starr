@@ -159,7 +159,7 @@ type Artist struct {
 	Links             []*starr.Link     `json:"links,omitempty"`
 	Images            []*starr.Image    `json:"images,omitempty"`
 	Genres            []string          `json:"genres,omitempty"`
-	Tags              []interface{}     `json:"tags,omitempty"`
+	Tags              []int             `json:"tags,omitempty"`
 	Added             time.Time         `json:"added,omitempty"`
 	Ratings           *starr.Ratings    `json:"ratings,omitempty"`
 	Statistics        *Statistics       `json:"statistics,omitempty"`

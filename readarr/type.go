@@ -95,20 +95,20 @@ type SystemStatus struct {
 
 // RootFolder is the /api/v1/rootfolder endpoint.
 type RootFolder struct {
-	ID                       int64         `json:"id"`
-	Name                     string        `json:"name"`
-	Path                     string        `json:"path"`
-	DefaultMetadataProfileID int64         `json:"defaultMetadataProfileId"`
-	DefaultQualityProfileID  int64         `json:"defaultQualityProfileId"`
-	DefaultMonitorOption     string        `json:"defaultMonitorOption"`
-	DefaultTags              []interface{} `json:"defaultTags"`
-	Port                     int           `json:"port"`
-	OutputProfile            int64         `json:"outputProfile"`
-	UseSsl                   bool          `json:"useSsl"`
-	Accessible               bool          `json:"accessible"`
-	IsCalibreLibrary         bool          `json:"isCalibreLibrary"`
-	FreeSpace                int64         `json:"freeSpace"`
-	TotalSpace               int64         `json:"totalSpace"`
+	ID                       int64  `json:"id"`
+	Name                     string `json:"name"`
+	Path                     string `json:"path"`
+	DefaultMetadataProfileID int64  `json:"defaultMetadataProfileId"`
+	DefaultQualityProfileID  int64  `json:"defaultQualityProfileId"`
+	DefaultMonitorOption     string `json:"defaultMonitorOption"`
+	DefaultTags              []int  `json:"defaultTags"`
+	Port                     int    `json:"port"`
+	OutputProfile            int64  `json:"outputProfile"`
+	UseSsl                   bool   `json:"useSsl"`
+	Accessible               bool   `json:"accessible"`
+	IsCalibreLibrary         bool   `json:"isCalibreLibrary"`
+	FreeSpace                int64  `json:"freeSpace"`
+	TotalSpace               int64  `json:"totalSpace"`
 }
 
 // QualityProfile is the /api/v1/qualityprofile endpoint.
@@ -148,7 +148,7 @@ type Author struct {
 	Genres            []interface{}  `json:"genres,omitempty"`
 	CleanName         string         `json:"cleanName,omitempty"`
 	SortName          string         `json:"sortName,omitempty"`
-	Tags              []interface{}  `json:"tags,omitempty"`
+	Tags              []int          `json:"tags,omitempty"`
 	Added             time.Time      `json:"added,omitempty"`
 	Ratings           *starr.Ratings `json:"ratings,omitempty"`
 	Statistics        *Statistics    `json:"statistics,omitempty"`
@@ -230,7 +230,7 @@ type BookAuthor struct {
 	Genres            []interface{}  `json:"genres"`
 	CleanName         string         `json:"cleanName"`
 	SortName          string         `json:"sortName"`
-	Tags              []interface{}  `json:"tags"`
+	Tags              []int          `json:"tags"`
 	Added             time.Time      `json:"added"`
 	Ratings           *starr.Ratings `json:"ratings"`
 	Statistics        *Statistics    `json:"statistics"`
