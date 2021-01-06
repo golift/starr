@@ -263,6 +263,7 @@ type Edition struct {
 // AddBookInput is the input to add a book.
 type AddBookInput struct {
 	Monitored     bool              `json:"monitored"`
+	Tags          []int             `json:"tags"`
 	AddOptions    *AddBookOptions   `json:"addOptions"`    // Contains Search.
 	Author        *AddBookAuthor    `json:"author"`        // Contains Author ID
 	Editions      []*AddBookEdition `json:"editions"`      // contains GRID Edition ID

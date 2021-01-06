@@ -66,6 +66,7 @@ type AddMovieInput struct {
 	Year                int              `json:"year,omitempty"`
 	Images              []*starr.Image   `json:"images,omitempty"`
 	AddOptions          *AddMovieOptions `json:"addOptions"`
+	Tags                []int            `json:"tags,omitempty"`
 	Monitored           bool             `json:"monitored,omitempty"`
 }
 
