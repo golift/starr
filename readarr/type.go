@@ -103,7 +103,7 @@ type RootFolder struct {
 	DefaultMonitorOption     string `json:"defaultMonitorOption"`
 	DefaultTags              []int  `json:"defaultTags"`
 	Port                     int    `json:"port"`
-	OutputProfile            int64  `json:"outputProfile"`
+	OutputProfile            string `json:"outputProfile"`
 	UseSsl                   bool   `json:"useSsl"`
 	Accessible               bool   `json:"accessible"`
 	IsCalibreLibrary         bool   `json:"isCalibreLibrary"`

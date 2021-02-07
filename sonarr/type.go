@@ -224,6 +224,7 @@ type AddSeriesInput struct {
 	TvdbID            int64             `json:"tvdbId"`
 	QualityProfileID  int64             `json:"qualityProfileId"`
 	LanguageProfileID int64             `json:"languageProfileID"`
+	Tags              []int             `json:"tags"`
 	RootFolderPath    string            `json:"rootFolderPath"`
 	Title             string            `json:"title,omitempty"`
 	SeriesType        string            `json:"seriesType,omitempty"`
