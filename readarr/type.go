@@ -155,7 +155,7 @@ type Author struct {
 	LastBook          *AuthorBook    `json:"lastBook,omitempty"`
 	NextBook          *AuthorBook    `json:"nextBook,omitempty"`
 	Ended             bool           `json:"ended,omitempty"`
-	Monitored         bool           `json:"monitored,omitempty"`
+	Monitored         bool           `json:"monitored"`
 }
 
 // AuthorBook is part of an Author.

@@ -145,7 +145,7 @@ type Series struct {
 	AirTime           string            `json:"airTime,omitempty"`
 	Ended             bool              `json:"ended,omitempty"`
 	SeasonFolder      bool              `json:"seasonFolder,omitempty"`
-	Monitored         bool              `json:"monitored,omitempty"`
+	Monitored         bool              `json:"monitored"`
 	UseSceneNumbering bool              `json:"useSceneNumbering,omitempty"`
 }
 

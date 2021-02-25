@@ -167,7 +167,7 @@ type Artist struct {
 	NextAlbum         *Album            `json:"nextAlbum,omitempty"`
 	AddOptions        *ArtistAddOptions `json:"addOptions,omitempty"`
 	AlbumFolder       bool              `json:"albumFolder,omitempty"`
-	Monitored         bool              `json:"monitored,omitempty"`
+	Monitored         bool              `json:"monitored"`
 	Ended             bool              `json:"ended,omitempty"`
 }
 

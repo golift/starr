@@ -67,7 +67,7 @@ type AddMovieInput struct {
 	Images              []*starr.Image   `json:"images,omitempty"`
 	AddOptions          *AddMovieOptions `json:"addOptions"`
 	Tags                []int            `json:"tags,omitempty"`
-	Monitored           bool             `json:"monitored,omitempty"`
+	Monitored           bool             `json:"monitored"`
 }
 
 // AddMovieOptions are the options for finding a new movie.
