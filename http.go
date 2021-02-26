@@ -46,7 +46,7 @@ func (c *Config) setHeaders(req *http.Request) {
 	}
 
 	req.Header.Set("Accept", "application/json")
-	req.Header.Set("User-Agent", "go-starr: https://"+reflect.TypeOf(Config{}).PkgPath())
+	req.Header.Set("User-Agent", "go-starr: https://"+reflect.TypeOf(Config{}).PkgPath()) //nolint:exhaustivestruct
 	req.Header.Set("X-API-Key", c.APIKey)
 }
 
