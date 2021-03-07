@@ -363,3 +363,10 @@ type QualityProfile struct {
 	FormatItems       []interface{}    `json:"formatItems"`
 	Language          *starr.Value     `json:"language"`
 }
+
+type Exclusion struct {
+	TMDBID int64  `json:"tmdbId"`
+	Title  string `json:"movieTitle"`
+	Year   int    `json:"movieYear"`
+	ID     int64  `json:"id,omitempty"`
+}
