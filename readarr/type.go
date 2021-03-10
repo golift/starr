@@ -162,7 +162,7 @@ type Author struct {
 type AuthorBook struct {
 	ID               int64           `json:"id"`
 	AuthorMetadataID int             `json:"authorMetadataId"`
-	ForeignBookID    string          `json:"foreignBookId"`
+	ForeignBookID    int64           `json:"foreignBookId"`
 	TitleSlug        string          `json:"titleSlug"`
 	Title            string          `json:"title"`
 	ReleaseDate      time.Time       `json:"releaseDate"`
@@ -188,7 +188,7 @@ type Book struct {
 	SeriesTitle    string         `json:"seriesTitle"`
 	Overview       string         `json:"overview"`
 	AuthorID       int64          `json:"authorId"`
-	ForeignBookID  string         `json:"foreignBookId"`
+	ForeignBookID  int64          `json:"foreignBookId"`
 	TitleSlug      string         `json:"titleSlug"`
 	Monitored      bool           `json:"monitored"`
 	AnyEditionOk   bool           `json:"anyEditionOk"`
@@ -309,7 +309,7 @@ type AddBookOutput struct {
 	Title         string         `json:"title"`
 	SeriesTitle   string         `json:"seriesTitle"`
 	Overview      string         `json:"overview"`
-	ForeignBookID string         `json:"foreignBookId"`
+	ForeignBookID int64          `json:"foreignBookId"`
 	TitleSlug     string         `json:"titleSlug"`
 	Ratings       *starr.Ratings `json:"ratings"`
 	ReleaseDate   time.Time      `json:"releaseDate"`
