@@ -151,12 +151,12 @@ func (r *Readarr) UpdateAuthor(authorID int64, author *Author) error {
 	return nil
 }
 
-// GetBook returns books. All if gridID is 0.
-func (r *Readarr) GetBook(gridID int64) ([]*Book, error) {
+// GetBook returns books. All if gridID is empty.
+func (r *Readarr) GetBook(gridID string) ([]*Book, error) {
 	params := make(url.Values)
 
-	if gridID > 0 {
-		params.Add("titleSlug", strconv.FormatInt(gridID, 10)) // this may change, but works for now.
+	if gridID != "" {
+		params.Add("titleSlug", gridID) // this may change, but works for now.
 	}
 
 	var books []*Book
