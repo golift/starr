@@ -22,7 +22,7 @@ specific needs this library doesn't currently meet, but should or could, please
 This library is currently in use by:
 
 -   [Unpackerr](https://github.com/davidnewhall/unpackerr/)
--   [Notifiarrt](https://github.com/Go-Lift-TV/notifiarr/)
+-   [Notifiarr](https://github.com/Go-Lift-TV/notifiarr/)
 
 # Usage
 
