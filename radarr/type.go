@@ -373,21 +373,21 @@ type Exclusion struct {
 
 // CustomFormat is the api/customformat endpoint payload.
 type CustomFormat struct {
-	ID                    int                `json:"id"`
-	Name                  string             `json:"name"`
-	IncludeCFWhenRenaming bool               `json:"includeCustomFormatWhenRenaming"`
-	Specifications        []CustomFormatSpec `json:"specifications"`
+	ID                    int                 `json:"id"`
+	Name                  string              `json:"name"`
+	IncludeCFWhenRenaming bool                `json:"includeCustomFormatWhenRenaming"`
+	Specifications        []*CustomFormatSpec `json:"specifications"`
 }
 
 // CustomFormatSpec is part of a CustomFormat.
 type CustomFormatSpec struct {
-	Name               string              `json:"name"`
-	Implementation     string              `json:"implementation"`
-	Implementationname string              `json:"implementationName"`
-	Infolink           string              `json:"infoLink"`
-	Negate             bool                `json:"negate"`
-	Required           bool                `json:"required"`
-	Fields             []CustomFormatField `json:"fields"`
+	Name               string               `json:"name"`
+	Implementation     string               `json:"implementation"`
+	Implementationname string               `json:"implementationName"`
+	Infolink           string               `json:"infoLink"`
+	Negate             bool                 `json:"negate"`
+	Required           bool                 `json:"required"`
+	Fields             []*CustomFormatField `json:"fields"`
 }
 
 // CustomFormatField is part of a CustomFormat Specification.
