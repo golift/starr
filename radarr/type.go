@@ -370,3 +370,32 @@ type Exclusion struct {
 	Year   int    `json:"movieYear"`
 	ID     int64  `json:"id,omitempty"`
 }
+
+// CustomFormat is the api/customformat endpoint payload.
+type CustomFormat struct {
+	ID                    int                 `json:"id"`
+	Name                  string              `json:"name"`
+	IncludeCFWhenRenaming bool                `json:"includeCustomFormatWhenRenaming"`
+	Specifications        []*CustomFormatSpec `json:"specifications"`
+}
+
+// CustomFormatSpec is part of a CustomFormat.
+type CustomFormatSpec struct {
+	Name               string               `json:"name"`
+	Implementation     string               `json:"implementation"`
+	Implementationname string               `json:"implementationName"`
+	Infolink           string               `json:"infoLink"`
+	Negate             bool                 `json:"negate"`
+	Required           bool                 `json:"required"`
+	Fields             []*CustomFormatField `json:"fields"`
+}
+
+// CustomFormatField is part of a CustomFormat Specification.
+type CustomFormatField struct {
+	Order    int    `json:"order"`
+	Name     string `json:"name"`
+	Label    string `json:"label"`
+	Value    string `json:"value"`
+	Type     string `json:"type"`
+	Advanced bool   `json:"advanced"`
+}
