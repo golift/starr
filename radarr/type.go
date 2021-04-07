@@ -392,10 +392,10 @@ type CustomFormatSpec struct {
 
 // CustomFormatField is part of a CustomFormat Specification.
 type CustomFormatField struct {
-	Order    int    `json:"order"`
-	Name     string `json:"name"`
-	Label    string `json:"label"`
-	Value    string `json:"value"`
-	Type     string `json:"type"`
-	Advanced bool   `json:"advanced"`
+	Order    int         `json:"order"`
+	Name     string      `json:"name"`
+	Label    string      `json:"label"`
+	Value    interface{} `json:"value"` // should be a string, but sometimes it's a number.
+	Type     string      `json:"type"`
+	Advanced bool        `json:"advanced"`
 }
