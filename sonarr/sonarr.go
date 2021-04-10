@@ -157,7 +157,7 @@ func (s *Sonarr) GetAllSeries() ([]*Series, error) {
 	return s.GetSeries(0)
 }
 
-// UpdateSeries updates a series to in place.
+// UpdateSeries updates a series in place.
 func (s *Sonarr) UpdateSeries(seriesID int64, series *Series) error {
 	put, err := json.Marshal(series)
 	if err != nil {
@@ -190,6 +190,38 @@ func (s *Sonarr) AddSeries(series *AddSeriesInput) (*AddSeriesOutput, error) {
 	var output AddSeriesOutput
 	if err = s.PostInto("v3/series", params, body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(series): %w", err)
+	}
+
+	return &output, nil
+}
+
+// GetCommands returns all available Sonarr commands.
+// These can be used with SendCommand.
+func (s *Sonarr) GetCommands() ([]*CommandResponse, error) {
+	var output []*CommandResponse
+
+	if err := s.GetInto("v3/command", nil, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(command): %w", err)
+	}
+
+	return output, nil
+}
+
+// SendCommand sends a command to Sonarr.
+func (s *Sonarr) SendCommand(cmd *CommandRequest) (*CommandResponse, error) {
+	if cmd == nil || cmd.Name == "" {
+		return nil, nil
+	}
+
+	body, err := json.Marshal(cmd)
+	if err != nil {
+		return nil, fmt.Errorf("json.Marshal(cmd): %w", err)
+	}
+
+	var output CommandResponse
+
+	if err := s.PostInto("v3/command", nil, body, &output); err != nil {
+		return nil, fmt.Errorf("api.Post(command): %w", err)
 	}
 
 	return &output, nil
