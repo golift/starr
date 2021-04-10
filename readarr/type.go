@@ -296,9 +296,12 @@ type AddBookOptions struct {
 
 // AddBookEdition is part of AddBookInput.
 type AddBookEdition struct {
-	Monitored        bool   `json:"monitored"`        // true
-	ManualAdd        bool   `json:"manualAdd"`        // true
-	ForeignEditionID string `json:"foreignEditionId"` // GRID ID
+	Title            string         `json:"title"`            // Edition Title
+	TitleSlug        interface{}    `json:"titleSlug"`        // Slugs are dumb
+	Images           []*starr.Image `json:"images"`           // this is dumb too
+	ForeignEditionID string         `json:"foreignEditionId"` // GRID ID
+	Monitored        bool           `json:"monitored"`        // true
+	ManualAdd        bool           `json:"manualAdd"`        // true
 }
 
 // AddBookOutput is returned when a book is added.
