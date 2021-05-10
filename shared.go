@@ -75,3 +75,9 @@ type Value struct {
 	ID   int64  `json:"id"`
 	Name string `json:"name"`
 }
+
+// KeyValue is yet another reusable generic type.
+type KeyValue struct {
+	Key   string `json:"key"`
+	Value int    `json:"value"`
+}
