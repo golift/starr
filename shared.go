@@ -8,20 +8,28 @@ type StatusMessage struct {
 	Messages []string `json:"messages"`
 }
 
+// RootQuality is a base quality profile.
+type RootQuality struct {
+	ID         int64  `json:"id"`
+	Name       string `json:"name"`
+	Source     string `json:"source,omitempty"`
+	Resolution int    `json:"resolution,omitempty"`
+	Modifier   string `json:"modifier,omitempty"`
+}
+
 // Quality is a download quality attached to a movie, book, track or series.
 type Quality struct {
-	Quality struct {
-		ID         int64  `json:"id"`
-		Name       string `json:"name"`
-		Source     string `json:"source,omitempty"`
-		Resolution int    `json:"resolution,omitempty"`
-		Modifier   string `json:"modifier,omitempty"`
-	} `json:"quality"`
-	Revision struct {
-		Version  int64 `json:"version"`
-		Real     int64 `json:"real"`
-		IsRepack bool  `json:"isRepack,omitempty"`
-	} `json:"revision,omitempty"`
+	Quality  *RootQuality     `json:"quality,omitempty"`
+	Items    []*Quality       `json:"items,omitempty"`
+	Allowed  bool             `json:"allowed,omitempty"`
+	Revision *QualityRevision `json:"revision,omitempty"` // Not for Radarr.
+}
+
+// QualityRevision is probably used in Sonarr.
+type QualityRevision struct {
+	Version  int64 `json:"version"`
+	Real     int64 `json:"real"`
+	IsRepack bool  `json:"isRepack,omitempty"`
 }
 
 // Ratings belong to a few types.

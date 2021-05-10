@@ -139,6 +139,38 @@ func (r *Radarr) GetQualityProfiles() ([]*QualityProfile, error) {
 	return profiles, nil
 }
 
+// AddQualityProfile updates a quality profile in place.
+func (r *Radarr) AddQualityProfile(profile *QualityProfile) (int64, error) {
+	post, err := json.Marshal(profile)
+	if err != nil {
+		return 0, fmt.Errorf("json.Marshal(profile): %w", err)
+	}
+
+	var output QualityProfile
+
+	err = r.PostInto("v3/qualityProfile", nil, post, &output)
+	if err != nil {
+		return 0, fmt.Errorf("api.Post(qualityProfile): %w", err)
+	}
+
+	return output.ID, nil
+}
+
+// UpdateQualityProfile updates a quality profile in place.
+func (r *Radarr) UpdateQualityProfile(profile *QualityProfile) error {
+	put, err := json.Marshal(profile)
+	if err != nil {
+		return fmt.Errorf("json.Marshal(profile): %w", err)
+	}
+
+	_, err = r.Put("v3/qualityProfile/"+strconv.FormatInt(profile.ID, 10), nil, put)
+	if err != nil {
+		return fmt.Errorf("api.Put(qualityProfile): %w", err)
+	}
+
+	return nil
+}
+
 // GetRootFolders returns all configured root folders.
 func (r *Radarr) GetRootFolders() ([]*RootFolder, error) {
 	var folders []*RootFolder
