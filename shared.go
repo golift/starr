@@ -8,8 +8,8 @@ type StatusMessage struct {
 	Messages []string `json:"messages"`
 }
 
-// RootQuality is a base quality profile.
-type RootQuality struct {
+// BaseQuality is a base quality profile.
+type BaseQuality struct {
 	ID         int64  `json:"id"`
 	Name       string `json:"name"`
 	Source     string `json:"source,omitempty"`
@@ -17,12 +17,16 @@ type RootQuality struct {
 	Modifier   string `json:"modifier,omitempty"`
 }
 
-// Quality is a download quality attached to a movie, book, track or series.
+// Quality is a download quality profile attached to a movie, book, track or series.
+// It may contain 1 or more profiles.
+// Readarr does not use Name or ID in this struct.
 type Quality struct {
-	Quality  *RootQuality     `json:"quality,omitempty"`
-	Items    []*Quality       `json:"items,omitempty"`
-	Allowed  bool             `json:"allowed,omitempty"`
-	Revision *QualityRevision `json:"revision,omitempty"` // Not for Radarr.
+	Name     string           `json:"name,omitempty"`
+	ID       int              `json:"id,omitempty"`
+	Quality  *BaseQuality     `json:"quality,omitempty"`
+	Items    []*Quality       `json:"items"`
+	Allowed  bool             `json:"allowed"`
+	Revision *QualityRevision `json:"revision,omitempty"` // Not sure which app had this....
 }
 
 // QualityRevision is probably used in Sonarr.
