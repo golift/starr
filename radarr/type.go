@@ -360,8 +360,15 @@ type QualityProfile struct {
 	Qualities         []*starr.Quality `json:"items"`
 	MinFormatScore    int64            `json:"minFormatScore"`
 	CutoffFormatScore int64            `json:"cutoffFormatScore"`
-	FormatItems       []interface{}    `json:"formatItems"`
+	FormatItems       []*FormatItem    `json:"formatItems,omitempty"`
 	Language          *starr.Value     `json:"language"`
+}
+
+// FormatItem is part of a QualityProfile.
+type FormatItem struct {
+	Format int    `json:"format"`
+	Name   string `json:"name"`
+	Score  int    `json:"score"`
 }
 
 type Exclusion struct {

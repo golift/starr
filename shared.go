@@ -8,20 +8,32 @@ type StatusMessage struct {
 	Messages []string `json:"messages"`
 }
 
-// Quality is a download quality attached to a movie, book, track or series.
+// BaseQuality is a base quality profile.
+type BaseQuality struct {
+	ID         int64  `json:"id"`
+	Name       string `json:"name"`
+	Source     string `json:"source,omitempty"`
+	Resolution int    `json:"resolution,omitempty"`
+	Modifier   string `json:"modifier,omitempty"`
+}
+
+// Quality is a download quality profile attached to a movie, book, track or series.
+// It may contain 1 or more profiles.
+// Readarr does not use Name or ID in this struct.
 type Quality struct {
-	Quality struct {
-		ID         int64  `json:"id"`
-		Name       string `json:"name"`
-		Source     string `json:"source,omitempty"`
-		Resolution int    `json:"resolution,omitempty"`
-		Modifier   string `json:"modifier,omitempty"`
-	} `json:"quality"`
-	Revision struct {
-		Version  int64 `json:"version"`
-		Real     int64 `json:"real"`
-		IsRepack bool  `json:"isRepack,omitempty"`
-	} `json:"revision,omitempty"`
+	Name     string           `json:"name,omitempty"`
+	ID       int              `json:"id,omitempty"`
+	Quality  *BaseQuality     `json:"quality,omitempty"`
+	Items    []*Quality       `json:"items"`
+	Allowed  bool             `json:"allowed"`
+	Revision *QualityRevision `json:"revision,omitempty"` // Not sure which app had this....
+}
+
+// QualityRevision is probably used in Sonarr.
+type QualityRevision struct {
+	Version  int64 `json:"version"`
+	Real     int64 `json:"real"`
+	IsRepack bool  `json:"isRepack,omitempty"`
 }
 
 // Ratings belong to a few types.
@@ -66,4 +78,10 @@ type Path struct {
 type Value struct {
 	ID   int64  `json:"id"`
 	Name string `json:"name"`
+}
+
+// KeyValue is yet another reusable generic type.
+type KeyValue struct {
+	Key   string `json:"key"`
+	Value int    `json:"value"`
 }
