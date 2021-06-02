@@ -10,6 +10,32 @@ import (
 	"golift.io/starr"
 )
 
+// GetQueue returns the Sonarr Queue (processing, but not yet imported).
+func (s *Sonarr) GetQueue(maxRecords, page int) (*Queue, error) {
+	if maxRecords < 1 {
+		maxRecords = 1
+	}
+
+	if page < 1 {
+		page = 1
+	}
+
+	params := make(url.Values)
+	params.Set("sortKey", "timeleft")
+	params.Set("sortDir", "asc")
+	params.Set("pageSize", strconv.Itoa(maxRecords))
+	params.Set("page", strconv.Itoa(page))
+
+	var queue Queue
+
+	err := s.GetInto("v3/queue", params, &queue)
+	if err != nil {
+		return nil, fmt.Errorf("api.Get(queue): %w", err)
+	}
+
+	return &queue, nil
+}
+
 // GetTags returns all the tags.
 func (s *Sonarr) GetTags() ([]*starr.Tag, error) {
 	var tags []*starr.Tag

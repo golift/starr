@@ -67,12 +67,20 @@ func (r *Radarr) AddTag(label string) (int, error) {
 }
 
 // GetHistory returns the Radarr History (grabs/failures/completed).
-func (r *Radarr) GetHistory() ([]*Record, error) {
+func (r *Radarr) GetHistory(maxRecords, page int) ([]*Record, error) {
+	if maxRecords < 1 {
+		maxRecords = 10
+	}
+
+	if page < 1 {
+		page = 1
+	}
+
 	params := make(url.Values)
 	params.Set("sortKey", "date")
 	params.Set("sortDir", "asc")
-	params.Set("page", "1")
-	params.Set("pageSize", "0")
+	params.Set("pageSize", strconv.Itoa(maxRecords))
+	params.Set("page", strconv.Itoa(page))
 
 	var history History
 
@@ -85,19 +93,29 @@ func (r *Radarr) GetHistory() ([]*Record, error) {
 }
 
 // GetQueue returns the Radarr Queue (processing, but not yet imported).
-func (r *Radarr) GetQueue() ([]*Queue, error) {
-	params := make(url.Values)
-	params.Set("sort_by", "timeleft")
-	params.Set("order", "asc")
+func (r *Radarr) GetQueue(maxRecords, page int) (*Queue, error) {
+	if maxRecords < 1 {
+		maxRecords = 10
+	}
 
-	var queue []*Queue
+	if page < 1 {
+		page = 1
+	}
+
+	params := make(url.Values)
+	params.Set("sortKey", "timeleft")
+	params.Set("sortDir", "asc")
+	params.Set("pageSize", strconv.Itoa(maxRecords))
+	params.Set("page", strconv.Itoa(page))
+
+	var queue Queue
 
 	err := r.GetInto("v3/queue", params, &queue)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(queue): %w", err)
 	}
 
-	return queue, nil
+	return &queue, nil
 }
 
 // GetMovie grabs a movie from the queue, or all movies if tmdbId is 0.
