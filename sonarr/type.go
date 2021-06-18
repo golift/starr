@@ -44,7 +44,7 @@ type ReleaseProfile struct {
 	Preferred       []*starr.KeyValue `json:"preferred"`
 	IncPrefOnRename bool              `json:"includePreferredWhenRenaming"`
 	IndexerID       int64             `json:"indexerId"`
-	Tags            []*starr.Tag      `json:"tags"`
+	Tags            []int             `json:"tags"`
 	ID              int64             `json:"id"`
 	Enabled         bool              `json:"enabled"`
 }
