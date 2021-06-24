@@ -283,7 +283,7 @@ type Movie struct {
 	Collection            *Collection         `json:"collection,omitempty"`
 	HasFile               bool                `json:"hasFile,omitempty"`
 	IsAvailable           bool                `json:"isAvailable,omitempty"`
-	Monitored             bool                `json:"monitored,omitempty"`
+	Monitored             bool                `json:"monitored"`
 }
 
 // Collection belongs to a Movie.

@@ -5,7 +5,6 @@ package radarr
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/url"
 	"strconv"
 
@@ -211,12 +210,10 @@ func (r *Radarr) UpdateMovie(movieID int64, movie *Movie) error {
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
-	b, err := r.Put("v3/movie/"+strconv.FormatInt(movieID, 10), params, put)
+	_, err = r.Put("v3/movie/"+strconv.FormatInt(movieID, 10), params, put)
 	if err != nil {
 		return fmt.Errorf("api.Put(movie): %w", err)
 	}
-
-	log.Println("SHOW THIS TO CAPTAIN plz:", string(b))
 
 	return nil
 }
