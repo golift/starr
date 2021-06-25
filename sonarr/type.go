@@ -179,6 +179,23 @@ type Season struct {
 	Statistics   *Statistics `json:"statistics,omitempty"`
 }
 
+// Episode is the /api/v3/episode endpoint.
+type Episode struct {
+	ID                       int64     `json:"id"`
+	SeriesID                 int64     `json:"seriesId"`
+	AbsoluteEpisodeNumber    int64     `json:"absoluteEpisodeNumber"`
+	EpisodeFileID            int64     `json:"episodeFileId"`
+	SeasonNumber             int64     `json:"seasonNumber"`
+	EpisodeNumber            int64     `json:"episodeNumber"`
+	AirDateUtc               time.Time `json:"airDateUtc"`
+	AirDate                  string    `json:"airDate"`
+	Title                    string    `json:"title"`
+	Overview                 string    `json:"overview"`
+	UnverifiedSceneNumbering bool      `json:"unverifiedSceneNumbering"`
+	HasFile                  bool      `json:"hasFile"`
+	Monitored                bool      `json:"monitored"`
+}
+
 // SeriesLookup is the /api/v3/series/lookup endpoint.
 type SeriesLookup struct {
 	Title             string         `json:"title"`
