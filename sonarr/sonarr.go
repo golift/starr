@@ -334,7 +334,10 @@ func (s *Sonarr) SendCommand(cmd *CommandRequest) (*CommandResponse, error) {
 func (s *Sonarr) GetSeriesEpisodes(seriesID int64) ([]*Episode, error) {
 	var output []*Episode
 
-	err := s.GetInto("v3/episode?seriesId="+strconv.FormatInt(seriesID, 10), nil, &output)
+	params := make(url.Values)
+	params.Add("seriesId", strconv.FormatInt(seriesID, 10))
+
+	err := s.GetInto("v3/episode?seriesId", params, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(episode): %w", err)
 	}
