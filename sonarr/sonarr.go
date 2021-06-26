@@ -25,6 +25,7 @@ func (s *Sonarr) GetQueue(maxRecords, page int) (*Queue, error) {
 	params.Set("sortDir", "asc")
 	params.Set("pageSize", strconv.Itoa(maxRecords))
 	params.Set("page", strconv.Itoa(page))
+	params.Set("includeUnknownSeriesItems", "true")
 
 	var queue Queue
 

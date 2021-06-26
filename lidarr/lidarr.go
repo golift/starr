@@ -99,6 +99,7 @@ func (l *Lidarr) GetQueue(maxRecords int) (*Queue, error) {
 	params.Set("sortKey", "timeleft")
 	params.Set("sortDir", "asc")
 	params.Set("pageSize", strconv.Itoa(maxRecords))
+	params.Set("includeUnknownArtistItems", "true")
 
 	var queue Queue
 

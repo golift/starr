@@ -106,6 +106,7 @@ func (r *Radarr) GetQueue(maxRecords, page int) (*Queue, error) {
 	params.Set("sortDir", "asc")
 	params.Set("pageSize", strconv.Itoa(maxRecords))
 	params.Set("page", strconv.Itoa(page))
+	params.Set("includeUnknownMovieItems", "true")
 
 	var queue Queue
 

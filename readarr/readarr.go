@@ -59,7 +59,8 @@ func (r *Readarr) GetQueue(maxRecords int) (*Queue, error) {
 	}
 
 	params := make(url.Values)
-	params["pageSize"] = []string{strconv.Itoa(maxRecords)}
+	params.Set("pageSize", strconv.Itoa(maxRecords))
+	params.Set("includeUnknownAuthorItems", "true")
 
 	var queue Queue
 
