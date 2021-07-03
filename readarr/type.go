@@ -30,16 +30,16 @@ func New(c *starr.Config) *Readarr {
 
 // Queue is the /api/v1/queue endpoint.
 type Queue struct {
-	Page          int          `json:"page"`
-	PageSize      int          `json:"pageSize"`
-	SortKey       string       `json:"sortKey"`
-	SortDirection string       `json:"sortDirection"`
-	TotalRecords  int          `json:"totalRecords"`
-	Records       []BookRecord `json:"records"`
+	Page          int            `json:"page"`
+	PageSize      int            `json:"pageSize"`
+	SortKey       string         `json:"sortKey"`
+	SortDirection string         `json:"sortDirection"`
+	TotalRecords  int            `json:"totalRecords"`
+	Records       []*QueueRecord `json:"records"`
 }
 
-// BookRecord is a book from the queue API path.
-type BookRecord struct {
+// QueueRecord is a book from the queue API path.
+type QueueRecord struct {
 	AuthorID                int64                  `json:"authorId"`
 	BookID                  int64                  `json:"bookId"`
 	Quality                 *starr.Quality         `json:"quality"`

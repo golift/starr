@@ -30,16 +30,16 @@ func New(c *starr.Config) *Lidarr {
 
 // Queue is the /api/v1/queue endpoint.
 type Queue struct {
-	Page          int       `json:"page"`
-	PageSize      int       `json:"pageSize"`
-	SortKey       string    `json:"sortKey"`
-	SortDirection string    `json:"sortDirection"`
-	TotalRecords  int       `json:"totalRecords"`
-	Records       []*Record `json:"records"`
+	Page          int            `json:"page"`
+	PageSize      int            `json:"pageSize"`
+	SortKey       string         `json:"sortKey"`
+	SortDirection string         `json:"sortDirection"`
+	TotalRecords  int            `json:"totalRecords"`
+	Records       []*QueueRecord `json:"records"`
 }
 
-// Record represents the records returns by the /api/v1/queue endpoint.
-type Record struct {
+// QueueRecord represents the records returns by the /api/v1/queue endpoint.
+type QueueRecord struct {
 	ArtistID                int64                  `json:"artistId"`
 	AlbumID                 int64                  `json:"albumId"`
 	Quality                 *starr.Quality         `json:"quality"`
