@@ -244,6 +244,7 @@ type QueueRecord struct {
 	Indexer                 string                 `json:"indexer"`
 	OutputPath              string                 `json:"outputPath"`
 	ID                      int64                  `json:"id"`
+	ErrorMessage            string                 `json:"errorMessage"`
 }
 
 // Movie is the /api/v3/movie endpoint.

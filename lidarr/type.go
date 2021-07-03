@@ -58,6 +58,7 @@ type Record struct {
 	OutputPath              string                 `json:"outputPath"`
 	DownloadForced          bool                   `json:"downloadForced"`
 	ID                      int64                  `json:"id"`
+	ErrorMessage            string                 `json:"errorMessage"`
 }
 
 // QualityProfile is the /api/v1/qualityprofile endpoint.

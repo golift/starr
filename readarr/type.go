@@ -59,6 +59,7 @@ type BookRecord struct {
 	OutputPath              string                 `json:"outputPath,omitempty"`
 	DownloadForced          bool                   `json:"downloadForced"`
 	ID                      int64                  `json:"id"`
+	ErrorMessage            string                 `json:"errorMessage"`
 }
 
 // SystemStatus is the /api/v1/system/status endpoint.

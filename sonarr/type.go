@@ -119,6 +119,7 @@ type QueueRecord struct {
 	DownloadClient          string                 `json:"downloadClient"`
 	Indexer                 string                 `json:"indexer"`
 	OutputPath              string                 `json:"outputPath"`
+	ErrorMessage            string                 `json:"errorMessage"`
 }
 
 // Series the /api/v3/series endpoint.
