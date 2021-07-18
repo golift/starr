@@ -9,13 +9,13 @@ type App string
 // These constants are just here for convenience.
 // If you add more here, add them to String() below.
 const (
-	Emby     App = "Emby"
-	Lidarr   App = "Lidarr"
-	Plex     App = "Plex"
-	Prowlarr App = "Prowlarr"
-	Radarr   App = "Radarr"
-	Readarr  App = "Readarr"
-	Sonarr   App = "Sonarr"
+	Emby     App = "emby"
+	Lidarr   App = "lidarr"
+	Plex     App = "plex"
+	Prowlarr App = "prowlarr"
+	Radarr   App = "radarr"
+	Readarr  App = "readarr"
+	Sonarr   App = "sonarr"
 )
 
 // String turns an App name into a string.
