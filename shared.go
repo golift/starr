@@ -1,5 +1,7 @@
 package starr
 
+import "strings"
+
 /* This file contains shared structs or constants for all the *arr apps. */
 
 // App can be used to satisfy a context value key.
@@ -9,23 +11,23 @@ type App string
 // These constants are just here for convenience.
 // If you add more here, add them to String() below.
 const (
-	Emby     App = "emby"
-	Lidarr   App = "lidarr"
-	Plex     App = "plex"
-	Prowlarr App = "prowlarr"
-	Radarr   App = "radarr"
-	Readarr  App = "readarr"
-	Sonarr   App = "sonarr"
+	Emby     App = "Emby"
+	Lidarr   App = "Lidarr"
+	Plex     App = "Plex"
+	Prowlarr App = "Prowlarr"
+	Radarr   App = "Radarr"
+	Readarr  App = "Readarr"
+	Sonarr   App = "Sonarr"
 )
 
 // String turns an App name into a string.
 func (a App) String() string {
-	switch a {
-	case Lidarr, Radarr, Readarr, Sonarr, Plex, Emby, Prowlarr:
-		return string(a)
-	default:
-		return "Unknown"
-	}
+	return string(a)
+}
+
+// Lower turns an App name into a lowercase string.
+func (a App) Lower() string {
+	return strings.ToLower(string(a))
 }
 
 // StatusMessage represents the status of the item. All apps use this.
