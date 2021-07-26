@@ -337,17 +337,17 @@ type CommandResponse struct {
 
 // History is the /api/v3/history endpoint.
 type History struct {
-	Page          int               `json:"page"`
-	PageSize      int               `json:"pageSize"`
-	SortKey       string            `json:"sortKey"`
-	SortDirection string            `json:"sortDirection"`
-	TotalRecords  int               `json:"totalRecords"`
-	Records       []*HistoryRecords `json:"records"`
+	Page          int              `json:"page"`
+	PageSize      int              `json:"pageSize"`
+	SortKey       string           `json:"sortKey"`
+	SortDirection string           `json:"sortDirection"`
+	TotalRecords  int              `json:"totalRecords"`
+	Records       []*HistoryRecord `json:"records"`
 }
 
 // HistoryRecords are part of the History data.
 // Not all items have all Data members. Check EventType for what you need.
-type HistoryRecords struct {
+type HistoryRecord struct {
 	ID                  int64          `json:"id"`
 	MovieID             int64          `json:"movieId"`
 	SourceTitle         string         `json:"sourceTitle"`
