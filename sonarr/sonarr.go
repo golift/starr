@@ -363,3 +363,22 @@ func (s *Sonarr) MonitorEpisode(episodeIDs []int64, monitor bool) ([]*Episode, e
 
 	return output, nil
 }
+
+// GetHistory returns the last few items from the history endpoint.
+func (s *Sonarr) GetHistory(maxRecords int) (*History, error) {
+	if maxRecords < 1 {
+		maxRecords = 1
+	}
+
+	params := make(url.Values)
+	params.Set("pageSize", strconv.Itoa(maxRecords))
+
+	var history History
+
+	err := s.GetInto("v3/history", params, &history)
+	if err != nil {
+		return nil, fmt.Errorf("api.Get(history): %w", err)
+	}
+
+	return &history, nil
+}

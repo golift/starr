@@ -291,3 +291,49 @@ type CommandResponse struct {
 	UpdateScheduledTask bool                   `json:"updateScheduledTask"`
 	Body                map[string]interface{} `json:"body"`
 }
+
+// History represents the /api/v1/history endpoint.
+type History struct {
+	Page          int              `json:"page"`
+	PageSize      int              `json:"pageSize"`
+	SortKey       string           `json:"sortKey"`
+	SortDirection string           `json:"sortDirection"`
+	TotalRecords  int              `json:"totalRecords"`
+	Records       []*HistoryRecord `json:"records"`
+}
+
+// HistoryRecord is part of the history. Not all items have all Data members.
+// Check EventType for events you need.
+type HistoryRecord struct {
+	ID                  int64          `json:"id"`
+	AlbumID             int64          `json:"albumId"`
+	ArtistID            int64          `json:"artistId"`
+	TrackID             int64          `json:"trackId"`
+	SourceTitle         string         `json:"sourceTitle"`
+	Quality             *starr.Quality `json:"quality"`
+	QualityCutoffNotMet bool           `json:"qualityCutoffNotMet"`
+	Date                time.Time      `json:"date"`
+	DownloadID          string         `json:"downloadId"`
+	EventType           string         `json:"eventType"`
+	Data                struct {
+		Age             string    `json:"age"`
+		AgeHours        string    `json:"ageHours"`
+		AgeMinutes      string    `json:"ageMinutes"`
+		DownloadClient  string    `json:"downloadClient"`
+		DownloadForced  string    `json:"downloadForced"`
+		DownloadURL     string    `json:"downloadUrl"`
+		DroppedPath     string    `json:"droppedPath"`
+		GUID            string    `json:"guid"`
+		ImportedPath    string    `json:"importedPath"`
+		Indexer         string    `json:"indexer"`
+		Message         string    `json:"message"`
+		NzbInfoURL      string    `json:"nzbInfoUrl"`
+		Protocol        string    `json:"protocol"`
+		PublishedDate   time.Time `json:"publishedDate"`
+		Reason          string    `json:"reason"`
+		ReleaseGroup    string    `json:"releaseGroup"`
+		Size            string    `json:"size"`
+		StatusMessages  string    `json:"statusMessages"`
+		TorrentInfoHash string    `json:"torrentInfoHash"`
+	} `json:"data"`
+}

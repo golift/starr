@@ -66,7 +66,7 @@ func (r *Radarr) AddTag(label string) (int, error) {
 }
 
 // GetHistory returns the Radarr History (grabs/failures/completed).
-func (r *Radarr) GetHistory(maxRecords, page int) ([]*Record, error) {
+func (r *Radarr) GetHistory(maxRecords, page int) (*History, error) {
 	if maxRecords < 1 {
 		maxRecords = 10
 	}
@@ -88,7 +88,7 @@ func (r *Radarr) GetHistory(maxRecords, page int) ([]*Record, error) {
 		return nil, fmt.Errorf("api.Get(history): %w", err)
 	}
 
-	return history.Records, nil
+	return &history, nil
 }
 
 // GetQueue returns the Radarr Queue (processing, but not yet imported).

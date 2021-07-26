@@ -342,3 +342,53 @@ type CommandResponse struct {
 	UpdateScheduledTask bool                   `json:"updateScheduledTask"`
 	Body                map[string]interface{} `json:"body"`
 }
+
+// History is the data from the /api/v3/history endpoint.
+type History struct {
+	Page          int              `json:"page"`
+	PageSize      int              `json:"pageSize"`
+	SortKey       string           `json:"sortKey"`
+	SortDirection string           `json:"sortDirection"`
+	TotalRecords  int              `json:"totalRecords"`
+	Records       []*HistoryRecord `json:"records"`
+}
+
+// HistoryRecords are part of the History data.
+// Not all items have all Data members. Check EventType for what you need.
+type HistoryRecord struct {
+	ID                   int64          `json:"id"`
+	EpisodeID            int64          `json:"episodeId"`
+	SeriesID             int64          `json:"seriesId"`
+	SourceTitle          string         `json:"sourceTitle"`
+	Language             Language       `json:"language"`
+	Quality              *starr.Quality `json:"quality"`
+	QualityCutoffNotMet  bool           `json:"qualityCutoffNotMet"`
+	LanguageCutoffNotMet bool           `json:"languageCutoffNotMet"`
+	Date                 time.Time      `json:"date"`
+	DownloadID           string         `json:"downloadId,omitempty"`
+	EventType            string         `json:"eventType"`
+	Data                 struct {
+		Age                string    `json:"age"`
+		AgeHours           string    `json:"ageHours"`
+		AgeMinutes         string    `json:"ageMinutes"`
+		DownloadClient     string    `json:"downloadClient"`
+		DownloadClientName string    `json:"downloadClientName"`
+		DownloadURL        string    `json:"downloadUrl"`
+		DroppedPath        string    `json:"droppedPath"`
+		FileID             string    `json:"fileId"`
+		GUID               string    `json:"guid"`
+		ImportedPath       string    `json:"importedPath"`
+		Indexer            string    `json:"indexer"`
+		Message            string    `json:"message"`
+		NzbInfoURL         string    `json:"nzbInfoUrl"`
+		PreferredWordScore string    `json:"preferredWordScore"`
+		Protocol           string    `json:"protocol"`
+		PublishedDate      time.Time `json:"publishedDate"`
+		Reason             string    `json:"reason"`
+		ReleaseGroup       string    `json:"releaseGroup"`
+		Size               string    `json:"size"`
+		TorrentInfoHash    string    `json:"torrentInfoHash"`
+		TvRageID           string    `json:"tvRageId"`
+		TvdbID             string    `json:"tvdbId"`
+	} `json:"data"`
+}

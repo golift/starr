@@ -285,3 +285,22 @@ func (r *Readarr) SendCommand(cmd *CommandRequest) (*CommandResponse, error) {
 
 	return &output, nil
 }
+
+// GetHistory returns the last few items from the history endpoint.
+func (r *Readarr) GetHistory(maxRecords int) (*History, error) {
+	if maxRecords < 1 {
+		maxRecords = 1
+	}
+
+	params := make(url.Values)
+	params.Set("pageSize", strconv.Itoa(maxRecords))
+
+	var history History
+
+	err := r.GetInto("v1/history", params, &history)
+	if err != nil {
+		return nil, fmt.Errorf("api.Get(history): %w", err)
+	}
+
+	return &history, nil
+}

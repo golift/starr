@@ -135,84 +135,6 @@ type RootFolder struct {
 	UnmappedFolders []*starr.Path `json:"unmappedFolders"`
 }
 
-// History is the /api/history endpoint.
-type History struct {
-	Page          int       `json:"page"`
-	PageSize      int       `json:"pageSize"`
-	SortKey       string    `json:"sortKey"`
-	SortDirection string    `json:"sortDirection"`
-	TotalRecords  int64     `json:"totalRecords"`
-	Records       []*Record `json:"Records"`
-}
-
-// Record is a record in Radarr History.
-type Record struct {
-	ID                  int64          `json:"id"`
-	EpisodeID           int64          `json:"episodeId"`
-	MovieID             int64          `json:"movieId"`
-	SeriesID            int64          `json:"seriesId"`
-	SourceTitle         string         `json:"sourceTitle"`
-	Quality             *starr.Quality `json:"quality"`
-	QualityCutoffNotMet bool           `json:"qualityCutoffNotMet"`
-	Date                time.Time      `json:"date"`
-	DownloadID          string         `json:"downloadId"`
-	EventType           string         `json:"eventType"`
-	Data                *RecordData    `json:"data"`
-	Movie               *RecordMovie   `json:"movie"`
-}
-
-// RecordMovie belongs to a Record.
-type RecordMovie struct {
-	ID                int64          `json:"id"`
-	Downloaded        bool           `json:"downloaded"`
-	Monitored         bool           `json:"monitored"`
-	HasFile           bool           `json:"hasFile"`
-	Year              int            `json:"year"`
-	ProfileID         int64          `json:"profileId"`
-	Runtime           int            `json:"runtime"`
-	QualityProfileID  int64          `json:"qualityProfileId"`
-	SizeOnDisk        int64          `json:"sizeOnDisk"`
-	Title             string         `json:"title"`
-	SortTitle         string         `json:"sortTitle"`
-	Status            string         `json:"status"`
-	Overview          string         `json:"overview"`
-	InCinemas         time.Time      `json:"inCinemas"`
-	Images            []*starr.Image `json:"images"`
-	Website           string         `json:"website"`
-	YouTubeTrailerID  string         `json:"youTubeTrailerId"`
-	Studio            string         `json:"studio"`
-	Path              string         `json:"path"`
-	LastInfoSync      time.Time      `json:"lastInfoSync"`
-	CleanTitle        string         `json:"cleanTitle"`
-	ImdbID            string         `json:"imdbId"`
-	TmdbID            int64          `json:"tmdbId"`
-	TitleSlug         string         `json:"titleSlug"`
-	Genres            []string       `json:"genres"`
-	Tags              []int          `json:"tags"`
-	Added             time.Time      `json:"added"`
-	Ratings           *starr.Ratings `json:"ratings"`
-	AlternativeTitles []string       `json:"alternativeTitles"`
-}
-
-// RecordData belongs to a Record.
-type RecordData struct {
-	Indexer         string    `json:"indexer"`
-	NzbInfoURL      string    `json:"nzbInfoUrl"`
-	ReleaseGroup    string    `json:"releaseGroup"`
-	Age             string    `json:"age"`
-	AgeHours        string    `json:"ageHours"`
-	AgeMinutes      string    `json:"ageMinutes"`
-	PublishedDate   time.Time `json:"publishedDate"`
-	DownloadClient  string    `json:"downloadClient"`
-	Size            string    `json:"size"`
-	DownloadURL     string    `json:"downloadUrl"`
-	GUID            string    `json:"guid"`
-	TvdbID          string    `json:"tvdbId"`
-	TvRageID        string    `json:"tvRageId"`
-	Protocol        string    `json:"protocol"`
-	TorrentInfoHash []string  `json:"torrentInfoHash"`
-}
-
 // Queue is the /api/v3/queue endpoint.
 type Queue struct {
 	Page          int            `json:"page"`
@@ -411,4 +333,53 @@ type CommandResponse struct {
 	SendUpdatesToClient bool                   `json:"sendUpdatesToClient"`
 	UpdateScheduledTask bool                   `json:"updateScheduledTask"`
 	Body                map[string]interface{} `json:"body"`
+}
+
+// History is the /api/v3/history endpoint.
+type History struct {
+	Page          int               `json:"page"`
+	PageSize      int               `json:"pageSize"`
+	SortKey       string            `json:"sortKey"`
+	SortDirection string            `json:"sortDirection"`
+	TotalRecords  int               `json:"totalRecords"`
+	Records       []*HistoryRecords `json:"records"`
+}
+
+// HistoryRecords are part of the History data.
+// Not all items have all Data members. Check EventType for what you need.
+type HistoryRecords struct {
+	ID                  int64          `json:"id"`
+	MovieID             int64          `json:"movieId"`
+	SourceTitle         string         `json:"sourceTitle"`
+	Languages           []*starr.Value `json:"languages"`
+	Quality             *starr.Quality `json:"quality"`
+	CustomFormats       []interface{}  `json:"customFormats"`
+	QualityCutoffNotMet bool           `json:"qualityCutoffNotMet"`
+	Date                time.Time      `json:"date"`
+	DownloadID          string         `json:"downloadId"`
+	EventType           string         `json:"eventType"`
+	Data                struct {
+		Age                string    `json:"age"`
+		AgeHours           string    `json:"ageHours"`
+		AgeMinutes         string    `json:"ageMinutes"`
+		DownloadClient     string    `json:"downloadClient"`
+		DownloadClientName string    `json:"downloadClientName"`
+		DownloadURL        string    `json:"downloadUrl"`
+		DroppedPath        string    `json:"droppedPath"`
+		FileID             string    `json:"fileId"`
+		GUID               string    `json:"guid"`
+		ImportedPath       string    `json:"importedPath"`
+		Indexer            string    `json:"indexer"`
+		IndexerFlags       string    `json:"indexerFlags"`
+		IndexerID          string    `json:"indexerId"`
+		Message            string    `json:"message"`
+		NzbInfoURL         string    `json:"nzbInfoUrl"`
+		Protocol           string    `json:"protocol"`
+		PublishedDate      time.Time `json:"publishedDate"`
+		Reason             string    `json:"reason"`
+		ReleaseGroup       string    `json:"releaseGroup"`
+		Size               string    `json:"size"`
+		TmdbID             string    `json:"tmdbId"`
+		TorrentInfoHash    string    `json:"torrentInfoHash"`
+	} `json:"data"`
 }
