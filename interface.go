@@ -27,22 +27,37 @@ var _ APIer = (*Config)(nil)
 
 // Get makes a GET http request and returns the body.
 func (c *Config) Get(path string, params url.Values) ([]byte, error) {
-	return c.req(path, http.MethodGet, params, nil)
+	data, err := c.req(path, http.MethodGet, params, nil)
+	c.Printf("Sent (%s) to %s, Response: %s", http.MethodGet, c.setPathParams(path, params), string(data))
+
+	return data, err
 }
 
 // Put makes a PUT http request and returns the body.
 func (c *Config) Put(path string, params url.Values, body []byte) ([]byte, error) {
-	return c.req(path, http.MethodPut, params, bytes.NewBuffer(body))
+	data, err := c.req(path, http.MethodPut, params, bytes.NewBuffer(body))
+	c.Printf("Sent (%s) payload to %s: %s\n Response: %s",
+		http.MethodPut, c.setPathParams(path, params), string(body), string(data))
+
+	return data, err
 }
 
 // Post makes a POST http request and returns the body.
 func (c *Config) Post(path string, params url.Values, body []byte) ([]byte, error) {
-	return c.req(path, http.MethodPost, params, bytes.NewBuffer(body))
+	data, err := c.req(path, http.MethodPost, params, bytes.NewBuffer(body))
+	c.Printf("Sent (%s) to %s, Response: %s (err: %v)",
+		http.MethodPost, c.setPathParams(path, params), string(data), err)
+
+	return data, err
 }
 
 // Get makes a DELETE http request and returns the body.
 func (c *Config) Delete(path string, params url.Values) ([]byte, error) {
-	return c.req(path, http.MethodDelete, params, nil)
+	data, err := c.req(path, http.MethodDelete, params, nil)
+	c.Printf("Sent (%s) to %s, Response: %s (err: %v)",
+		http.MethodDelete, c.setPathParams(path, params), string(data), err)
+
+	return data, err
 }
 
 // GetInto performs an HTTP GET against an API path and unmarshals the payload into the provided pointer interface.

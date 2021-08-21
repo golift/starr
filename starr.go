@@ -19,6 +19,8 @@ package starr
 
 import (
 	"fmt"
+	"io"
+	"log"
 	"net/http"
 	"time"
 )
@@ -46,13 +48,14 @@ var (
 // may set those and call New() in the sub packages to create the http.Client
 // pointer, or you can create your own http.Client before calling subpackage.New().
 type Config struct {
-	APIKey   string       `json:"api_key" toml:"api_key" xml:"api_key" yaml:"api_key"`
-	URL      string       `json:"url" toml:"url" xml:"url" yaml:"url"`
-	HTTPPass string       `json:"http_pass" toml:"http_pass" xml:"http_pass" yaml:"http_pass"`
-	HTTPUser string       `json:"http_user" toml:"http_user" xml:"http_user" yaml:"http_user"`
-	Timeout  Duration     `json:"timeout" toml:"timeout" xml:"timeout" yaml:"timeout"`
-	ValidSSL bool         `json:"valid_ssl" toml:"valid_ssl" xml:"valid_ssl" yaml:"valid_ssl"`
-	Client   *http.Client `json:"-" toml:"-" xml:"-" yaml:"-"`
+	APIKey      string       `json:"api_key" toml:"api_key" xml:"api_key" yaml:"api_key"`
+	URL         string       `json:"url" toml:"url" xml:"url" yaml:"url"`
+	HTTPPass    string       `json:"http_pass" toml:"http_pass" xml:"http_pass" yaml:"http_pass"`
+	HTTPUser    string       `json:"http_user" toml:"http_user" xml:"http_user" yaml:"http_user"`
+	Timeout     Duration     `json:"timeout" toml:"timeout" xml:"timeout" yaml:"timeout"`
+	ValidSSL    bool         `json:"valid_ssl" toml:"valid_ssl" xml:"valid_ssl" yaml:"valid_ssl"`
+	Client      *http.Client `json:"-" toml:"-" xml:"-" yaml:"-"`
+	*log.Logger `json:"-" toml:"-" xml:"-" yaml:"-"`
 }
 
 // Duration is used to Unmarshal text into a time.Duration value.
@@ -60,6 +63,7 @@ type Duration struct{ time.Duration }
 
 // New returns a *starr.Config pointer. This pointer is safe to modify
 // further before passing it into one of the arr app New() procedures.
+// Set Logger if you want this library to print debug messages (payloads, etc).
 func New(apiKey, appURL string, timeout time.Duration) *Config {
 	if timeout == 0 {
 		timeout = DefaultTimeout
@@ -73,6 +77,7 @@ func New(apiKey, appURL string, timeout time.Duration) *Config {
 		ValidSSL: false,
 		Timeout:  Duration{Duration: timeout},
 		Client:   nil, // Let each sub package handle its own client.
+		Logger:   log.New(io.Discard, "", 0),
 	}
 }
 
