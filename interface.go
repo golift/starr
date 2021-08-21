@@ -28,7 +28,7 @@ var _ APIer = (*Config)(nil)
 // Get makes a GET http request and returns the body.
 func (c *Config) Get(path string, params url.Values) ([]byte, error) {
 	data, err := c.req(path, http.MethodGet, params, nil)
-	c.Printf("Sent (%s) to %s, Response: %s", http.MethodGet, c.setPathParams(path, params), string(data))
+	c.Debugf("Sent (%s) to %s, Response: %s", http.MethodGet, c.setPathParams(path, params), string(data))
 
 	return data, err
 }
@@ -36,7 +36,7 @@ func (c *Config) Get(path string, params url.Values) ([]byte, error) {
 // Put makes a PUT http request and returns the body.
 func (c *Config) Put(path string, params url.Values, body []byte) ([]byte, error) {
 	data, err := c.req(path, http.MethodPut, params, bytes.NewBuffer(body))
-	c.Printf("Sent (%s) payload to %s: %s\n Response: %s",
+	c.Debugf("Sent (%s) payload to %s: %s\n Response: %s",
 		http.MethodPut, c.setPathParams(path, params), string(body), string(data))
 
 	return data, err
@@ -45,7 +45,7 @@ func (c *Config) Put(path string, params url.Values, body []byte) ([]byte, error
 // Post makes a POST http request and returns the body.
 func (c *Config) Post(path string, params url.Values, body []byte) ([]byte, error) {
 	data, err := c.req(path, http.MethodPost, params, bytes.NewBuffer(body))
-	c.Printf("Sent (%s) to %s, Response: %s (err: %v)",
+	c.Debugf("Sent (%s) to %s, Response: %s (err: %v)",
 		http.MethodPost, c.setPathParams(path, params), string(data), err)
 
 	return data, err
@@ -54,7 +54,7 @@ func (c *Config) Post(path string, params url.Values, body []byte) ([]byte, erro
 // Get makes a DELETE http request and returns the body.
 func (c *Config) Delete(path string, params url.Values) ([]byte, error) {
 	data, err := c.req(path, http.MethodDelete, params, nil)
-	c.Printf("Sent (%s) to %s, Response: %s (err: %v)",
+	c.Debugf("Sent (%s) to %s, Response: %s (err: %v)",
 		http.MethodDelete, c.setPathParams(path, params), string(data), err)
 
 	return data, err
