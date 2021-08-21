@@ -9,10 +9,10 @@ test: lint nopollution
 
 lint:
 	# Test lint on four platforms.
-	GOOS=linux golangci-lint run --enable-all -D maligned,scopelint,interfacer
-	GOOS=darwin golangci-lint run --enable-all -D maligned,scopelint,interfacer
-	GOOS=windows golangci-lint run --enable-all -D maligned,scopelint,interfacer
-	GOOS=freebsd golangci-lint run --enable-all -D maligned,scopelint,interfacer
+	GOOS=linux golangci-lint run --enable-all -D maligned,scopelint,interfacer,golint,tagliatelle
+	GOOS=darwin golangci-lint run --enable-all -D maligned,scopelint,interfacer,golint,tagliatelle
+	GOOS=windows golangci-lint run --enable-all -D maligned,scopelint,interfacer,golint,tagliatelle
+	GOOS=freebsd golangci-lint run --enable-all -D maligned,scopelint,interfacer,golint,tagliatelle
 
 nopollution:
 	# Avoid cross pollution.

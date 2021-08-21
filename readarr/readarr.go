@@ -144,7 +144,7 @@ func (r *Readarr) UpdateQualityProfile(profile *QualityProfile) error {
 		return fmt.Errorf("json.Marshal(profile): %w", err)
 	}
 
-	_, err = r.Put("v1/qualityProfile/"+strconv.FormatInt(profile.ID, 10), nil, put)
+	_, err = r.Put("v1/qualityProfile/"+strconv.FormatInt(profile.ID, starr.Bits10), nil, put)
 	if err != nil {
 		return fmt.Errorf("api.Put(qualityProfile): %w", err)
 	}
@@ -156,7 +156,7 @@ func (r *Readarr) UpdateQualityProfile(profile *QualityProfile) error {
 func (r *Readarr) GetAuthorByID(authorID int64) (*Author, error) {
 	var author Author
 
-	err := r.GetInto("v1/author/"+strconv.FormatInt(authorID, 10), nil, &author)
+	err := r.GetInto("v1/author/"+strconv.FormatInt(authorID, starr.Bits10), nil, &author)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(author): %w", err)
 	}
@@ -174,7 +174,7 @@ func (r *Readarr) UpdateAuthor(authorID int64, author *Author) error {
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
-	b, err := r.Put("v1/author/"+strconv.FormatInt(authorID, 10), params, put)
+	b, err := r.Put("v1/author/"+strconv.FormatInt(authorID, starr.Bits10), params, put)
 	if err != nil {
 		return fmt.Errorf("api.Put(author): %w", err)
 	}
@@ -206,7 +206,7 @@ func (r *Readarr) GetBook(gridID string) ([]*Book, error) {
 func (r *Readarr) GetBookByID(bookID int64) (*Book, error) {
 	var book Book
 
-	err := r.GetInto("v1/book/"+strconv.FormatInt(bookID, 10), nil, &book)
+	err := r.GetInto("v1/book/"+strconv.FormatInt(bookID, starr.Bits10), nil, &book)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(book): %w", err)
 	}
@@ -224,7 +224,7 @@ func (r *Readarr) UpdateBook(bookID int64, book *Book) error {
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
-	b, err := r.Put("v1/book/"+strconv.FormatInt(bookID, 10), params, put)
+	b, err := r.Put("v1/book/"+strconv.FormatInt(bookID, starr.Bits10), params, put)
 	if err != nil {
 		return fmt.Errorf("api.Put(book): %w", err)
 	}

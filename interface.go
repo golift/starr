@@ -28,26 +28,8 @@ var _ APIer = (*Config)(nil)
 // Get makes a GET http request and returns the body.
 func (c *Config) Get(path string, params url.Values) ([]byte, error) {
 	code, data, err := c.req(path, http.MethodGet, params, nil)
-	c.Debugf("Sent (%s) to %s, Response (%d): %s",
-		http.MethodGet, c.setPathParams(path, params), code, string(data), err)
-
-	return data, err
-}
-
-// Put makes a PUT http request and returns the body.
-func (c *Config) Put(path string, params url.Values, body []byte) ([]byte, error) {
-	code, data, err := c.req(path, http.MethodPut, params, bytes.NewBuffer(body))
-	c.Debugf("Sent (%s) payload to %s: %s\n Response (%d): %s (err: %v)",
-		http.MethodPut, c.setPathParams(path, params), string(body), code, string(data), err)
-
-	return data, err
-}
-
-// Post makes a POST http request and returns the body.
-func (c *Config) Post(path string, params url.Values, body []byte) ([]byte, error) {
-	code, data, err := c.req(path, http.MethodPost, params, bytes.NewBuffer(body))
 	c.Debugf("Sent (%s) to %s, Response (%d): %s (err: %v)",
-		http.MethodPost, c.setPathParams(path, params), code, string(data), err)
+		http.MethodGet, c.setPathParams(path, params), code, string(data), err)
 
 	return data, err
 }
@@ -57,6 +39,24 @@ func (c *Config) Delete(path string, params url.Values) ([]byte, error) {
 	code, data, err := c.req(path, http.MethodDelete, params, nil)
 	c.Debugf("Sent (%s) to %s, Response (%d): %s (err: %v)",
 		http.MethodDelete, c.setPathParams(path, params), code, string(data), err)
+
+	return data, err
+}
+
+// Put makes a PUT http request and returns the body.
+func (c *Config) Put(path string, params url.Values, body []byte) ([]byte, error) {
+	code, data, err := c.req(path, http.MethodPut, params, bytes.NewBuffer(body))
+	c.Debugf("Sent (%s) %d bytes to %s: %s\n Response (%d): %s (err: %v)",
+		http.MethodPut, len(body), c.setPathParams(path, params), string(body), code, string(data), err)
+
+	return data, err
+}
+
+// Post makes a POST http request and returns the body.
+func (c *Config) Post(path string, params url.Values, body []byte) ([]byte, error) {
+	code, data, err := c.req(path, http.MethodPost, params, bytes.NewBuffer(body))
+	c.Debugf("Sent (%s) %d bytes to %s: %s\n Response (%d): %s (err: %v)",
+		http.MethodPost, len(body), c.setPathParams(path, params), string(body), code, string(data), err)
 
 	return data, err
 }
