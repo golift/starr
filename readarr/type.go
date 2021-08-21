@@ -25,6 +25,10 @@ func New(c *starr.Config) *Readarr {
 		}
 	}
 
+	if c.Debugf == nil {
+		c.Debugf = func(string, ...interface{}) {}
+	}
+
 	return &Readarr{APIer: c}
 }
 
