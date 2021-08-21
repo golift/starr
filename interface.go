@@ -27,22 +27,38 @@ var _ APIer = (*Config)(nil)
 
 // Get makes a GET http request and returns the body.
 func (c *Config) Get(path string, params url.Values) ([]byte, error) {
-	return c.req(path, http.MethodGet, params, nil)
-}
+	code, data, err := c.req(path, http.MethodGet, params, nil)
+	c.Debugf("Sent (%s) to %s, Response (%s): %s (err: %v)",
+		http.MethodGet, c.setPathParams(path, params), http.StatusText(code), string(data), err)
 
-// Put makes a PUT http request and returns the body.
-func (c *Config) Put(path string, params url.Values, body []byte) ([]byte, error) {
-	return c.req(path, http.MethodPut, params, bytes.NewBuffer(body))
-}
-
-// Post makes a POST http request and returns the body.
-func (c *Config) Post(path string, params url.Values, body []byte) ([]byte, error) {
-	return c.req(path, http.MethodPost, params, bytes.NewBuffer(body))
+	return data, err
 }
 
 // Get makes a DELETE http request and returns the body.
 func (c *Config) Delete(path string, params url.Values) ([]byte, error) {
-	return c.req(path, http.MethodDelete, params, nil)
+	code, data, err := c.req(path, http.MethodDelete, params, nil)
+	c.Debugf("Sent (%s) to %s, Response (%s): %s (err: %v)",
+		http.MethodDelete, c.setPathParams(path, params), http.StatusText(code), string(data), err)
+
+	return data, err
+}
+
+// Put makes a PUT http request and returns the body.
+func (c *Config) Put(path string, params url.Values, body []byte) ([]byte, error) {
+	code, data, err := c.req(path, http.MethodPut, params, bytes.NewBuffer(body))
+	c.Debugf("Sent (%s) %d bytes to %s: %s\n Response (%s): %s (err: %v)",
+		http.MethodPut, len(body), c.setPathParams(path, params), string(body), http.StatusText(code), string(data), err)
+
+	return data, err
+}
+
+// Post makes a POST http request and returns the body.
+func (c *Config) Post(path string, params url.Values, body []byte) ([]byte, error) {
+	code, data, err := c.req(path, http.MethodPost, params, bytes.NewBuffer(body))
+	c.Debugf("Sent (%s) %d bytes to %s: %s\n Response (%s): %s (err: %v)",
+		http.MethodPost, len(body), c.setPathParams(path, params), string(body), http.StatusText(code), string(data), err)
+
+	return data, err
 }
 
 // GetInto performs an HTTP GET against an API path and unmarshals the payload into the provided pointer interface.

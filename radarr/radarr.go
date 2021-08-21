@@ -121,7 +121,7 @@ func (r *Radarr) GetQueue(maxRecords, page int) (*Queue, error) {
 // GetMovie grabs a movie from the queue, or all movies if tmdbId is 0.
 func (r *Radarr) GetMovie(tmdbID int64) ([]*Movie, error) {
 	params := make(url.Values)
-	params.Set("tmdbId", strconv.FormatInt(tmdbID, 10))
+	params.Set("tmdbId", strconv.FormatInt(tmdbID, starr.Bits10))
 
 	var movie []*Movie
 
@@ -137,7 +137,7 @@ func (r *Radarr) GetMovie(tmdbID int64) ([]*Movie, error) {
 func (r *Radarr) GetMovieByID(movieID int64) (*Movie, error) {
 	var movie Movie
 
-	err := r.GetInto("v3/movie/"+strconv.FormatInt(movieID, 10), nil, &movie)
+	err := r.GetInto("v3/movie/"+strconv.FormatInt(movieID, starr.Bits10), nil, &movie)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(movie): %w", err)
 	}
@@ -181,7 +181,7 @@ func (r *Radarr) UpdateQualityProfile(profile *QualityProfile) error {
 		return fmt.Errorf("json.Marshal(profile): %w", err)
 	}
 
-	_, err = r.Put("v3/qualityProfile/"+strconv.FormatInt(profile.ID, 10), nil, put)
+	_, err = r.Put("v3/qualityProfile/"+strconv.FormatInt(profile.ID, starr.Bits10), nil, put)
 	if err != nil {
 		return fmt.Errorf("api.Put(qualityProfile): %w", err)
 	}
@@ -211,7 +211,7 @@ func (r *Radarr) UpdateMovie(movieID int64, movie *Movie) error {
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
-	_, err = r.Put("v3/movie/"+strconv.FormatInt(movieID, 10), params, put)
+	_, err = r.Put("v3/movie/"+strconv.FormatInt(movieID, starr.Bits10), params, put)
 	if err != nil {
 		return fmt.Errorf("api.Put(movie): %w", err)
 	}
@@ -254,7 +254,7 @@ func (r *Radarr) DeleteExclusions(ids []int64) error {
 	var errs string
 
 	for _, id := range ids {
-		_, err := r.Delete("v3/exclusions/"+strconv.FormatInt(id, 10), nil)
+		_, err := r.Delete("v3/exclusions/"+strconv.FormatInt(id, starr.Bits10), nil)
 		if err != nil {
 			errs += err.Error() + " "
 		}

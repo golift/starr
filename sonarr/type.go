@@ -25,6 +25,10 @@ func New(c *starr.Config) *Sonarr {
 		}
 	}
 
+	if c.Debugf == nil {
+		c.Debugf = func(string, ...interface{}) {}
+	}
+
 	return &Sonarr{APIer: c}
 }
 

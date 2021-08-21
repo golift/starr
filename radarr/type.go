@@ -25,6 +25,10 @@ func New(c *starr.Config) *Radarr {
 		}
 	}
 
+	if c.Debugf == nil {
+		c.Debugf = func(string, ...interface{}) {}
+	}
+
 	return &Radarr{APIer: c}
 }
 

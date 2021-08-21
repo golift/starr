@@ -139,7 +139,7 @@ func (s *Sonarr) UpdateQualityProfile(profile *QualityProfile) error {
 		return fmt.Errorf("json.Marshal(profile): %w", err)
 	}
 
-	_, err = s.Put("v3/qualityProfile/"+strconv.FormatInt(profile.ID, 10), nil, put)
+	_, err = s.Put("v3/qualityProfile/"+strconv.FormatInt(profile.ID, starr.Bits10), nil, put)
 	if err != nil {
 		return fmt.Errorf("api.Put(qualityProfile): %w", err)
 	}
@@ -183,7 +183,7 @@ func (s *Sonarr) UpdateReleaseProfile(profile *ReleaseProfile) error {
 		return fmt.Errorf("json.Marshal(profile): %w", err)
 	}
 
-	_, err = s.Put("v3/releaseProfile/"+strconv.FormatInt(profile.ID, 10), nil, put)
+	_, err = s.Put("v3/releaseProfile/"+strconv.FormatInt(profile.ID, starr.Bits10), nil, put)
 	if err != nil {
 		return fmt.Errorf("api.Put(releaseProfile): %w", err)
 	}
@@ -209,7 +209,7 @@ func (s *Sonarr) GetSeriesLookup(term string, tvdbID int64) ([]*SeriesLookup, er
 	params := make(url.Values)
 
 	if tvdbID > 0 {
-		params.Add("term", "tvdbid:"+strconv.FormatInt(tvdbID, 10))
+		params.Add("term", "tvdbid:"+strconv.FormatInt(tvdbID, starr.Bits10))
 	} else {
 		params.Add("term", term)
 	}
@@ -229,7 +229,7 @@ func (s *Sonarr) GetSeries(tvdbID int64) ([]*Series, error) {
 	params := make(url.Values)
 
 	if tvdbID != 0 {
-		params.Add("tvdbId", strconv.FormatInt(tvdbID, 10))
+		params.Add("tvdbId", strconv.FormatInt(tvdbID, starr.Bits10))
 	}
 
 	var series []*Series
@@ -246,7 +246,7 @@ func (s *Sonarr) GetSeries(tvdbID int64) ([]*Series, error) {
 func (s *Sonarr) GetSeriesByID(seriesID int64) (*Series, error) {
 	var series Series
 
-	err := s.GetInto("v3/series/"+strconv.FormatInt(seriesID, 10), nil, &series)
+	err := s.GetInto("v3/series/"+strconv.FormatInt(seriesID, starr.Bits10), nil, &series)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(series): %w", err)
 	}
@@ -270,7 +270,7 @@ func (s *Sonarr) UpdateSeries(seriesID int64, series *Series) error {
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
-	b, err := s.Put("v3/series/"+strconv.FormatInt(seriesID, 10), params, put)
+	b, err := s.Put("v3/series/"+strconv.FormatInt(seriesID, starr.Bits10), params, put)
 	if err != nil {
 		return fmt.Errorf("api.Put(series): %w", err)
 	}
@@ -336,7 +336,7 @@ func (s *Sonarr) GetSeriesEpisodes(seriesID int64) ([]*Episode, error) {
 	var output []*Episode
 
 	params := make(url.Values)
-	params.Add("seriesId", strconv.FormatInt(seriesID, 10))
+	params.Add("seriesId", strconv.FormatInt(seriesID, starr.Bits10))
 
 	err := s.GetInto("v3/episode?seriesId", params, &output)
 	if err != nil {
