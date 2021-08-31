@@ -248,7 +248,7 @@ func (r *Radarr) GetExclusions() ([]*Exclusion, error) {
 	return exclusions, nil
 }
 
-var ErrRequestErr = fmt.Errorf("request error")
+var ErrRequestError = fmt.Errorf("request error")
 
 func (r *Radarr) DeleteExclusions(ids []int64) error {
 	var errs string
@@ -261,7 +261,7 @@ func (r *Radarr) DeleteExclusions(ids []int64) error {
 	}
 
 	if errs != "" {
-		return fmt.Errorf("%w: %s", ErrRequestErr, errs)
+		return fmt.Errorf("%w: %s", ErrRequestError, errs)
 	}
 
 	return nil
