@@ -19,6 +19,9 @@ func New(c *starr.Config) *Sonarr {
 		//nolint:exhaustivestruct,gosec
 		c.Client = &http.Client{
 			Timeout: c.Timeout.Duration,
+			CheckRedirect: func(r *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
 			Transport: &http.Transport{
 				TLSClientConfig: &tls.Config{InsecureSkipVerify: !c.ValidSSL},
 			},
