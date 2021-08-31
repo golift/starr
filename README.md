@@ -1,7 +1,7 @@
 # Starr
 
 [![GoDoc](https://godoc.org/golift.io/starr/svc?status.svg)](https://pkg.go.dev/golift.io/starr)
-[![Go Report Card](https://goreportcard.com/badge/golift.io/starr)](https://goreportcard.com/report/golift.io/rotatorr)
+[![Go Report Card](https://goreportcard.com/badge/golift.io/starr)](https://goreportcard.com/report/golift.io/starr)
 [![MIT License](http://img.shields.io/:license-mit-blue.svg)](https://github.com/golift/starr/blob/master/LICENSE)
 [![travis](https://travis-ci.org/golift/starr.svg?branch=main "Travis Tests")](https://travis-ci.org/golift/starr)
 [![discord](https://badgen.net/badge/icon/Discord?color=0011ff&label&icon=https://simpleicons.now.sh/discord/eee "GoLift Discord")](https://golift.io/discord)
