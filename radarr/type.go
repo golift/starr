@@ -279,6 +279,7 @@ type FormatItem struct {
 	Score  int    `json:"score"`
 }
 
+// Exclusion is a Radarr excluded item.
 type Exclusion struct {
 	TMDBID int64  `json:"tmdbId"`
 	Title  string `json:"movieTitle"`
@@ -315,7 +316,7 @@ type CustomFormatField struct {
 	Advanced bool        `json:"advanced"`
 }
 
-// CommandReqyest goes into the /api/v3/command endpoint.
+// CommandRequest goes into the /api/v3/command endpoint.
 // This was created from the search command and may not support other commands yet.
 type CommandRequest struct {
 	Name     string  `json:"name"`
@@ -352,7 +353,7 @@ type History struct {
 	Records       []*HistoryRecord `json:"records"`
 }
 
-// HistoryRecords are part of the History data.
+// HistoryRecord is part of the History data.
 // Not all items have all Data members. Check EventType for what you need.
 type HistoryRecord struct {
 	ID                  int64          `json:"id"`

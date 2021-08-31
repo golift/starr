@@ -44,6 +44,7 @@ type QualityProfile struct {
 	UpgradeAllowed bool             `json:"upgradeAllowed"`
 }
 
+// ReleaseProfile defines a release profile's data from Sonarr.
 type ReleaseProfile struct {
 	Name            string            `json:"name"`
 	Required        string            `json:"required"`
@@ -322,7 +323,7 @@ type AlternateTitle struct {
 	SeasonNumber int    `json:"seasonNumber"`
 }
 
-// CommandReqyest goes into the /api/v3/command endpoint.
+// CommandRequest goes into the /api/v3/command endpoint.
 // This was created from the search command and may not support other commands yet.
 type CommandRequest struct {
 	Name      string  `json:"name"`
@@ -360,7 +361,7 @@ type History struct {
 	Records       []*HistoryRecord `json:"records"`
 }
 
-// HistoryRecords are part of the History data.
+// HistoryRecord is part of the History data.
 // Not all items have all Data members. Check EventType for what you need.
 type HistoryRecord struct {
 	ID                   int64          `json:"id"`

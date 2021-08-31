@@ -237,6 +237,7 @@ func (r *Radarr) AddMovie(movie *AddMovieInput) (*AddMovieOutput, error) {
 	return &output, nil
 }
 
+// GetExclusions returns all configured exclusions from Radarr.
 func (r *Radarr) GetExclusions() ([]*Exclusion, error) {
 	var exclusions []*Exclusion
 
@@ -248,8 +249,10 @@ func (r *Radarr) GetExclusions() ([]*Exclusion, error) {
 	return exclusions, nil
 }
 
+// ErrRequestError is returned when bad input is provided.
 var ErrRequestError = fmt.Errorf("request error")
 
+// DeleteExclusions removes exclusions from Radarr.
 func (r *Radarr) DeleteExclusions(ids []int64) error {
 	var errs string
 
@@ -267,6 +270,7 @@ func (r *Radarr) DeleteExclusions(ids []int64) error {
 	return nil
 }
 
+// AddExclusions adds an exclusion to Radarr.
 func (r *Radarr) AddExclusions(exclusions []*Exclusion) error {
 	for i := range exclusions {
 		exclusions[i].ID = 0

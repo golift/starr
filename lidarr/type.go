@@ -271,7 +271,7 @@ type AlbumAddOptions struct {
 	SearchForNewAlbum bool `json:"searchForNewAlbum,omitempty"`
 }
 
-// CommandReqyest goes into the /api/v1/command endpoint.
+// CommandRequest goes into the /api/v1/command endpoint.
 // This was created from the search command and may not support other commands yet.
 type CommandRequest struct {
 	Name     string  `json:"name"`

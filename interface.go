@@ -51,7 +51,7 @@ func (c *Config) Get(path string, params url.Values) ([]byte, error) {
 	return data, err
 }
 
-// Get makes a DELETE http request and returns the body.
+// Delete makes a DELETE http request and returns the body.
 func (c *Config) Delete(path string, params url.Values) ([]byte, error) {
 	code, data, header, err := c.req(path, http.MethodDelete, params, nil)
 	c.log(code, data, nil, header, c.setPathParams(path, params), http.MethodDelete, err)

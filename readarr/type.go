@@ -334,7 +334,7 @@ type AddBookOutput struct {
 	AnyEditionOk  bool           `json:"anyEditionOk"`
 }
 
-// CommandReqyest goes into the /api/v1/command endpoint.
+// CommandRequest goes into the /api/v1/command endpoint.
 // This was created from the search command and may not support other commands yet.
 type CommandRequest struct {
 	Name    string  `json:"name"`
