@@ -34,12 +34,22 @@ func (c *Config) log(code int, data, body []byte, header http.Header, path, meth
 		}
 	}
 
+	b := string(body)
+	if c.MaxBody > 0 && len(b) > c.MaxBody {
+		b = b[:c.MaxBody] + " <body truncated>"
+	}
+
+	d := string(data)
+	if c.MaxBody > 0 && len(d) > c.MaxBody {
+		d = d[:c.MaxBody] + " <data truncated>"
+	}
+
 	if len(body) > 0 {
 		c.Debugf("Sent (%s) %d bytes to %s: %s\n Response: %s\n%s%s (err: %v)",
-			method, len(body), path, string(body), http.StatusText(code), h, string(data), err)
+			method, len(body), path, b, http.StatusText(code), h, d, err)
 	} else {
 		c.Debugf("Sent (%s) to %s, Response: %s\n%s%s (err: %v)",
-			method, path, http.StatusText(code), h, string(data), err)
+			method, path, http.StatusText(code), h, d, err)
 	}
 }
 
