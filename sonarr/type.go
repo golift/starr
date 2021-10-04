@@ -47,13 +47,13 @@ type QualityProfile struct {
 // ReleaseProfile defines a release profile's data from Sonarr.
 type ReleaseProfile struct {
 	Name            string            `json:"name"`
-	Required        string            `json:"required"`
-	Ignored         string            `json:"ignored"`
+	Required        []string          `json:"required"`
+	Ignored         []string          `json:"ignored"`
 	Preferred       []*starr.KeyValue `json:"preferred"`
-	IncPrefOnRename bool              `json:"includePreferredWhenRenaming"`
 	IndexerID       int64             `json:"indexerId"`
 	Tags            []int             `json:"tags"`
 	ID              int64             `json:"id"`
+	IncPrefOnRename bool              `json:"includePreferredWhenRenaming"`
 	Enabled         bool              `json:"enabled"`
 }
 
