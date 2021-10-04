@@ -18,7 +18,10 @@
 package starr
 
 import (
+	"context"
+	"crypto/tls"
 	"fmt"
+	"io"
 	"net/http"
 	"time"
 )
@@ -74,6 +77,7 @@ func New(apiKey, appURL string, timeout time.Duration) *Config {
 		URL:      appURL,
 		HTTPUser: "",
 		HTTPPass: "",
+		MaxBody:  0,
 		ValidSSL: false,
 		Timeout:  Duration{Duration: timeout},
 		Client:   nil, // Let each sub package handle its own client.
@@ -86,4 +90,41 @@ func (d *Duration) UnmarshalText(data []byte) (err error) {
 	d.Duration, err = time.ParseDuration(string(data))
 
 	return
+}
+
+// GetURL attempts to fix the URL for a starr app.
+// If the url base is missing it is added; this only checks the Location header.
+// You should call this once at startup and update the URL provided.
+func (c *Config) GetURL() (string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), c.Timeout.Duration)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, c.URL, nil)
+	if err != nil {
+		return c.URL, fmt.Errorf("creating request: %w", err)
+	}
+
+	client := &http.Client{
+		CheckRedirect: func(r *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: !c.ValidSSL}, // nolint:gosec
+		},
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return c.URL, fmt.Errorf("making request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	_, _ = io.Copy(io.Discard, resp.Body) // read the whole body to avoid memory leaks.
+
+	location, err := resp.Location()
+	if err != nil {
+		return c.URL, nil //nolint:nilerr // no location header, no error returned.
+	}
+
+	return location.String(), nil
 }
