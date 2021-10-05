@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -39,6 +40,8 @@ var (
 	ErrNilClient = fmt.Errorf("http.Client must not be nil")
 	// ErrNilInterface is returned by *Into() methods when a nil interface is provided.
 	ErrNilInterface = fmt.Errorf("cannot unmarshal data into a nil or empty interface")
+	// ErrInvalidAPIKey is returned if we know the API key didn't work.
+	ErrInvalidAPIKey = fmt.Errorf("API Key may be incorrect")
 )
 
 // Config is the data needed to poll Radarr or Sonarr or Lidarr or Readarr.
@@ -113,6 +116,8 @@ func (c *Config) GetURL() (string, error) {
 		},
 	}
 
+	req.Header.Add("X-API-Key", c.APIKey)
+
 	resp, err := client.Do(req)
 	if err != nil {
 		return c.URL, fmt.Errorf("making request: %w", err)
@@ -124,6 +129,10 @@ func (c *Config) GetURL() (string, error) {
 	location, err := resp.Location()
 	if err != nil {
 		return c.URL, nil //nolint:nilerr // no location header, no error returned.
+	}
+
+	if strings.Contains(location.String(), "/login") {
+		return c.URL, fmt.Errorf("redirected to login page while checking URL %s: %w", c.URL, ErrInvalidAPIKey)
 	}
 
 	return location.String(), nil
