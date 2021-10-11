@@ -394,32 +394,40 @@ type HistoryRecord struct {
 
 // ImportList represents the api/v3/importlist endpoint.
 type ImportList struct {
-	ID                  int64         `json:"id"`
-	Name                string        `json:"name"`
-	Enabled             bool          `json:"enabled"`
-	EnableAuto          bool          `json:"enableAuto"`
-	ShouldMonitor       bool          `json:"shouldMonitor"`
-	SearchOnAdd         bool          `json:"searchOnAdd"`
-	RootFolderPath      string        `json:"rootFolderPath"`
-	QualityProfileID    int64         `json:"qualityProfileId"`
-	MinimumAvailability string        `json:"minimumAvailability"`
-	ListType            string        `json:"listType"`
-	ListOrder           int64         `json:"listOrder"`
-	Fields              []*Field      `json:"fields"`
-	ImplementationName  string        `json:"implementationName"`
-	Implementation      string        `json:"implementation"`
-	ConfigContract      string        `json:"configContract"`
-	InfoLink            string        `json:"infoLink"`
-	Tags                []interface{} `json:"tags"`
+	ID                  int64    `json:"id"`
+	Name                string   `json:"name"`
+	Enabled             bool     `json:"enabled"`
+	EnableAuto          bool     `json:"enableAuto"`
+	ShouldMonitor       bool     `json:"shouldMonitor"`
+	SearchOnAdd         bool     `json:"searchOnAdd"`
+	RootFolderPath      string   `json:"rootFolderPath"`
+	QualityProfileID    int64    `json:"qualityProfileId"`
+	MinimumAvailability string   `json:"minimumAvailability"`
+	ListType            string   `json:"listType"`
+	ListOrder           int64    `json:"listOrder"`
+	Fields              []*Field `json:"fields"`
+	ImplementationName  string   `json:"implementationName"`
+	Implementation      string   `json:"implementation"`
+	ConfigContract      string   `json:"configContract"`
+	InfoLink            string   `json:"infoLink"`
+	Tags                []int    `json:"tags"`
 }
 
 // Field is currently only part of ImportList.
 type Field struct {
-	Order    int    `json:"order"`
-	Name     string `json:"name"`
-	Label    string `json:"label"`
-	HelpText string `json:"helpText"`
-	Value    string `json:"value"`
-	Type     string `json:"type"`
-	Advanced bool   `json:"advanced"`
+	Name          string          `json:"name"`
+	Value         interface{}     `json:"value"` // sometimes number, sometimes string. 'Type' may tell you.
+	Label         string          `json:"label"`
+	HelpText      string          `json:"helpText"`
+	Type          string          `json:"type"`
+	Order         int64           `json:"order"`
+	Advanced      bool            `json:"advanced"`
+	SelectOptions []*SelectOption `json:"selectOptions,omitempty"`
+}
+
+type SelectOption struct {
+	Value        int    `json:"value"`
+	Name         string `json:"name"`
+	Order        int    `json:"order"`
+	DividerAfter bool   `json:"dividerAfter"`
 }
