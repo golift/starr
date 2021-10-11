@@ -339,6 +339,16 @@ func (r *Radarr) UpdateCustomFormat(cf *CustomFormat, cfID int) (*CustomFormat, 
 	return &output, nil
 }
 
+// GetImportLists returns all import lists.
+func (r *Radarr) GetImportLists() ([]*ImportList, error) {
+	var il []*ImportList
+	if err := r.GetInto("v3/importlist", nil, &il); err != nil {
+		return nil, fmt.Errorf("api.Get(importlist): %w", err)
+	}
+
+	return il, nil
+}
+
 // CreateImportList creates an import list in Radarr.
 func (r *Radarr) CreateImportList(il *ImportList) (*ImportList, error) {
 	il.ID = 0
