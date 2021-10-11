@@ -391,3 +391,24 @@ type HistoryRecord struct {
 		TorrentInfoHash    string    `json:"torrentInfoHash"`
 	} `json:"data"`
 }
+
+// ImportList represents the api/v3/importlist endpoint.
+type ImportList struct {
+	ID                  int64           `json:"id"`
+	Name                string          `json:"name"`
+	Enabled             bool            `json:"enabled"`
+	EnableAuto          bool            `json:"enableAuto"`
+	ShouldMonitor       bool            `json:"shouldMonitor"`
+	SearchOnAdd         bool            `json:"searchOnAdd"`
+	RootFolderPath      string          `json:"rootFolderPath"`
+	QualityProfileID    int64           `json:"qualityProfileId"`
+	MinimumAvailability string          `json:"minimumAvailability"`
+	ListType            string          `json:"listType"`
+	ListOrder           int64           `json:"listOrder"`
+	ImplementationName  string          `json:"implementationName"`
+	Implementation      string          `json:"implementation"`
+	ConfigContract      string          `json:"configContract"`
+	InfoLink            string          `json:"infoLink"`
+	Tags                []int64         `json:"tags"`
+	Fields              []*starr.Fields `json:"fields"`
+}

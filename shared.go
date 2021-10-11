@@ -118,3 +118,9 @@ type KeyValue struct {
 	Key   string `json:"key"`
 	Value int    `json:"value"`
 }
+
+// Fields is yet another reusable generic type.
+type Fields struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
