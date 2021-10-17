@@ -121,7 +121,9 @@ func (r *Radarr) GetQueue(maxRecords, page int) (*Queue, error) {
 // GetMovie grabs a movie from the queue, or all movies if tmdbId is 0.
 func (r *Radarr) GetMovie(tmdbID int64) ([]*Movie, error) {
 	params := make(url.Values)
-	params.Set("tmdbId", strconv.FormatInt(tmdbID, starr.Bits10))
+	if tmdbID != 0 {
+		params.Set("tmdbId", strconv.FormatInt(tmdbID, starr.Bits10))
+	}
 
 	var movie []*Movie
 
