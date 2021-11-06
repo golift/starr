@@ -57,7 +57,7 @@ func (l *Lidarr) UpdateQualityProfile(profile *QualityProfile) error {
 		return fmt.Errorf("json.Marshal(profile): %w", err)
 	}
 
-	_, err = l.Put("v1/qualityProfile/"+strconv.FormatInt(profile.ID, starr.Bits10), nil, put)
+	_, err = l.Put("v1/qualityProfile/"+strconv.FormatInt(profile.ID, starr.Base10), nil, put)
 	if err != nil {
 		return fmt.Errorf("api.Put(qualityProfile): %w", err)
 	}
@@ -187,7 +187,7 @@ func (l *Lidarr) GetArtist(mbID string) ([]*Artist, error) {
 func (l *Lidarr) GetArtistByID(artistID int64) (*Artist, error) {
 	var artist Artist
 
-	err := l.GetInto("v1/artist/"+strconv.FormatInt(artistID, starr.Bits10), nil, &artist)
+	err := l.GetInto("v1/artist/"+strconv.FormatInt(artistID, starr.Base10), nil, &artist)
 	if err != nil {
 		return &artist, fmt.Errorf("api.Get(artist): %w", err)
 	}
@@ -227,7 +227,7 @@ func (l *Lidarr) UpdateArtist(artist *Artist) (*Artist, error) {
 
 	var output Artist
 
-	err = l.PutInto("v1/artist/"+strconv.FormatInt(artist.ID, starr.Bits10), params, body, &output)
+	err = l.PutInto("v1/artist/"+strconv.FormatInt(artist.ID, starr.Base10), params, body, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Put(artist): %w", err)
 	}
@@ -258,7 +258,7 @@ func (l *Lidarr) GetAlbum(mbID string) ([]*Album, error) {
 func (l *Lidarr) GetAlbumByID(albumID int64) (*Album, error) {
 	var album Album
 
-	err := l.GetInto("v1/album/"+strconv.FormatInt(albumID, starr.Bits10), nil, &album)
+	err := l.GetInto("v1/album/"+strconv.FormatInt(albumID, starr.Base10), nil, &album)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(album): %w", err)
 	}
@@ -278,7 +278,7 @@ func (l *Lidarr) UpdateAlbum(albumID int64, album *Album) (*Album, error) {
 
 	var output Album
 
-	err = l.PutInto("v1/album/"+strconv.FormatInt(albumID, starr.Bits10), params, put, &output)
+	err = l.PutInto("v1/album/"+strconv.FormatInt(albumID, starr.Base10), params, put, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Put(album): %w", err)
 	}

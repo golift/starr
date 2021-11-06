@@ -122,7 +122,7 @@ func (r *Radarr) GetQueue(maxRecords, page int) (*Queue, error) {
 func (r *Radarr) GetMovie(tmdbID int64) ([]*Movie, error) {
 	params := make(url.Values)
 	if tmdbID != 0 {
-		params.Set("tmdbId", strconv.FormatInt(tmdbID, starr.Bits10))
+		params.Set("tmdbId", strconv.FormatInt(tmdbID, starr.Base10))
 	}
 
 	var movie []*Movie
@@ -139,7 +139,7 @@ func (r *Radarr) GetMovie(tmdbID int64) ([]*Movie, error) {
 func (r *Radarr) GetMovieByID(movieID int64) (*Movie, error) {
 	var movie Movie
 
-	err := r.GetInto("v3/movie/"+strconv.FormatInt(movieID, starr.Bits10), nil, &movie)
+	err := r.GetInto("v3/movie/"+strconv.FormatInt(movieID, starr.Base10), nil, &movie)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(movie): %w", err)
 	}
@@ -183,7 +183,7 @@ func (r *Radarr) UpdateQualityProfile(profile *QualityProfile) error {
 		return fmt.Errorf("json.Marshal(profile): %w", err)
 	}
 
-	_, err = r.Put("v3/qualityProfile/"+strconv.FormatInt(profile.ID, starr.Bits10), nil, put)
+	_, err = r.Put("v3/qualityProfile/"+strconv.FormatInt(profile.ID, starr.Base10), nil, put)
 	if err != nil {
 		return fmt.Errorf("api.Put(qualityProfile): %w", err)
 	}
@@ -213,7 +213,7 @@ func (r *Radarr) UpdateMovie(movieID int64, movie *Movie) error {
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
-	_, err = r.Put("v3/movie/"+strconv.FormatInt(movieID, starr.Bits10), params, put)
+	_, err = r.Put("v3/movie/"+strconv.FormatInt(movieID, starr.Base10), params, put)
 	if err != nil {
 		return fmt.Errorf("api.Put(movie): %w", err)
 	}
@@ -259,7 +259,7 @@ func (r *Radarr) DeleteExclusions(ids []int64) error {
 	var errs string
 
 	for _, id := range ids {
-		_, err := r.Delete("v3/exclusions/"+strconv.FormatInt(id, starr.Bits10), nil)
+		_, err := r.Delete("v3/exclusions/"+strconv.FormatInt(id, starr.Base10), nil)
 		if err != nil {
 			errs += err.Error() + " "
 		}
@@ -373,7 +373,7 @@ func (r *Radarr) DeleteImportList(ids []int64) error {
 	var errs string
 
 	for _, id := range ids {
-		_, err := r.Delete("v3/importlist/"+strconv.FormatInt(id, starr.Bits10), nil)
+		_, err := r.Delete("v3/importlist/"+strconv.FormatInt(id, starr.Base10), nil)
 		if err != nil {
 			errs += fmt.Errorf("api.Delete(importlist): %w", err).Error() + " "
 		}
@@ -394,7 +394,7 @@ func (r *Radarr) UpdateImportList(il *ImportList) (*ImportList, error) {
 	}
 
 	var output ImportList
-	if err := r.PutInto("v3/importlist/"+strconv.FormatInt(il.ID, starr.Bits10), nil, body, &output); err != nil {
+	if err := r.PutInto("v3/importlist/"+strconv.FormatInt(il.ID, starr.Base10), nil, body, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(importlist): %w", err)
 	}
 

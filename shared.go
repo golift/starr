@@ -22,7 +22,7 @@ const (
 
 // Silly constants to not screw up integer->string conversions.
 const (
-	Bits10 = 10
+	Base10 = 10
 )
 
 // String turns an App name into a string.
