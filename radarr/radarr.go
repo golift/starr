@@ -432,7 +432,7 @@ func (r *Radarr) SendCommand(cmd *CommandRequest) (*CommandResponse, error) {
 	return &output, nil
 }
 
-// Lookup will search for movies matching the specified search term
+// Lookup will search for movies matching the specified search term.
 func (r *Radarr) Lookup(term string) ([]Movie, error) {
 	if term == "" {
 		return nil, nil
@@ -445,7 +445,8 @@ func (r *Radarr) Lookup(term string) ([]Movie, error) {
 
 	err := r.GetInto("v3/movie/lookup", params, &out)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to lookup movie: %w", err)
 	}
+
 	return out, nil
 }
