@@ -431,3 +431,22 @@ func (r *Radarr) SendCommand(cmd *CommandRequest) (*CommandResponse, error) {
 
 	return &output, nil
 }
+
+// Lookup will search for movies matching the specified search term.
+func (r *Radarr) Lookup(term string) ([]Movie, error) {
+	if term == "" {
+		return nil, nil
+	}
+
+	var out []Movie
+
+	params := make(url.Values)
+	params.Set("term", term)
+
+	err := r.GetInto("v3/movie/lookup", params, &out)
+	if err != nil {
+		return nil, fmt.Errorf("api.Get(movie/lookup): %w", err)
+	}
+
+	return out, nil
+}
