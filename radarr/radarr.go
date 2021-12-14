@@ -441,11 +441,11 @@ func (r *Radarr) Lookup(term string) ([]Movie, error) {
 	var out []Movie
 
 	params := make(url.Values)
-	params.Set("term", url.QueryEscape(term))
+	params.Set("term", term)
 
 	err := r.GetInto("v3/movie/lookup", params, &out)
 	if err != nil {
-		return nil, fmt.Errorf("failed to lookup movie: %w", err)
+		return nil, fmt.Errorf("api.Get(movie/lookup): %w", err)
 	}
 
 	return out, nil
