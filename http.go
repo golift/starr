@@ -20,7 +20,7 @@ func (c *Config) req(path, method string, params url.Values, body io.Reader) (in
 	ctx, cancel := context.WithTimeout(context.Background(), c.Timeout.Duration)
 	defer cancel()
 
-	req, err := c.newReq(ctx, path, method, params, body)
+	req, err := c.newReq(ctx, c.setPathParams(path, params), method, params, body)
 	if err != nil {
 		return 0, nil, nil, err
 	}
@@ -29,11 +29,9 @@ func (c *Config) req(path, method string, params url.Values, body io.Reader) (in
 }
 
 // body returns the body in io.ReadCloser form (read and close it yourself).
-func (c *Config) body(path, method string, params url.Values, body io.Reader) (int, io.ReadCloser, http.Header, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), c.Timeout.Duration)
-	defer cancel()
-
-	req, err := c.newReq(ctx, path, method, params, body)
+func (c *Config) body(ctx context.Context, uri, method string, params url.Values,
+	body io.Reader) (int, io.ReadCloser, http.Header, error) {
+	req, err := c.newReq(ctx, c.URL+uri, method, params, body)
 	if err != nil {
 		return 0, nil, nil, err
 	}
@@ -52,7 +50,7 @@ func (c *Config) newReq(ctx context.Context, path, method string,
 		return nil, ErrNilClient
 	}
 
-	req, err := http.NewRequestWithContext(ctx, method, c.setPathParams(path, params), body)
+	req, err := http.NewRequestWithContext(ctx, method, path, body)
 	if err != nil {
 		return nil, fmt.Errorf("http.NewRequestWithContext(path): %w", err)
 	}

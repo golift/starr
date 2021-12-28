@@ -5,6 +5,7 @@ package starr
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -23,10 +24,12 @@ type APIer interface {
 	PostInto(path string, params url.Values, postBody []byte, v interface{}) error
 	PutInto(path string, params url.Values, putBody []byte, v interface{}) error
 	DeleteInto(path string, params url.Values, v interface{}) error
-	GetBody(path string, params url.Values) (respBody io.ReadCloser, status int, err error)
-	PostBody(path string, params url.Values, postBody []byte) (respBody io.ReadCloser, status int, err error)
-	PutBody(path string, params url.Values, putBody []byte) (respBody io.ReadCloser, status int, err error)
-	DeleteBody(path string, params url.Values) (respBody io.ReadCloser, status int, err error)
+	GetBody(ctx context.Context, path string, params url.Values) (respBody io.ReadCloser, status int, err error)
+	PostBody(ctx context.Context, path string, params url.Values,
+		postBody []byte) (respBody io.ReadCloser, status int, err error)
+	PutBody(ctx context.Context, path string, params url.Values,
+		putBody []byte) (respBody io.ReadCloser, status int, err error)
+	DeleteBody(ctx context.Context, path string, params url.Values) (respBody io.ReadCloser, status int, err error)
 }
 
 // Config must satify the APIer struct.
@@ -125,8 +128,8 @@ func (c *Config) DeleteInto(path string, params url.Values, v interface{}) error
 // around limitations in this library. Always remember to close the io.ReadCloser.
 // Before you use the returned data, check the HTTP status code.
 // If it's not 200, it's possible the request had an error or was not authenticated.
-func (c *Config) GetBody(path string, params url.Values) (io.ReadCloser, int, error) {
-	code, data, header, err := c.body(path, http.MethodGet, params, nil)
+func (c *Config) GetBody(ctx context.Context, path string, params url.Values) (io.ReadCloser, int, error) {
+	code, data, header, err := c.body(ctx, path, http.MethodGet, params, nil)
 	c.log(code, nil, nil, header, c.setPathParams(path, params), http.MethodGet, err)
 
 	return data, code, err
@@ -136,8 +139,9 @@ func (c *Config) GetBody(path string, params url.Values) (io.ReadCloser, int, er
 // Always remember to close the io.ReadCloser.
 // Before you use the returned data, check the HTTP status code.
 // If it's not 200, it's possible the request had an error or was not authenticated.
-func (c *Config) PostBody(path string, params url.Values, postBody []byte) (io.ReadCloser, int, error) {
-	code, data, header, err := c.body(path, http.MethodPost, params, bytes.NewBuffer(postBody))
+func (c *Config) PostBody(ctx context.Context, path string, params url.Values,
+	postBody []byte) (io.ReadCloser, int, error) {
+	code, data, header, err := c.body(ctx, path, http.MethodPost, params, bytes.NewBuffer(postBody))
 	c.log(code, nil, postBody, header, c.setPathParams(path, params), http.MethodPut, err)
 
 	return data, code, err
@@ -146,8 +150,9 @@ func (c *Config) PostBody(path string, params url.Values, postBody []byte) (io.R
 // PutBody makes a PUT http request and returns the resp.Body (io.ReadCloser).
 // Always remember to close the io.ReadCloser.
 // Before you use the returned data, check the HTTP status code.
-func (c *Config) PutBody(path string, params url.Values, putBody []byte) (io.ReadCloser, int, error) {
-	code, data, header, err := c.body(path, http.MethodPut, params, bytes.NewBuffer(putBody))
+func (c *Config) PutBody(ctx context.Context, path string, params url.Values,
+	putBody []byte) (io.ReadCloser, int, error) {
+	code, data, header, err := c.body(ctx, path, http.MethodPut, params, bytes.NewBuffer(putBody))
 	c.log(code, nil, putBody, header, c.setPathParams(path, params), http.MethodPut, err)
 
 	return data, code, err
@@ -157,8 +162,8 @@ func (c *Config) PutBody(path string, params url.Values, putBody []byte) (io.Rea
 // Always remember to close the io.ReadCloser.
 // Before you use the returned data, check the HTTP status code.
 // If it's not 200, it's possible the request had an error or was not authenticated.
-func (c *Config) DeleteBody(path string, params url.Values) (io.ReadCloser, int, error) {
-	code, data, header, err := c.body(path, http.MethodDelete, params, nil)
+func (c *Config) DeleteBody(ctx context.Context, path string, params url.Values) (io.ReadCloser, int, error) {
+	code, data, header, err := c.body(ctx, path, http.MethodDelete, params, nil)
 	c.log(code, nil, nil, header, c.setPathParams(path, params), http.MethodDelete, err)
 
 	return data, code, err
