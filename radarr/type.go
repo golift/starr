@@ -432,12 +432,3 @@ type SelectOption struct {
 	Order        int    `json:"order"`
 	DividerAfter bool   `json:"dividerAfter"`
 }
-
-// BackupFile comes from the system/backup path.
-type BackupFile struct {
-	Name string    `json:"name"`
-	Path string    `json:"path"`
-	Type string    `json:"type"`
-	Time time.Time `json:"time"`
-	ID   int64     `json:"id"`
-}

@@ -455,9 +455,9 @@ func (r *Radarr) Lookup(term string) ([]Movie, error) {
 }
 
 // GetBackupFiles returns all available Radarr backup files.
-// Use GetBody to download a file using path.Join("system", BackupFile.Path)s.
-func (r *Radarr) GetBackupFiles() ([]*BackupFile, error) {
-	var output []*BackupFile
+// Use GetBody to download a file using BackupFile.Path.
+func (r *Radarr) GetBackupFiles() ([]*starr.BackupFile, error) {
+	var output []*starr.BackupFile
 
 	if err := r.GetInto("v3/system/backup", nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(system/backup): %w", err)

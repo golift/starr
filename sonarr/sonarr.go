@@ -398,3 +398,15 @@ func (s *Sonarr) GetHistory(maxRecords int) (*History, error) {
 
 	return &history, nil
 }
+
+// GetBackupFiles returns all available Sonarr backup files.
+// Use GetBody to download a file using BackupFile.Path.
+func (s *Sonarr) GetBackupFiles() ([]*starr.BackupFile, error) {
+	var output []*starr.BackupFile
+
+	if err := s.GetInto("v3/system/backup", nil, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(system/backup): %w", err)
+	}
+
+	return output, nil
+}
