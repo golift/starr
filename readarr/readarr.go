@@ -268,16 +268,16 @@ func (r *Readarr) GetCommands() ([]*CommandResponse, error) {
 
 // SendCommand sends a command to Readarr.
 func (r *Readarr) SendCommand(cmd *CommandRequest) (*CommandResponse, error) {
+	var output CommandResponse
+
 	if cmd == nil || cmd.Name == "" {
-		return nil, nil
+		return &output, nil
 	}
 
 	body, err := json.Marshal(cmd)
 	if err != nil {
 		return nil, fmt.Errorf("json.Marshal(cmd): %w", err)
 	}
-
-	var output CommandResponse
 
 	if err := r.PostInto("v1/command", nil, body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(command): %w", err)

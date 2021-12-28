@@ -14,25 +14,25 @@ type Readarr struct {
 }
 
 // New returns a Readarr object used to interact with the Readarr API.
-func New(c *starr.Config) *Readarr {
-	if c.Client == nil {
+func New(config *starr.Config) *Readarr {
+	if config.Client == nil {
 		//nolint:exhaustivestruct,gosec
-		c.Client = &http.Client{
-			Timeout: c.Timeout.Duration,
+		config.Client = &http.Client{
+			Timeout: config.Timeout.Duration,
 			CheckRedirect: func(r *http.Request, via []*http.Request) error {
 				return http.ErrUseLastResponse
 			},
 			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: !c.ValidSSL},
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: !config.ValidSSL},
 			},
 		}
 	}
 
-	if c.Debugf == nil {
-		c.Debugf = func(string, ...interface{}) {}
+	if config.Debugf == nil {
+		config.Debugf = func(string, ...interface{}) {}
 	}
 
-	return &Readarr{APIer: c}
+	return &Readarr{APIer: config}
 }
 
 // Queue is the /api/v1/queue endpoint.

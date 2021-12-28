@@ -14,25 +14,25 @@ type Sonarr struct {
 }
 
 // New returns a Sonarr object used to interact with the Sonarr API.
-func New(c *starr.Config) *Sonarr {
-	if c.Client == nil {
+func New(config *starr.Config) *Sonarr {
+	if config.Client == nil {
 		//nolint:exhaustivestruct,gosec
-		c.Client = &http.Client{
-			Timeout: c.Timeout.Duration,
+		config.Client = &http.Client{
+			Timeout: config.Timeout.Duration,
 			CheckRedirect: func(r *http.Request, via []*http.Request) error {
 				return http.ErrUseLastResponse
 			},
 			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: !c.ValidSSL},
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: !config.ValidSSL},
 			},
 		}
 	}
 
-	if c.Debugf == nil {
-		c.Debugf = func(string, ...interface{}) {}
+	if config.Debugf == nil {
+		config.Debugf = func(string, ...interface{}) {}
 	}
 
-	return &Sonarr{APIer: c}
+	return &Sonarr{APIer: config}
 }
 
 // QualityProfile is the /api/v3/qualityprofile endpoint.
