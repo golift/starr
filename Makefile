@@ -16,10 +16,10 @@ lint:
 
 nopollution:
 	# Avoid cross pollution.
+	grep -riE 'readar|radar|sonar' lidarr  || exit 0 && exit 1
 	grep -riE 'readar|sonar|lidar' radarr  || exit 0 && exit 1
 	grep -riE 'radar|sonar|lidar'  readarr || exit 0 && exit 1
 	grep -riE 'readar|radar|lidar' sonarr  || exit 0 && exit 1
-	grep -riE 'readar|radar|sonar' lidarr  || exit 0 && exit 1
 
 generate:
 	go generate ./...
