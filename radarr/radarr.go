@@ -293,28 +293,29 @@ func (r *Radarr) AddExclusions(exclusions []*Exclusion) error {
 
 // GetCustomFormats returns all configured Custom Formats.
 func (r *Radarr) GetCustomFormats() ([]*CustomFormat, error) {
-	var cf []*CustomFormat
-	if err := r.GetInto("v3/customFormat", nil, &cf); err != nil {
+	var output []*CustomFormat
+	if err := r.GetInto("v3/customFormat", nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(customFormat): %w", err)
 	}
 
-	return cf, nil
+	return output, nil
 }
 
 // AddCustomFormat creates a new custom format and returns the response (with ID).
-func (r *Radarr) AddCustomFormat(cf *CustomFormat) (*CustomFormat, error) {
-	if cf == nil {
-		return nil, nil
+func (r *Radarr) AddCustomFormat(format *CustomFormat) (*CustomFormat, error) {
+	var output CustomFormat
+
+	if format == nil {
+		return &output, nil
 	}
 
-	cf.ID = 0 // ID must be zero when adding.
+	format.ID = 0 // ID must be zero when adding.
 
-	body, err := json.Marshal(cf)
+	body, err := json.Marshal(format)
 	if err != nil {
 		return nil, fmt.Errorf("json.Marshal(customFormat): %w", err)
 	}
 
-	var output CustomFormat
 	if err := r.PostInto("v3/customFormat", nil, body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(customFormat): %w", err)
 	}
@@ -343,12 +344,12 @@ func (r *Radarr) UpdateCustomFormat(cf *CustomFormat, cfID int) (*CustomFormat, 
 
 // GetImportLists returns all import lists.
 func (r *Radarr) GetImportLists() ([]*ImportList, error) {
-	var il []*ImportList
-	if err := r.GetInto("v3/importlist", nil, &il); err != nil {
+	var output []*ImportList
+	if err := r.GetInto("v3/importlist", nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(importlist): %w", err)
 	}
 
-	return il, nil
+	return output, nil
 }
 
 // CreateImportList creates an import list in Radarr.
@@ -387,14 +388,16 @@ func (r *Radarr) DeleteImportList(ids []int64) error {
 }
 
 // UpdateImportList updates an existing import list and returns the response.
-func (r *Radarr) UpdateImportList(il *ImportList) (*ImportList, error) {
-	body, err := json.Marshal(il)
+func (r *Radarr) UpdateImportList(list *ImportList) (*ImportList, error) {
+	body, err := json.Marshal(list)
 	if err != nil {
 		return nil, fmt.Errorf("json.Marshal(importlist): %w", err)
 	}
 
 	var output ImportList
-	if err := r.PutInto("v3/importlist/"+strconv.FormatInt(il.ID, starr.Base10), nil, body, &output); err != nil {
+
+	err = r.PutInto("v3/importlist/"+strconv.FormatInt(list.ID, starr.Base10), nil, body, &output)
+	if err != nil {
 		return nil, fmt.Errorf("api.Put(importlist): %w", err)
 	}
 
@@ -415,7 +418,7 @@ func (r *Radarr) GetCommands() ([]*CommandResponse, error) {
 // SendCommand sends a command to Radarr.
 func (r *Radarr) SendCommand(cmd *CommandRequest) (*CommandResponse, error) {
 	if cmd == nil || cmd.Name == "" {
-		return nil, nil
+		return &CommandResponse{}, nil
 	}
 
 	body, err := json.Marshal(cmd)
@@ -449,4 +452,16 @@ func (r *Radarr) Lookup(term string) ([]Movie, error) {
 	}
 
 	return out, nil
+}
+
+// GetBackupFiles returns all available Radarr backup files.
+// Use GetBody to download a file using path.Join("system", BackupFile.Path)s.
+func (r *Radarr) GetBackupFiles() ([]*BackupFile, error) {
+	var output []*BackupFile
+
+	if err := r.GetInto("v3/system/backup", nil, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(system/backup): %w", err)
+	}
+
+	return output, nil
 }

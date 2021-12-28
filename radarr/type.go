@@ -14,25 +14,25 @@ type Radarr struct {
 }
 
 // New returns a Radarr object used to interact with the Radarr API.
-func New(c *starr.Config) *Radarr {
-	if c.Client == nil {
+func New(config *starr.Config) *Radarr {
+	if config.Client == nil {
 		//nolint:exhaustivestruct,gosec
-		c.Client = &http.Client{
-			Timeout: c.Timeout.Duration,
+		config.Client = &http.Client{
+			Timeout: config.Timeout.Duration,
 			CheckRedirect: func(r *http.Request, via []*http.Request) error {
 				return http.ErrUseLastResponse
 			},
 			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: !c.ValidSSL},
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: !config.ValidSSL},
 			},
 		}
 	}
 
-	if c.Debugf == nil {
-		c.Debugf = func(string, ...interface{}) {}
+	if config.Debugf == nil {
+		config.Debugf = func(string, ...interface{}) {}
 	}
 
-	return &Radarr{APIer: c}
+	return &Radarr{APIer: config}
 }
 
 // SystemStatus is the /api/v1/system/status endpoint.
@@ -425,9 +425,19 @@ type Field struct {
 	SelectOptions []*SelectOption `json:"selectOptions,omitempty"`
 }
 
+// SelectOption is part of a Field from an ImportList.
 type SelectOption struct {
 	Value        int    `json:"value"`
 	Name         string `json:"name"`
 	Order        int    `json:"order"`
 	DividerAfter bool   `json:"dividerAfter"`
+}
+
+// BackupFile comes from the system/backup path.
+type BackupFile struct {
+	Name string    `json:"name"`
+	Path string    `json:"path"`
+	Type string    `json:"type"`
+	Time time.Time `json:"time"`
+	ID   int64     `json:"id"`
 }
