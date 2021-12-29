@@ -371,7 +371,7 @@ func (l *Lidarr) Lookup(term string) ([]*Album, error) {
 	params := make(url.Values)
 	params.Set("term", term)
 
-	err := l.GetInto("v1/album", nil, &output)
+	err := l.GetInto("v1/album/lookup", params, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(album/lookup): %w", err)
 	}
