@@ -14,6 +14,7 @@
 -   [Sonarr](http://sonarr.tv)
 -   [Radarr](http://radarr.video)
 -   [Readarr](http://readarr.com)
+-   [Prowlarr](https://prowlarr.com)
 
 This library is slowly updated as new methods are needed or requested. If you have
 specific needs this library doesn't currently meet, but should or could, please
@@ -28,7 +29,7 @@ This library is currently in use by:
 
 Get it:
 ```shell
-go get -u golift.io/starr
+go get golift.io/starr
 ```
 
 Use it:

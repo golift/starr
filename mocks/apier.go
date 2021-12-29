@@ -5,6 +5,7 @@
 package mocks
 
 import (
+	context "context"
 	io "io"
 	url "net/url"
 	reflect "reflect"
@@ -51,9 +52,9 @@ func (mr *MockAPIerMockRecorder) Delete(arg0, arg1 interface{}) *gomock.Call {
 }
 
 // DeleteBody mocks base method.
-func (m *MockAPIer) DeleteBody(arg0 string, arg1 url.Values) (io.ReadCloser, int, error) {
+func (m *MockAPIer) DeleteBody(arg0 context.Context, arg1 string, arg2 url.Values) (io.ReadCloser, int, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteBody", arg0, arg1)
+	ret := m.ctrl.Call(m, "DeleteBody", arg0, arg1, arg2)
 	ret0, _ := ret[0].(io.ReadCloser)
 	ret1, _ := ret[1].(int)
 	ret2, _ := ret[2].(error)
@@ -61,9 +62,9 @@ func (m *MockAPIer) DeleteBody(arg0 string, arg1 url.Values) (io.ReadCloser, int
 }
 
 // DeleteBody indicates an expected call of DeleteBody.
-func (mr *MockAPIerMockRecorder) DeleteBody(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockAPIerMockRecorder) DeleteBody(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteBody", reflect.TypeOf((*MockAPIer)(nil).DeleteBody), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteBody", reflect.TypeOf((*MockAPIer)(nil).DeleteBody), arg0, arg1, arg2)
 }
 
 // DeleteInto mocks base method.
@@ -96,9 +97,9 @@ func (mr *MockAPIerMockRecorder) Get(arg0, arg1 interface{}) *gomock.Call {
 }
 
 // GetBody mocks base method.
-func (m *MockAPIer) GetBody(arg0 string, arg1 url.Values) (io.ReadCloser, int, error) {
+func (m *MockAPIer) GetBody(arg0 context.Context, arg1 string, arg2 url.Values) (io.ReadCloser, int, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetBody", arg0, arg1)
+	ret := m.ctrl.Call(m, "GetBody", arg0, arg1, arg2)
 	ret0, _ := ret[0].(io.ReadCloser)
 	ret1, _ := ret[1].(int)
 	ret2, _ := ret[2].(error)
@@ -106,9 +107,9 @@ func (m *MockAPIer) GetBody(arg0 string, arg1 url.Values) (io.ReadCloser, int, e
 }
 
 // GetBody indicates an expected call of GetBody.
-func (mr *MockAPIerMockRecorder) GetBody(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockAPIerMockRecorder) GetBody(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBody", reflect.TypeOf((*MockAPIer)(nil).GetBody), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBody", reflect.TypeOf((*MockAPIer)(nil).GetBody), arg0, arg1, arg2)
 }
 
 // GetInto mocks base method.
@@ -141,9 +142,9 @@ func (mr *MockAPIerMockRecorder) Post(arg0, arg1, arg2 interface{}) *gomock.Call
 }
 
 // PostBody mocks base method.
-func (m *MockAPIer) PostBody(arg0 string, arg1 url.Values, arg2 []byte) (io.ReadCloser, int, error) {
+func (m *MockAPIer) PostBody(arg0 context.Context, arg1 string, arg2 url.Values, arg3 []byte) (io.ReadCloser, int, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PostBody", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "PostBody", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(io.ReadCloser)
 	ret1, _ := ret[1].(int)
 	ret2, _ := ret[2].(error)
@@ -151,9 +152,9 @@ func (m *MockAPIer) PostBody(arg0 string, arg1 url.Values, arg2 []byte) (io.Read
 }
 
 // PostBody indicates an expected call of PostBody.
-func (mr *MockAPIerMockRecorder) PostBody(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockAPIerMockRecorder) PostBody(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostBody", reflect.TypeOf((*MockAPIer)(nil).PostBody), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostBody", reflect.TypeOf((*MockAPIer)(nil).PostBody), arg0, arg1, arg2, arg3)
 }
 
 // PostInto mocks base method.
@@ -186,9 +187,9 @@ func (mr *MockAPIerMockRecorder) Put(arg0, arg1, arg2 interface{}) *gomock.Call 
 }
 
 // PutBody mocks base method.
-func (m *MockAPIer) PutBody(arg0 string, arg1 url.Values, arg2 []byte) (io.ReadCloser, int, error) {
+func (m *MockAPIer) PutBody(arg0 context.Context, arg1 string, arg2 url.Values, arg3 []byte) (io.ReadCloser, int, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PutBody", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "PutBody", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(io.ReadCloser)
 	ret1, _ := ret[1].(int)
 	ret2, _ := ret[2].(error)
@@ -196,9 +197,9 @@ func (m *MockAPIer) PutBody(arg0 string, arg1 url.Values, arg2 []byte) (io.ReadC
 }
 
 // PutBody indicates an expected call of PutBody.
-func (mr *MockAPIerMockRecorder) PutBody(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockAPIerMockRecorder) PutBody(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PutBody", reflect.TypeOf((*MockAPIer)(nil).PutBody), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PutBody", reflect.TypeOf((*MockAPIer)(nil).PutBody), arg0, arg1, arg2, arg3)
 }
 
 // PutInto mocks base method.
