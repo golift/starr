@@ -401,8 +401,8 @@ func (s *Sonarr) GetHistory(maxRecords int) (*History, error) {
 
 // Lookup will search for series matching the specified search term.
 // Searches for new shows on TheTVDB.com utilizing sonarr.tv's caching and augmentation proxy.
-func (s *Sonarr) Lookup(term string) ([]Series, error) {
-	var output []Series
+func (s *Sonarr) Lookup(term string) ([]*Series, error) {
+	var output []*Series
 
 	if term == "" {
 		return output, nil

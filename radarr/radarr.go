@@ -436,22 +436,22 @@ func (r *Radarr) SendCommand(cmd *CommandRequest) (*CommandResponse, error) {
 }
 
 // Lookup will search for movies matching the specified search term.
-func (r *Radarr) Lookup(term string) ([]Movie, error) {
-	var out []Movie
+func (r *Radarr) Lookup(term string) ([]*Movie, error) {
+	var output []*Movie
 
 	if term == "" {
-		return out, nil
+		return output, nil
 	}
 
 	params := make(url.Values)
 	params.Set("term", term)
 
-	err := r.GetInto("v3/movie/lookup", params, &out)
+	err := r.GetInto("v3/movie/lookup", params, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(movie/lookup): %w", err)
 	}
 
-	return out, nil
+	return output, nil
 }
 
 // GetBackupFiles returns all available Radarr backup files.

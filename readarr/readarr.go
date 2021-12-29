@@ -306,8 +306,8 @@ func (r *Readarr) GetHistory(maxRecords int) (*History, error) {
 }
 
 // Lookup will search for books matching the specified search term.
-func (r *Readarr) Lookup(term string) ([]Book, error) {
-	var output []Book
+func (r *Readarr) Lookup(term string) ([]*Book, error) {
+	var output []*Book
 
 	if term == "" {
 		return output, nil

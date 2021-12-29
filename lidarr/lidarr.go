@@ -361,8 +361,8 @@ func (l *Lidarr) GetHistory(maxRecords int) (*History, error) {
 }
 
 // Lookup will search for albums matching the specified search term.
-func (l *Lidarr) Lookup(term string) ([]Album, error) {
-	var output []Album
+func (l *Lidarr) Lookup(term string) ([]*Album, error) {
+	var output []*Album
 
 	if term == "" {
 		return output, nil
