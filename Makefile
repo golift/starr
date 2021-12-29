@@ -14,13 +14,15 @@ lint:
 	GOOS=windows golangci-lint run --enable-all -D maligned,scopelint,interfacer,golint,tagliatelle,exhaustivestruct
 	GOOS=freebsd golangci-lint run --enable-all -D maligned,scopelint,interfacer,golint,tagliatelle,exhaustivestruct
 
+# Some of these are borderline. For instance "edition" shows up in radarr payloads. "series" shows up in Readarr, "author" in Sonarr, etc.
+# If these catch legitimate uses, just remove the piece that caught it.
 nopollution:
 	# Avoid cross pollution.
-	grep -riE 'readar|radar|sonar|prowl' lidarr   || exit 0 && exit 1
-	grep -riE 'readar|sonar|lidar|prowl' radarr   || exit 0 && exit 1
-	grep -riE 'radar|sonar|lidar|prowl'  readarr  || exit 0 && exit 1
-	grep -riE 'readar|radar|lidar|prowl' sonarr   || exit 0 && exit 1
-	grep -riE 'readar|radar|lidar|sonar' prowlarr || exit 0 && exit 1
+	grep -riE 'readar|radar|sonar|prowl|series|episode|author|book|edition|movie' lidarr   || exit 0 && exit 1
+	grep -riE 'readar|sonar|lidar|prowl|series|episode|author|book|artist|album' radarr   || exit 0 && exit 1
+	grep -riE 'radar|sonar|lidar|prowl|episode|movie|artist|album'  readarr  || exit 0 && exit 1
+	grep -riE 'readar|radar|lidar|prowl|book|edition|movie|artist|album' sonarr   || exit 0 && exit 1
+	grep -riE 'readar|radar|lidar|sonar|series|episode|author|book|edition|movie|artist|album|track' prowlarr || exit 0 && exit 1
 
 generate:
 	go generate ./...

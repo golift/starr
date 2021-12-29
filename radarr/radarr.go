@@ -417,16 +417,16 @@ func (r *Radarr) GetCommands() ([]*CommandResponse, error) {
 
 // SendCommand sends a command to Radarr.
 func (r *Radarr) SendCommand(cmd *CommandRequest) (*CommandResponse, error) {
+	var output CommandResponse
+
 	if cmd == nil || cmd.Name == "" {
-		return &CommandResponse{}, nil
+		return &output, nil
 	}
 
 	body, err := json.Marshal(cmd)
 	if err != nil {
 		return nil, fmt.Errorf("json.Marshal(cmd): %w", err)
 	}
-
-	var output CommandResponse
 
 	if err := r.PostInto("v3/command", nil, body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(command): %w", err)
@@ -436,22 +436,22 @@ func (r *Radarr) SendCommand(cmd *CommandRequest) (*CommandResponse, error) {
 }
 
 // Lookup will search for movies matching the specified search term.
-func (r *Radarr) Lookup(term string) ([]Movie, error) {
-	if term == "" {
-		return nil, nil
-	}
+func (r *Radarr) Lookup(term string) ([]*Movie, error) {
+	var output []*Movie
 
-	var out []Movie
+	if term == "" {
+		return output, nil
+	}
 
 	params := make(url.Values)
 	params.Set("term", term)
 
-	err := r.GetInto("v3/movie/lookup", params, &out)
+	err := r.GetInto("v3/movie/lookup", params, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(movie/lookup): %w", err)
 	}
 
-	return out, nil
+	return output, nil
 }
 
 // GetBackupFiles returns all available Radarr backup files.
