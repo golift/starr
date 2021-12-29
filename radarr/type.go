@@ -79,9 +79,7 @@ type AddMovieInput struct {
 
 // AddMovieOptions are the options for finding a new movie.
 type AddMovieOptions struct {
-	SearchForMovie             bool `json:"searchForMovie"`
-	IgnoreEpisodesWithFiles    bool `json:"ignoreEpisodesWithFiles,omitempty"`
-	IgnoreEpisodesWithoutFiles bool `json:"ignoreEpisodesWithoutFiles,omitempty"`
+	SearchForMovie bool `json:"searchForMovie"`
 }
 
 // AddMovieOutput is the data returned when adding a movier.
