@@ -53,13 +53,13 @@ var (
 // pointer, or you can create your own http.Client before calling subpackage.New().
 // MaxBody is only used if a DebugLog is provided, and causes payloads to truncate.
 type Config struct {
-	APIKey   string                       `json:"api_key" toml:"api_key" xml:"api_key" yaml:"api_key"`
+	APIKey   string                       `json:"apiKey" toml:"api_key" xml:"api_key" yaml:"apiKey"`
 	URL      string                       `json:"url" toml:"url" xml:"url" yaml:"url"`
-	HTTPPass string                       `json:"http_pass" toml:"http_pass" xml:"http_pass" yaml:"http_pass"`
-	HTTPUser string                       `json:"http_user" toml:"http_user" xml:"http_user" yaml:"http_user"`
+	HTTPPass string                       `json:"httpPass" toml:"http_pass" xml:"http_pass" yaml:"httpPass"`
+	HTTPUser string                       `json:"httpUser" toml:"http_user" xml:"http_user" yaml:"httpUser"`
 	Timeout  Duration                     `json:"timeout" toml:"timeout" xml:"timeout" yaml:"timeout"`
-	ValidSSL bool                         `json:"valid_ssl" toml:"valid_ssl" xml:"valid_ssl" yaml:"valid_ssl"`
-	MaxBody  int                          `json:"max_body" toml:"max_body" xml:"max_body" yaml:"max_body"`
+	ValidSSL bool                         `json:"validSsl" toml:"valid_ssl" xml:"valid_ssl" yaml:"validSsl"`
+	MaxBody  int                          `json:"maxBody" toml:"max_body" xml:"max_body" yaml:"maxBody"`
 	Client   *http.Client                 `json:"-" toml:"-" xml:"-" yaml:"-"`
 	Debugf   func(string, ...interface{}) `json:"-" toml:"-" xml:"-" yaml:"-"`
 }

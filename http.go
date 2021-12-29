@@ -13,25 +13,52 @@ import (
 	"strings"
 )
 
-/* The methods in this file provided assumption-ridden HTTP calls for Starr apps. */
+/* The methods in this file provide assumption-ridden HTTP calls for Starr apps. */
 
+// req returns te body in []byte form (already read).
 func (c *Config) req(path, method string, params url.Values, body io.Reader) (int, []byte, http.Header, error) {
-	if c.Client == nil { // we must have an http client.
-		return 0, nil, nil, ErrNilClient
-	}
-
 	ctx, cancel := context.WithTimeout(context.Background(), c.Timeout.Duration)
 	defer cancel()
 
-	req, err := http.NewRequestWithContext(ctx, method, c.setPathParams(path, params), body)
+	req, err := c.newReq(ctx, c.setPathParams(path, params), method, params, body)
 	if err != nil {
-		return 0, nil, nil, fmt.Errorf("http.NewRequestWithContext(path): %w", err)
+		return 0, nil, nil, err
+	}
+
+	return c.getBody(req)
+}
+
+// body returns the body in io.ReadCloser form (read and close it yourself).
+func (c *Config) body(ctx context.Context, uri, method string, params url.Values,
+	body io.Reader) (int, io.ReadCloser, http.Header, error) {
+	req, err := c.newReq(ctx, c.URL+uri, method, params, body)
+	if err != nil {
+		return 0, nil, nil, err
+	}
+
+	resp, err := c.Client.Do(req)
+	if err != nil {
+		return 0, nil, nil, fmt.Errorf("httpClient.Do(req): %w", err)
+	}
+
+	return resp.StatusCode, resp.Body, resp.Header, nil
+}
+
+func (c *Config) newReq(ctx context.Context, path, method string,
+	params url.Values, body io.Reader) (*http.Request, error) {
+	if c.Client == nil { // we must have an http client.
+		return nil, ErrNilClient
+	}
+
+	req, err := http.NewRequestWithContext(ctx, method, path, body)
+	if err != nil {
+		return nil, fmt.Errorf("http.NewRequestWithContext(path): %w", err)
 	}
 
 	c.setHeaders(req)
 	req.URL.RawQuery = params.Encode()
 
-	return c.getBody(req)
+	return req, nil
 }
 
 // setHeaders sets all our request headers.
@@ -58,18 +85,18 @@ func (c *Config) getBody(req *http.Request) (int, []byte, http.Header, error) {
 	}
 	defer resp.Body.Close()
 
-	b, err := ioutil.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return resp.StatusCode, nil, resp.Header, fmt.Errorf("ioutil.ReadAll: %w", err)
 	}
 
 	// fmt.Println(string(b))
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		return resp.StatusCode, b, resp.Header, fmt.Errorf("failed: %v (status: %s): %w: %s",
-			resp.Request.RequestURI, resp.Status, ErrInvalidStatusCode, string(b))
+		return resp.StatusCode, body, resp.Header, fmt.Errorf("failed: %v (status: %s): %w: %s",
+			resp.Request.RequestURI, resp.Status, ErrInvalidStatusCode, string(body))
 	}
 
-	return resp.StatusCode, b, resp.Header, nil
+	return resp.StatusCode, body, resp.Header, nil
 }
 
 // setPathParams makes sure the path starts with /api and returns the full URL.

@@ -1,6 +1,9 @@
 package starr
 
-import "strings"
+import (
+	"strings"
+	"time"
+)
 
 /* This file contains shared structs or constants for all the *arr apps. */
 
@@ -117,4 +120,13 @@ type Value struct {
 type KeyValue struct {
 	Key   string `json:"key"`
 	Value int    `json:"value"`
+}
+
+// BackupFile comes from the system/backup paths in all apps.
+type BackupFile struct {
+	Name string    `json:"name"`
+	Path string    `json:"path"`
+	Type string    `json:"type"`
+	Time time.Time `json:"time"`
+	ID   int64     `json:"id"`
 }

@@ -323,16 +323,16 @@ func (l *Lidarr) GetCommands() ([]*CommandResponse, error) {
 
 // SendCommand sends a command to Lidarr.
 func (l *Lidarr) SendCommand(cmd *CommandRequest) (*CommandResponse, error) {
+	var output CommandResponse
+
 	if cmd == nil || cmd.Name == "" {
-		return nil, nil
+		return &output, nil
 	}
 
 	body, err := json.Marshal(cmd)
 	if err != nil {
 		return nil, fmt.Errorf("json.Marshal(cmd): %w", err)
 	}
-
-	var output CommandResponse
 
 	if err := l.PostInto("v1/command", nil, body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(command): %w", err)
@@ -358,4 +358,16 @@ func (l *Lidarr) GetHistory(maxRecords int) (*History, error) {
 	}
 
 	return &history, nil
+}
+
+// GetBackupFiles returns all available Lidarr backup files.
+// Use GetBody to download a file using BackupFile.Path.
+func (l *Lidarr) GetBackupFiles() ([]*starr.BackupFile, error) {
+	var output []*starr.BackupFile
+
+	if err := l.GetInto("v1/system/backup", nil, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(system/backup): %w", err)
+	}
+
+	return output, nil
 }
