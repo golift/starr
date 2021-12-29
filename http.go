@@ -90,7 +90,11 @@ func (c *Config) getBody(req *http.Request) (int, []byte, http.Header, error) {
 		return resp.StatusCode, nil, resp.Header, fmt.Errorf("ioutil.ReadAll: %w", err)
 	}
 
-	// fmt.Println(string(b))
+	// #############################################
+	// DEBUG: useful for viewing payloads from apps.
+	// fmt.Println(string(body))
+	// #############################################
+
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		return resp.StatusCode, body, resp.Header, fmt.Errorf("failed: %v (status: %s): %w: %s",
 			resp.Request.RequestURI, resp.Status, ErrInvalidStatusCode, string(body))

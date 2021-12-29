@@ -215,6 +215,7 @@ type Album struct {
 	AddOptions     *AlbumAddOptions `json:"addOptions,omitempty"`
 	Monitored      bool             `json:"monitored"`
 	AnyReleaseOk   bool             `json:"anyReleaseOk"`
+	Grabbed        bool             `json:"grabbed"`
 }
 
 // Release is part of an Album.

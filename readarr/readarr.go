@@ -305,6 +305,25 @@ func (r *Readarr) GetHistory(maxRecords int) (*History, error) {
 	return &history, nil
 }
 
+// Lookup will search for books matching the specified search term.
+func (r *Readarr) Lookup(term string) ([]Book, error) {
+	var output []Book
+
+	if term == "" {
+		return output, nil
+	}
+
+	params := make(url.Values)
+	params.Set("term", term)
+
+	err := r.GetInto("v1/book/lookup", params, &output)
+	if err != nil {
+		return nil, fmt.Errorf("api.Get(book/lookup): %w", err)
+	}
+
+	return output, nil
+}
+
 // GetBackupFiles returns all available Readarr backup files.
 // Use GetBody to download a file using BackupFile.Path.
 func (r *Readarr) GetBackupFiles() ([]*starr.BackupFile, error) {

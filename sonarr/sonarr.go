@@ -399,6 +399,26 @@ func (s *Sonarr) GetHistory(maxRecords int) (*History, error) {
 	return &history, nil
 }
 
+// Lookup will search for series matching the specified search term.
+// Searches for new shows on TheTVDB.com utilizing sonarr.tv's caching and augmentation proxy.
+func (s *Sonarr) Lookup(term string) ([]Series, error) {
+	var output []Series
+
+	if term == "" {
+		return output, nil
+	}
+
+	params := make(url.Values)
+	params.Set("term", term)
+
+	err := s.GetInto("v3/series/lookup", params, &output)
+	if err != nil {
+		return nil, fmt.Errorf("api.Get(series/lookup): %w", err)
+	}
+
+	return output, nil
+}
+
 // GetBackupFiles returns all available Sonarr backup files.
 // Use GetBody to download a file using BackupFile.Path.
 func (s *Sonarr) GetBackupFiles() ([]*starr.BackupFile, error) {

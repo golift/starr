@@ -360,6 +360,25 @@ func (l *Lidarr) GetHistory(maxRecords int) (*History, error) {
 	return &history, nil
 }
 
+// Lookup will search for albums matching the specified search term.
+func (l *Lidarr) Lookup(term string) ([]Album, error) {
+	var output []Album
+
+	if term == "" {
+		return output, nil
+	}
+
+	params := make(url.Values)
+	params.Set("term", term)
+
+	err := l.GetInto("v1/album", nil, &output)
+	if err != nil {
+		return nil, fmt.Errorf("api.Get(album/lookup): %w", err)
+	}
+
+	return output, nil
+}
+
 // GetBackupFiles returns all available Lidarr backup files.
 // Use GetBody to download a file using BackupFile.Path.
 func (l *Lidarr) GetBackupFiles() ([]*starr.BackupFile, error) {
