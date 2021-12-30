@@ -126,6 +126,20 @@ func (mr *MockAPIerMockRecorder) GetInto(arg0, arg1, arg2 interface{}) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetInto", reflect.TypeOf((*MockAPIer)(nil).GetInto), arg0, arg1, arg2)
 }
 
+// Login mocks base method.
+func (m *MockAPIer) Login() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Login")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Login indicates an expected call of Login.
+func (mr *MockAPIerMockRecorder) Login() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Login", reflect.TypeOf((*MockAPIer)(nil).Login))
+}
+
 // Post mocks base method.
 func (m *MockAPIer) Post(arg0 string, arg1 url.Values, arg2 []byte) ([]byte, error) {
 	m.ctrl.T.Helper()
