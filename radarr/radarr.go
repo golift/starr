@@ -94,7 +94,6 @@ func (r *Radarr) GetHistory(records, perPage int) (*History, error) { //nolint:d
 
 			break
 		}
-		fmt.Println(len(hist.Records), perPage)
 
 		perPage = starr.AdjustPerPage(records, curr.TotalRecords, len(hist.Records), perPage)
 	}
