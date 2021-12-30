@@ -72,7 +72,12 @@ func (c *Config) setHeaders(req *http.Request) {
 		req.Header.Set("Content-Type", "application/json")
 	}
 
-	req.Header.Set("Accept", "application/json")
+	if req.Method == http.MethodPost && strings.HasSuffix(req.URL.RequestURI(), "/login") {
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	} else {
+		req.Header.Set("Accept", "application/json")
+	}
+
 	req.Header.Set("User-Agent", "go-starr: https://"+reflect.TypeOf(Config{}).PkgPath()) //nolint:exhaustivestruct
 	req.Header.Set("X-API-Key", c.APIKey)
 }
@@ -92,7 +97,7 @@ func (c *Config) getBody(req *http.Request) (int, []byte, http.Header, error) {
 
 	// #############################################
 	// DEBUG: useful for viewing payloads from apps.
-	// fmt.Println(resp.StatusCode, string(body))
+	// log.Println(resp.StatusCode, resp.Header.Get("location"), string(body))
 	// #############################################
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {

@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+	"strings"
 
 	"golang.org/x/net/publicsuffix"
 )
@@ -67,6 +68,38 @@ func (c *Config) log(code int, data, body []byte, header http.Header, path, meth
 	}
 }
 
+func (c *Config) Login() error {
+	if c.Client.Jar == nil {
+		jar, err := cookiejar.New(&cookiejar.Options{PublicSuffixList: publicsuffix.List})
+		if err != nil {
+			return fmt.Errorf("cookiejar.New(publicsuffix): %w", err)
+		}
+
+		c.Client.Jar = jar
+	}
+
+	post := []byte("username=" + c.Username + "&password=" + c.Password)
+
+	code, resp, header, err := c.body(context.Background(), "/login", http.MethodPost, nil, bytes.NewBuffer(post))
+	c.log(code, nil, post, header, c.URL+"/login", http.MethodPost, err)
+
+	if err != nil {
+		return fmt.Errorf("authenticating as %s failed: %w", c.Username, err)
+	}
+	defer resp.Close()
+
+	_, _ = io.Copy(io.Discard, resp)
+
+	if u, _ := url.Parse(c.URL); strings.Contains(header.Get("location"), "loginFailed") ||
+		len(c.Client.Jar.Cookies(u)) == 0 {
+		return fmt.Errorf("%w: authenticating as %s failed", ErrRequestError, c.Username)
+	}
+
+	c.cookie = true
+
+	return nil
+}
+
 // Get makes a GET http request and returns the body.
 func (c *Config) Get(path string, params url.Values) ([]byte, error) {
 	code, data, header, err := c.req(path, http.MethodGet, params, nil)
@@ -78,7 +111,7 @@ func (c *Config) Get(path string, params url.Values) ([]byte, error) {
 // Post makes a POST http request and returns the body.
 func (c *Config) Post(path string, params url.Values, postBody []byte) ([]byte, error) {
 	code, data, header, err := c.req(path, http.MethodPost, params, bytes.NewBuffer(postBody))
-	c.log(code, data, postBody, header, c.setPathParams(path, params), http.MethodPut, err)
+	c.log(code, data, postBody, header, c.setPathParams(path, params), http.MethodPost, err)
 
 	return data, err
 }
@@ -134,7 +167,7 @@ func (c *Config) DeleteInto(path string, params url.Values, v interface{}) error
 // If it's not 200, it's possible the request had an error or was not authenticated.
 func (c *Config) GetBody(ctx context.Context, path string, params url.Values) (io.ReadCloser, int, error) {
 	code, data, header, err := c.body(ctx, path, http.MethodGet, params, nil)
-	c.log(code, nil, nil, header, c.setPathParams(path, params), http.MethodGet, err)
+	c.log(code, nil, nil, header, c.URL+path, http.MethodGet, err)
 
 	return data, code, err
 }
@@ -146,7 +179,7 @@ func (c *Config) GetBody(ctx context.Context, path string, params url.Values) (i
 func (c *Config) PostBody(ctx context.Context, path string, params url.Values,
 	postBody []byte) (io.ReadCloser, int, error) {
 	code, data, header, err := c.body(ctx, path, http.MethodPost, params, bytes.NewBuffer(postBody))
-	c.log(code, nil, postBody, header, c.setPathParams(path, params), http.MethodPut, err)
+	c.log(code, nil, postBody, header, c.URL+path, http.MethodPost, err)
 
 	return data, code, err
 }
@@ -157,7 +190,7 @@ func (c *Config) PostBody(ctx context.Context, path string, params url.Values,
 func (c *Config) PutBody(ctx context.Context, path string, params url.Values,
 	putBody []byte) (io.ReadCloser, int, error) {
 	code, data, header, err := c.body(ctx, path, http.MethodPut, params, bytes.NewBuffer(putBody))
-	c.log(code, nil, putBody, header, c.setPathParams(path, params), http.MethodPut, err)
+	c.log(code, nil, putBody, header, c.URL+path, http.MethodPut, err)
 
 	return data, code, err
 }
@@ -168,33 +201,9 @@ func (c *Config) PutBody(ctx context.Context, path string, params url.Values,
 // If it's not 200, it's possible the request had an error or was not authenticated.
 func (c *Config) DeleteBody(ctx context.Context, path string, params url.Values) (io.ReadCloser, int, error) {
 	code, data, header, err := c.body(ctx, path, http.MethodDelete, params, nil)
-	c.log(code, nil, nil, header, c.setPathParams(path, params), http.MethodDelete, err)
+	c.log(code, nil, nil, header, c.URL+path, http.MethodDelete, err)
 
 	return data, code, err
-}
-
-func (c *Config) Login() error {
-	if c.Client.Jar == nil {
-		jar, err := cookiejar.New(&cookiejar.Options{PublicSuffixList: publicsuffix.List})
-		if err != nil {
-			return fmt.Errorf("cookiejar.New(publicsuffix): %w", err)
-		}
-
-		c.Client.Jar = jar
-	}
-
-	post := []byte("username=" + c.Username + "&password=" + c.Password)
-
-	resp, _, err := c.PostBody(context.Background(), "/login", nil, post)
-	if err != nil {
-		return fmt.Errorf("authenticating as %s failed: %w", c.Username, err)
-	}
-	defer resp.Close()
-
-	_, _ = io.Copy(io.Discard, resp)
-	c.cookie = true
-
-	return nil
 }
 
 // unmarshal is an extra procedure to check an error and unmarshal the payload.
