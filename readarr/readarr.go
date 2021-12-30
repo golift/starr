@@ -367,6 +367,22 @@ func (r *Readarr) GetHistoryPage(params *starr.Req) (*History, error) {
 	return &history, nil
 }
 
+// Fail marks the given history item as failed by id.
+func (r *Readarr) Fail(historyID int64) error {
+	if historyID < 1 {
+		return fmt.Errorf("%w: invalid history ID: %d", starr.ErrRequestError, historyID)
+	}
+
+	params := make(url.Values)
+
+	_, err := r.Get("v1/history/failed/"+strconv.FormatInt(historyID, starr.Base10), params)
+	if err != nil {
+		return fmt.Errorf("api.Get(history/failed): %w", err)
+	}
+
+	return nil
+}
+
 // Lookup will search for books matching the specified search term.
 func (r *Readarr) Lookup(term string) ([]*Book, error) {
 	var output []*Book

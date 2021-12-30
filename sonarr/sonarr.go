@@ -454,18 +454,17 @@ func (s *Sonarr) GetHistoryPage(params *starr.Req) (*History, error) {
 	return &history, nil
 }
 
-
 // Fail marks the given history item as failed by id.
 func (s *Sonarr) Fail(historyID int64) error {
 	if historyID < 1 {
-		return fmt.Errorf("invalid history ID: %d", historyID)
+		return fmt.Errorf("%w: invalid history ID: %d", starr.ErrRequestError, historyID)
 	}
 
 	params := make(url.Values)
 
-	_, err := s.Post("v3/history/failed/"+strconv.FormatInt(historyID, starr.Base10), params, nil)
+	_, err := s.Get("v3/history/failed/"+strconv.FormatInt(historyID, starr.Base10), params)
 	if err != nil {
-		return fmt.Errorf("api.Get(history/failed/): %w", err)
+		return fmt.Errorf("api.Get(history/failed): %w", err)
 	}
 
 	return nil

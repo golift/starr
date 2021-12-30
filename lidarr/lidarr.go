@@ -420,6 +420,22 @@ func (l *Lidarr) GetHistoryPage(params *starr.Req) (*History, error) {
 	return &history, nil
 }
 
+// Fail marks the given history item as failed by id.
+func (l *Lidarr) Fail(historyID int64) error {
+	if historyID < 1 {
+		return fmt.Errorf("%w: invalid history ID: %d", starr.ErrRequestError, historyID)
+	}
+
+	params := make(url.Values)
+
+	_, err := l.Get("v1/history/failed/"+strconv.FormatInt(historyID, starr.Base10), params)
+	if err != nil {
+		return fmt.Errorf("api.Get(history/failed): %w", err)
+	}
+
+	return nil
+}
+
 // Lookup will search for albums matching the specified search term.
 func (l *Lidarr) Lookup(term string) ([]*Album, error) {
 	var output []*Album
