@@ -1,6 +1,8 @@
 package starr
 
 import (
+	"net/url"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -129,4 +131,79 @@ type BackupFile struct {
 	Type string    `json:"type"`
 	Time time.Time `json:"time"`
 	ID   int64     `json:"id"`
+}
+
+// Req is the input to search requests that have page-able responses.
+// These are turned into HTTP parameters.
+type Req struct {
+	PageSize int    // 10 is default if not provided.
+	Page     int    // 1 or higher
+	SortKey  string // date, timeleft, others?
+	SortDir  string // asc, desc
+}
+
+func (r *Req) Params() url.Values {
+	params := make(url.Values)
+
+	if r.Page > 0 {
+		params.Set("page", strconv.Itoa(r.Page))
+	} else {
+		params.Set("page", "1")
+	}
+
+	if r.PageSize > 0 {
+		params.Set("pageSize", strconv.Itoa(r.PageSize))
+	} else {
+		params.Set("pageSize", "10")
+	}
+
+	if r.SortKey != "" {
+		params.Set("sortKey", r.SortKey)
+	} else {
+		params.Set("sortKey", "date") // timeleft
+	}
+
+	if r.SortDir != "" {
+		params.Set("sortDir", r.SortDir)
+	} else {
+		params.Set("sortDir", "asc") // desc
+	}
+
+	return params
+}
+
+// SetPerPage returns a proper perPage value that is not equal to zero,
+// and not larger than the record count desired. If the count is zero, then
+// perPage can be anything other than zero.
+// This is used by paginated methods in the starr modules.
+func SetPerPage(records, perPage int) int {
+	const perPageDefault = 500
+
+	if perPage <= 1 {
+		if records > perPageDefault || records == 0 {
+			perPage = perPageDefault
+		} else {
+			perPage = records
+		}
+	} else if perPage > records && records != 0 {
+		perPage = records
+	}
+
+	return perPage
+}
+
+// AdjustPerPage to make sure we don't go over, or ask for more records than exist.
+// This is used by paginated methods in the starr modules.
+// 'records' is the number requested, 'total' is the number in the app,
+// 'collected' is how many we have so far, and 'perPage' is the current perPage setting.
+func AdjustPerPage(records, total, collected, perPage int) int {
+	if d := records - collected; perPage > d {
+		perPage = d
+	}
+
+	if d := total - collected; perPage > d {
+		perPage = d
+	}
+
+	return perPage
 }

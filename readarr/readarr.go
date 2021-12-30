@@ -52,19 +52,51 @@ func (r *Readarr) AddTag(label string) (int, error) {
 	return tag.ID, nil
 }
 
-// GetQueue returns the Readarr Queue (processing, but not yet imported).
-func (r *Readarr) GetQueue(maxRecords int) (*Queue, error) {
-	if maxRecords < 1 {
-		maxRecords = 1
+// GetQueue returns a single page from the Readarr Queue (processing, but not yet imported).
+// WARNING: 12/30/2021 - this method changed.
+// If you need control over the page, use readarr.GetQueuePage().
+// This function simply returns the number of queue records desired,
+// up to the number of records present in the application.
+// It grabs records in (paginated) batches of perPage, and concatenates
+// them into one list.  Passing zero for records will return all of them.
+func (r *Readarr) GetQueue(records, perPage int) (*Queue, error) {
+	queue := &Queue{Records: []*QueueRecord{}}
+	perPage = starr.SetPerPage(records, perPage)
+
+	for page := 0; ; page++ {
+		curr, err := r.GetQueuePage(&starr.Req{PageSize: perPage, Page: page})
+		if err != nil {
+			return nil, err
+		}
+
+		queue.Records = append(queue.Records, curr.Records...)
+
+		if len(queue.Records) >= curr.TotalRecords ||
+			(len(queue.Records) >= records && records != 0) ||
+			len(curr.Records) == 0 {
+			queue.PageSize = curr.TotalRecords
+			queue.TotalRecords = curr.TotalRecords
+			queue.SortDirection = curr.SortDirection
+			queue.SortKey = curr.SortKey
+
+			break
+		}
+
+		perPage = starr.AdjustPerPage(records, curr.TotalRecords, len(queue.Records), perPage)
 	}
 
-	params := make(url.Values)
-	params.Set("pageSize", strconv.Itoa(maxRecords))
-	params.Set("includeUnknownAuthorItems", "true")
+	return queue, nil
+}
 
+// GetQueuePage returns a single page from the Readarr Queue.
+// The page size and number is configurable with the input request parameters.
+func (r *Readarr) GetQueuePage(params *starr.Req) (*Queue, error) {
 	var queue Queue
 
-	err := r.GetInto("v1/queue", params, &queue)
+	paramVals := params.Params()
+	paramVals.Set("includeUnknownAuthorItems", "true")
+
+	err := r.GetInto("v1/queue", paramVals, &queue)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(queue): %w", err)
 	}
@@ -286,18 +318,48 @@ func (r *Readarr) SendCommand(cmd *CommandRequest) (*CommandResponse, error) {
 	return &output, nil
 }
 
-// GetHistory returns the last few items from the history endpoint.
-func (r *Readarr) GetHistory(maxRecords int) (*History, error) {
-	if maxRecords < 1 {
-		maxRecords = 1
+// GetHistory returns the Readarr History (grabs/failures/completed).
+// WARNING: 12/30/2021 - this method changed.
+// If you need control over the page, use readarr.GetHistoryPage().
+// This function simply returns the number of history records desired,
+// up to the number of records present in the application.
+// It grabs records in (paginated) batches of perPage, and concatenates
+// them into one list.  Passing zero for records will return all of them.
+func (r *Readarr) GetHistory(records, perPage int) (*History, error) {
+	hist := &History{Records: []HistoryRecord{}}
+	perPage = starr.SetPerPage(records, perPage)
+
+	for page := 0; ; page++ {
+		curr, err := r.GetHistoryPage(&starr.Req{PageSize: perPage, Page: page})
+		if err != nil {
+			return nil, err
+		}
+
+		hist.Records = append(hist.Records, curr.Records...)
+
+		if len(hist.Records) >= curr.TotalRecords ||
+			(len(hist.Records) >= records && records != 0) ||
+			len(curr.Records) == 0 {
+			hist.PageSize = curr.TotalRecords
+			hist.TotalRecords = curr.TotalRecords
+			hist.SortDirection = curr.SortDirection
+			hist.SortKey = curr.SortKey
+
+			break
+		}
+
+		perPage = starr.AdjustPerPage(records, curr.TotalRecords, len(hist.Records), perPage)
 	}
 
-	params := make(url.Values)
-	params.Set("pageSize", strconv.Itoa(maxRecords))
+	return hist, nil
+}
 
+// GetHistoryPage returns a single page from the Readarr History (grabs/failures/completed).
+// The page size and number is configurable with the input request parameters.
+func (r *Readarr) GetHistoryPage(params *starr.Req) (*History, error) {
 	var history History
 
-	err := r.GetInto("v1/history", params, &history)
+	err := r.GetInto("v1/history", params.Params(), &history)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(history): %w", err)
 	}
