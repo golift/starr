@@ -1,6 +1,8 @@
 package starr
 
 import (
+	"net/url"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -129,4 +131,138 @@ type BackupFile struct {
 	Type string    `json:"type"`
 	Time time.Time `json:"time"`
 	ID   int64     `json:"id"`
+}
+
+// Req is the input to search requests that have page-able responses.
+// These are turned into HTTP parameters.
+type Req struct {
+	PageSize   int    // 10 is default if not provided.
+	Page       int    // 1 or higher
+	SortKey    string // date, timeleft, others?
+	SortDir    string // asc, desc
+	url.Values        // Additional values that may be set.
+}
+
+// Params returns a brand new url.Values with all request parameters combined.
+func (r *Req) Params() url.Values {
+	params := make(url.Values)
+
+	if r.Page > 0 {
+		params.Set("page", strconv.Itoa(r.Page))
+	} else {
+		params.Set("page", "1")
+	}
+
+	if r.PageSize > 0 {
+		params.Set("pageSize", strconv.Itoa(r.PageSize))
+	} else {
+		params.Set("pageSize", "10")
+	}
+
+	if r.SortKey != "" {
+		params.Set("sortKey", r.SortKey)
+	} else {
+		params.Set("sortKey", "date") // timeleft
+	}
+
+	if r.SortDir != "" {
+		params.Set("sortDir", r.SortDir)
+	} else {
+		params.Set("sortDir", "asc") // desc
+	}
+
+	for k, v := range r.Values {
+		for _, val := range v {
+			params.Set(k, val)
+		}
+	}
+
+	return params
+}
+
+// Encode turns our request parameters into a URI string.
+func (r *Req) Encode() string {
+	return r.Params().Encode()
+}
+
+// CheckSet sets a request parameter if it's not already set.
+func (r *Req) CheckSet(key, value string) { //nolint:cyclop
+	switch strings.ToLower(key) {
+	case "page":
+		if r.Page == 0 {
+			r.Page, _ = strconv.Atoi(value)
+		}
+	case "pagesize":
+		if r.PageSize == 0 {
+			r.PageSize, _ = strconv.Atoi(value)
+		}
+	case "sortkey":
+		if r.SortKey == "" {
+			r.SortKey = value
+		}
+	case "sortdir":
+		if r.SortDir == "" {
+			r.SortDir = value
+		}
+	default:
+		if r.Values == nil || r.Values.Get(key) == "" {
+			r.Values.Set(key, value)
+		}
+	}
+}
+
+// Set sets a request parameter.
+func (r *Req) Set(key, value string) {
+	switch strings.ToLower(key) {
+	case "page":
+		r.Page, _ = strconv.Atoi(value)
+	case "pagesize":
+		r.PageSize, _ = strconv.Atoi(value)
+	case "sortkey":
+		r.SortKey = value
+	case "sortdir":
+		r.SortDir = value
+	default:
+		if r.Values == nil {
+			r.Values = make(url.Values)
+		}
+
+		r.Values.Set(key, value)
+	}
+}
+
+// SetPerPage returns a proper perPage value that is not equal to zero,
+// and not larger than the record count desired. If the count is zero, then
+// perPage can be anything other than zero.
+// This is used by paginated methods in the starr modules.
+func SetPerPage(records, perPage int) int {
+	const perPageDefault = 500
+
+	if perPage <= 1 {
+		if records > perPageDefault || records == 0 {
+			perPage = perPageDefault
+		} else {
+			perPage = records
+		}
+	} else if perPage > records && records != 0 {
+		perPage = records
+	}
+
+	return perPage
+}
+
+// AdjustPerPage to make sure we don't go over, or ask for more records than exist.
+// This is used by paginated methods in the starr modules.
+// 'records' is the number requested, 'total' is the number in the app,
+// 'collected' is how many we have so far, and 'perPage' is the current perPage setting.
+func AdjustPerPage(records, total, collected, perPage int) int {
+	if d := records - collected; perPage > d && d > 0 {
+		perPage = d
+	}
+
+	if d := total - collected; perPage > d {
+		perPage = d
+	}
+
+	return perPage
 }

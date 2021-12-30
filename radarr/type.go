@@ -35,7 +35,7 @@ func New(config *starr.Config) *Radarr {
 	return &Radarr{APIer: config}
 }
 
-// SystemStatus is the /api/v1/system/status endpoint.
+// SystemStatus is the /api/v3/system/status endpoint.
 type SystemStatus struct {
 	Version           string    `json:"version"`
 	BuildTime         time.Time `json:"buildTime"`
