@@ -100,7 +100,7 @@ func (l *Lidarr) GetQueue(records, perPage int) (*Queue, error) { //nolint:dupl
 	queue := &Queue{Records: []*QueueRecord{}}
 	perPage = starr.SetPerPage(records, perPage)
 
-	for page := 0; ; page++ {
+	for page := 1; ; page++ {
 		curr, err := l.GetQueuePage(&starr.Req{PageSize: perPage, Page: page})
 		if err != nil {
 			return nil, err
@@ -382,7 +382,7 @@ func (l *Lidarr) GetHistory(records, perPage int) (*History, error) { //nolint:d
 	hist := &History{Records: []*HistoryRecord{}}
 	perPage = starr.SetPerPage(records, perPage)
 
-	for page := 0; ; page++ {
+	for page := 1; ; page++ {
 		curr, err := l.GetHistoryPage(&starr.Req{PageSize: perPage, Page: page})
 		if err != nil {
 			return nil, err

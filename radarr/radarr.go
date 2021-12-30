@@ -77,14 +77,13 @@ func (r *Radarr) GetHistory(records, perPage int) (*History, error) { //nolint:d
 	hist := &History{Records: []*HistoryRecord{}}
 	perPage = starr.SetPerPage(records, perPage)
 
-	for page := 0; ; page++ {
+	for page := 1; ; page++ {
 		curr, err := r.GetHistoryPage(&starr.Req{PageSize: perPage, Page: page})
 		if err != nil {
 			return nil, err
 		}
 
 		hist.Records = append(hist.Records, curr.Records...)
-
 		if len(hist.Records) >= curr.TotalRecords ||
 			(len(hist.Records) >= records && records != 0) ||
 			len(curr.Records) == 0 {
@@ -95,6 +94,7 @@ func (r *Radarr) GetHistory(records, perPage int) (*History, error) { //nolint:d
 
 			break
 		}
+		fmt.Println(len(hist.Records), perPage)
 
 		perPage = starr.AdjustPerPage(records, curr.TotalRecords, len(hist.Records), perPage)
 	}
@@ -127,14 +127,13 @@ func (r *Radarr) GetQueue(records, perPage int) (*Queue, error) { //nolint:dupl
 	queue := &Queue{Records: []*QueueRecord{}}
 	perPage = starr.SetPerPage(records, perPage)
 
-	for page := 0; ; page++ {
+	for page := 1; ; page++ {
 		curr, err := r.GetQueuePage(&starr.Req{PageSize: perPage, Page: page})
 		if err != nil {
 			return nil, err
 		}
 
 		queue.Records = append(queue.Records, curr.Records...)
-
 		if len(queue.Records) >= curr.TotalRecords ||
 			(len(queue.Records) >= records && records != 0) ||
 			len(curr.Records) == 0 {

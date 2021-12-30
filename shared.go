@@ -186,7 +186,7 @@ func (r *Req) Encode() string {
 }
 
 // CheckSet sets a request parameter if it's not already set.
-func (r *Req) CheckSet(key, value string) {
+func (r *Req) CheckSet(key, value string) { //nolint:cyclop
 	switch strings.ToLower(key) {
 	case "page":
 		if r.Page == 0 {
@@ -256,7 +256,7 @@ func SetPerPage(records, perPage int) int {
 // 'records' is the number requested, 'total' is the number in the app,
 // 'collected' is how many we have so far, and 'perPage' is the current perPage setting.
 func AdjustPerPage(records, total, collected, perPage int) int {
-	if d := records - collected; perPage > d {
+	if d := records - collected; perPage > d && d > 0 {
 		perPage = d
 	}
 

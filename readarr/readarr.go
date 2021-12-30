@@ -63,7 +63,7 @@ func (r *Readarr) GetQueue(records, perPage int) (*Queue, error) {
 	queue := &Queue{Records: []*QueueRecord{}}
 	perPage = starr.SetPerPage(records, perPage)
 
-	for page := 0; ; page++ {
+	for page := 1; ; page++ {
 		curr, err := r.GetQueuePage(&starr.Req{PageSize: perPage, Page: page})
 		if err != nil {
 			return nil, err
@@ -329,7 +329,7 @@ func (r *Readarr) GetHistory(records, perPage int) (*History, error) {
 	hist := &History{Records: []HistoryRecord{}}
 	perPage = starr.SetPerPage(records, perPage)
 
-	for page := 0; ; page++ {
+	for page := 1; ; page++ {
 		curr, err := r.GetHistoryPage(&starr.Req{PageSize: perPage, Page: page})
 		if err != nil {
 			return nil, err
