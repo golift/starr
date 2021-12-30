@@ -517,11 +517,10 @@ func (r *Radarr) Fail(historyID int64) error {
 		return fmt.Errorf("%w: invalid history ID: %d", starr.ErrRequestError, historyID)
 	}
 
-	params := make(url.Values)
-
-	_, err := r.Get("v3/history/failed/"+strconv.FormatInt(historyID, starr.Base10), params)
+	// Strangely uses a POST without a payload.
+	_, err := r.Post("v3/history/failed/"+strconv.FormatInt(historyID, starr.Base10), nil, nil)
 	if err != nil {
-		return fmt.Errorf("api.Get(history/failed): %w", err)
+		return fmt.Errorf("api.Post(history/failed): %w", err)
 	}
 
 	return nil
