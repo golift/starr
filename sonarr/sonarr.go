@@ -51,14 +51,10 @@ func (s *Sonarr) GetQueue(records, perPage int) (*Queue, error) { //nolint:dupl
 func (s *Sonarr) GetQueuePage(params *starr.Req) (*Queue, error) {
 	var queue Queue
 
-	paramVals := params.Params()
-	paramVals.Set("includeUnknownSeriesItems", "true")
+	params.CheckSet("sortKey", "timeleft")
+	params.CheckSet("includeUnknownSeriesItems", "true")
 
-	if paramVals.Get("sortKey") == "" {
-		paramVals.Set("sortKey", "timeleft")
-	}
-
-	err := s.GetInto("v3/queue", paramVals, &queue)
+	err := s.GetInto("v3/queue", params.Params(), &queue)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(queue): %w", err)
 	}

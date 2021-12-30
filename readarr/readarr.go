@@ -93,10 +93,10 @@ func (r *Readarr) GetQueue(records, perPage int) (*Queue, error) {
 func (r *Readarr) GetQueuePage(params *starr.Req) (*Queue, error) {
 	var queue Queue
 
-	paramVals := params.Params()
-	paramVals.Set("includeUnknownAuthorItems", "true")
+	params.CheckSet("sortKey", "timeleft")
+	params.CheckSet("includeUnknownAuthorItems", "true")
 
-	err := r.GetInto("v1/queue", paramVals, &queue)
+	err := r.GetInto("v1/queue", params.Params(), &queue)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(queue): %w", err)
 	}

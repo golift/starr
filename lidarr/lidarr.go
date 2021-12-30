@@ -130,14 +130,10 @@ func (l *Lidarr) GetQueue(records, perPage int) (*Queue, error) { //nolint:dupl
 func (l *Lidarr) GetQueuePage(params *starr.Req) (*Queue, error) {
 	var queue Queue
 
-	paramVals := params.Params()
-	paramVals.Set("includeUnknownArtistItems", "true")
+	params.CheckSet("sortKey", "timeleft")
+	params.CheckSet("includeUnknownArtistItems", "true")
 
-	if paramVals.Get("sortKey") == "" {
-		paramVals.Set("sortKey", "timeleft")
-	}
-
-	err := l.GetInto("v1/queue", paramVals, &queue)
+	err := l.GetInto("v1/queue", params.Params(), &queue)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(queue): %w", err)
 	}

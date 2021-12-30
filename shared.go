@@ -136,12 +136,14 @@ type BackupFile struct {
 // Req is the input to search requests that have page-able responses.
 // These are turned into HTTP parameters.
 type Req struct {
-	PageSize int    // 10 is default if not provided.
-	Page     int    // 1 or higher
-	SortKey  string // date, timeleft, others?
-	SortDir  string // asc, desc
+	PageSize   int    // 10 is default if not provided.
+	Page       int    // 1 or higher
+	SortKey    string // date, timeleft, others?
+	SortDir    string // asc, desc
+	url.Values        // Additional values that may be set.
 }
 
+// Params returns a brand new url.Values with all request parameters combined.
 func (r *Req) Params() url.Values {
 	params := make(url.Values)
 
@@ -169,7 +171,64 @@ func (r *Req) Params() url.Values {
 		params.Set("sortDir", "asc") // desc
 	}
 
+	for k, v := range r.Values {
+		for _, val := range v {
+			params.Set(k, val)
+		}
+	}
+
 	return params
+}
+
+// Encode turns our request parameters into a URI string.
+func (r *Req) Encode() string {
+	return r.Params().Encode()
+}
+
+// CheckSet sets a request parameter if it's not already set.
+func (r *Req) CheckSet(key, value string) {
+	switch strings.ToLower(key) {
+	case "page":
+		if r.Page == 0 {
+			r.Page, _ = strconv.Atoi(value)
+		}
+	case "pagesize":
+		if r.PageSize == 0 {
+			r.PageSize, _ = strconv.Atoi(value)
+		}
+	case "sortkey":
+		if r.SortKey == "" {
+			r.SortKey = value
+		}
+	case "sortdir":
+		if r.SortDir == "" {
+			r.SortDir = value
+		}
+	default:
+		if r.Values == nil || r.Values.Get(key) == "" {
+			r.Values.Set(key, value)
+		}
+	}
+}
+
+// Set sets a request parameter.
+func (r *Req) Set(key, value string) {
+	switch strings.ToLower(key) {
+	case "page":
+		r.Page, _ = strconv.Atoi(value)
+	case "pagesize":
+		r.PageSize, _ = strconv.Atoi(value)
+	case "sortkey":
+		r.SortKey = value
+	case "sortdir":
+		r.SortDir = value
+	default:
+		if r.Values == nil {
+			r.Values = make(url.Values)
+		}
+
+		r.Values.Set(key, value)
+	}
 }
 
 // SetPerPage returns a proper perPage value that is not equal to zero,

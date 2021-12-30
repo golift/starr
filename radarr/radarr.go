@@ -157,14 +157,10 @@ func (r *Radarr) GetQueue(records, perPage int) (*Queue, error) { //nolint:dupl
 func (r *Radarr) GetQueuePage(params *starr.Req) (*Queue, error) {
 	var queue Queue
 
-	paramVals := params.Params()
-	paramVals.Set("includeUnknownMovieItems", "true")
+	params.CheckSet("sortKey", "timeleft")
+	params.CheckSet("includeUnknownMovieItems", "true")
 
-	if paramVals.Get("sortKey") == "" {
-		paramVals.Set("sortKey", "timeleft")
-	}
-
-	err := r.GetInto("v3/queue", paramVals, &queue)
+	err := r.GetInto("v3/queue", params.Params(), &queue)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(queue): %w", err)
 	}
