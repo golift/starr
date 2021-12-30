@@ -14,28 +14,28 @@ type Radarr struct {
 }
 
 // New returns a Radarr object used to interact with the Radarr API.
-func New(c *starr.Config) *Radarr {
-	if c.Client == nil {
+func New(config *starr.Config) *Radarr {
+	if config.Client == nil {
 		//nolint:exhaustivestruct,gosec
-		c.Client = &http.Client{
-			Timeout: c.Timeout.Duration,
+		config.Client = &http.Client{
+			Timeout: config.Timeout.Duration,
 			CheckRedirect: func(r *http.Request, via []*http.Request) error {
 				return http.ErrUseLastResponse
 			},
 			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: !c.ValidSSL},
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: !config.ValidSSL},
 			},
 		}
 	}
 
-	if c.Debugf == nil {
-		c.Debugf = func(string, ...interface{}) {}
+	if config.Debugf == nil {
+		config.Debugf = func(string, ...interface{}) {}
 	}
 
-	return &Radarr{APIer: c}
+	return &Radarr{APIer: config}
 }
 
-// SystemStatus is the /api/v1/system/status endpoint.
+// SystemStatus is the /api/v3/system/status endpoint.
 type SystemStatus struct {
 	Version           string    `json:"version"`
 	BuildTime         time.Time `json:"buildTime"`
@@ -79,9 +79,7 @@ type AddMovieInput struct {
 
 // AddMovieOptions are the options for finding a new movie.
 type AddMovieOptions struct {
-	SearchForMovie             bool `json:"searchForMovie"`
-	IgnoreEpisodesWithFiles    bool `json:"ignoreEpisodesWithFiles,omitempty"`
-	IgnoreEpisodesWithoutFiles bool `json:"ignoreEpisodesWithoutFiles,omitempty"`
+	SearchForMovie bool `json:"searchForMovie"`
 }
 
 // AddMovieOutput is the data returned when adding a movier.
@@ -425,6 +423,7 @@ type Field struct {
 	SelectOptions []*SelectOption `json:"selectOptions,omitempty"`
 }
 
+// SelectOption is part of a Field from an ImportList.
 type SelectOption struct {
 	Value        int    `json:"value"`
 	Name         string `json:"name"`

@@ -14,25 +14,25 @@ type Lidarr struct {
 }
 
 // New returns a Lidarr object used to interact with the Lidarr API.
-func New(c *starr.Config) *Lidarr {
-	if c.Client == nil {
+func New(config *starr.Config) *Lidarr {
+	if config.Client == nil {
 		//nolint:exhaustivestruct,gosec
-		c.Client = &http.Client{
-			Timeout: c.Timeout.Duration,
+		config.Client = &http.Client{
+			Timeout: config.Timeout.Duration,
 			CheckRedirect: func(r *http.Request, via []*http.Request) error {
 				return http.ErrUseLastResponse
 			},
 			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: !c.ValidSSL},
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: !config.ValidSSL},
 			},
 		}
 	}
 
-	if c.Debugf == nil {
-		c.Debugf = func(string, ...interface{}) {}
+	if config.Debugf == nil {
+		config.Debugf = func(string, ...interface{}) {}
 	}
 
-	return &Lidarr{APIer: c}
+	return &Lidarr{APIer: config}
 }
 
 // Queue is the /api/v1/queue endpoint.
@@ -215,6 +215,7 @@ type Album struct {
 	AddOptions     *AlbumAddOptions `json:"addOptions,omitempty"`
 	Monitored      bool             `json:"monitored"`
 	AnyReleaseOk   bool             `json:"anyReleaseOk"`
+	Grabbed        bool             `json:"grabbed"`
 }
 
 // Release is part of an Album.

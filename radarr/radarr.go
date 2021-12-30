@@ -66,24 +66,47 @@ func (r *Radarr) AddTag(label string) (int, error) {
 }
 
 // GetHistory returns the Radarr History (grabs/failures/completed).
-func (r *Radarr) GetHistory(maxRecords, page int) (*History, error) {
-	if maxRecords < 1 {
-		maxRecords = 10
+// WARNING: 12/30/2021 - this method changed. The second argument no longer
+// controls which page is returned, but instead adjusts the pagination size.
+// If you need control over the page, use radarr.GetHistoryPage().
+// This function simply returns the number of history records desired,
+// up to the number of records present in the application.
+// It grabs records in (paginated) batches of perPage, and concatenates
+// them into one list.  Passing zero for records will return all of them.
+func (r *Radarr) GetHistory(records, perPage int) (*History, error) { //nolint:dupl
+	hist := &History{Records: []*HistoryRecord{}}
+	perPage = starr.SetPerPage(records, perPage)
+
+	for page := 1; ; page++ {
+		curr, err := r.GetHistoryPage(&starr.Req{PageSize: perPage, Page: page})
+		if err != nil {
+			return nil, err
+		}
+
+		hist.Records = append(hist.Records, curr.Records...)
+		if len(hist.Records) >= curr.TotalRecords ||
+			(len(hist.Records) >= records && records != 0) ||
+			len(curr.Records) == 0 {
+			hist.PageSize = curr.TotalRecords
+			hist.TotalRecords = curr.TotalRecords
+			hist.SortDirection = curr.SortDirection
+			hist.SortKey = curr.SortKey
+
+			break
+		}
+
+		perPage = starr.AdjustPerPage(records, curr.TotalRecords, len(hist.Records), perPage)
 	}
 
-	if page < 1 {
-		page = 1
-	}
+	return hist, nil
+}
 
-	params := make(url.Values)
-	params.Set("sortKey", "date")
-	params.Set("sortDir", "asc")
-	params.Set("pageSize", strconv.Itoa(maxRecords))
-	params.Set("page", strconv.Itoa(page))
-
+// GetHistoryPage returns a single page from the Radarr History (grabs/failures/completed).
+// The page size and number is configurable with the input request parameters.
+func (r *Radarr) GetHistoryPage(params *starr.Req) (*History, error) {
 	var history History
 
-	err := r.GetInto("v3/history", params, &history)
+	err := r.GetInto("v3/history", params.Params(), &history)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(history): %w", err)
 	}
@@ -91,26 +114,51 @@ func (r *Radarr) GetHistory(maxRecords, page int) (*History, error) {
 	return &history, nil
 }
 
-// GetQueue returns the Radarr Queue (processing, but not yet imported).
-func (r *Radarr) GetQueue(maxRecords, page int) (*Queue, error) {
-	if maxRecords < 1 {
-		maxRecords = 10
+// GetQueue returns a single page from the Radarr Queue (processing, but not yet imported).
+// WARNING: 12/30/2021 - this method changed. The second argument no longer
+// controls which page is returned, but instead adjusts the pagination size.
+// If you need control over the page, use radarr.GetQueuePage().
+// This function simply returns the number of queue records desired,
+// up to the number of records present in the application.
+// It grabs records in (paginated) batches of perPage, and concatenates
+// them into one list.  Passing zero for records will return all of them.
+func (r *Radarr) GetQueue(records, perPage int) (*Queue, error) { //nolint:dupl
+	queue := &Queue{Records: []*QueueRecord{}}
+	perPage = starr.SetPerPage(records, perPage)
+
+	for page := 1; ; page++ {
+		curr, err := r.GetQueuePage(&starr.Req{PageSize: perPage, Page: page})
+		if err != nil {
+			return nil, err
+		}
+
+		queue.Records = append(queue.Records, curr.Records...)
+		if len(queue.Records) >= curr.TotalRecords ||
+			(len(queue.Records) >= records && records != 0) ||
+			len(curr.Records) == 0 {
+			queue.PageSize = curr.TotalRecords
+			queue.TotalRecords = curr.TotalRecords
+			queue.SortDirection = curr.SortDirection
+			queue.SortKey = curr.SortKey
+
+			break
+		}
+
+		perPage = starr.AdjustPerPage(records, curr.TotalRecords, len(queue.Records), perPage)
 	}
 
-	if page < 1 {
-		page = 1
-	}
+	return queue, nil
+}
 
-	params := make(url.Values)
-	params.Set("sortKey", "timeleft")
-	params.Set("sortDir", "asc")
-	params.Set("pageSize", strconv.Itoa(maxRecords))
-	params.Set("page", strconv.Itoa(page))
-	params.Set("includeUnknownMovieItems", "true")
-
+// GetQueuePage returns a single page from the Radarr Queue.
+// The page size and number is configurable with the input request parameters.
+func (r *Radarr) GetQueuePage(params *starr.Req) (*Queue, error) {
 	var queue Queue
 
-	err := r.GetInto("v3/queue", params, &queue)
+	params.CheckSet("sortKey", "timeleft")
+	params.CheckSet("includeUnknownMovieItems", "true")
+
+	err := r.GetInto("v3/queue", params.Params(), &queue)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(queue): %w", err)
 	}
@@ -293,28 +341,29 @@ func (r *Radarr) AddExclusions(exclusions []*Exclusion) error {
 
 // GetCustomFormats returns all configured Custom Formats.
 func (r *Radarr) GetCustomFormats() ([]*CustomFormat, error) {
-	var cf []*CustomFormat
-	if err := r.GetInto("v3/customFormat", nil, &cf); err != nil {
+	var output []*CustomFormat
+	if err := r.GetInto("v3/customFormat", nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(customFormat): %w", err)
 	}
 
-	return cf, nil
+	return output, nil
 }
 
 // AddCustomFormat creates a new custom format and returns the response (with ID).
-func (r *Radarr) AddCustomFormat(cf *CustomFormat) (*CustomFormat, error) {
-	if cf == nil {
-		return nil, nil
+func (r *Radarr) AddCustomFormat(format *CustomFormat) (*CustomFormat, error) {
+	var output CustomFormat
+
+	if format == nil {
+		return &output, nil
 	}
 
-	cf.ID = 0 // ID must be zero when adding.
+	format.ID = 0 // ID must be zero when adding.
 
-	body, err := json.Marshal(cf)
+	body, err := json.Marshal(format)
 	if err != nil {
 		return nil, fmt.Errorf("json.Marshal(customFormat): %w", err)
 	}
 
-	var output CustomFormat
 	if err := r.PostInto("v3/customFormat", nil, body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(customFormat): %w", err)
 	}
@@ -343,12 +392,12 @@ func (r *Radarr) UpdateCustomFormat(cf *CustomFormat, cfID int) (*CustomFormat, 
 
 // GetImportLists returns all import lists.
 func (r *Radarr) GetImportLists() ([]*ImportList, error) {
-	var il []*ImportList
-	if err := r.GetInto("v3/importlist", nil, &il); err != nil {
+	var output []*ImportList
+	if err := r.GetInto("v3/importlist", nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(importlist): %w", err)
 	}
 
-	return il, nil
+	return output, nil
 }
 
 // CreateImportList creates an import list in Radarr.
@@ -387,14 +436,16 @@ func (r *Radarr) DeleteImportList(ids []int64) error {
 }
 
 // UpdateImportList updates an existing import list and returns the response.
-func (r *Radarr) UpdateImportList(il *ImportList) (*ImportList, error) {
-	body, err := json.Marshal(il)
+func (r *Radarr) UpdateImportList(list *ImportList) (*ImportList, error) {
+	body, err := json.Marshal(list)
 	if err != nil {
 		return nil, fmt.Errorf("json.Marshal(importlist): %w", err)
 	}
 
 	var output ImportList
-	if err := r.PutInto("v3/importlist/"+strconv.FormatInt(il.ID, starr.Base10), nil, body, &output); err != nil {
+
+	err = r.PutInto("v3/importlist/"+strconv.FormatInt(list.ID, starr.Base10), nil, body, &output)
+	if err != nil {
 		return nil, fmt.Errorf("api.Put(importlist): %w", err)
 	}
 
@@ -414,16 +465,16 @@ func (r *Radarr) GetCommands() ([]*CommandResponse, error) {
 
 // SendCommand sends a command to Radarr.
 func (r *Radarr) SendCommand(cmd *CommandRequest) (*CommandResponse, error) {
+	var output CommandResponse
+
 	if cmd == nil || cmd.Name == "" {
-		return nil, nil
+		return &output, nil
 	}
 
 	body, err := json.Marshal(cmd)
 	if err != nil {
 		return nil, fmt.Errorf("json.Marshal(cmd): %w", err)
 	}
-
-	var output CommandResponse
 
 	if err := r.PostInto("v3/command", nil, body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(command): %w", err)
@@ -433,22 +484,34 @@ func (r *Radarr) SendCommand(cmd *CommandRequest) (*CommandResponse, error) {
 }
 
 // Lookup will search for movies matching the specified search term.
-func (r *Radarr) Lookup(term string) ([]Movie, error) {
-	if term == "" {
-		return nil, nil
-	}
+func (r *Radarr) Lookup(term string) ([]*Movie, error) {
+	var output []*Movie
 
-	var out []Movie
+	if term == "" {
+		return output, nil
+	}
 
 	params := make(url.Values)
 	params.Set("term", term)
 
-	err := r.GetInto("v3/movie/lookup", params, &out)
+	err := r.GetInto("v3/movie/lookup", params, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(movie/lookup): %w", err)
 	}
 
-	return out, nil
+	return output, nil
+}
+
+// GetBackupFiles returns all available Radarr backup files.
+// Use GetBody to download a file using BackupFile.Path.
+func (r *Radarr) GetBackupFiles() ([]*starr.BackupFile, error) {
+	var output []*starr.BackupFile
+
+	if err := r.GetInto("v3/system/backup", nil, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(system/backup): %w", err)
+	}
+
+	return output, nil
 }
 
 // MarkHistoryItemAsFailed marks the given history item as failed by id.
