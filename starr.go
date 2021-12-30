@@ -42,6 +42,8 @@ var (
 	ErrNilInterface = fmt.Errorf("cannot unmarshal data into a nil or empty interface")
 	// ErrInvalidAPIKey is returned if we know the API key didn't work.
 	ErrInvalidAPIKey = fmt.Errorf("API Key may be incorrect")
+	// ErrRequestError is returned when bad input is provided.
+	ErrRequestError = fmt.Errorf("request error")
 )
 
 // Config is the data needed to poll Radarr or Sonarr or Lidarr or Readarr.

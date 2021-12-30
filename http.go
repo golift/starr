@@ -92,7 +92,7 @@ func (c *Config) getBody(req *http.Request) (int, []byte, http.Header, error) {
 
 	// #############################################
 	// DEBUG: useful for viewing payloads from apps.
-	// fmt.Println(string(body))
+	// fmt.Println(resp.StatusCode, string(body))
 	// #############################################
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {

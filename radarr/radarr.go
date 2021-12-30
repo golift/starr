@@ -299,9 +299,6 @@ func (r *Radarr) GetExclusions() ([]*Exclusion, error) {
 	return exclusions, nil
 }
 
-// ErrRequestError is returned when bad input is provided.
-var ErrRequestError = fmt.Errorf("request error")
-
 // DeleteExclusions removes exclusions from Radarr.
 func (r *Radarr) DeleteExclusions(ids []int64) error {
 	var errs string
@@ -314,7 +311,7 @@ func (r *Radarr) DeleteExclusions(ids []int64) error {
 	}
 
 	if errs != "" {
-		return fmt.Errorf("%w: %s", ErrRequestError, errs)
+		return fmt.Errorf("%w: %s", starr.ErrRequestError, errs)
 	}
 
 	return nil
@@ -429,7 +426,7 @@ func (r *Radarr) DeleteImportList(ids []int64) error {
 	}
 
 	if errs != "" {
-		return fmt.Errorf("%w: %s", ErrRequestError, errs)
+		return fmt.Errorf("%w: %s", starr.ErrRequestError, errs)
 	}
 
 	return nil
@@ -514,17 +511,16 @@ func (r *Radarr) GetBackupFiles() ([]*starr.BackupFile, error) {
 	return output, nil
 }
 
-// MarkHistoryItemAsFailed marks the given history item as failed by id.
+// Fail marks the given history item as failed by id.
 func (r *Radarr) Fail(historyID int64) error {
 	if historyID < 1 {
-		return fmt.Errorf("invalid history ID: %d", historyID)
+		return fmt.Errorf("%w: invalid history ID: %d", starr.ErrRequestError, historyID)
 	}
 
-	params := make(url.Values)
-
-	_, err := r.Post("v3/history/failed/"+strconv.FormatInt(historyID, starr.Base10), params, nil)
+	// Strangely uses a POST without a payload.
+	_, err := r.Post("v3/history/failed/"+strconv.FormatInt(historyID, starr.Base10), nil, nil)
 	if err != nil {
-		return fmt.Errorf("api.Get(history/failed/): %w", err)
+		return fmt.Errorf("api.Post(history/failed): %w", err)
 	}
 
 	return nil

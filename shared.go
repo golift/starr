@@ -162,13 +162,13 @@ func (r *Req) Params() url.Values {
 	if r.SortKey != "" {
 		params.Set("sortKey", r.SortKey)
 	} else {
-		params.Set("sortKey", "date") // timeleft
+		params.Set("sortKey", "date") // timeleft, title, id
 	}
 
 	if r.SortDir != "" {
-		params.Set("sortDir", r.SortDir)
+		params.Set("sortDirection", r.SortDir)
 	} else {
-		params.Set("sortDir", "asc") // desc
+		params.Set("sortDirection", "ascending") // descending
 	}
 
 	for k, v := range r.Values {
@@ -200,7 +200,7 @@ func (r *Req) CheckSet(key, value string) { //nolint:cyclop
 		if r.SortKey == "" {
 			r.SortKey = value
 		}
-	case "sortdir":
+	case "sortdirection":
 		if r.SortDir == "" {
 			r.SortDir = value
 		}
@@ -220,7 +220,7 @@ func (r *Req) Set(key, value string) {
 		r.PageSize, _ = strconv.Atoi(value)
 	case "sortkey":
 		r.SortKey = value
-	case "sortdir":
+	case "sortdirection":
 		r.SortDir = value
 	default:
 		if r.Values == nil {
