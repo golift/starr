@@ -82,7 +82,11 @@ func (r *Req) CheckSet(key, value string) { //nolint:cyclop
 			r.SortDir = value
 		}
 	default:
-		if r.Values == nil || r.Values.Get(key) == "" {
+		if r.Values == nil {
+			r.Values = make(url.Values)
+		}
+
+		if r.Values.Get(key) == "" {
 			r.Values.Set(key, value)
 		}
 	}
