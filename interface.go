@@ -10,12 +10,16 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/http/cookiejar"
 	"net/url"
+
+	"golang.org/x/net/publicsuffix"
 )
 
 // APIer is used by the sub packages to allow mocking the http methods in tests.
 // This also allows consuming packages to override methods.
 type APIer interface {
+	Login() error // Only need for non-API paths. Requires Username and Password being set.
 	Get(path string, params url.Values) (respBody []byte, err error)
 	Post(path string, params url.Values, postBody []byte) (respBody []byte, err error)
 	Put(path string, params url.Values, putBody []byte) (respBody []byte, err error)
@@ -167,6 +171,30 @@ func (c *Config) DeleteBody(ctx context.Context, path string, params url.Values)
 	c.log(code, nil, nil, header, c.setPathParams(path, params), http.MethodDelete, err)
 
 	return data, code, err
+}
+
+func (c *Config) Login() error {
+	if c.Client.Jar == nil {
+		jar, err := cookiejar.New(&cookiejar.Options{PublicSuffixList: publicsuffix.List})
+		if err != nil {
+			return fmt.Errorf("cookiejar.New(publicsuffix): %w", err)
+		}
+
+		c.Client.Jar = jar
+	}
+
+	post := []byte("username=" + c.Username + "&password=" + c.Password)
+
+	resp, _, err := c.PostBody(context.Background(), "/login", nil, post)
+	if err != nil {
+		return fmt.Errorf("authenticating as %s failed: %w", c.Username, err)
+	}
+	defer resp.Close()
+
+	_, _ = io.Copy(io.Discard, resp)
+	c.cookie = true
+
+	return nil
 }
 
 // unmarshal is an extra procedure to check an error and unmarshal the payload.

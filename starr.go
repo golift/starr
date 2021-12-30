@@ -50,6 +50,7 @@ var (
 // At a minimum, provide a URL and API Key.
 // Set ValidSSL to true if the app has a valid SSL certificate.
 // HTTPUser and HTTPPass are used for Basic HTTP auth, if enabled (not common).
+// Username and Password are for non-API paths with native authentication enabled.
 // Timeout and ValidSSL are used to create the http Client by sub packages. You
 // may set those and call New() in the sub packages to create the http.Client
 // pointer, or you can create your own http.Client before calling subpackage.New().
@@ -59,11 +60,14 @@ type Config struct {
 	URL      string                       `json:"url" toml:"url" xml:"url" yaml:"url"`
 	HTTPPass string                       `json:"httpPass" toml:"http_pass" xml:"http_pass" yaml:"httpPass"`
 	HTTPUser string                       `json:"httpUser" toml:"http_user" xml:"http_user" yaml:"httpUser"`
+	Username string                       `json:"username" toml:"username" xml:"username" yaml:"username"`
+	Password string                       `json:"password" toml:"password" xml:"password" yaml:"password"`
 	Timeout  Duration                     `json:"timeout" toml:"timeout" xml:"timeout" yaml:"timeout"`
 	ValidSSL bool                         `json:"validSsl" toml:"valid_ssl" xml:"valid_ssl" yaml:"validSsl"`
 	MaxBody  int                          `json:"maxBody" toml:"max_body" xml:"max_body" yaml:"maxBody"`
 	Client   *http.Client                 `json:"-" toml:"-" xml:"-" yaml:"-"`
 	Debugf   func(string, ...interface{}) `json:"-" toml:"-" xml:"-" yaml:"-"`
+	cookie   bool
 }
 
 // Duration is used to Unmarshal text into a time.Duration value.
@@ -82,6 +86,8 @@ func New(apiKey, appURL string, timeout time.Duration) *Config {
 		URL:      appURL,
 		HTTPUser: "",
 		HTTPPass: "",
+		Username: "",
+		Password: "",
 		MaxBody:  0,
 		ValidSSL: false,
 		Timeout:  Duration{Duration: timeout},
