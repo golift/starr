@@ -426,8 +426,9 @@ func (l *Lidarr) Fail(historyID int64) error {
 		return fmt.Errorf("%w: invalid history ID: %d", starr.ErrRequestError, historyID)
 	}
 
-	// Strangely uses a POST without a payload.
-	_, err := l.Post("v1/history/failed/"+strconv.FormatInt(historyID, starr.Base10), nil, nil)
+	post := []byte("id=" + strconv.FormatInt(historyID, starr.Base10))
+
+	_, err := l.Post("v1/history/failed", nil, post)
 	if err != nil {
 		return fmt.Errorf("api.Post(history/failed): %w", err)
 	}
