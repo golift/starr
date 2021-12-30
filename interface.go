@@ -20,7 +20,7 @@ import (
 // APIer is used by the sub packages to allow mocking the http methods in tests.
 // This also allows consuming packages to override methods.
 type APIer interface {
-	Login() error // Only need for non-API paths. Requires Username and Password being set.
+	Login() error // Only needed for non-API paths, like backup downloads. Requires Username and Password being set.
 	Get(path string, params url.Values) (respBody []byte, err error)
 	Post(path string, params url.Values, postBody []byte) (respBody []byte, err error)
 	Put(path string, params url.Values, putBody []byte) (respBody []byte, err error)
@@ -68,6 +68,7 @@ func (c *Config) log(code int, data, body []byte, header http.Header, path, meth
 	}
 }
 
+// Login POSTs to the login form in a Starr app and saves the authentication cookie for future use.
 func (c *Config) Login() error {
 	if c.Client.Jar == nil {
 		jar, err := cookiejar.New(&cookiejar.Options{PublicSuffixList: publicsuffix.List})
@@ -84,7 +85,7 @@ func (c *Config) Login() error {
 	c.log(code, nil, post, header, c.URL+"/login", http.MethodPost, err)
 
 	if err != nil {
-		return fmt.Errorf("authenticating as %s failed: %w", c.Username, err)
+		return fmt.Errorf("authenticating as user '%s' failed: %w", c.Username, err)
 	}
 	defer resp.Close()
 
@@ -92,7 +93,7 @@ func (c *Config) Login() error {
 
 	if u, _ := url.Parse(c.URL); strings.Contains(header.Get("location"), "loginFailed") ||
 		len(c.Client.Jar.Cookies(u)) == 0 {
-		return fmt.Errorf("%w: authenticating as %s failed", ErrRequestError, c.Username)
+		return fmt.Errorf("%w: authenticating as user '%s' failed", ErrRequestError, c.Username)
 	}
 
 	c.cookie = true
