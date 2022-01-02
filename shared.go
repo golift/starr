@@ -129,4 +129,5 @@ type BackupFile struct {
 	Type string    `json:"type"`
 	Time time.Time `json:"time"`
 	ID   int64     `json:"id"`
+	Size int64     `json:"size"`
 }
