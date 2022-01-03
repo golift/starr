@@ -1,9 +1,9 @@
 # Starr
 
 [![GoDoc](https://godoc.org/golift.io/starr/svc?status.svg)](https://pkg.go.dev/golift.io/starr)
-[![Go Report Card](https://goreportcard.com/badge/golift.io/starr)](https://goreportcard.com/report/golift.io/rotatorr)
+[![Go Report Card](https://goreportcard.com/badge/golift.io/starr)](https://goreportcard.com/report/golift.io/starr)
 [![MIT License](http://img.shields.io/:license-mit-blue.svg)](https://github.com/golift/starr/blob/master/LICENSE)
-[![travis](https://travis-ci.org/golift/starr.svg?branch=main "Travis Tests")](https://travis-ci.org/golift/starr)
+[![travis](https://api.travis-ci.com/golift/starr.svg?branch=master "Travis Tests")](https://travis-ci.com/github/golift/starr)
 [![discord](https://badgen.net/badge/icon/Discord?color=0011ff&label&icon=https://simpleicons.now.sh/discord/eee "GoLift Discord")](https://golift.io/discord)
 
 ### Another way to say `*arr`
@@ -14,6 +14,7 @@
 -   [Sonarr](http://sonarr.tv)
 -   [Radarr](http://radarr.video)
 -   [Readarr](http://readarr.com)
+-   [Prowlarr](https://prowlarr.com)
 
 This library is slowly updated as new methods are needed or requested. If you have
 specific needs this library doesn't currently meet, but should or could, please
@@ -22,13 +23,13 @@ specific needs this library doesn't currently meet, but should or could, please
 This library is currently in use by:
 
 -   [Unpackerr](https://github.com/davidnewhall/unpackerr/)
--   [Notifiarr](https://github.com/Go-Lift-TV/notifiarr/)
+-   [Notifiarr](https://github.com/Notifiarr/notifiarr/)
 
 # Usage
 
 Get it:
 ```shell
-go get -u golift.io/starr
+go get golift.io/starr
 ```
 
 Use it:

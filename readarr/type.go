@@ -14,32 +14,39 @@ type Readarr struct {
 }
 
 // New returns a Readarr object used to interact with the Readarr API.
-func New(c *starr.Config) *Readarr {
-	if c.Client == nil {
+func New(config *starr.Config) *Readarr {
+	if config.Client == nil {
 		//nolint:exhaustivestruct,gosec
-		c.Client = &http.Client{
-			Timeout: c.Timeout.Duration,
+		config.Client = &http.Client{
+			Timeout: config.Timeout.Duration,
+			CheckRedirect: func(r *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
 			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: !c.ValidSSL},
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: !config.ValidSSL},
 			},
 		}
 	}
 
-	return &Readarr{APIer: c}
+	if config.Debugf == nil {
+		config.Debugf = func(string, ...interface{}) {}
+	}
+
+	return &Readarr{APIer: config}
 }
 
 // Queue is the /api/v1/queue endpoint.
 type Queue struct {
-	Page          int          `json:"page"`
-	PageSize      int          `json:"pageSize"`
-	SortKey       string       `json:"sortKey"`
-	SortDirection string       `json:"sortDirection"`
-	TotalRecords  int          `json:"totalRecords"`
-	Records       []BookRecord `json:"records"`
+	Page          int            `json:"page"`
+	PageSize      int            `json:"pageSize"`
+	SortKey       string         `json:"sortKey"`
+	SortDirection string         `json:"sortDirection"`
+	TotalRecords  int            `json:"totalRecords"`
+	Records       []*QueueRecord `json:"records"`
 }
 
-// BookRecord is a book from the queue API path.
-type BookRecord struct {
+// QueueRecord is a book from the queue API path.
+type QueueRecord struct {
 	AuthorID                int64                  `json:"authorId"`
 	BookID                  int64                  `json:"bookId"`
 	Quality                 *starr.Quality         `json:"quality"`
@@ -59,6 +66,7 @@ type BookRecord struct {
 	OutputPath              string                 `json:"outputPath,omitempty"`
 	DownloadForced          bool                   `json:"downloadForced"`
 	ID                      int64                  `json:"id"`
+	ErrorMessage            string                 `json:"errorMessage"`
 }
 
 // SystemStatus is the /api/v1/system/status endpoint.
@@ -326,7 +334,7 @@ type AddBookOutput struct {
 	AnyEditionOk  bool           `json:"anyEditionOk"`
 }
 
-// CommandReqyest goes into the /api/v1/command endpoint.
+// CommandRequest goes into the /api/v1/command endpoint.
 // This was created from the search command and may not support other commands yet.
 type CommandRequest struct {
 	Name    string  `json:"name"`
@@ -352,4 +360,49 @@ type CommandResponse struct {
 	SendUpdatesToClient bool                   `json:"sendUpdatesToClient"`
 	UpdateScheduledTask bool                   `json:"updateScheduledTask"`
 	Body                map[string]interface{} `json:"body"`
+}
+
+// History is the /api/v1/history endpoint.
+type History struct {
+	Page          int             `json:"page"`
+	PageSize      int             `json:"pageSize"`
+	SortKey       string          `json:"sortKey"`
+	SortDirection string          `json:"sortDirection"`
+	TotalRecords  int             `json:"totalRecords"`
+	Records       []HistoryRecord `json:"records"`
+}
+
+// HistoryRecord is part of the history. Not all items have all Data members.
+// Check EventType for events you need.
+type HistoryRecord struct {
+	ID                  int64          `json:"id"`
+	BookID              int64          `json:"bookId"`
+	AuthorID            int64          `json:"authorId"`
+	SourceTitle         string         `json:"sourceTitle"`
+	Quality             *starr.Quality `json:"quality"`
+	QualityCutoffNotMet bool           `json:"qualityCutoffNotMet"`
+	Date                time.Time      `json:"date"`
+	DownloadID          string         `json:"downloadId"`
+	EventType           string         `json:"eventType"`
+	Data                struct {
+		Age             string    `json:"age"`
+		AgeHours        string    `json:"ageHours"`
+		AgeMinutes      string    `json:"ageMinutes"`
+		DownloadClient  string    `json:"downloadClient"`
+		DownloadForced  string    `json:"downloadForced"`
+		DownloadURL     string    `json:"downloadUrl"`
+		DroppedPath     string    `json:"droppedPath"`
+		GUID            string    `json:"guid"`
+		ImportedPath    string    `json:"importedPath"`
+		Indexer         string    `json:"indexer"`
+		Message         string    `json:"message"`
+		NzbInfoURL      string    `json:"nzbInfoUrl"`
+		Protocol        string    `json:"protocol"`
+		PublishedDate   time.Time `json:"publishedDate"`
+		Reason          string    `json:"reason"`
+		ReleaseGroup    string    `json:"releaseGroup"`
+		Size            string    `json:"size"`
+		StatusMessages  string    `json:"statusMessages"`
+		TorrentInfoHash string    `json:"torrentInfoHash"`
+	} `json:"data"`
 }

@@ -14,32 +14,39 @@ type Lidarr struct {
 }
 
 // New returns a Lidarr object used to interact with the Lidarr API.
-func New(c *starr.Config) *Lidarr {
-	if c.Client == nil {
+func New(config *starr.Config) *Lidarr {
+	if config.Client == nil {
 		//nolint:exhaustivestruct,gosec
-		c.Client = &http.Client{
-			Timeout: c.Timeout.Duration,
+		config.Client = &http.Client{
+			Timeout: config.Timeout.Duration,
+			CheckRedirect: func(r *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
 			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: !c.ValidSSL},
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: !config.ValidSSL},
 			},
 		}
 	}
 
-	return &Lidarr{APIer: c}
+	if config.Debugf == nil {
+		config.Debugf = func(string, ...interface{}) {}
+	}
+
+	return &Lidarr{APIer: config}
 }
 
 // Queue is the /api/v1/queue endpoint.
 type Queue struct {
-	Page          int       `json:"page"`
-	PageSize      int       `json:"pageSize"`
-	SortKey       string    `json:"sortKey"`
-	SortDirection string    `json:"sortDirection"`
-	TotalRecords  int       `json:"totalRecords"`
-	Records       []*Record `json:"records"`
+	Page          int            `json:"page"`
+	PageSize      int            `json:"pageSize"`
+	SortKey       string         `json:"sortKey"`
+	SortDirection string         `json:"sortDirection"`
+	TotalRecords  int            `json:"totalRecords"`
+	Records       []*QueueRecord `json:"records"`
 }
 
-// Record represents the records returns by the /api/v1/queue endpoint.
-type Record struct {
+// QueueRecord represents the records returns by the /api/v1/queue endpoint.
+type QueueRecord struct {
 	ArtistID                int64                  `json:"artistId"`
 	AlbumID                 int64                  `json:"albumId"`
 	Quality                 *starr.Quality         `json:"quality"`
@@ -58,6 +65,7 @@ type Record struct {
 	OutputPath              string                 `json:"outputPath"`
 	DownloadForced          bool                   `json:"downloadForced"`
 	ID                      int64                  `json:"id"`
+	ErrorMessage            string                 `json:"errorMessage"`
 }
 
 // QualityProfile is the /api/v1/qualityprofile endpoint.
@@ -207,6 +215,7 @@ type Album struct {
 	AddOptions     *AlbumAddOptions `json:"addOptions,omitempty"`
 	Monitored      bool             `json:"monitored"`
 	AnyReleaseOk   bool             `json:"anyReleaseOk"`
+	Grabbed        bool             `json:"grabbed"`
 }
 
 // Release is part of an Album.
@@ -263,7 +272,7 @@ type AlbumAddOptions struct {
 	SearchForNewAlbum bool `json:"searchForNewAlbum,omitempty"`
 }
 
-// CommandReqyest goes into the /api/v1/command endpoint.
+// CommandRequest goes into the /api/v1/command endpoint.
 // This was created from the search command and may not support other commands yet.
 type CommandRequest struct {
 	Name     string  `json:"name"`
@@ -289,4 +298,50 @@ type CommandResponse struct {
 	SendUpdatesToClient bool                   `json:"sendUpdatesToClient"`
 	UpdateScheduledTask bool                   `json:"updateScheduledTask"`
 	Body                map[string]interface{} `json:"body"`
+}
+
+// History represents the /api/v1/history endpoint.
+type History struct {
+	Page          int              `json:"page"`
+	PageSize      int              `json:"pageSize"`
+	SortKey       string           `json:"sortKey"`
+	SortDirection string           `json:"sortDirection"`
+	TotalRecords  int              `json:"totalRecords"`
+	Records       []*HistoryRecord `json:"records"`
+}
+
+// HistoryRecord is part of the history. Not all items have all Data members.
+// Check EventType for events you need.
+type HistoryRecord struct {
+	ID                  int64          `json:"id"`
+	AlbumID             int64          `json:"albumId"`
+	ArtistID            int64          `json:"artistId"`
+	TrackID             int64          `json:"trackId"`
+	SourceTitle         string         `json:"sourceTitle"`
+	Quality             *starr.Quality `json:"quality"`
+	QualityCutoffNotMet bool           `json:"qualityCutoffNotMet"`
+	Date                time.Time      `json:"date"`
+	DownloadID          string         `json:"downloadId"`
+	EventType           string         `json:"eventType"`
+	Data                struct {
+		Age             string    `json:"age"`
+		AgeHours        string    `json:"ageHours"`
+		AgeMinutes      string    `json:"ageMinutes"`
+		DownloadClient  string    `json:"downloadClient"`
+		DownloadForced  string    `json:"downloadForced"`
+		DownloadURL     string    `json:"downloadUrl"`
+		DroppedPath     string    `json:"droppedPath"`
+		GUID            string    `json:"guid"`
+		ImportedPath    string    `json:"importedPath"`
+		Indexer         string    `json:"indexer"`
+		Message         string    `json:"message"`
+		NzbInfoURL      string    `json:"nzbInfoUrl"`
+		Protocol        string    `json:"protocol"`
+		PublishedDate   time.Time `json:"publishedDate"`
+		Reason          string    `json:"reason"`
+		ReleaseGroup    string    `json:"releaseGroup"`
+		Size            string    `json:"size"`
+		StatusMessages  string    `json:"statusMessages"`
+		TorrentInfoHash string    `json:"torrentInfoHash"`
+	} `json:"data"`
 }

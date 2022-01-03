@@ -33,6 +33,38 @@ func (l *Lidarr) GetQualityProfiles() ([]*QualityProfile, error) {
 	return profiles, nil
 }
 
+// AddQualityProfile updates a quality profile in place.
+func (l *Lidarr) AddQualityProfile(profile *QualityProfile) (int64, error) {
+	post, err := json.Marshal(profile)
+	if err != nil {
+		return 0, fmt.Errorf("json.Marshal(profile): %w", err)
+	}
+
+	var output QualityProfile
+
+	err = l.PostInto("v1/qualityProfile", nil, post, &output)
+	if err != nil {
+		return 0, fmt.Errorf("api.Post(qualityProfile): %w", err)
+	}
+
+	return output.ID, nil
+}
+
+// UpdateQualityProfile updates a quality profile in place.
+func (l *Lidarr) UpdateQualityProfile(profile *QualityProfile) error {
+	put, err := json.Marshal(profile)
+	if err != nil {
+		return fmt.Errorf("json.Marshal(profile): %w", err)
+	}
+
+	_, err = l.Put("v1/qualityProfile/"+strconv.FormatInt(profile.ID, starr.Base10), nil, put)
+	if err != nil {
+		return fmt.Errorf("api.Put(qualityProfile): %w", err)
+	}
+
+	return nil
+}
+
 // GetRootFolders returns all configured root folders.
 func (l *Lidarr) GetRootFolders() ([]*RootFolder, error) {
 	var folders []*RootFolder
@@ -57,20 +89,51 @@ func (l *Lidarr) GetMetadataProfiles() ([]*MetadataProfile, error) {
 	return profiles, nil
 }
 
-// GetQueue returns the Lidarr Queue.
-func (l *Lidarr) GetQueue(maxRecords int) (*Queue, error) {
-	if maxRecords < 1 {
-		maxRecords = 1
+// GetQueue returns a single page from the Lidarr Queue (processing, but not yet imported).
+// WARNING: 12/30/2021 - this method changed.
+// If you need control over the page, use lidarr.GetQueuePage().
+// This function simply returns the number of queue records desired,
+// up to the number of records present in the application.
+// It grabs records in (paginated) batches of perPage, and concatenates
+// them into one list.  Passing zero for records will return all of them.
+func (l *Lidarr) GetQueue(records, perPage int) (*Queue, error) { //nolint:dupl
+	queue := &Queue{Records: []*QueueRecord{}}
+	perPage = starr.SetPerPage(records, perPage)
+
+	for page := 1; ; page++ {
+		curr, err := l.GetQueuePage(&starr.Req{PageSize: perPage, Page: page})
+		if err != nil {
+			return nil, err
+		}
+
+		queue.Records = append(queue.Records, curr.Records...)
+
+		if len(queue.Records) >= curr.TotalRecords ||
+			(len(queue.Records) >= records && records != 0) ||
+			len(curr.Records) == 0 {
+			queue.PageSize = curr.TotalRecords
+			queue.TotalRecords = curr.TotalRecords
+			queue.SortDirection = curr.SortDirection
+			queue.SortKey = curr.SortKey
+
+			break
+		}
+
+		perPage = starr.AdjustPerPage(records, curr.TotalRecords, len(queue.Records), perPage)
 	}
 
-	params := make(url.Values)
-	params.Set("sortKey", "timeleft")
-	params.Set("sortDir", "asc")
-	params.Set("pageSize", strconv.Itoa(maxRecords))
+	return queue, nil
+}
 
+// GetQueuePage returns a single page from the Lidarr Queue.
+// The page size and number is configurable with the input request parameters.
+func (l *Lidarr) GetQueuePage(params *starr.Req) (*Queue, error) {
 	var queue Queue
 
-	err := l.GetInto("v1/queue", params, &queue)
+	params.CheckSet("sortKey", "timeleft")
+	params.CheckSet("includeUnknownArtistItems", "true")
+
+	err := l.GetInto("v1/queue", params.Params(), &queue)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(queue): %w", err)
 	}
@@ -154,7 +217,7 @@ func (l *Lidarr) GetArtist(mbID string) ([]*Artist, error) {
 func (l *Lidarr) GetArtistByID(artistID int64) (*Artist, error) {
 	var artist Artist
 
-	err := l.GetInto("v1/artist/"+strconv.FormatInt(artistID, 10), nil, &artist)
+	err := l.GetInto("v1/artist/"+strconv.FormatInt(artistID, starr.Base10), nil, &artist)
 	if err != nil {
 		return &artist, fmt.Errorf("api.Get(artist): %w", err)
 	}
@@ -194,7 +257,7 @@ func (l *Lidarr) UpdateArtist(artist *Artist) (*Artist, error) {
 
 	var output Artist
 
-	err = l.PutInto("v1/artist/"+strconv.FormatInt(artist.ID, 10), params, body, &output)
+	err = l.PutInto("v1/artist/"+strconv.FormatInt(artist.ID, starr.Base10), params, body, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Put(artist): %w", err)
 	}
@@ -225,7 +288,7 @@ func (l *Lidarr) GetAlbum(mbID string) ([]*Album, error) {
 func (l *Lidarr) GetAlbumByID(albumID int64) (*Album, error) {
 	var album Album
 
-	err := l.GetInto("v1/album/"+strconv.FormatInt(albumID, 10), nil, &album)
+	err := l.GetInto("v1/album/"+strconv.FormatInt(albumID, starr.Base10), nil, &album)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(album): %w", err)
 	}
@@ -245,7 +308,7 @@ func (l *Lidarr) UpdateAlbum(albumID int64, album *Album) (*Album, error) {
 
 	var output Album
 
-	err = l.PutInto("v1/album/"+strconv.FormatInt(albumID, 10), params, put, &output)
+	err = l.PutInto("v1/album/"+strconv.FormatInt(albumID, starr.Base10), params, put, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Put(album): %w", err)
 	}
@@ -290,8 +353,10 @@ func (l *Lidarr) GetCommands() ([]*CommandResponse, error) {
 
 // SendCommand sends a command to Lidarr.
 func (l *Lidarr) SendCommand(cmd *CommandRequest) (*CommandResponse, error) {
+	var output CommandResponse
+
 	if cmd == nil || cmd.Name == "" {
-		return nil, nil
+		return &output, nil
 	}
 
 	body, err := json.Marshal(cmd)
@@ -299,11 +364,105 @@ func (l *Lidarr) SendCommand(cmd *CommandRequest) (*CommandResponse, error) {
 		return nil, fmt.Errorf("json.Marshal(cmd): %w", err)
 	}
 
-	var output CommandResponse
-
 	if err := l.PostInto("v1/command", nil, body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(command): %w", err)
 	}
 
 	return &output, nil
+}
+
+// GetHistory returns the Lidarr History (grabs/failures/completed).
+// WARNING: 12/30/2021 - this method changed.
+// If you need control over the page, use lidarr.GetHistoryPage().
+// This function simply returns the number of history records desired,
+// up to the number of records present in the application.
+// It grabs records in (paginated) batches of perPage, and concatenates
+// them into one list.  Passing zero for records will return all of them.
+func (l *Lidarr) GetHistory(records, perPage int) (*History, error) { //nolint:dupl
+	hist := &History{Records: []*HistoryRecord{}}
+	perPage = starr.SetPerPage(records, perPage)
+
+	for page := 1; ; page++ {
+		curr, err := l.GetHistoryPage(&starr.Req{PageSize: perPage, Page: page})
+		if err != nil {
+			return nil, err
+		}
+
+		hist.Records = append(hist.Records, curr.Records...)
+
+		if len(hist.Records) >= curr.TotalRecords ||
+			(len(hist.Records) >= records && records != 0) ||
+			len(curr.Records) == 0 {
+			hist.PageSize = curr.TotalRecords
+			hist.TotalRecords = curr.TotalRecords
+			hist.SortDirection = curr.SortDirection
+			hist.SortKey = curr.SortKey
+
+			break
+		}
+
+		perPage = starr.AdjustPerPage(records, curr.TotalRecords, len(hist.Records), perPage)
+	}
+
+	return hist, nil
+}
+
+// GetHistoryPage returns a single page from the Lidarr History (grabs/failures/completed).
+// The page size and number is configurable with the input request parameters.
+func (l *Lidarr) GetHistoryPage(params *starr.Req) (*History, error) {
+	var history History
+
+	err := l.GetInto("v1/history", params.Params(), &history)
+	if err != nil {
+		return nil, fmt.Errorf("api.Get(history): %w", err)
+	}
+
+	return &history, nil
+}
+
+// Fail marks the given history item as failed by id.
+func (l *Lidarr) Fail(historyID int64) error {
+	if historyID < 1 {
+		return fmt.Errorf("%w: invalid history ID: %d", starr.ErrRequestError, historyID)
+	}
+
+	post := []byte("id=" + strconv.FormatInt(historyID, starr.Base10))
+
+	_, err := l.Post("v1/history/failed", nil, post)
+	if err != nil {
+		return fmt.Errorf("api.Post(history/failed): %w", err)
+	}
+
+	return nil
+}
+
+// Lookup will search for albums matching the specified search term.
+func (l *Lidarr) Lookup(term string) ([]*Album, error) {
+	var output []*Album
+
+	if term == "" {
+		return output, nil
+	}
+
+	params := make(url.Values)
+	params.Set("term", term)
+
+	err := l.GetInto("v1/album/lookup", params, &output)
+	if err != nil {
+		return nil, fmt.Errorf("api.Get(album/lookup): %w", err)
+	}
+
+	return output, nil
+}
+
+// GetBackupFiles returns all available Lidarr backup files.
+// Use GetBody to download a file using BackupFile.Path.
+func (l *Lidarr) GetBackupFiles() ([]*starr.BackupFile, error) {
+	var output []*starr.BackupFile
+
+	if err := l.GetInto("v1/system/backup", nil, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(system/backup): %w", err)
+	}
+
+	return output, nil
 }

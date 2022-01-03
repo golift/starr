@@ -14,18 +14,25 @@ type Sonarr struct {
 }
 
 // New returns a Sonarr object used to interact with the Sonarr API.
-func New(c *starr.Config) *Sonarr {
-	if c.Client == nil {
+func New(config *starr.Config) *Sonarr {
+	if config.Client == nil {
 		//nolint:exhaustivestruct,gosec
-		c.Client = &http.Client{
-			Timeout: c.Timeout.Duration,
+		config.Client = &http.Client{
+			Timeout: config.Timeout.Duration,
+			CheckRedirect: func(r *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
 			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: !c.ValidSSL},
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: !config.ValidSSL},
 			},
 		}
 	}
 
-	return &Sonarr{APIer: c}
+	if config.Debugf == nil {
+		config.Debugf = func(string, ...interface{}) {}
+	}
+
+	return &Sonarr{APIer: config}
 }
 
 // QualityProfile is the /api/v3/qualityprofile endpoint.
@@ -37,15 +44,16 @@ type QualityProfile struct {
 	UpgradeAllowed bool             `json:"upgradeAllowed"`
 }
 
+// ReleaseProfile defines a release profile's data from Sonarr.
 type ReleaseProfile struct {
 	Name            string            `json:"name"`
-	Required        string            `json:"required"`
-	Ignored         string            `json:"ignored"`
+	Required        []string          `json:"required"`
+	Ignored         []string          `json:"ignored"`
 	Preferred       []*starr.KeyValue `json:"preferred"`
-	IncPrefOnRename bool              `json:"includePreferredWhenRenaming"`
 	IndexerID       int64             `json:"indexerId"`
-	Tags            []*starr.Tag      `json:"tags"`
+	Tags            []int             `json:"tags"`
 	ID              int64             `json:"id"`
+	IncPrefOnRename bool              `json:"includePreferredWhenRenaming"`
 	Enabled         bool              `json:"enabled"`
 }
 
@@ -119,6 +127,7 @@ type QueueRecord struct {
 	DownloadClient          string                 `json:"downloadClient"`
 	Indexer                 string                 `json:"indexer"`
 	OutputPath              string                 `json:"outputPath"`
+	ErrorMessage            string                 `json:"errorMessage"`
 }
 
 // Series the /api/v3/series endpoint.
@@ -177,6 +186,23 @@ type Season struct {
 	SeasonNumber int         `json:"seasonNumber"`
 	Monitored    bool        `json:"monitored"`
 	Statistics   *Statistics `json:"statistics,omitempty"`
+}
+
+// Episode is the /api/v3/episode endpoint.
+type Episode struct {
+	ID                       int64     `json:"id"`
+	SeriesID                 int64     `json:"seriesId"`
+	AbsoluteEpisodeNumber    int64     `json:"absoluteEpisodeNumber"`
+	EpisodeFileID            int64     `json:"episodeFileId"`
+	SeasonNumber             int64     `json:"seasonNumber"`
+	EpisodeNumber            int64     `json:"episodeNumber"`
+	AirDateUtc               time.Time `json:"airDateUtc"`
+	AirDate                  string    `json:"airDate"`
+	Title                    string    `json:"title"`
+	Overview                 string    `json:"overview"`
+	UnverifiedSceneNumbering bool      `json:"unverifiedSceneNumbering"`
+	HasFile                  bool      `json:"hasFile"`
+	Monitored                bool      `json:"monitored"`
 }
 
 // SeriesLookup is the /api/v3/series/lookup endpoint.
@@ -297,10 +323,11 @@ type AlternateTitle struct {
 	SeasonNumber int    `json:"seasonNumber"`
 }
 
-// CommandReqyest goes into the /api/v3/command endpoint.
+// CommandRequest goes into the /api/v3/command endpoint.
 // This was created from the search command and may not support other commands yet.
 type CommandRequest struct {
 	Name      string  `json:"name"`
+	Files     []int64 `json:"files,omitempty"` // RenameFiles only
 	SeriesIDs []int64 `json:"seriesIds,omitempty"`
 	SeriesID  int64   `json:"seriesId,omitempty"`
 }
@@ -323,4 +350,54 @@ type CommandResponse struct {
 	SendUpdatesToClient bool                   `json:"sendUpdatesToClient"`
 	UpdateScheduledTask bool                   `json:"updateScheduledTask"`
 	Body                map[string]interface{} `json:"body"`
+}
+
+// History is the data from the /api/v3/history endpoint.
+type History struct {
+	Page          int              `json:"page"`
+	PageSize      int              `json:"pageSize"`
+	SortKey       string           `json:"sortKey"`
+	SortDirection string           `json:"sortDirection"`
+	TotalRecords  int              `json:"totalRecords"`
+	Records       []*HistoryRecord `json:"records"`
+}
+
+// HistoryRecord is part of the History data.
+// Not all items have all Data members. Check EventType for what you need.
+type HistoryRecord struct {
+	ID                   int64          `json:"id"`
+	EpisodeID            int64          `json:"episodeId"`
+	SeriesID             int64          `json:"seriesId"`
+	SourceTitle          string         `json:"sourceTitle"`
+	Language             Language       `json:"language"`
+	Quality              *starr.Quality `json:"quality"`
+	QualityCutoffNotMet  bool           `json:"qualityCutoffNotMet"`
+	LanguageCutoffNotMet bool           `json:"languageCutoffNotMet"`
+	Date                 time.Time      `json:"date"`
+	DownloadID           string         `json:"downloadId,omitempty"`
+	EventType            string         `json:"eventType"`
+	Data                 struct {
+		Age                string    `json:"age"`
+		AgeHours           string    `json:"ageHours"`
+		AgeMinutes         string    `json:"ageMinutes"`
+		DownloadClient     string    `json:"downloadClient"`
+		DownloadClientName string    `json:"downloadClientName"`
+		DownloadURL        string    `json:"downloadUrl"`
+		DroppedPath        string    `json:"droppedPath"`
+		FileID             string    `json:"fileId"`
+		GUID               string    `json:"guid"`
+		ImportedPath       string    `json:"importedPath"`
+		Indexer            string    `json:"indexer"`
+		Message            string    `json:"message"`
+		NzbInfoURL         string    `json:"nzbInfoUrl"`
+		PreferredWordScore string    `json:"preferredWordScore"`
+		Protocol           string    `json:"protocol"`
+		PublishedDate      time.Time `json:"publishedDate"`
+		Reason             string    `json:"reason"`
+		ReleaseGroup       string    `json:"releaseGroup"`
+		Size               string    `json:"size"`
+		TorrentInfoHash    string    `json:"torrentInfoHash"`
+		TvRageID           string    `json:"tvRageId"`
+		TvdbID             string    `json:"tvdbId"`
+	} `json:"data"`
 }

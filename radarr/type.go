@@ -14,21 +14,28 @@ type Radarr struct {
 }
 
 // New returns a Radarr object used to interact with the Radarr API.
-func New(c *starr.Config) *Radarr {
-	if c.Client == nil {
+func New(config *starr.Config) *Radarr {
+	if config.Client == nil {
 		//nolint:exhaustivestruct,gosec
-		c.Client = &http.Client{
-			Timeout: c.Timeout.Duration,
+		config.Client = &http.Client{
+			Timeout: config.Timeout.Duration,
+			CheckRedirect: func(r *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
 			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: !c.ValidSSL},
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: !config.ValidSSL},
 			},
 		}
 	}
 
-	return &Radarr{APIer: c}
+	if config.Debugf == nil {
+		config.Debugf = func(string, ...interface{}) {}
+	}
+
+	return &Radarr{APIer: config}
 }
 
-// SystemStatus is the /api/v1/system/status endpoint.
+// SystemStatus is the /api/v3/system/status endpoint.
 type SystemStatus struct {
 	Version           string    `json:"version"`
 	BuildTime         time.Time `json:"buildTime"`
@@ -72,9 +79,7 @@ type AddMovieInput struct {
 
 // AddMovieOptions are the options for finding a new movie.
 type AddMovieOptions struct {
-	SearchForMovie             bool `json:"searchForMovie"`
-	IgnoreEpisodesWithFiles    bool `json:"ignoreEpisodesWithFiles,omitempty"`
-	IgnoreEpisodesWithoutFiles bool `json:"ignoreEpisodesWithoutFiles,omitempty"`
+	SearchForMovie bool `json:"searchForMovie"`
 }
 
 // AddMovieOutput is the data returned when adding a movier.
@@ -135,137 +140,38 @@ type RootFolder struct {
 	UnmappedFolders []*starr.Path `json:"unmappedFolders"`
 }
 
-// History is the /api/history endpoint.
-type History struct {
-	Page          int       `json:"page"`
-	PageSize      int       `json:"pageSize"`
-	SortKey       string    `json:"sortKey"`
-	SortDirection string    `json:"sortDirection"`
-	TotalRecords  int64     `json:"totalRecords"`
-	Records       []*Record `json:"Records"`
-}
-
-// Record is a record in Radarr History.
-type Record struct {
-	ID                  int64          `json:"id"`
-	EpisodeID           int64          `json:"episodeId"`
-	MovieID             int64          `json:"movieId"`
-	SeriesID            int64          `json:"seriesId"`
-	SourceTitle         string         `json:"sourceTitle"`
-	Quality             *starr.Quality `json:"quality"`
-	QualityCutoffNotMet bool           `json:"qualityCutoffNotMet"`
-	Date                time.Time      `json:"date"`
-	DownloadID          string         `json:"downloadId"`
-	EventType           string         `json:"eventType"`
-	Data                *RecordData    `json:"data"`
-	Movie               *RecordMovie   `json:"movie"`
-}
-
-// RecordMovie belongs to a Record.
-type RecordMovie struct {
-	ID                int64          `json:"id"`
-	Downloaded        bool           `json:"downloaded"`
-	Monitored         bool           `json:"monitored"`
-	HasFile           bool           `json:"hasFile"`
-	Year              int            `json:"year"`
-	ProfileID         int64          `json:"profileId"`
-	Runtime           int            `json:"runtime"`
-	QualityProfileID  int64          `json:"qualityProfileId"`
-	SizeOnDisk        int64          `json:"sizeOnDisk"`
-	Title             string         `json:"title"`
-	SortTitle         string         `json:"sortTitle"`
-	Status            string         `json:"status"`
-	Overview          string         `json:"overview"`
-	InCinemas         time.Time      `json:"inCinemas"`
-	Images            []*starr.Image `json:"images"`
-	Website           string         `json:"website"`
-	YouTubeTrailerID  string         `json:"youTubeTrailerId"`
-	Studio            string         `json:"studio"`
-	Path              string         `json:"path"`
-	LastInfoSync      time.Time      `json:"lastInfoSync"`
-	CleanTitle        string         `json:"cleanTitle"`
-	ImdbID            string         `json:"imdbId"`
-	TmdbID            int64          `json:"tmdbId"`
-	TitleSlug         string         `json:"titleSlug"`
-	Genres            []string       `json:"genres"`
-	Tags              []int          `json:"tags"`
-	Added             time.Time      `json:"added"`
-	Ratings           *starr.Ratings `json:"ratings"`
-	AlternativeTitles []string       `json:"alternativeTitles"`
-}
-
-// RecordData belongs to a Record.
-type RecordData struct {
-	Indexer         string    `json:"indexer"`
-	NzbInfoURL      string    `json:"nzbInfoUrl"`
-	ReleaseGroup    string    `json:"releaseGroup"`
-	Age             string    `json:"age"`
-	AgeHours        string    `json:"ageHours"`
-	AgeMinutes      string    `json:"ageMinutes"`
-	PublishedDate   time.Time `json:"publishedDate"`
-	DownloadClient  string    `json:"downloadClient"`
-	Size            string    `json:"size"`
-	DownloadURL     string    `json:"downloadUrl"`
-	GUID            string    `json:"guid"`
-	TvdbID          string    `json:"tvdbId"`
-	TvRageID        string    `json:"tvRageId"`
-	Protocol        string    `json:"protocol"`
-	TorrentInfoHash []string  `json:"torrentInfoHash"`
-}
-
 // Queue is the /api/v3/queue endpoint.
 type Queue struct {
-	ID                      int64                  `json:"id"`
-	Size                    float64                `json:"size"`
-	Sizeleft                float64                `json:"sizeleft"`
-	EstimatedCompletionTime time.Time              `json:"estimatedCompletionTime"`
-	Title                   string                 `json:"title"`
-	Timeleft                string                 `json:"timeleft"`
-	Status                  string                 `json:"status"`
-	TrackedDownloadStatus   string                 `json:"trackedDownloadStatus"`
-	DownloadID              string                 `json:"downloadId"`
-	Protocol                string                 `json:"protocol"`
-	Movie                   *QueueMovie            `json:"movie"`
-	Quality                 *starr.Quality         `json:"quality"`
-	StatusMessages          []*starr.StatusMessage `json:"statusMessages"`
+	Page          int            `json:"page"`
+	PageSize      int            `json:"pageSize"`
+	SortKey       string         `json:"sortKey"`
+	SortDirection string         `json:"sortDirection"`
+	TotalRecords  int            `json:"totalRecords"`
+	Records       []*QueueRecord `json:"records"`
 }
 
-// QueueMovie is part of a Movie in the Queue.
-type QueueMovie struct {
-	Downloaded            bool           `json:"downloaded"`
-	HasFile               bool           `json:"hasFile"`
-	Monitored             bool           `json:"monitored"`
-	IsAvailable           bool           `json:"isAvailable"`
-	SecondaryYearSourceID int            `json:"secondaryYearSourceId"`
-	Year                  int            `json:"year"`
-	ProfileID             int64          `json:"profileId"`
-	Runtime               int            `json:"runtime"`
-	QualityProfileID      int64          `json:"qualityProfileId"`
-	ID                    int64          `json:"id"`
-	TmdbID                int64          `json:"tmdbId"`
-	SizeOnDisk            int64          `json:"sizeOnDisk"`
-	InCinemas             time.Time      `json:"inCinemas"`
-	PhysicalRelease       time.Time      `json:"physicalRelease"`
-	LastInfoSync          time.Time      `json:"lastInfoSync"`
-	Added                 time.Time      `json:"added"`
-	Title                 string         `json:"title"`
-	SortTitle             string         `json:"sortTitle"`
-	Status                string         `json:"status"`
-	Overview              string         `json:"overview"`
-	Website               string         `json:"website"`
-	YouTubeTrailerID      string         `json:"youTubeTrailerId"`
-	Studio                string         `json:"studio"`
-	Path                  string         `json:"path"`
-	PathState             string         `json:"pathState"`
-	MinimumAvailability   string         `json:"minimumAvailability"`
-	FolderName            string         `json:"folderName"`
-	CleanTitle            string         `json:"cleanTitle"`
-	ImdbID                string         `json:"imdbId"`
-	TitleSlug             string         `json:"titleSlug"`
-	Genres                []string       `json:"genres"`
-	Tags                  []int          `json:"tags"`
-	Images                []*starr.Image `json:"images"`
-	Ratings               *starr.Ratings `json:"ratings"`
+// QueueRecord is part of the activity Queue.
+type QueueRecord struct {
+	MovieID                 int64                  `json:"movieId"`
+	Languages               []*starr.Value         `json:"languages"`
+	Quality                 *starr.Quality         `json:"quality"`
+	CustomFormats           []interface{}          `json:"customFormats"` // probably []int64
+	Size                    float64                `json:"size"`
+	Title                   string                 `json:"title"`
+	Sizeleft                float64                `json:"sizeleft"`
+	Timeleft                string                 `json:"timeleft"`
+	EstimatedCompletionTime time.Time              `json:"estimatedCompletionTime"`
+	Status                  string                 `json:"status"`
+	TrackedDownloadStatus   string                 `json:"trackedDownloadStatus"`
+	TrackedDownloadState    string                 `json:"trackedDownloadState"`
+	StatusMessages          []*starr.StatusMessage `json:"statusMessages"`
+	DownloadID              string                 `json:"downloadId"`
+	Protocol                string                 `json:"protocol"`
+	DownloadClient          string                 `json:"downloadClient"`
+	Indexer                 string                 `json:"indexer"`
+	OutputPath              string                 `json:"outputPath"`
+	ID                      int64                  `json:"id"`
+	ErrorMessage            string                 `json:"errorMessage"`
 }
 
 // Movie is the /api/v3/movie endpoint.
@@ -305,7 +211,7 @@ type Movie struct {
 	Collection            *Collection         `json:"collection,omitempty"`
 	HasFile               bool                `json:"hasFile,omitempty"`
 	IsAvailable           bool                `json:"isAvailable,omitempty"`
-	Monitored             bool                `json:"monitored,omitempty"`
+	Monitored             bool                `json:"monitored"`
 }
 
 // Collection belongs to a Movie.
@@ -371,6 +277,7 @@ type FormatItem struct {
 	Score  int    `json:"score"`
 }
 
+// Exclusion is a Radarr excluded item.
 type Exclusion struct {
 	TMDBID int64  `json:"tmdbId"`
 	Title  string `json:"movieTitle"`
@@ -407,7 +314,7 @@ type CustomFormatField struct {
 	Advanced bool        `json:"advanced"`
 }
 
-// CommandReqyest goes into the /api/v3/command endpoint.
+// CommandRequest goes into the /api/v3/command endpoint.
 // This was created from the search command and may not support other commands yet.
 type CommandRequest struct {
 	Name     string  `json:"name"`
@@ -432,4 +339,94 @@ type CommandResponse struct {
 	SendUpdatesToClient bool                   `json:"sendUpdatesToClient"`
 	UpdateScheduledTask bool                   `json:"updateScheduledTask"`
 	Body                map[string]interface{} `json:"body"`
+}
+
+// History is the /api/v3/history endpoint.
+type History struct {
+	Page          int              `json:"page"`
+	PageSize      int              `json:"pageSize"`
+	SortKey       string           `json:"sortKey"`
+	SortDirection string           `json:"sortDirection"`
+	TotalRecords  int              `json:"totalRecords"`
+	Records       []*HistoryRecord `json:"records"`
+}
+
+// HistoryRecord is part of the History data.
+// Not all items have all Data members. Check EventType for what you need.
+type HistoryRecord struct {
+	ID                  int64          `json:"id"`
+	MovieID             int64          `json:"movieId"`
+	SourceTitle         string         `json:"sourceTitle"`
+	Languages           []*starr.Value `json:"languages"`
+	Quality             *starr.Quality `json:"quality"`
+	CustomFormats       []interface{}  `json:"customFormats"`
+	QualityCutoffNotMet bool           `json:"qualityCutoffNotMet"`
+	Date                time.Time      `json:"date"`
+	DownloadID          string         `json:"downloadId"`
+	EventType           string         `json:"eventType"`
+	Data                struct {
+		Age                string    `json:"age"`
+		AgeHours           string    `json:"ageHours"`
+		AgeMinutes         string    `json:"ageMinutes"`
+		DownloadClient     string    `json:"downloadClient"`
+		DownloadClientName string    `json:"downloadClientName"`
+		DownloadURL        string    `json:"downloadUrl"`
+		DroppedPath        string    `json:"droppedPath"`
+		FileID             string    `json:"fileId"`
+		GUID               string    `json:"guid"`
+		ImportedPath       string    `json:"importedPath"`
+		Indexer            string    `json:"indexer"`
+		IndexerFlags       string    `json:"indexerFlags"`
+		IndexerID          string    `json:"indexerId"`
+		Message            string    `json:"message"`
+		NzbInfoURL         string    `json:"nzbInfoUrl"`
+		Protocol           string    `json:"protocol"`
+		PublishedDate      time.Time `json:"publishedDate"`
+		Reason             string    `json:"reason"`
+		ReleaseGroup       string    `json:"releaseGroup"`
+		Size               string    `json:"size"`
+		TmdbID             string    `json:"tmdbId"`
+		TorrentInfoHash    string    `json:"torrentInfoHash"`
+	} `json:"data"`
+}
+
+// ImportList represents the api/v3/importlist endpoint.
+type ImportList struct {
+	ID                  int64    `json:"id"`
+	Name                string   `json:"name"`
+	Enabled             bool     `json:"enabled"`
+	EnableAuto          bool     `json:"enableAuto"`
+	ShouldMonitor       bool     `json:"shouldMonitor"`
+	SearchOnAdd         bool     `json:"searchOnAdd"`
+	RootFolderPath      string   `json:"rootFolderPath"`
+	QualityProfileID    int64    `json:"qualityProfileId"`
+	MinimumAvailability string   `json:"minimumAvailability"`
+	ListType            string   `json:"listType"`
+	ListOrder           int64    `json:"listOrder"`
+	Fields              []*Field `json:"fields"`
+	ImplementationName  string   `json:"implementationName"`
+	Implementation      string   `json:"implementation"`
+	ConfigContract      string   `json:"configContract"`
+	InfoLink            string   `json:"infoLink"`
+	Tags                []int    `json:"tags"`
+}
+
+// Field is currently only part of ImportList.
+type Field struct {
+	Name          string          `json:"name"`
+	Value         interface{}     `json:"value"` // sometimes number, sometimes string. 'Type' may tell you.
+	Label         string          `json:"label"`
+	HelpText      string          `json:"helpText"`
+	Type          string          `json:"type"`
+	Order         int64           `json:"order"`
+	Advanced      bool            `json:"advanced"`
+	SelectOptions []*SelectOption `json:"selectOptions,omitempty"`
+}
+
+// SelectOption is part of a Field from an ImportList.
+type SelectOption struct {
+	Value        int    `json:"value"`
+	Name         string `json:"name"`
+	Order        int    `json:"order"`
+	DividerAfter bool   `json:"dividerAfter"`
 }
