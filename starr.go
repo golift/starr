@@ -103,6 +103,20 @@ func (d *Duration) UnmarshalText(data []byte) (err error) {
 	return
 }
 
+// String returns a Duration as string without trailing zero units.
+func (d Duration) String() string {
+	dur := d.Duration.String()
+	if len(dur) > 3 && dur[len(dur)-3:] == "m0s" {
+		dur = dur[:len(dur)-2]
+	}
+
+	if len(dur) > 3 && dur[len(dur)-3:] == "h0m" {
+		dur = dur[:len(dur)-2]
+	}
+
+	return dur
+}
+
 // GetURL attempts to fix the URL for a starr app.
 // If the url base is missing it is added; this only checks the Location header.
 // You should call this once at startup and update the URL provided.
