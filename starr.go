@@ -82,3 +82,17 @@ func (d *Duration) UnmarshalText(data []byte) (err error) {
 
 	return
 }
+
+// String returns a Duration as string without trailing zero units.
+func (d Duration) String() string {
+	dur := d.Duration.String()
+	if len(dur) > 3 && dur[len(dur)-3:] == "m0s" {
+		dur = dur[:len(dur)-2]
+	}
+
+	if len(dur) > 3 && dur[len(dur)-3:] == "h0m" {
+		dur = dur[:len(dur)-2]
+	}
+
+	return dur
+}
