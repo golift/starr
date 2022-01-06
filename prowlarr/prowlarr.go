@@ -1,19 +1,35 @@
 package prowlarr
 
 import (
-	"fmt"
+	"crypto/tls"
+	"net/http"
 
 	"golift.io/starr"
 )
 
-// GetBackupFiles returns all available Prowlarr backup files.
-// Use GetBody to download a file using BackupFile.Path.
-func (r *Prowlarr) GetBackupFiles() ([]*starr.BackupFile, error) {
-	var output []*starr.BackupFile
+// Prowlarr contains all the methods to interact with a Prowlarr server.
+type Prowlarr struct {
+	starr.APIer
+}
 
-	if err := r.GetInto("v1/system/backup", nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(system/backup): %w", err)
+// New returns a Prowlarr object used to interact with the Prowlarr API.
+func New(config *starr.Config) *Prowlarr {
+	if config.Client == nil {
+		//nolint:exhaustivestruct,gosec
+		config.Client = &http.Client{
+			Timeout: config.Timeout.Duration,
+			CheckRedirect: func(r *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{InsecureSkipVerify: !config.ValidSSL},
+			},
+		}
 	}
 
-	return output, nil
+	if config.Debugf == nil {
+		config.Debugf = func(string, ...interface{}) {}
+	}
+
+	return &Prowlarr{APIer: config}
 }
