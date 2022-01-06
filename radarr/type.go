@@ -1,39 +1,10 @@
 package radarr
 
 import (
-	"crypto/tls"
-	"net/http"
 	"time"
 
 	"golift.io/starr"
 )
-
-// Radarr contains all the methods to interact with a Radarr server.
-type Radarr struct {
-	starr.APIer
-}
-
-// New returns a Radarr object used to interact with the Radarr API.
-func New(config *starr.Config) *Radarr {
-	if config.Client == nil {
-		//nolint:exhaustivestruct,gosec
-		config.Client = &http.Client{
-			Timeout: config.Timeout.Duration,
-			CheckRedirect: func(r *http.Request, via []*http.Request) error {
-				return http.ErrUseLastResponse
-			},
-			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: !config.ValidSSL},
-			},
-		}
-	}
-
-	if config.Debugf == nil {
-		config.Debugf = func(string, ...interface{}) {}
-	}
-
-	return &Radarr{APIer: config}
-}
 
 // SystemStatus is the /api/v3/system/status endpoint.
 type SystemStatus struct {
