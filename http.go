@@ -16,10 +16,8 @@ import (
 /* The methods in this file provide assumption-ridden HTTP calls for Starr apps. */
 
 // req returns te body in []byte form (already read).
-func (c *Config) req(path, method string, params url.Values, body io.Reader) (int, []byte, http.Header, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), c.Timeout.Duration)
-	defer cancel()
-
+func (c *Config) req(ctx context.Context, path, method string, params url.Values,
+	body io.Reader) (int, []byte, http.Header, error) {
 	req, err := c.newReq(ctx, c.setPathParams(path, params), method, params, body)
 	if err != nil {
 		return 0, nil, nil, err
