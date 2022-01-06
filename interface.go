@@ -20,27 +20,17 @@ import (
 // APIer is used by the sub packages to allow mocking the http methods in tests.
 // This also allows consuming packages to override methods.
 type APIer interface {
-	Login() error // Only needed for non-API paths, like backup downloads. Requires Username and Password being set.
+	Login(ctx context.Context) error
 	// Normal data, returns http body.
-	Get(path string, params url.Values) (respBody []byte, err error)
-	Post(path string, params url.Values, postBody []byte) (respBody []byte, err error)
-	Put(path string, params url.Values, putBody []byte) (respBody []byte, err error)
-	Delete(path string, params url.Values) (respBody []byte, err error)
+	Get(ctx context.Context, path string, params url.Values) (respBody []byte, err error)
+	Post(ctx context.Context, path string, params url.Values, postBody []byte) (respBody []byte, err error)
+	Put(ctx context.Context, path string, params url.Values, putBody []byte) (respBody []byte, err error)
+	Delete(ctx context.Context, path string, params url.Values) (respBody []byte, err error)
 	// Normal data, unmarshals into provided interface.
-	GetInto(path string, params url.Values, v interface{}) error
-	PostInto(path string, params url.Values, postBody []byte, v interface{}) error
-	PutInto(path string, params url.Values, putBody []byte, v interface{}) error
-	DeleteInto(path string, params url.Values, v interface{}) error
-	// With-Context methods for above.
-	LoginContext(ctx context.Context) error
-	GetContext(ctx context.Context, path string, params url.Values) (respBody []byte, err error)
-	PostContext(ctx context.Context, path string, params url.Values, postBody []byte) (respBody []byte, err error)
-	PutContext(ctx context.Context, path string, params url.Values, putBody []byte) (respBody []byte, err error)
-	DeleteContext(ctx context.Context, path string, params url.Values) (respBody []byte, err error)
-	GetIntoContext(ctx context.Context, path string, params url.Values, v interface{}) error
-	PostIntoContext(ctx context.Context, path string, params url.Values, postBody []byte, v interface{}) error
-	PutIntoContext(ctx context.Context, path string, params url.Values, putBody []byte, v interface{}) error
-	DeleteIntoContext(ctx context.Context, path string, params url.Values, v interface{}) error
+	GetInto(ctx context.Context, path string, params url.Values, v interface{}) error
+	PostInto(ctx context.Context, path string, params url.Values, postBody []byte, v interface{}) error
+	PutInto(ctx context.Context, path string, params url.Values, putBody []byte, v interface{}) error
+	DeleteInto(ctx context.Context, path string, params url.Values, v interface{}) error
 	// Body methods.
 	GetBody(ctx context.Context, path string, params url.Values) (respBody io.ReadCloser, status int, err error)
 	PostBody(ctx context.Context, path string, params url.Values,
@@ -81,13 +71,8 @@ func (c *Config) log(code int, data, body []byte, header http.Header, path, meth
 	}
 }
 
-// Login POSTs to the login form in a Starr app and saves the authentication cookie for future use.
-func (c *Config) Login() error {
-	return c.LoginContext(context.Background())
-}
-
-// LoginContext POSTs to the login form in a Starr app and saves the authentication cookie for future use.
-func (c *Config) LoginContext(ctx context.Context) error {
+// LoginC POSTs to the login form in a Starr app and saves the authentication cookie for future use.
+func (c *Config) Login(ctx context.Context) error {
 	if c.Client.Jar == nil {
 		jar, err := cookiejar.New(&cookiejar.Options{PublicSuffixList: publicsuffix.List})
 		if err != nil {
@@ -120,12 +105,7 @@ func (c *Config) LoginContext(ctx context.Context) error {
 }
 
 // Get makes a GET http request and returns the body.
-func (c *Config) Get(path string, params url.Values) ([]byte, error) {
-	return c.GetContext(context.Background(), path, params)
-}
-
-// Get makes a GET http request and returns the body.
-func (c *Config) GetContext(ctx context.Context, path string, params url.Values) ([]byte, error) {
+func (c *Config) Get(ctx context.Context, path string, params url.Values) ([]byte, error) {
 	code, data, header, err := c.Req(ctx, path, http.MethodGet, params, nil)
 	c.log(code, data, nil, header, c.SetPathParams(path, params), http.MethodGet, err)
 
@@ -133,12 +113,7 @@ func (c *Config) GetContext(ctx context.Context, path string, params url.Values)
 }
 
 // Post makes a POST http request and returns the body.
-func (c *Config) Post(path string, params url.Values, postBody []byte) ([]byte, error) {
-	return c.PostContext(context.Background(), path, params, postBody)
-}
-
-// PostContext makes a POST http request and returns the body.
-func (c *Config) PostContext(ctx context.Context, path string, params url.Values, postBody []byte) ([]byte, error) {
+func (c *Config) Post(ctx context.Context, path string, params url.Values, postBody []byte) ([]byte, error) {
 	code, data, header, err := c.Req(ctx, path, http.MethodPost, params, bytes.NewBuffer(postBody))
 	c.log(code, data, postBody, header, c.SetPathParams(path, params), http.MethodPost, err)
 
@@ -146,12 +121,7 @@ func (c *Config) PostContext(ctx context.Context, path string, params url.Values
 }
 
 // Put makes a PUT http request and returns the body.
-func (c *Config) Put(path string, params url.Values, putBody []byte) ([]byte, error) {
-	return c.PutContext(context.Background(), path, params, putBody)
-}
-
-// PutContext makes a PUT http request and returns the body.
-func (c *Config) PutContext(ctx context.Context, path string, params url.Values, putBody []byte) ([]byte, error) {
+func (c *Config) Put(ctx context.Context, path string, params url.Values, putBody []byte) ([]byte, error) {
 	code, data, header, err := c.Req(ctx, path, http.MethodPut, params, bytes.NewBuffer(putBody))
 	c.log(code, data, putBody, header, c.SetPathParams(path, params), http.MethodPut, err)
 
@@ -159,69 +129,43 @@ func (c *Config) PutContext(ctx context.Context, path string, params url.Values,
 }
 
 // Delete makes a DELETE http request and returns the body.
-func (c *Config) Delete(path string, params url.Values) ([]byte, error) {
-	return c.DeleteContext(context.Background(), path, params)
-}
-
-// DeleteContext makes a DELETE http request and returns the body.
-func (c *Config) DeleteContext(ctx context.Context, path string, params url.Values) ([]byte, error) {
+func (c *Config) Delete(ctx context.Context, path string, params url.Values) ([]byte, error) {
 	code, data, header, err := c.Req(ctx, path, http.MethodDelete, params, nil)
 	c.log(code, data, nil, header, c.SetPathParams(path, params), http.MethodDelete, err)
 
 	return data, err
 }
 
-// GetInto performs an HTTP GET against an API path and unmarshals the payload into the provided pointer interface.
-func (c *Config) GetInto(path string, params url.Values, v interface{}) error {
-	return c.GetIntoContext(context.Background(), path, params, v)
-}
-
-// GetIntoContext performs an HTTP GET against an API path and
+// GetInto performs an HTTP GET against an API path and
 // unmarshals the payload into the provided pointer interface.
-func (c *Config) GetIntoContext(ctx context.Context, path string, params url.Values, v interface{}) error {
-	data, err := c.GetContext(ctx, path, params)
+func (c *Config) GetInto(ctx context.Context, path string, params url.Values, v interface{}) error {
+	data, err := c.Get(ctx, path, params)
 
 	return unmarshal(v, data, err)
 }
 
-// PostInto performs an HTTP POST against an API path and unmarshals the payload into the provided pointer interface.
-func (c *Config) PostInto(path string, params url.Values, postBody []byte, v interface{}) error {
-	return c.PostIntoContext(context.Background(), path, params, postBody, v)
-}
-
-// PostIntoContext performs an HTTP POST against an API path and
+// PostInto performs an HTTP POST against an API path and
 // unmarshals the payload into the provided pointer interface.
-func (c *Config) PostIntoContext(ctx context.Context, path string,
+func (c *Config) PostInto(ctx context.Context, path string,
 	params url.Values, postBody []byte, v interface{}) error {
-	data, err := c.PostContext(ctx, path, params, postBody)
+	data, err := c.Post(ctx, path, params, postBody)
 
 	return unmarshal(v, data, err)
 }
 
 // PutInto performs an HTTP PUT against an API path and
 // unmarshals the payload into the provided pointer interface.
-func (c *Config) PutInto(path string, params url.Values, putBody []byte, v interface{}) error {
-	return c.PutIntoContext(context.Background(), path, params, putBody, v)
-}
-
-// PutIntoContext performs an HTTP PUT against an API path and
-// unmarshals the payload into the provided pointer interface.
-func (c *Config) PutIntoContext(ctx context.Context, path string,
+func (c *Config) PutInto(ctx context.Context, path string,
 	params url.Values, putBody []byte, v interface{}) error {
-	data, err := c.PutContext(ctx, path, params, putBody)
+	data, err := c.Put(ctx, path, params, putBody)
 
 	return unmarshal(v, data, err)
 }
 
-// DeleteInto performs an HTTP DELETE against an API path and unmarshals the payload into a pointer interface.
-func (c *Config) DeleteInto(path string, params url.Values, v interface{}) error {
-	return c.DeleteIntoContext(context.Background(), path, params, v)
-}
-
-// DeleteIntoContext performs an HTTP DELETE against an API path
+// DeleteInto performs an HTTP DELETE against an API path
 // and unmarshals the payload into a pointer interface.
-func (c *Config) DeleteIntoContext(ctx context.Context, path string, params url.Values, v interface{}) error {
-	data, err := c.DeleteContext(ctx, path, params)
+func (c *Config) DeleteInto(ctx context.Context, path string, params url.Values, v interface{}) error {
+	data, err := c.Delete(ctx, path, params)
 
 	return unmarshal(v, data, err)
 }
