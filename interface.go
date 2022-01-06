@@ -126,8 +126,8 @@ func (c *Config) Get(path string, params url.Values) ([]byte, error) {
 
 // Get makes a GET http request and returns the body.
 func (c *Config) GetContext(ctx context.Context, path string, params url.Values) ([]byte, error) {
-	code, data, header, err := c.req(ctx, path, http.MethodGet, params, nil)
-	c.log(code, data, nil, header, c.setPathParams(path, params), http.MethodGet, err)
+	code, data, header, err := c.Req(ctx, path, http.MethodGet, params, nil)
+	c.log(code, data, nil, header, c.SetPathParams(path, params), http.MethodGet, err)
 
 	return data, err
 }
@@ -139,8 +139,8 @@ func (c *Config) Post(path string, params url.Values, postBody []byte) ([]byte, 
 
 // PostContext makes a POST http request and returns the body.
 func (c *Config) PostContext(ctx context.Context, path string, params url.Values, postBody []byte) ([]byte, error) {
-	code, data, header, err := c.req(ctx, path, http.MethodPost, params, bytes.NewBuffer(postBody))
-	c.log(code, data, postBody, header, c.setPathParams(path, params), http.MethodPost, err)
+	code, data, header, err := c.Req(ctx, path, http.MethodPost, params, bytes.NewBuffer(postBody))
+	c.log(code, data, postBody, header, c.SetPathParams(path, params), http.MethodPost, err)
 
 	return data, err
 }
@@ -152,8 +152,8 @@ func (c *Config) Put(path string, params url.Values, putBody []byte) ([]byte, er
 
 // PutContext makes a PUT http request and returns the body.
 func (c *Config) PutContext(ctx context.Context, path string, params url.Values, putBody []byte) ([]byte, error) {
-	code, data, header, err := c.req(ctx, path, http.MethodPut, params, bytes.NewBuffer(putBody))
-	c.log(code, data, putBody, header, c.setPathParams(path, params), http.MethodPut, err)
+	code, data, header, err := c.Req(ctx, path, http.MethodPut, params, bytes.NewBuffer(putBody))
+	c.log(code, data, putBody, header, c.SetPathParams(path, params), http.MethodPut, err)
 
 	return data, err
 }
@@ -165,8 +165,8 @@ func (c *Config) Delete(path string, params url.Values) ([]byte, error) {
 
 // DeleteContext makes a DELETE http request and returns the body.
 func (c *Config) DeleteContext(ctx context.Context, path string, params url.Values) ([]byte, error) {
-	code, data, header, err := c.req(ctx, path, http.MethodDelete, params, nil)
-	c.log(code, data, nil, header, c.setPathParams(path, params), http.MethodDelete, err)
+	code, data, header, err := c.Req(ctx, path, http.MethodDelete, params, nil)
+	c.log(code, data, nil, header, c.SetPathParams(path, params), http.MethodDelete, err)
 
 	return data, err
 }
