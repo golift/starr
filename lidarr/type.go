@@ -1,39 +1,10 @@
 package lidarr
 
 import (
-	"crypto/tls"
-	"net/http"
 	"time"
 
 	"golift.io/starr"
 )
-
-// Lidarr contains all the methods to interact with a Lidarr server.
-type Lidarr struct {
-	starr.APIer
-}
-
-// New returns a Lidarr object used to interact with the Lidarr API.
-func New(config *starr.Config) *Lidarr {
-	if config.Client == nil {
-		//nolint:exhaustivestruct,gosec
-		config.Client = &http.Client{
-			Timeout: config.Timeout.Duration,
-			CheckRedirect: func(r *http.Request, via []*http.Request) error {
-				return http.ErrUseLastResponse
-			},
-			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: !config.ValidSSL},
-			},
-		}
-	}
-
-	if config.Debugf == nil {
-		config.Debugf = func(string, ...interface{}) {}
-	}
-
-	return &Lidarr{APIer: config}
-}
 
 // Queue is the /api/v1/queue endpoint.
 type Queue struct {
