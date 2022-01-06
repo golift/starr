@@ -1,6 +1,7 @@
 package sonarr
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -13,11 +14,19 @@ import (
 // GetAllSeries returns all configured series.
 // This may not deal well with pagination atm.
 func (s *Sonarr) GetAllSeries() ([]*Series, error) {
-	return s.GetSeries(0)
+	return s.GetAllSeriesContext(context.Background())
+}
+
+func (s *Sonarr) GetAllSeriesContext(ctx context.Context) ([]*Series, error) {
+	return s.GetSeriesContext(ctx, 0)
 }
 
 // GetSeries locates and returns a series by tvdbID. If tvdbID is 0, returns all series.
 func (s *Sonarr) GetSeries(tvdbID int64) ([]*Series, error) {
+	return s.GetSeriesContext(context.Background(), tvdbID)
+}
+
+func (s *Sonarr) GetSeriesContext(ctx context.Context, tvdbID int64) ([]*Series, error) {
 	params := make(url.Values)
 
 	if tvdbID != 0 {
@@ -26,7 +35,7 @@ func (s *Sonarr) GetSeries(tvdbID int64) ([]*Series, error) {
 
 	var series []*Series
 
-	err := s.GetInto("v3/series", params, &series)
+	err := s.GetInto(ctx, "v3/series", params, &series)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(series): %w", err)
 	}
@@ -36,6 +45,10 @@ func (s *Sonarr) GetSeries(tvdbID int64) ([]*Series, error) {
 
 // UpdateSeries updates a series in place.
 func (s *Sonarr) UpdateSeries(seriesID int64, series *Series) error {
+	return s.UpdateSeriesContext(context.Background(), seriesID, series)
+}
+
+func (s *Sonarr) UpdateSeriesContext(ctx context.Context, seriesID int64, series *Series) error {
 	put, err := json.Marshal(series)
 	if err != nil {
 		return fmt.Errorf("json.Marshal(series): %w", err)
@@ -44,7 +57,7 @@ func (s *Sonarr) UpdateSeries(seriesID int64, series *Series) error {
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
-	b, err := s.Put("v3/series/"+strconv.FormatInt(seriesID, starr.Base10), params, put)
+	b, err := s.Put(ctx, "v3/series/"+strconv.FormatInt(seriesID, starr.Base10), params, put)
 	if err != nil {
 		return fmt.Errorf("api.Put(series): %w", err)
 	}
@@ -56,6 +69,10 @@ func (s *Sonarr) UpdateSeries(seriesID int64, series *Series) error {
 
 // AddSeries adds a new series to Sonarr.
 func (s *Sonarr) AddSeries(series *AddSeriesInput) (*AddSeriesOutput, error) {
+	return s.AddSeriesContext(context.Background(), series)
+}
+
+func (s *Sonarr) AddSeriesContext(ctx context.Context, series *AddSeriesInput) (*AddSeriesOutput, error) {
 	body, err := json.Marshal(series)
 	if err != nil {
 		return nil, fmt.Errorf("json.Marshal(series): %w", err)
@@ -65,7 +82,7 @@ func (s *Sonarr) AddSeries(series *AddSeriesInput) (*AddSeriesOutput, error) {
 	params.Add("moveFiles", "true")
 
 	var output AddSeriesOutput
-	if err = s.PostInto("v3/series", params, body, &output); err != nil {
+	if err = s.PostInto(ctx, "v3/series", params, body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(series): %w", err)
 	}
 
@@ -74,9 +91,13 @@ func (s *Sonarr) AddSeries(series *AddSeriesInput) (*AddSeriesOutput, error) {
 
 // GetSeriesByID locates and returns a series by DB [series] ID.
 func (s *Sonarr) GetSeriesByID(seriesID int64) (*Series, error) {
+	return s.GetSeriesByIDContext(context.Background(), seriesID)
+}
+
+func (s *Sonarr) GetSeriesByIDContext(ctx context.Context, seriesID int64) (*Series, error) {
 	var series Series
 
-	err := s.GetInto("v3/series/"+strconv.FormatInt(seriesID, starr.Base10), nil, &series)
+	err := s.GetInto(ctx, "v3/series/"+strconv.FormatInt(seriesID, starr.Base10), nil, &series)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(series): %w", err)
 	}
@@ -87,6 +108,10 @@ func (s *Sonarr) GetSeriesByID(seriesID int64) (*Series, error) {
 // GetSeriesLookup searches for a series [in Servarr] using a search term or a tvdbid.
 // Provide a search term or a tvdbid. If you provide both, tvdbID is used.
 func (s *Sonarr) GetSeriesLookup(term string, tvdbID int64) ([]*Series, error) {
+	return s.GetSeriesLookupContext(context.Background(), term, tvdbID)
+}
+
+func (s *Sonarr) GetSeriesLookupContext(ctx context.Context, term string, tvdbID int64) ([]*Series, error) {
 	params := make(url.Values)
 
 	if tvdbID > 0 {
@@ -97,7 +122,7 @@ func (s *Sonarr) GetSeriesLookup(term string, tvdbID int64) ([]*Series, error) {
 
 	var series []*Series
 
-	err := s.GetInto("v3/series/lookup", params, &series)
+	err := s.GetInto(ctx, "v3/series/lookup", params, &series)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(series/lookup): %w", err)
 	}
@@ -108,5 +133,9 @@ func (s *Sonarr) GetSeriesLookup(term string, tvdbID int64) ([]*Series, error) {
 // Lookup will search for series matching the specified search term.
 // Searches for new shows on TheTVDB.com utilizing sonarr.tv's caching and augmentation proxy.
 func (s *Sonarr) Lookup(term string) ([]*Series, error) {
-	return s.GetSeriesLookup(term, 0)
+	return s.LookupContext(context.Background(), term)
+}
+
+func (s *Sonarr) LookupContext(ctx context.Context, term string) ([]*Series, error) {
+	return s.GetSeriesLookupContext(ctx, term, 0)
 }

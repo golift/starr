@@ -1,6 +1,7 @@
 package sonarr
 
 import (
+	"context"
 	"crypto/tls"
 	"fmt"
 	"net/http"
@@ -43,11 +44,15 @@ func New(config *starr.Config) *Sonarr {
 // It grabs records in (paginated) batches of perPage, and concatenates
 // them into one list.  Passing zero for records will return all of them.
 func (s *Sonarr) GetQueue(records, perPage int) (*Queue, error) {
+	return s.GetQueueContext(context.Background(), records, perPage)
+}
+
+func (s *Sonarr) GetQueueContext(ctx context.Context, records, perPage int) (*Queue, error) {
 	queue := &Queue{Records: []*QueueRecord{}}
 	perPage = starr.SetPerPage(records, perPage)
 
 	for page := 1; ; page++ {
-		curr, err := s.GetQueuePage(&starr.Req{PageSize: perPage, Page: page})
+		curr, err := s.GetQueuePageContext(ctx, &starr.Req{PageSize: perPage, Page: page})
 		if err != nil {
 			return nil, err
 		}
@@ -74,12 +79,16 @@ func (s *Sonarr) GetQueue(records, perPage int) (*Queue, error) {
 // GetQueuePage returns a single page from the Sonarr Queue.
 // The page size and number is configurable with the input request parameters.
 func (s *Sonarr) GetQueuePage(params *starr.Req) (*Queue, error) {
+	return s.GetQueuePageContext(context.Background(), params)
+}
+
+func (s *Sonarr) GetQueuePageContext(ctx context.Context, params *starr.Req) (*Queue, error) {
 	var queue Queue
 
 	params.CheckSet("sortKey", "timeleft")
 	params.CheckSet("includeUnknownSeriesItems", "true")
 
-	err := s.GetInto("v3/queue", params.Params(), &queue)
+	err := s.GetInto(ctx, "v3/queue", params.Params(), &queue)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(queue): %w", err)
 	}
@@ -89,9 +98,13 @@ func (s *Sonarr) GetQueuePage(params *starr.Req) (*Queue, error) {
 
 // GetLanguageProfiles returns all configured language profiles.
 func (s *Sonarr) GetLanguageProfiles() ([]*LanguageProfile, error) {
+	return s.GetLanguageProfilesContext(context.Background())
+}
+
+func (s *Sonarr) GetLanguageProfilesContext(ctx context.Context) ([]*LanguageProfile, error) {
 	var profiles []*LanguageProfile
 
-	err := s.GetInto("v3/languageprofile", nil, &profiles)
+	err := s.GetInto(ctx, "v3/languageprofile", nil, &profiles)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(languageprofile): %w", err)
 	}
@@ -101,9 +114,13 @@ func (s *Sonarr) GetLanguageProfiles() ([]*LanguageProfile, error) {
 
 // GetRootFolders returns all configured root folders.
 func (s *Sonarr) GetRootFolders() ([]*RootFolder, error) {
+	return s.GetRootFoldersContext(context.Background())
+}
+
+func (s *Sonarr) GetRootFoldersContext(ctx context.Context) ([]*RootFolder, error) {
 	var folders []*RootFolder
 
-	err := s.GetInto("v3/rootfolder", nil, &folders)
+	err := s.GetInto(ctx, "v3/rootfolder", nil, &folders)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(rootfolder): %w", err)
 	}
