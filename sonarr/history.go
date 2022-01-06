@@ -14,7 +14,7 @@ import (
 // up to the number of records present in the application.
 // It grabs records in (paginated) batches of perPage, and concatenates
 // them into one list.  Passing zero for records will return all of them.
-func (s *Sonarr) GetHistory(records, perPage int) (*History, error) { //nolint:dupl
+func (s *Sonarr) GetHistory(records, perPage int) (*History, error) {
 	hist := &History{Records: []*HistoryRecord{}}
 	perPage = starr.SetPerPage(records, perPage)
 

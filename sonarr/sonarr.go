@@ -42,7 +42,7 @@ func New(config *starr.Config) *Sonarr {
 // up to the number of records present in the application.
 // It grabs records in (paginated) batches of perPage, and concatenates
 // them into one list.  Passing zero for records will return all of them.
-func (s *Sonarr) GetQueue(records, perPage int) (*Queue, error) { //nolint:dupl
+func (s *Sonarr) GetQueue(records, perPage int) (*Queue, error) {
 	queue := &Queue{Records: []*QueueRecord{}}
 	perPage = starr.SetPerPage(records, perPage)
 
