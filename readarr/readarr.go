@@ -1,6 +1,7 @@
 package readarr
 
 import (
+	"context"
 	"crypto/tls"
 	"fmt"
 	"net/http"
@@ -43,11 +44,15 @@ func New(config *starr.Config) *Readarr {
 // It grabs records in (paginated) batches of perPage, and concatenates
 // them into one list.  Passing zero for records will return all of them.
 func (r *Readarr) GetQueue(records, perPage int) (*Queue, error) {
+	return r.GetQueueContext(context.Background(), records, perPage)
+}
+
+func (r *Readarr) GetQueueContext(ctx context.Context, records, perPage int) (*Queue, error) {
 	queue := &Queue{Records: []*QueueRecord{}}
 	perPage = starr.SetPerPage(records, perPage)
 
 	for page := 1; ; page++ {
-		curr, err := r.GetQueuePage(&starr.Req{PageSize: perPage, Page: page})
+		curr, err := r.GetQueuePageContext(ctx, &starr.Req{PageSize: perPage, Page: page})
 		if err != nil {
 			return nil, err
 		}
@@ -74,12 +79,16 @@ func (r *Readarr) GetQueue(records, perPage int) (*Queue, error) {
 // GetQueuePage returns a single page from the Readarr Queue.
 // The page size and number is configurable with the input request parameters.
 func (r *Readarr) GetQueuePage(params *starr.Req) (*Queue, error) {
+	return r.GetQueuePageContext(context.Background(), params)
+}
+
+func (r *Readarr) GetQueuePageContext(ctx context.Context, params *starr.Req) (*Queue, error) {
 	var queue Queue
 
 	params.CheckSet("sortKey", "timeleft")
 	params.CheckSet("includeUnknownAuthorItems", "true")
 
-	err := r.GetInto("v1/queue", params.Params(), &queue)
+	err := r.GetInto(ctx, "v1/queue", params.Params(), &queue)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(queue): %w", err)
 	}
@@ -89,9 +98,13 @@ func (r *Readarr) GetQueuePage(params *starr.Req) (*Queue, error) {
 
 // GetRootFolders returns all configured root folders.
 func (r *Readarr) GetRootFolders() ([]*RootFolder, error) {
+	return r.GetRootFoldersContext(context.Background())
+}
+
+func (r *Readarr) GetRootFoldersContext(ctx context.Context) ([]*RootFolder, error) {
 	var folders []*RootFolder
 
-	err := r.GetInto("v1/rootFolder", nil, &folders)
+	err := r.GetInto(ctx, "v1/rootFolder", nil, &folders)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(rootFolder): %w", err)
 	}
@@ -101,9 +114,13 @@ func (r *Readarr) GetRootFolders() ([]*RootFolder, error) {
 
 // GetMetadataProfiles returns the metadata profiles.
 func (r *Readarr) GetMetadataProfiles() ([]*MetadataProfile, error) {
+	return r.GetMetadataProfilesContext(context.Background())
+}
+
+func (r *Readarr) GetMetadataProfilesContext(ctx context.Context) ([]*MetadataProfile, error) {
 	var profiles []*MetadataProfile
 
-	err := r.GetInto("v1/metadataprofile", nil, &profiles)
+	err := r.GetInto(ctx, "v1/metadataprofile", nil, &profiles)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(metadataprofile): %w", err)
 	}

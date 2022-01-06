@@ -1,6 +1,7 @@
 package readarr
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 )
@@ -8,9 +9,13 @@ import (
 // GetCommands returns all available Readarr commands.
 // These can be used with SendCommand.
 func (r *Readarr) GetCommands() ([]*CommandResponse, error) {
+	return r.GetCommandsContext(context.Background())
+}
+
+func (r *Readarr) GetCommandsContext(ctx context.Context) ([]*CommandResponse, error) {
 	var output []*CommandResponse
 
-	if err := r.GetInto("v1/command", nil, &output); err != nil {
+	if err := r.GetInto(ctx, "v1/command", nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(command): %w", err)
 	}
 
@@ -19,6 +24,10 @@ func (r *Readarr) GetCommands() ([]*CommandResponse, error) {
 
 // SendCommand sends a command to Readarr.
 func (r *Readarr) SendCommand(cmd *CommandRequest) (*CommandResponse, error) {
+	return r.SendCommandContext(context.Background(), cmd)
+}
+
+func (r *Readarr) SendCommandContext(ctx context.Context, cmd *CommandRequest) (*CommandResponse, error) {
 	var output CommandResponse
 
 	if cmd == nil || cmd.Name == "" {
@@ -30,7 +39,7 @@ func (r *Readarr) SendCommand(cmd *CommandRequest) (*CommandResponse, error) {
 		return nil, fmt.Errorf("json.Marshal(cmd): %w", err)
 	}
 
-	if err := r.PostInto("v1/command", nil, body, &output); err != nil {
+	if err := r.PostInto(ctx, "v1/command", nil, body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(command): %w", err)
 	}
 

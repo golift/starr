@@ -1,6 +1,7 @@
 package readarr
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -12,9 +13,14 @@ import (
 
 // GetAuthorByID returns an author.
 func (r *Readarr) GetAuthorByID(authorID int64) (*Author, error) {
+	return r.GetAuthorByIDContext(context.Background(), authorID)
+}
+
+// GetAuthorByIDContext returns an author.
+func (r *Readarr) GetAuthorByIDContext(ctx context.Context, authorID int64) (*Author, error) {
 	var author Author
 
-	err := r.GetInto("v1/author/"+strconv.FormatInt(authorID, starr.Base10), nil, &author)
+	err := r.GetInto(ctx, "v1/author/"+strconv.FormatInt(authorID, starr.Base10), nil, &author)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(author): %w", err)
 	}
@@ -24,6 +30,11 @@ func (r *Readarr) GetAuthorByID(authorID int64) (*Author, error) {
 
 // UpdateAuthor updates an author in place.
 func (r *Readarr) UpdateAuthor(authorID int64, author *Author) error {
+	return r.UpdateAuthorContext(context.Background(), authorID, author)
+}
+
+// UpdateAuthorContext updates an author in place.
+func (r *Readarr) UpdateAuthorContext(ctx context.Context, authorID int64, author *Author) error {
 	put, err := json.Marshal(author)
 	if err != nil {
 		return fmt.Errorf("json.Marshal(author): %w", err)
@@ -32,7 +43,7 @@ func (r *Readarr) UpdateAuthor(authorID int64, author *Author) error {
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
-	b, err := r.Put("v1/author/"+strconv.FormatInt(authorID, starr.Base10), params, put)
+	b, err := r.Put(ctx, "v1/author/"+strconv.FormatInt(authorID, starr.Base10), params, put)
 	if err != nil {
 		return fmt.Errorf("api.Put(author): %w", err)
 	}
