@@ -30,7 +30,7 @@ func (r *Radarr) UpdateTag(tagID int, label string) (int, error) {
 	return r.UpdateTagContext(context.Background(), tagID, label)
 }
 
-// UpdateTag updates the label for a tag.
+// UpdateTagContext updates the label for a tag.
 func (r *Radarr) UpdateTagContext(ctx context.Context, tagID int, label string) (int, error) {
 	body, err := json.Marshal(&starr.Tag{Label: label, ID: tagID})
 	if err != nil {
