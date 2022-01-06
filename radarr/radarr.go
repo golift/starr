@@ -1,6 +1,7 @@
 package radarr
 
 import (
+	"context"
 	"crypto/tls"
 	"fmt"
 	"net/http"
@@ -43,12 +44,17 @@ func New(config *starr.Config) *Radarr {
 // up to the number of records present in the application.
 // It grabs records in (paginated) batches of perPage, and concatenates
 // them into one list.  Passing zero for records will return all of them.
-func (r *Radarr) GetQueue(records, perPage int) (*Queue, error) { //nolint:dupl
+func (r *Radarr) GetQueue(records, perPage int) (*Queue, error) {
+	return r.GetQueueContext(context.Background(), records, perPage)
+}
+
+// GetQueueContext returns a single page from the Radarr Queue (processing, but not yet imported).
+func (r *Radarr) GetQueueContext(ctx context.Context, records, perPage int) (*Queue, error) {
 	queue := &Queue{Records: []*QueueRecord{}}
 	perPage = starr.SetPerPage(records, perPage)
 
 	for page := 1; ; page++ {
-		curr, err := r.GetQueuePage(&starr.Req{PageSize: perPage, Page: page})
+		curr, err := r.GetQueuePageContext(ctx, &starr.Req{PageSize: perPage, Page: page})
 		if err != nil {
 			return nil, err
 		}
@@ -74,12 +80,18 @@ func (r *Radarr) GetQueue(records, perPage int) (*Queue, error) { //nolint:dupl
 // GetQueuePage returns a single page from the Radarr Queue.
 // The page size and number is configurable with the input request parameters.
 func (r *Radarr) GetQueuePage(params *starr.Req) (*Queue, error) {
+	return r.GetQueuePageContext(context.Background(), params)
+}
+
+// GetQueuePage returns a single page from the Radarr Queue.
+// The page size and number is configurable with the input request parameters.
+func (r *Radarr) GetQueuePageContext(ctx context.Context, params *starr.Req) (*Queue, error) {
 	var queue Queue
 
 	params.CheckSet("sortKey", "timeleft")
 	params.CheckSet("includeUnknownMovieItems", "true")
 
-	err := r.GetInto("v3/queue", params.Params(), &queue)
+	err := r.GetInto(ctx, "v3/queue", params.Params(), &queue)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(queue): %w", err)
 	}
@@ -89,9 +101,14 @@ func (r *Radarr) GetQueuePage(params *starr.Req) (*Queue, error) {
 
 // GetRootFolders returns all configured root folders.
 func (r *Radarr) GetRootFolders() ([]*RootFolder, error) {
+	return r.GetRootFoldersContext(context.Background())
+}
+
+// GetRootFoldersContext returns all configured root folders.
+func (r *Radarr) GetRootFoldersContext(ctx context.Context) ([]*RootFolder, error) {
 	var folders []*RootFolder
 
-	err := r.GetInto("v3/rootFolder", nil, &folders)
+	err := r.GetInto(ctx, "v3/rootFolder", nil, &folders)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(rootFolder): %w", err)
 	}

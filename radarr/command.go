@@ -1,15 +1,21 @@
 package radarr
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 )
 
 // GetCommands returns all available Radarr commands.
 func (r *Radarr) GetCommands() ([]*CommandResponse, error) {
+	return r.GetCommandsContext(context.Background())
+}
+
+// GetCommandsContext returns all available Radarr commands.
+func (r *Radarr) GetCommandsContext(ctx context.Context) ([]*CommandResponse, error) {
 	var output []*CommandResponse
 
-	if err := r.GetInto("v3/command", nil, &output); err != nil {
+	if err := r.GetInto(ctx, "v3/command", nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(command): %w", err)
 	}
 
@@ -18,6 +24,11 @@ func (r *Radarr) GetCommands() ([]*CommandResponse, error) {
 
 // SendCommand sends a command to Radarr.
 func (r *Radarr) SendCommand(cmd *CommandRequest) (*CommandResponse, error) {
+	return r.SendCommandContext(context.Background(), cmd)
+}
+
+// SendCommandContext sends a command to Radarr.
+func (r *Radarr) SendCommandContext(ctx context.Context, cmd *CommandRequest) (*CommandResponse, error) {
 	var output CommandResponse
 
 	if cmd == nil || cmd.Name == "" {
@@ -29,7 +40,7 @@ func (r *Radarr) SendCommand(cmd *CommandRequest) (*CommandResponse, error) {
 		return nil, fmt.Errorf("json.Marshal(cmd): %w", err)
 	}
 
-	if err := r.PostInto("v3/command", nil, body, &output); err != nil {
+	if err := r.PostInto(ctx, "v3/command", nil, body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(command): %w", err)
 	}
 

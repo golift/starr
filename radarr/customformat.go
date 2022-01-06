@@ -1,6 +1,7 @@
 package radarr
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -8,8 +9,13 @@ import (
 
 // GetCustomFormats returns all configured Custom Formats.
 func (r *Radarr) GetCustomFormats() ([]*CustomFormat, error) {
+	return r.GetCustomFormatsContext(context.Background())
+}
+
+// GetCustomFormatsContext returns all configured Custom Formats.
+func (r *Radarr) GetCustomFormatsContext(ctx context.Context) ([]*CustomFormat, error) {
 	var output []*CustomFormat
-	if err := r.GetInto("v3/customFormat", nil, &output); err != nil {
+	if err := r.GetInto(ctx, "v3/customFormat", nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(customFormat): %w", err)
 	}
 
@@ -18,6 +24,11 @@ func (r *Radarr) GetCustomFormats() ([]*CustomFormat, error) {
 
 // AddCustomFormat creates a new custom format and returns the response (with ID).
 func (r *Radarr) AddCustomFormat(format *CustomFormat) (*CustomFormat, error) {
+	return r.AddCustomFormatContext(context.Background(), format)
+}
+
+// AddCustomFormatContext creates a new custom format and returns the response (with ID).
+func (r *Radarr) AddCustomFormatContext(ctx context.Context, format *CustomFormat) (*CustomFormat, error) {
 	var output CustomFormat
 
 	if format == nil {
@@ -31,7 +42,7 @@ func (r *Radarr) AddCustomFormat(format *CustomFormat) (*CustomFormat, error) {
 		return nil, fmt.Errorf("json.Marshal(customFormat): %w", err)
 	}
 
-	if err := r.PostInto("v3/customFormat", nil, body, &output); err != nil {
+	if err := r.PostInto(ctx, "v3/customFormat", nil, body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(customFormat): %w", err)
 	}
 
@@ -40,6 +51,11 @@ func (r *Radarr) AddCustomFormat(format *CustomFormat) (*CustomFormat, error) {
 
 // UpdateCustomFormat updates an existing custom format and returns the response.
 func (r *Radarr) UpdateCustomFormat(cf *CustomFormat, cfID int) (*CustomFormat, error) {
+	return r.UpdateCustomFormatContext(context.Background(), cf, cfID)
+}
+
+// UpdateCustomFormatContext updates an existing custom format and returns the response.
+func (r *Radarr) UpdateCustomFormatContext(ctx context.Context, cf *CustomFormat, cfID int) (*CustomFormat, error) {
 	if cfID == 0 {
 		cfID = cf.ID
 	}
@@ -50,7 +66,7 @@ func (r *Radarr) UpdateCustomFormat(cf *CustomFormat, cfID int) (*CustomFormat, 
 	}
 
 	var output CustomFormat
-	if err := r.PutInto("v3/customFormat/"+strconv.Itoa(cfID), nil, body, &output); err != nil {
+	if err := r.PutInto(ctx, "v3/customFormat/"+strconv.Itoa(cfID), nil, body, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(customFormat): %w", err)
 	}
 
