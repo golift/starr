@@ -1,6 +1,7 @@
 package lidarr
 
 import (
+	"context"
 	"crypto/tls"
 	"fmt"
 	"net/http"
@@ -42,12 +43,17 @@ func New(config *starr.Config) *Lidarr {
 // up to the number of records present in the application.
 // It grabs records in (paginated) batches of perPage, and concatenates
 // them into one list.  Passing zero for records will return all of them.
-func (l *Lidarr) GetQueue(records, perPage int) (*Queue, error) { //nolint:dupl
+func (l *Lidarr) GetQueue(records, perPage int) (*Queue, error) {
+	return l.GetQueueContext(context.Background(), records, perPage)
+}
+
+// GetQueueContext returns a single page from the Lidarr Queue (processing, but not yet imported).
+func (l *Lidarr) GetQueueContext(ctx context.Context, records, perPage int) (*Queue, error) {
 	queue := &Queue{Records: []*QueueRecord{}}
 	perPage = starr.SetPerPage(records, perPage)
 
 	for page := 1; ; page++ {
-		curr, err := l.GetQueuePage(&starr.Req{PageSize: perPage, Page: page})
+		curr, err := l.GetQueuePageContext(ctx, &starr.Req{PageSize: perPage, Page: page})
 		if err != nil {
 			return nil, err
 		}
@@ -74,12 +80,18 @@ func (l *Lidarr) GetQueue(records, perPage int) (*Queue, error) { //nolint:dupl
 // GetQueuePage returns a single page from the Lidarr Queue.
 // The page size and number is configurable with the input request parameters.
 func (l *Lidarr) GetQueuePage(params *starr.Req) (*Queue, error) {
+	return l.GetQueuePageContext(context.Background(), params)
+}
+
+// GetQueuePageContext returns a single page from the Lidarr Queue.
+// The page size and number is configurable with the input request parameters.
+func (l *Lidarr) GetQueuePageContext(ctx context.Context, params *starr.Req) (*Queue, error) {
 	var queue Queue
 
 	params.CheckSet("sortKey", "timeleft")
 	params.CheckSet("includeUnknownArtistItems", "true")
 
-	err := l.GetInto("v1/queue", params.Params(), &queue)
+	err := l.GetInto(ctx, "v1/queue", params.Params(), &queue)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(queue): %w", err)
 	}
@@ -89,9 +101,14 @@ func (l *Lidarr) GetQueuePage(params *starr.Req) (*Queue, error) {
 
 // GetQualityDefinition returns the Quality Definitions.
 func (l *Lidarr) GetQualityDefinition() ([]*QualityDefinition, error) {
+	return l.GetQualityDefinitionContext(context.Background())
+}
+
+// GetQualityDefinitionContext returns the Quality Definitions.
+func (l *Lidarr) GetQualityDefinitionContext(ctx context.Context) ([]*QualityDefinition, error) {
 	var definition []*QualityDefinition
 
-	err := l.GetInto("v1/qualitydefinition", nil, &definition)
+	err := l.GetInto(ctx, "v1/qualitydefinition", nil, &definition)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(qualitydefinition): %w", err)
 	}
@@ -101,9 +118,14 @@ func (l *Lidarr) GetQualityDefinition() ([]*QualityDefinition, error) {
 
 // GetRootFolders returns all configured root folders.
 func (l *Lidarr) GetRootFolders() ([]*RootFolder, error) {
+	return l.GetRootFoldersContext(context.Background())
+}
+
+// GetRootFoldersContext returns all configured root folders.
+func (l *Lidarr) GetRootFoldersContext(ctx context.Context) ([]*RootFolder, error) {
 	var folders []*RootFolder
 
-	err := l.GetInto("v1/rootFolder", nil, &folders)
+	err := l.GetInto(ctx, "v1/rootFolder", nil, &folders)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(rootFolder): %w", err)
 	}
@@ -113,9 +135,14 @@ func (l *Lidarr) GetRootFolders() ([]*RootFolder, error) {
 
 // GetMetadataProfiles returns the metadata profiles.
 func (l *Lidarr) GetMetadataProfiles() ([]*MetadataProfile, error) {
+	return l.GetMetadataProfilesContext(context.Background())
+}
+
+// GetMetadataProfilesContext returns the metadata profiles.
+func (l *Lidarr) GetMetadataProfilesContext(ctx context.Context) ([]*MetadataProfile, error) {
 	var profiles []*MetadataProfile
 
-	err := l.GetInto("v1/metadataprofile", nil, &profiles)
+	err := l.GetInto(ctx, "v1/metadataprofile", nil, &profiles)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(metadataprofile): %w", err)
 	}
