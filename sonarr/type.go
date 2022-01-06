@@ -176,42 +176,6 @@ type Episode struct {
 	Monitored                bool      `json:"monitored"`
 }
 
-// SeriesLookup is the /api/v3/series/lookup endpoint.
-type SeriesLookup struct {
-	Title             string         `json:"title"`
-	SortTitle         string         `json:"sortTitle"`
-	Status            string         `json:"status"`
-	Overview          string         `json:"overview"`
-	Network           string         `json:"network"`
-	AirTime           string         `json:"airTime"`
-	Images            []*starr.Image `json:"images"`
-	RemotePoster      string         `json:"remotePoster"`
-	Seasons           []*Season      `json:"seasons"`
-	Year              int            `json:"year"`
-	QualityProfileID  int64          `json:"qualityProfileId"`
-	LanguageProfileID int64          `json:"languageProfileId"`
-	Runtime           int            `json:"runtime"`
-	TvdbID            int64          `json:"tvdbId"`
-	TvRageID          int64          `json:"tvRageId"`
-	TvMazeID          int64          `json:"tvMazeId"`
-	FirstAired        time.Time      `json:"firstAired"`
-	SeriesType        string         `json:"seriesType"`
-	CleanTitle        string         `json:"cleanTitle"`
-	ImdbID            string         `json:"imdbId"`
-	TitleSlug         string         `json:"titleSlug"`
-	Folder            string         `json:"folder"`
-	Certification     string         `json:"certification"`
-	Genres            []string       `json:"genres"`
-	Tags              []int          `json:"tags"`
-	Added             time.Time      `json:"added"`
-	Ratings           *starr.Ratings `json:"ratings"`
-	Statistics        *Statistics    `json:"statistics"`
-	Ended             bool           `json:"ended"`
-	SeasonFolder      bool           `json:"seasonFolder"`
-	Monitored         bool           `json:"monitored"`
-	UseSceneNumbering bool           `json:"useSceneNumbering"`
-}
-
 // LanguageProfile is the /api/v3/languageprofile endpoint.
 type LanguageProfile struct {
 	Name           string       `json:"name"`

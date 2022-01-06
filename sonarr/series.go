@@ -86,7 +86,7 @@ func (s *Sonarr) GetSeriesByID(seriesID int64) (*Series, error) {
 
 // GetSeriesLookup searches for a series [in Servarr] using a search term or a tvdbid.
 // Provide a search term or a tvdbid. If you provide both, tvdbID is used.
-func (s *Sonarr) GetSeriesLookup(term string, tvdbID int64) ([]*SeriesLookup, error) {
+func (s *Sonarr) GetSeriesLookup(term string, tvdbID int64) ([]*Series, error) {
 	params := make(url.Values)
 
 	if tvdbID > 0 {
@@ -95,7 +95,7 @@ func (s *Sonarr) GetSeriesLookup(term string, tvdbID int64) ([]*SeriesLookup, er
 		params.Add("term", term)
 	}
 
-	var series []*SeriesLookup
+	var series []*Series
 
 	err := s.GetInto("v3/series/lookup", params, &series)
 	if err != nil {
@@ -103,4 +103,10 @@ func (s *Sonarr) GetSeriesLookup(term string, tvdbID int64) ([]*SeriesLookup, er
 	}
 
 	return series, nil
+}
+
+// Lookup will search for series matching the specified search term.
+// Searches for new shows on TheTVDB.com utilizing sonarr.tv's caching and augmentation proxy.
+func (s *Sonarr) Lookup(term string) ([]*Series, error) {
+	return s.GetSeriesLookup(term, 0)
 }
