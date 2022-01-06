@@ -1,39 +1,10 @@
 package sonarr
 
 import (
-	"crypto/tls"
-	"net/http"
 	"time"
 
 	"golift.io/starr"
 )
-
-// Sonarr contains all the methods to interact with a Sonarr server.
-type Sonarr struct {
-	starr.APIer
-}
-
-// New returns a Sonarr object used to interact with the Sonarr API.
-func New(config *starr.Config) *Sonarr {
-	if config.Client == nil {
-		//nolint:exhaustivestruct,gosec
-		config.Client = &http.Client{
-			Timeout: config.Timeout.Duration,
-			CheckRedirect: func(r *http.Request, via []*http.Request) error {
-				return http.ErrUseLastResponse
-			},
-			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: !config.ValidSSL},
-			},
-		}
-	}
-
-	if config.Debugf == nil {
-		config.Debugf = func(string, ...interface{}) {}
-	}
-
-	return &Sonarr{APIer: config}
-}
 
 // QualityProfile is the /api/v3/qualityprofile endpoint.
 type QualityProfile struct {
@@ -261,7 +232,7 @@ type AddSeriesInput struct {
 	ID                int64             `json:"id,omitempty"`
 	TvdbID            int64             `json:"tvdbId"`
 	QualityProfileID  int64             `json:"qualityProfileId"`
-	LanguageProfileID int64             `json:"languageProfileID"`
+	LanguageProfileID int64             `json:"languageProfileId"`
 	Tags              []int             `json:"tags"`
 	RootFolderPath    string            `json:"rootFolderPath"`
 	Title             string            `json:"title,omitempty"`
