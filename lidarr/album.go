@@ -36,7 +36,7 @@ func (l *Lidarr) GetAlbumContext(ctx context.Context, mbID string) ([]*Album, er
 }
 
 // GetAlbumByID returns an album by DB ID.
-func (l *Lidarr) GetAlbumByIDC(albumID int64) (*Album, error) {
+func (l *Lidarr) GetAlbumByID(albumID int64) (*Album, error) {
 	return l.GetAlbumByIDContext(context.Background(), albumID)
 }
 
