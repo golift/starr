@@ -1,39 +1,10 @@
 package sonarr
 
 import (
-	"crypto/tls"
-	"net/http"
 	"time"
 
 	"golift.io/starr"
 )
-
-// Sonarr contains all the methods to interact with a Sonarr server.
-type Sonarr struct {
-	starr.APIer
-}
-
-// New returns a Sonarr object used to interact with the Sonarr API.
-func New(config *starr.Config) *Sonarr {
-	if config.Client == nil {
-		//nolint:exhaustivestruct,gosec
-		config.Client = &http.Client{
-			Timeout: config.Timeout.Duration,
-			CheckRedirect: func(r *http.Request, via []*http.Request) error {
-				return http.ErrUseLastResponse
-			},
-			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: !config.ValidSSL},
-			},
-		}
-	}
-
-	if config.Debugf == nil {
-		config.Debugf = func(string, ...interface{}) {}
-	}
-
-	return &Sonarr{APIer: config}
-}
 
 // QualityProfile is the /api/v3/qualityprofile endpoint.
 type QualityProfile struct {
@@ -205,42 +176,6 @@ type Episode struct {
 	Monitored                bool      `json:"monitored"`
 }
 
-// SeriesLookup is the /api/v3/series/lookup endpoint.
-type SeriesLookup struct {
-	Title             string         `json:"title"`
-	SortTitle         string         `json:"sortTitle"`
-	Status            string         `json:"status"`
-	Overview          string         `json:"overview"`
-	Network           string         `json:"network"`
-	AirTime           string         `json:"airTime"`
-	Images            []*starr.Image `json:"images"`
-	RemotePoster      string         `json:"remotePoster"`
-	Seasons           []*Season      `json:"seasons"`
-	Year              int            `json:"year"`
-	QualityProfileID  int64          `json:"qualityProfileId"`
-	LanguageProfileID int64          `json:"languageProfileId"`
-	Runtime           int            `json:"runtime"`
-	TvdbID            int64          `json:"tvdbId"`
-	TvRageID          int64          `json:"tvRageId"`
-	TvMazeID          int64          `json:"tvMazeId"`
-	FirstAired        time.Time      `json:"firstAired"`
-	SeriesType        string         `json:"seriesType"`
-	CleanTitle        string         `json:"cleanTitle"`
-	ImdbID            string         `json:"imdbId"`
-	TitleSlug         string         `json:"titleSlug"`
-	Folder            string         `json:"folder"`
-	Certification     string         `json:"certification"`
-	Genres            []string       `json:"genres"`
-	Tags              []int          `json:"tags"`
-	Added             time.Time      `json:"added"`
-	Ratings           *starr.Ratings `json:"ratings"`
-	Statistics        *Statistics    `json:"statistics"`
-	Ended             bool           `json:"ended"`
-	SeasonFolder      bool           `json:"seasonFolder"`
-	Monitored         bool           `json:"monitored"`
-	UseSceneNumbering bool           `json:"useSceneNumbering"`
-}
-
 // LanguageProfile is the /api/v3/languageprofile endpoint.
 type LanguageProfile struct {
 	Name           string       `json:"name"`
@@ -261,7 +196,7 @@ type AddSeriesInput struct {
 	ID                int64             `json:"id,omitempty"`
 	TvdbID            int64             `json:"tvdbId"`
 	QualityProfileID  int64             `json:"qualityProfileId"`
-	LanguageProfileID int64             `json:"languageProfileID"`
+	LanguageProfileID int64             `json:"languageProfileId"`
 	Tags              []int             `json:"tags"`
 	RootFolderPath    string            `json:"rootFolderPath"`
 	Title             string            `json:"title,omitempty"`

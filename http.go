@@ -15,17 +15,36 @@ import (
 
 /* The methods in this file provide assumption-ridden HTTP calls for Starr apps. */
 
-// req returns te body in []byte form (already read).
-func (c *Config) req(path, method string, params url.Values, body io.Reader) (int, []byte, http.Header, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), c.Timeout.Duration)
-	defer cancel()
-
-	req, err := c.newReq(ctx, c.setPathParams(path, params), method, params, body)
+// Req makes an http request and returns the body in []byte form (already read).
+func (c *Config) Req(ctx context.Context, path, method string, params url.Values,
+	body io.Reader) (int, []byte, http.Header, error) {
+	req, err := c.newReq(ctx, c.SetPathParams(path, params), method, params, body)
 	if err != nil {
 		return 0, nil, nil, err
 	}
 
-	return c.getBody(req)
+	resp, err := c.Client.Do(req)
+	if err != nil {
+		return 0, nil, nil, fmt.Errorf("httpClient.Do(req): %w", err)
+	}
+	defer resp.Body.Close()
+
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return resp.StatusCode, nil, resp.Header, fmt.Errorf("ioutil.ReadAll: %w", err)
+	}
+
+	// #############################################
+	// DEBUG: useful for viewing payloads from apps.
+	// log.Println(resp.StatusCode, resp.Header.Get("location"), string(body))
+	// #############################################
+
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		return resp.StatusCode, respBody, resp.Header, fmt.Errorf("failed: %v (status: %s): %w: %s",
+			resp.Request.RequestURI, resp.Status, ErrInvalidStatusCode, string(respBody))
+	}
+
+	return resp.StatusCode, respBody, resp.Header, nil
 }
 
 // body returns the body in io.ReadCloser form (read and close it yourself).
@@ -55,14 +74,14 @@ func (c *Config) newReq(ctx context.Context, path, method string,
 		return nil, fmt.Errorf("http.NewRequestWithContext(path): %w", err)
 	}
 
-	c.setHeaders(req)
+	c.SetHeaders(req)
 	req.URL.RawQuery = params.Encode()
 
 	return req, nil
 }
 
-// setHeaders sets all our request headers.
-func (c *Config) setHeaders(req *http.Request) {
+// SetHeaders sets all our request headers based on method and other data.
+func (c *Config) SetHeaders(req *http.Request) {
 	// This app allows http auth, in addition to api key (nginx proxy).
 	if auth := c.HTTPUser + ":" + c.HTTPPass; auth != ":" {
 		req.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(auth)))
@@ -82,36 +101,10 @@ func (c *Config) setHeaders(req *http.Request) {
 	req.Header.Set("X-API-Key", c.APIKey)
 }
 
-// getBody makes an http request and returns the response body if there are no errors.
-func (c *Config) getBody(req *http.Request) (int, []byte, http.Header, error) {
-	resp, err := c.Client.Do(req)
-	if err != nil {
-		return 0, nil, nil, fmt.Errorf("httpClient.Do(req): %w", err)
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return resp.StatusCode, nil, resp.Header, fmt.Errorf("ioutil.ReadAll: %w", err)
-	}
-
-	// #############################################
-	// DEBUG: useful for viewing payloads from apps.
-	// log.Println(resp.StatusCode, resp.Header.Get("location"), string(body))
-	// #############################################
-
-	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		return resp.StatusCode, body, resp.Header, fmt.Errorf("failed: %v (status: %s): %w: %s",
-			resp.Request.RequestURI, resp.Status, ErrInvalidStatusCode, string(body))
-	}
-
-	return resp.StatusCode, body, resp.Header, nil
-}
-
-// setPathParams makes sure the path starts with /api and returns the full URL.
+// SetPathParams makes sure the path starts with /api and returns the full URL.
 // Also makes sure params is not nil (so it can be encoded later).
 // Sets the apikey as a path parameter for use by older radarr/sonarr versions.
-func (c *Config) setPathParams(uriPath string, params url.Values) string {
+func (c *Config) SetPathParams(uriPath string, params url.Values) string {
 	if strings.Contains(uriPath, "api/") {
 		uriPath = path.Join("/", uriPath)
 	} else {
