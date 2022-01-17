@@ -13,16 +13,52 @@ import (
 // Req is the input to search requests that have page-able responses.
 // These are turned into HTTP parameters.
 type Req struct {
-	PageSize   int    // 10 is default if not provided.
-	Page       int    // 1 or higher
-	SortKey    string // date, timeleft, others?
-	SortDir    string // asc, desc
-	url.Values        // Additional values that may be set.
+	PageSize   int       // 10 is default if not provided.
+	Page       int       // 1 is default if not provided.
+	SortKey    string    // date, timeleft, others?
+	SortDir    Sorting   // ascending, descending
+	Filter     Filtering // enums for eventTypes. App specific.
+	url.Values           // Additional values that may be set.
+}
+
+// Sorting is used as a request parameter value to sort lists, like History and Queue.
+type Sorting string
+
+const (
+	// SortAsc is the default, and sorts lists in ascending order.
+	SortAscend Sorting = "ascending"
+	// SortDesc flips the sort order to descending.
+	SortDescend Sorting = "descending"
+)
+
+// Filtering is used as a request parameter value to filter lists, like History and Queue.
+// The filter values are different per-app, so find their values in their respective modules.
+type Filtering int
+
+// Set makes sure the sort direction is valid.
+func (s *Sorting) Set(val string) {
+	switch Sorting(strings.ToLower(val)) {
+	default:
+		fallthrough
+	case SortAscend:
+		*s = SortAscend
+	case SortDescend:
+		*s = SortDescend
+	}
+}
+
+// Param returns the string value of a Filter eventType.
+func (f Filtering) Param() string {
+	return strconv.Itoa(int(f))
 }
 
 // Params returns a brand new url.Values with all request parameters combined.
 func (r *Req) Params() url.Values {
 	params := make(url.Values)
+
+	if r.Filter > 0 {
+		params.Set("eventType", r.Filter.Param())
+	}
 
 	if r.Page > 0 {
 		params.Set("page", strconv.Itoa(r.Page))
@@ -43,7 +79,7 @@ func (r *Req) Params() url.Values {
 	}
 
 	if r.SortDir != "" {
-		params.Set("sortDirection", r.SortDir)
+		params.Set("sortDirection", string(r.SortDir))
 	} else {
 		params.Set("sortDirection", "ascending") // descending
 	}
@@ -79,7 +115,7 @@ func (r *Req) CheckSet(key, value string) { //nolint:cyclop
 		}
 	case "sortdirection":
 		if r.SortDir == "" {
-			r.SortDir = value
+			r.SortDir.Set(value)
 		}
 	default:
 		if r.Values == nil {
@@ -102,7 +138,7 @@ func (r *Req) Set(key, value string) {
 	case "sortkey":
 		r.SortKey = value
 	case "sortdirection":
-		r.SortDir = value
+		r.SortDir.Set(value)
 	default:
 		if r.Values == nil {
 			r.Values = make(url.Values)
