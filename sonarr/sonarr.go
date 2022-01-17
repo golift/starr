@@ -20,15 +20,12 @@ type Sonarr struct {
 const (
 	FilterUnknown starr.Filtering = iota
 	FilterGrabbed
-	_ // 2 is unused
-	FilterImported
+	FilterSeriesFolderImported
+	FilterDownloadFolderImported
 	FilterDownloadFailed
 	FilterDeleted
 	FilterRenamed
 	FilterImportFailed
-	FilterDownloadImported
-	FilterRetagged
-	FilterIgnored
 )
 
 // New returns a Sonarr object used to interact with the Sonarr API.

@@ -21,7 +21,7 @@ const (
 	FilterAll starr.Filtering = iota
 	FilterGrabbed
 	_ // 2 is unused
-	FilterImported
+	FilterBookFileImported
 	FilterDownloadFailed
 	FilterDeleted
 	FilterRenamed

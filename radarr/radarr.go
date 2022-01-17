@@ -21,11 +21,11 @@ const (
 	FilterUnknown starr.Filtering = iota
 	FilterGrabbed
 	_ // 2 is unused
-	FilterImported
+	FilterDownloadFolderImported
 	FilterDownloadFailed
 	_ // 5 is unused. FilterDeleted
 	FilterFileDeleted
-	FilterFolderImported // not used yet, 1/17/2022
+	_ // FilterFolderImported // not used yet, 1/17/2022
 	FilterRenamed
 	FilterIgnored
 )

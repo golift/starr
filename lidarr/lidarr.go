@@ -21,7 +21,7 @@ const (
 	FilterUnknown starr.Filtering = iota
 	FilterGrabbed
 	FilterArtistFolderImported
-	FilterImported
+	FilterTrackFileImported
 	FilterDownloadFailed
 	FilterDeleted
 	FilterRenamed
