@@ -23,7 +23,7 @@ const (
 	Sonarr   App = "Sonarr"
 )
 
-// Silly constants to not screw up integer->string conversions.
+// Silly constants to avoid screwing up integer->string conversions.
 const (
 	Base10 = 10
 )
