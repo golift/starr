@@ -37,18 +37,18 @@ func (m *MockAPIer) EXPECT() *MockAPIerMockRecorder {
 }
 
 // Delete mocks base method.
-func (m *MockAPIer) Delete(arg0 string, arg1 url.Values) ([]byte, error) {
+func (m *MockAPIer) Delete(arg0 context.Context, arg1 string, arg2 url.Values) ([]byte, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Delete", arg0, arg1)
+	ret := m.ctrl.Call(m, "Delete", arg0, arg1, arg2)
 	ret0, _ := ret[0].([]byte)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Delete indicates an expected call of Delete.
-func (mr *MockAPIerMockRecorder) Delete(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockAPIerMockRecorder) Delete(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockAPIer)(nil).Delete), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockAPIer)(nil).Delete), arg0, arg1, arg2)
 }
 
 // DeleteBody mocks base method.
@@ -67,62 +67,33 @@ func (mr *MockAPIerMockRecorder) DeleteBody(arg0, arg1, arg2 interface{}) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteBody", reflect.TypeOf((*MockAPIer)(nil).DeleteBody), arg0, arg1, arg2)
 }
 
-// DeleteContext mocks base method.
-func (m *MockAPIer) DeleteContext(arg0 context.Context, arg1 string, arg2 url.Values) ([]byte, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteContext", arg0, arg1, arg2)
-	ret0, _ := ret[0].([]byte)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// DeleteContext indicates an expected call of DeleteContext.
-func (mr *MockAPIerMockRecorder) DeleteContext(arg0, arg1, arg2 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteContext", reflect.TypeOf((*MockAPIer)(nil).DeleteContext), arg0, arg1, arg2)
-}
-
 // DeleteInto mocks base method.
-func (m *MockAPIer) DeleteInto(arg0 string, arg1 url.Values, arg2 interface{}) error {
+func (m *MockAPIer) DeleteInto(arg0 context.Context, arg1 string, arg2 url.Values, arg3 interface{}) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteInto", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "DeleteInto", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // DeleteInto indicates an expected call of DeleteInto.
-func (mr *MockAPIerMockRecorder) DeleteInto(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockAPIerMockRecorder) DeleteInto(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteInto", reflect.TypeOf((*MockAPIer)(nil).DeleteInto), arg0, arg1, arg2)
-}
-
-// DeleteIntoContext mocks base method.
-func (m *MockAPIer) DeleteIntoContext(arg0 context.Context, arg1 string, arg2 url.Values, arg3 interface{}) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteIntoContext", arg0, arg1, arg2, arg3)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// DeleteIntoContext indicates an expected call of DeleteIntoContext.
-func (mr *MockAPIerMockRecorder) DeleteIntoContext(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteIntoContext", reflect.TypeOf((*MockAPIer)(nil).DeleteIntoContext), arg0, arg1, arg2, arg3)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteInto", reflect.TypeOf((*MockAPIer)(nil).DeleteInto), arg0, arg1, arg2, arg3)
 }
 
 // Get mocks base method.
-func (m *MockAPIer) Get(arg0 string, arg1 url.Values) ([]byte, error) {
+func (m *MockAPIer) Get(arg0 context.Context, arg1 string, arg2 url.Values) ([]byte, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Get", arg0, arg1)
+	ret := m.ctrl.Call(m, "Get", arg0, arg1, arg2)
 	ret0, _ := ret[0].([]byte)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Get indicates an expected call of Get.
-func (mr *MockAPIerMockRecorder) Get(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockAPIerMockRecorder) Get(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockAPIer)(nil).Get), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockAPIer)(nil).Get), arg0, arg1, arg2)
 }
 
 // GetBody mocks base method.
@@ -141,90 +112,47 @@ func (mr *MockAPIerMockRecorder) GetBody(arg0, arg1, arg2 interface{}) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBody", reflect.TypeOf((*MockAPIer)(nil).GetBody), arg0, arg1, arg2)
 }
 
-// GetContext mocks base method.
-func (m *MockAPIer) GetContext(arg0 context.Context, arg1 string, arg2 url.Values) ([]byte, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetContext", arg0, arg1, arg2)
-	ret0, _ := ret[0].([]byte)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetContext indicates an expected call of GetContext.
-func (mr *MockAPIerMockRecorder) GetContext(arg0, arg1, arg2 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetContext", reflect.TypeOf((*MockAPIer)(nil).GetContext), arg0, arg1, arg2)
-}
-
 // GetInto mocks base method.
-func (m *MockAPIer) GetInto(arg0 string, arg1 url.Values, arg2 interface{}) error {
+func (m *MockAPIer) GetInto(arg0 context.Context, arg1 string, arg2 url.Values, arg3 interface{}) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetInto", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "GetInto", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // GetInto indicates an expected call of GetInto.
-func (mr *MockAPIerMockRecorder) GetInto(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockAPIerMockRecorder) GetInto(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetInto", reflect.TypeOf((*MockAPIer)(nil).GetInto), arg0, arg1, arg2)
-}
-
-// GetIntoContext mocks base method.
-func (m *MockAPIer) GetIntoContext(arg0 context.Context, arg1 string, arg2 url.Values, arg3 interface{}) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetIntoContext", arg0, arg1, arg2, arg3)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// GetIntoContext indicates an expected call of GetIntoContext.
-func (mr *MockAPIerMockRecorder) GetIntoContext(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetIntoContext", reflect.TypeOf((*MockAPIer)(nil).GetIntoContext), arg0, arg1, arg2, arg3)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetInto", reflect.TypeOf((*MockAPIer)(nil).GetInto), arg0, arg1, arg2, arg3)
 }
 
 // Login mocks base method.
-func (m *MockAPIer) Login() error {
+func (m *MockAPIer) Login(arg0 context.Context) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Login")
+	ret := m.ctrl.Call(m, "Login", arg0)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // Login indicates an expected call of Login.
-func (mr *MockAPIerMockRecorder) Login() *gomock.Call {
+func (mr *MockAPIerMockRecorder) Login(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Login", reflect.TypeOf((*MockAPIer)(nil).Login))
-}
-
-// LoginContext mocks base method.
-func (m *MockAPIer) LoginContext(arg0 context.Context) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "LoginContext", arg0)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// LoginContext indicates an expected call of LoginContext.
-func (mr *MockAPIerMockRecorder) LoginContext(arg0 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "LoginContext", reflect.TypeOf((*MockAPIer)(nil).LoginContext), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Login", reflect.TypeOf((*MockAPIer)(nil).Login), arg0)
 }
 
 // Post mocks base method.
-func (m *MockAPIer) Post(arg0 string, arg1 url.Values, arg2 []byte) ([]byte, error) {
+func (m *MockAPIer) Post(arg0 context.Context, arg1 string, arg2 url.Values, arg3 []byte) ([]byte, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Post", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "Post", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].([]byte)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Post indicates an expected call of Post.
-func (mr *MockAPIerMockRecorder) Post(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockAPIerMockRecorder) Post(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Post", reflect.TypeOf((*MockAPIer)(nil).Post), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Post", reflect.TypeOf((*MockAPIer)(nil).Post), arg0, arg1, arg2, arg3)
 }
 
 // PostBody mocks base method.
@@ -243,62 +171,33 @@ func (mr *MockAPIerMockRecorder) PostBody(arg0, arg1, arg2, arg3 interface{}) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostBody", reflect.TypeOf((*MockAPIer)(nil).PostBody), arg0, arg1, arg2, arg3)
 }
 
-// PostContext mocks base method.
-func (m *MockAPIer) PostContext(arg0 context.Context, arg1 string, arg2 url.Values, arg3 []byte) ([]byte, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PostContext", arg0, arg1, arg2, arg3)
-	ret0, _ := ret[0].([]byte)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// PostContext indicates an expected call of PostContext.
-func (mr *MockAPIerMockRecorder) PostContext(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostContext", reflect.TypeOf((*MockAPIer)(nil).PostContext), arg0, arg1, arg2, arg3)
-}
-
 // PostInto mocks base method.
-func (m *MockAPIer) PostInto(arg0 string, arg1 url.Values, arg2 []byte, arg3 interface{}) error {
+func (m *MockAPIer) PostInto(arg0 context.Context, arg1 string, arg2 url.Values, arg3 []byte, arg4 interface{}) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PostInto", arg0, arg1, arg2, arg3)
+	ret := m.ctrl.Call(m, "PostInto", arg0, arg1, arg2, arg3, arg4)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // PostInto indicates an expected call of PostInto.
-func (mr *MockAPIerMockRecorder) PostInto(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+func (mr *MockAPIerMockRecorder) PostInto(arg0, arg1, arg2, arg3, arg4 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostInto", reflect.TypeOf((*MockAPIer)(nil).PostInto), arg0, arg1, arg2, arg3)
-}
-
-// PostIntoContext mocks base method.
-func (m *MockAPIer) PostIntoContext(arg0 context.Context, arg1 string, arg2 url.Values, arg3 []byte, arg4 interface{}) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PostIntoContext", arg0, arg1, arg2, arg3, arg4)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// PostIntoContext indicates an expected call of PostIntoContext.
-func (mr *MockAPIerMockRecorder) PostIntoContext(arg0, arg1, arg2, arg3, arg4 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostIntoContext", reflect.TypeOf((*MockAPIer)(nil).PostIntoContext), arg0, arg1, arg2, arg3, arg4)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PostInto", reflect.TypeOf((*MockAPIer)(nil).PostInto), arg0, arg1, arg2, arg3, arg4)
 }
 
 // Put mocks base method.
-func (m *MockAPIer) Put(arg0 string, arg1 url.Values, arg2 []byte) ([]byte, error) {
+func (m *MockAPIer) Put(arg0 context.Context, arg1 string, arg2 url.Values, arg3 []byte) ([]byte, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Put", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "Put", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].([]byte)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Put indicates an expected call of Put.
-func (mr *MockAPIerMockRecorder) Put(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockAPIerMockRecorder) Put(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Put", reflect.TypeOf((*MockAPIer)(nil).Put), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Put", reflect.TypeOf((*MockAPIer)(nil).Put), arg0, arg1, arg2, arg3)
 }
 
 // PutBody mocks base method.
@@ -317,45 +216,16 @@ func (mr *MockAPIerMockRecorder) PutBody(arg0, arg1, arg2, arg3 interface{}) *go
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PutBody", reflect.TypeOf((*MockAPIer)(nil).PutBody), arg0, arg1, arg2, arg3)
 }
 
-// PutContext mocks base method.
-func (m *MockAPIer) PutContext(arg0 context.Context, arg1 string, arg2 url.Values, arg3 []byte) ([]byte, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PutContext", arg0, arg1, arg2, arg3)
-	ret0, _ := ret[0].([]byte)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// PutContext indicates an expected call of PutContext.
-func (mr *MockAPIerMockRecorder) PutContext(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PutContext", reflect.TypeOf((*MockAPIer)(nil).PutContext), arg0, arg1, arg2, arg3)
-}
-
 // PutInto mocks base method.
-func (m *MockAPIer) PutInto(arg0 string, arg1 url.Values, arg2 []byte, arg3 interface{}) error {
+func (m *MockAPIer) PutInto(arg0 context.Context, arg1 string, arg2 url.Values, arg3 []byte, arg4 interface{}) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PutInto", arg0, arg1, arg2, arg3)
+	ret := m.ctrl.Call(m, "PutInto", arg0, arg1, arg2, arg3, arg4)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // PutInto indicates an expected call of PutInto.
-func (mr *MockAPIerMockRecorder) PutInto(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+func (mr *MockAPIerMockRecorder) PutInto(arg0, arg1, arg2, arg3, arg4 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PutInto", reflect.TypeOf((*MockAPIer)(nil).PutInto), arg0, arg1, arg2, arg3)
-}
-
-// PutIntoContext mocks base method.
-func (m *MockAPIer) PutIntoContext(arg0 context.Context, arg1 string, arg2 url.Values, arg3 []byte, arg4 interface{}) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "PutIntoContext", arg0, arg1, arg2, arg3, arg4)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// PutIntoContext indicates an expected call of PutIntoContext.
-func (mr *MockAPIerMockRecorder) PutIntoContext(arg0, arg1, arg2, arg3, arg4 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PutIntoContext", reflect.TypeOf((*MockAPIer)(nil).PutIntoContext), arg0, arg1, arg2, arg3, arg4)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PutInto", reflect.TypeOf((*MockAPIer)(nil).PutInto), arg0, arg1, arg2, arg3, arg4)
 }
