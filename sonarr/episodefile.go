@@ -57,7 +57,7 @@ func (s *Sonarr) GetSeriesEpisodeFilesContext(ctx context.Context, seriesID int6
 	return output, nil
 }
 
-// UpdateEpisodeFile updates an episode file's quality.
+// UpdateEpisodeFile updates an episode file's quality. Use GetQualityProfiles() to find the available IDs.
 func (s *Sonarr) UpdateEpisodeFileQuality(episodeFileID, qualityID int64) (*EpisodeFile, error) {
 	return s.UpdateEpisodeFileQualityContext(context.Background(), episodeFileID, qualityID)
 }
