@@ -9,14 +9,17 @@ import (
 )
 
 func TestRadarrApplicationUpdate(t *testing.T) {
-	starrcmd.EventType = starrcmd.EventApplicationUpdate
-
 	t.Setenv("radarr_eventtype", string(starrcmd.EventApplicationUpdate))
 	t.Setenv("radarr_update_previousversion", "4.0.3.5875")
 	t.Setenv("radarr_update_newversion", "4.0.4.5909")
 	t.Setenv("radarr_update_message", "Radarr updated from 4.0.3.5875 to 4.0.4.5909")
 
-	switch info, err := starrcmd.GetRadarrApplicationUpdate(); {
+	cmd, err := starrcmd.New()
+	if err != nil {
+		t.Fatalf("got an unexpected error: %s", err)
+	}
+
+	switch info, err := cmd.GetRadarrApplicationUpdate(); {
 	case err != nil:
 		t.Fatalf("got an unexpected error: %s", err)
 	case info.Message != os.Getenv("radarr_update_message"):
@@ -29,15 +32,18 @@ func TestRadarrApplicationUpdate(t *testing.T) {
 }
 
 func TestRadarrHealthIssue(t *testing.T) {
-	starrcmd.EventType = starrcmd.EventHealthIssue
-
 	t.Setenv("radarr_eventtype", string(starrcmd.EventHealthIssue))
 	t.Setenv("radarr_health_issue_type", "ImportListStatusCheck")
 	t.Setenv("radarr_health_issue_wiki", "https://wiki.servarr.com/")
 	t.Setenv("radarr_health_issue_level", "Warning")
 	t.Setenv("radarr_health_issue_message", "Lists unavailable due to failures: List name here")
 
-	switch info, err := starrcmd.GetRadarrHealthIssue(); {
+	cmd, err := starrcmd.New()
+	if err != nil {
+		t.Fatalf("got an unexpected error: %s", err)
+	}
+
+	switch info, err := cmd.GetRadarrHealthIssue(); {
 	case err != nil:
 		t.Fatalf("got an unexpected error: %s", err)
 	case info.Message != os.Getenv("radarr_health_issue_message"):
@@ -52,11 +58,14 @@ func TestRadarrHealthIssue(t *testing.T) {
 }
 
 func TestRadarrTest(t *testing.T) {
-	starrcmd.EventType = starrcmd.EventTest
-
 	t.Setenv("radarr_eventtype", string(starrcmd.EventTest))
 
-	switch info, err := starrcmd.GetRadarrTest(); {
+	cmd, err := starrcmd.New()
+	if err != nil {
+		t.Fatalf("got an unexpected error: %s", err)
+	}
+
+	switch info, err := cmd.GetRadarrTest(); {
 	case err != nil:
 		t.Fatalf("got an unexpected error: %s", err)
 	case info != starrcmd.RadarrTest{}:
@@ -65,8 +74,6 @@ func TestRadarrTest(t *testing.T) {
 }
 
 func TestRadarrGrab(t *testing.T) {
-	starrcmd.EventType = starrcmd.EventGrab
-
 	// XXX: This isn't everything, should add the rest.
 	// Also write another test that purposely doesn't add everything to catch a different regression.
 	t.Setenv("radarr_eventtype", string(starrcmd.EventGrab))
@@ -85,7 +92,12 @@ func TestRadarrGrab(t *testing.T) {
 	t.Setenv("radarr_release_size", "123456778")
 	t.Setenv("radarr_download_client", "Qbot")
 
-	switch info, err := starrcmd.GetRadarrGrab(); {
+	cmd, err := starrcmd.New()
+	if err != nil {
+		t.Fatalf("got an unexpected error: %s", err)
+	}
+
+	switch info, err := cmd.GetRadarrGrab(); {
 	case err != nil:
 		t.Fatalf("got an unexpected error: %s", err)
 	case info.QualityVersion != int64(1):
@@ -118,8 +130,6 @@ func TestRadarrGrab(t *testing.T) {
 }
 
 func TestRadarrRename(t *testing.T) {
-	starrcmd.EventType = starrcmd.EventRename
-
 	// This isn't everything, but it's most..
 	t.Setenv("radarr_eventtype", string(starrcmd.EventRename))
 	t.Setenv("radarr_movie_id", "123456")
@@ -135,7 +145,12 @@ func TestRadarrRename(t *testing.T) {
 	t.Setenv("radarr_moviefile_previousrelativepaths", "/none")
 	t.Setenv("radarr_moviefile_previouspaths", "/really|/none")
 
-	switch info, err := starrcmd.GetRadarrRename(); {
+	cmd, err := starrcmd.New()
+	if err != nil {
+		t.Fatalf("got an unexpected error: %s", err)
+	}
+
+	switch info, err := cmd.GetRadarrRename(); {
 	case err != nil:
 		t.Fatalf("got an unexpected error: %s", err)
 	case info.ID != int64(123456):

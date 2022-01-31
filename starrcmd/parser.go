@@ -14,9 +14,9 @@ import (
 
 // get offloads the error checking from all the other routines.
 // This is where our journey into the data truly begins.
-func get(wanted Event, output interface{}) error {
-	if EventType != wanted {
-		return fmt.Errorf("%w: requested '%s' have '%s'", ErrInvalidEvent, wanted, EventType)
+func (c *CmdEvent) get(wanted Event, output interface{}) error {
+	if c.Type != wanted {
+		return fmt.Errorf("%w: requested '%s' have '%s'", ErrInvalidEvent, wanted, c.Type)
 	}
 
 	if err := fillStructFromEnv(output); err != nil {

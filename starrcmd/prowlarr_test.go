@@ -9,14 +9,17 @@ import (
 )
 
 func TestProwlarrApplicationUpdate(t *testing.T) {
-	starrcmd.EventType = starrcmd.EventApplicationUpdate
-
 	t.Setenv("prowlarr_eventtype", string(starrcmd.EventApplicationUpdate))
 	t.Setenv("prowlarr_update_previousversion", "4.0.3.5875")
 	t.Setenv("prowlarr_update_newversion", "4.0.4.5909")
 	t.Setenv("prowlarr_update_message", "Prowlarr updated from 4.0.3.5875 to 4.0.4.5909")
 
-	switch info, err := starrcmd.GetProwlarrApplicationUpdate(); {
+	cmd, err := starrcmd.New()
+	if err != nil {
+		t.Fatalf("got an unexpected error: %s", err)
+	}
+
+	switch info, err := cmd.GetProwlarrApplicationUpdate(); {
 	case err != nil:
 		t.Fatalf("got an unexpected error: %s", err)
 	case info.Message != os.Getenv("prowlarr_update_message"):
@@ -29,15 +32,18 @@ func TestProwlarrApplicationUpdate(t *testing.T) {
 }
 
 func TestProwlarrHealthIssue(t *testing.T) {
-	starrcmd.EventType = starrcmd.EventHealthIssue
-
 	t.Setenv("prowlarr_eventtype", string(starrcmd.EventHealthIssue))
 	t.Setenv("prowlarr_health_issue_type", "SomeIssueTypeForProwlarr")
 	t.Setenv("prowlarr_health_issue_wiki", "https://wiki.servarr.com/prowlarr")
 	t.Setenv("prowlarr_health_issue_level", "Error")
 	t.Setenv("prowlarr_health_issue_message", "Lists unavailable due to failures: List name here")
 
-	switch info, err := starrcmd.GetProwlarrHealthIssue(); {
+	cmd, err := starrcmd.New()
+	if err != nil {
+		t.Fatalf("got an unexpected error: %s", err)
+	}
+
+	switch info, err := cmd.GetProwlarrHealthIssue(); {
 	case err != nil:
 		t.Fatalf("got an unexpected error: %s", err)
 	case info.Message != os.Getenv("prowlarr_health_issue_message"):
@@ -52,11 +58,14 @@ func TestProwlarrHealthIssue(t *testing.T) {
 }
 
 func TestProwlarrTest(t *testing.T) {
-	starrcmd.EventType = starrcmd.EventTest
-
 	t.Setenv("prowlarr_eventtype", string(starrcmd.EventTest))
 
-	switch info, err := starrcmd.GetProwlarrTest(); {
+	cmd, err := starrcmd.New()
+	if err != nil {
+		t.Fatalf("got an unexpected error: %s", err)
+	}
+
+	switch info, err := cmd.GetProwlarrTest(); {
 	case err != nil:
 		t.Fatalf("got an unexpected error: %s", err)
 	case info != starrcmd.ProwlarrTest{}:

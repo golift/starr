@@ -24,16 +24,16 @@ type ProwlarrHealthIssue struct {
 type ProwlarrTest struct{}
 
 // GetProwlarrApplicationUpdate returns the ApplicationUpdate event data.
-func GetProwlarrApplicationUpdate() (output ProwlarrApplicationUpdate, err error) {
-	return output, get(EventApplicationUpdate, &output)
+func (c *CmdEvent) GetProwlarrApplicationUpdate() (output ProwlarrApplicationUpdate, err error) {
+	return output, c.get(EventApplicationUpdate, &output)
 }
 
 // GetProwlarrHealthIssue returns the ApplicationUpdate event data.
-func GetProwlarrHealthIssue() (output ProwlarrHealthIssue, err error) {
-	return output, get(EventHealthIssue, &output)
+func (c *CmdEvent) GetProwlarrHealthIssue() (output ProwlarrHealthIssue, err error) {
+	return output, c.get(EventHealthIssue, &output)
 }
 
 // GetProwlarrTest returns the ApplicationUpdate event data.
-func GetProwlarrTest() (output ProwlarrTest, err error) {
-	return output, get(EventTest, &output)
+func (c *CmdEvent) GetProwlarrTest() (output ProwlarrTest, err error) {
+	return output, c.get(EventTest, &output)
 }

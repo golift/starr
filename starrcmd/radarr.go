@@ -122,41 +122,41 @@ type RadarrRename struct {
 type RadarrTest struct{}
 
 // GetRadarrHealthIssue returns the HealthIssue event data.
-func GetRadarrHealthIssue() (output RadarrHealthIssue, err error) {
-	return output, get(EventHealthIssue, &output)
+func (c *CmdEvent) GetRadarrHealthIssue() (output RadarrHealthIssue, err error) {
+	return output, c.get(EventHealthIssue, &output)
 }
 
 // GetRadarrApplicationUpdate returns the ApplicationUpdate event data.
-func GetRadarrApplicationUpdate() (output RadarrApplicationUpdate, err error) {
-	return output, get(EventApplicationUpdate, &output)
+func (c *CmdEvent) GetRadarrApplicationUpdate() (output RadarrApplicationUpdate, err error) {
+	return output, c.get(EventApplicationUpdate, &output)
 }
 
 // GetRadarrDownload returns the Download event data.
-func GetRadarrDownload() (output RadarrDownload, err error) {
-	return output, get(EventDownload, &output)
+func (c *CmdEvent) GetRadarrDownload() (output RadarrDownload, err error) {
+	return output, c.get(EventDownload, &output)
 }
 
 // GetRadarrGrab returns the Grab event data.
-func GetRadarrGrab() (output RadarrGrab, err error) {
-	return output, get(EventGrab, &output)
+func (c *CmdEvent) GetRadarrGrab() (output RadarrGrab, err error) {
+	return output, c.get(EventGrab, &output)
 }
 
 // GetRadarrMovieFileDelete returns the MovieFileDelete event data.
-func GetRadarrMovieFileDelete() (output RadarrMovieFileDelete, err error) {
-	return output, get(EventMovieFileDelete, &output)
+func (c *CmdEvent) GetRadarrMovieFileDelete() (output RadarrMovieFileDelete, err error) {
+	return output, c.get(EventMovieFileDelete, &output)
 }
 
 // GetRadarrTest returns the Test event data.
-func GetRadarrTest() (output RadarrTest, err error) {
-	return output, get(EventTest, &output)
+func (c *CmdEvent) GetRadarrTest() (output RadarrTest, err error) {
+	return output, c.get(EventTest, &output)
 }
 
 // GetRadarrMovieDelete returns the MovieDelete event data.
-func GetRadarrMovieDelete() (output RadarrMovieDelete, err error) {
-	return output, get(EventMovieDelete, &output)
+func (c *CmdEvent) GetRadarrMovieDelete() (output RadarrMovieDelete, err error) {
+	return output, c.get(EventMovieDelete, &output)
 }
 
 // GetRadarrRename returns the Rename event data.
-func GetRadarrRename() (output RadarrRename, err error) {
-	return output, get(EventRename, &output)
+func (c *CmdEvent) GetRadarrRename() (output RadarrRename, err error) {
+	return output, c.get(EventRename, &output)
 }

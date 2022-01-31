@@ -9,14 +9,17 @@ import (
 )
 
 func TestLidarrApplicationUpdate(t *testing.T) {
-	starrcmd.EventType = starrcmd.EventApplicationUpdate
-
 	t.Setenv("lidarr_eventtype", string(starrcmd.EventApplicationUpdate))
 	t.Setenv("lidarr_update_previousversion", "5.0.3.5875")
 	t.Setenv("lidarr_update_newversion", "5.0.4.5909")
 	t.Setenv("lidarr_update_message", "Lidarr updated from 5.0.3.5875 to 5.0.4.5909")
 
-	switch info, err := starrcmd.GetLidarrApplicationUpdate(); {
+	cmd, err := starrcmd.New()
+	if err != nil {
+		t.Fatalf("got an unexpected error: %s", err)
+	}
+
+	switch info, err := cmd.GetLidarrApplicationUpdate(); {
 	case err != nil:
 		t.Fatalf("got an unexpected error: %s", err)
 	case info.Message != os.Getenv("lidarr_update_message"):
@@ -29,15 +32,18 @@ func TestLidarrApplicationUpdate(t *testing.T) {
 }
 
 func TestLidarrHealthIssue(t *testing.T) {
-	starrcmd.EventType = starrcmd.EventHealthIssue
-
 	t.Setenv("lidarr_eventtype", string(starrcmd.EventHealthIssue))
 	t.Setenv("lidarr_health_issue_type", "SomeIssueTypeForLidarr")
 	t.Setenv("lidarr_health_issue_wiki", "https://wiki.servarr.com/lidarr")
 	t.Setenv("lidarr_health_issue_level", "Womp")
 	t.Setenv("lidarr_health_issue_message", "Lists unavailable due to failures: List name here")
 
-	switch info, err := starrcmd.GetLidarrHealthIssue(); {
+	cmd, err := starrcmd.New()
+	if err != nil {
+		t.Fatalf("got an unexpected error: %s", err)
+	}
+
+	switch info, err := cmd.GetLidarrHealthIssue(); {
 	case err != nil:
 		t.Fatalf("got an unexpected error: %s", err)
 	case info.Message != os.Getenv("lidarr_health_issue_message"):
@@ -52,11 +58,14 @@ func TestLidarrHealthIssue(t *testing.T) {
 }
 
 func TestLidarrHealthIssueEmpty(t *testing.T) {
-	starrcmd.EventType = starrcmd.EventHealthIssue
-
 	t.Setenv("lidarr_eventtype", string(starrcmd.EventHealthIssue))
 
-	switch info, err := starrcmd.GetLidarrHealthIssue(); {
+	cmd, err := starrcmd.New()
+	if err != nil {
+		t.Fatalf("got an unexpected error: %s", err)
+	}
+
+	switch info, err := cmd.GetLidarrHealthIssue(); {
 	case err != nil:
 		t.Fatalf("got an unexpected error: %s", err)
 	case info.IssueType != "":
@@ -65,11 +74,14 @@ func TestLidarrHealthIssueEmpty(t *testing.T) {
 }
 
 func TestLidarrTest(t *testing.T) {
-	starrcmd.EventType = starrcmd.EventTest
-
 	t.Setenv("lidarr_eventtype", string(starrcmd.EventTest))
 
-	switch info, err := starrcmd.GetLidarrTest(); {
+	cmd, err := starrcmd.New()
+	if err != nil {
+		t.Fatalf("got an unexpected error: %s", err)
+	}
+
+	switch info, err := cmd.GetLidarrTest(); {
 	case err != nil:
 		t.Fatalf("got an unexpected error: %s", err)
 	case info != starrcmd.LidarrTest{}:

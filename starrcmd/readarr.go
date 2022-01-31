@@ -48,21 +48,21 @@ type ReadarrGrab struct {
 type ReadarrTest struct{}
 
 // GetReadarrApplicationUpdate returns the ApplicationUpdate event data.
-func GetReadarrApplicationUpdate() (output ReadarrApplicationUpdate, err error) {
-	return output, get(EventApplicationUpdate, &output)
+func (c *CmdEvent) GetReadarrApplicationUpdate() (output ReadarrApplicationUpdate, err error) {
+	return output, c.get(EventApplicationUpdate, &output)
 }
 
 // GetReadarrHealthIssue returns the ApplicationUpdate event data.
-func GetReadarrHealthIssue() (output ReadarrHealthIssue, err error) {
-	return output, get(EventHealthIssue, &output)
+func (c *CmdEvent) GetReadarrHealthIssue() (output ReadarrHealthIssue, err error) {
+	return output, c.get(EventHealthIssue, &output)
 }
 
 // GetReadarrGrab returns the Grab event data.
-func GetReadarrGrab() (output ReadarrGrab, err error) {
-	return output, get(EventGrab, &output)
+func (c *CmdEvent) GetReadarrGrab() (output ReadarrGrab, err error) {
+	return output, c.get(EventGrab, &output)
 }
 
 // GetReadarrTest returns the ApplicationUpdate event data.
-func GetReadarrTest() (output ReadarrTest, err error) {
-	return output, get(EventTest, &output)
+func (c *CmdEvent) GetReadarrTest() (output ReadarrTest, err error) {
+	return output, c.get(EventTest, &output)
 }

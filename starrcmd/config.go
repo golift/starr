@@ -1,4 +1,3 @@
-//nolint:gochecknoglobals,gochecknoinits,nlreturn
 package starrcmd
 
 import (
@@ -25,15 +24,15 @@ import (
 var (
 	// ErrInvalidEvent is returned if you invoke a procedure for the wrong event.
 	ErrInvalidEvent = fmt.Errorf("incorrect event type requested")
-	// EventType is set automatically  by init() but can be overridden in your code if needed.
-	EventType Event
-	// Application is set automatically by init() but can be overridden in your code if needed.
-	Application starr.App
+	// ErrNoEventFound is returned if an event type is not found.
+	// This should only happen when testing and you forget a variable.
+	ErrNoEventFound = fmt.Errorf("no eventType environment variable found")
 )
 
+// DateFormat matches the date output from all five starr apps. Hopefully it doesn't change!
 const DateFormat = "1/2/2006 3:04:05 PM"
 
-// Event is a hard type to hold our EventType.
+// Event is a custom type to hold our EventType.
 type Event string
 
 // This list of constants represents all available and existing Event Types for all five Starr apps.
@@ -60,20 +59,25 @@ const (
 	EventEpisodeFileDelete Event = "EpisodeFileDelete" // Sonarr
 )
 
-func init() {
-	for _, starrApp := range []struct {
-		event string
-		app   starr.App
-	}{
-		{os.Getenv("radarr_eventtype"), starr.Radarr},
-		{os.Getenv("sonarr_eventtype"), starr.Sonarr},
-		{os.Getenv("lidarr_eventtype"), starr.Lidarr},
-		{os.Getenv("readarr_eventtype"), starr.Readarr},
-		{os.Getenv("prowlarr_eventtype"), starr.Prowlarr},
+// CmdEvent holds the current event type and the app that triggered it.
+// Get one of these by calling New().
+type CmdEvent struct {
+	App  starr.App
+	Type Event
+}
+
+func New() (*CmdEvent, error) {
+	for _, starrApp := range []*CmdEvent{
+		{starr.Radarr, Event(os.Getenv("radarr_eventtype"))},
+		{starr.Sonarr, Event(os.Getenv("sonarr_eventtype"))},
+		{starr.Lidarr, Event(os.Getenv("lidarr_eventtype"))},
+		{starr.Readarr, Event(os.Getenv("readarr_eventtype"))},
+		{starr.Prowlarr, Event(os.Getenv("prowlarr_eventtype"))},
 	} {
-		if starrApp.event != "" {
-			EventType, Application = Event(starrApp.event), starrApp.app
-			return
+		if starrApp.Type != "" {
+			return starrApp, nil
 		}
 	}
+
+	return nil, ErrNoEventFound
 }

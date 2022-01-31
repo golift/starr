@@ -15,56 +15,60 @@ import (
 // This is an example main() function that uses the golft.io/starr/starrcmd module.
 func ExampleMain() {
 	// Do your own configuration input here.
-	// c := &Config{stuff}
-	switch starrcmd.Application {
+	cmd, err := starrcmd.New()
+	if err != nil {
+		panic(err)
+	}
+
+	switch cmd.App {
 	case starr.Radarr:
-		DoRadarr()
+		DoRadarr(cmd)
 	case starr.Sonarr:
-		DoSonarr()
+		DoSonarr(cmd)
 	case starr.Readarr:
-		DoReadarr()
+		DoReadarr(cmd)
 	case starr.Lidarr:
-		DoLidarr()
+		DoLidarr(cmd)
 	case starr.Prowlarr:
-		DoProwlarr()
+		DoProwlarr(cmd)
 	}
 }
 
 // DoRadarr handles any Radarr event.
-func DoRadarr() { //nolint:cyclop
-	fmt.Println("Processing Radarr Event: ", starrcmd.EventType)
+func DoRadarr(cmd *starrcmd.CmdEvent) { //nolint:cyclop
+	fmt.Println("Processing Radarr Event: ", cmd.Type)
 
-	switch starrcmd.EventType {
+	switch cmd.Type {
 	case starrcmd.EventGrab:
-		grab, err := starrcmd.GetRadarrGrab()
+		grab, err := cmd.GetRadarrGrab()
 		if err != nil {
 			panic(err)
 		}
 
 		fmt.Println(grab.Title)
 	case starrcmd.EventApplicationUpdate:
-		update, err := starrcmd.GetRadarrApplicationUpdate()
+		update, err := cmd.GetRadarrApplicationUpdate()
 		if err != nil {
 			panic(err)
 		}
 
 		fmt.Println(update.Message)
 	case starrcmd.EventDownload:
-		download, err := starrcmd.GetRadarrDownload()
+		download, err := cmd.GetRadarrDownload()
 		if err != nil {
 			panic(err)
 		}
 
 		fmt.Println(download.Title)
 	case starrcmd.EventHealthIssue:
-		health, err := starrcmd.GetRadarrHealthIssue()
+		health, err := cmd.GetRadarrHealthIssue()
 		if err != nil {
 			panic(err)
 		}
 
 		fmt.Println(health.IssueType, health.Message)
 	case starrcmd.EventMovieFileDelete:
-		movie, err := starrcmd.GetRadarrMovieFileDelete()
+		movie, err := cmd.GetRadarrMovieFileDelete()
 		if err != nil {
 			panic(err)
 		}
@@ -73,62 +77,62 @@ func DoRadarr() { //nolint:cyclop
 	case starrcmd.EventTest:
 		// nothing, it's useless
 	default:
-		fmt.Println("Ignored Radarr Event: ", starrcmd.EventType)
+		fmt.Println("Ignored Radarr Event: ", cmd.Type)
 	}
 }
 
 /* The following procedures are just more examples. They're left empty on purpose. */
 
 // DoSonarr handles any Sonarr event.
-func DoSonarr() {
-	fmt.Println("Processing Sonarr Event: ", starrcmd.EventType)
+func DoSonarr(command *starrcmd.CmdEvent) {
+	fmt.Println("Processing Sonarr Event: ", command.Type)
 
-	switch starrcmd.EventType {
+	switch command.Type {
 	case starrcmd.EventGrab:
 	case starrcmd.EventApplicationUpdate:
 	case starrcmd.EventDownload:
 	case starrcmd.EventHealthIssue:
 	default:
-		fmt.Println("Ignored Sonarr Event: ", starrcmd.EventType)
+		fmt.Println("Ignored Sonarr Event: ", command.Type)
 	}
 }
 
 // DoLidarr handles any Lidarr event.
-func DoLidarr() {
-	fmt.Println("Processing Lidarr Event: ", starrcmd.EventType)
+func DoLidarr(command *starrcmd.CmdEvent) {
+	fmt.Println("Processing Lidarr Event: ", command.Type)
 
-	switch starrcmd.EventType {
+	switch command.Type {
 	case starrcmd.EventGrab:
 	case starrcmd.EventApplicationUpdate:
 	case starrcmd.EventDownload:
 	case starrcmd.EventHealthIssue:
 	default:
-		fmt.Println("Ignored Lidarr Event: ", starrcmd.EventType)
+		fmt.Println("Ignored Lidarr Event: ", command.Type)
 	}
 }
 
 // DoReadarr handles any Readarr event.
-func DoReadarr() {
-	fmt.Println("Processing Readarr Event: ", starrcmd.EventType)
+func DoReadarr(command *starrcmd.CmdEvent) {
+	fmt.Println("Processing Readarr Event: ", command.Type)
 
-	switch starrcmd.EventType {
+	switch command.Type {
 	case starrcmd.EventGrab:
 	case starrcmd.EventApplicationUpdate:
 	case starrcmd.EventDownload:
 	case starrcmd.EventHealthIssue:
 	default:
-		fmt.Println("Ignored Readarr Event: ", starrcmd.EventType)
+		fmt.Println("Ignored Readarr Event: ", command.Type)
 	}
 }
 
 // DoProwlarr handles any Prowlarr event.
-func DoProwlarr() {
-	fmt.Println("Processing Prowlarr Event: ", starrcmd.EventType)
+func DoProwlarr(command *starrcmd.CmdEvent) {
+	fmt.Println("Processing Prowlarr Event: ", command.Type)
 
-	switch starrcmd.EventType {
+	switch command.Type {
 	case starrcmd.EventApplicationUpdate:
 	case starrcmd.EventHealthIssue:
 	default:
-		fmt.Println("Ignored Prowlarr Event: ", starrcmd.EventType)
+		fmt.Println("Ignored Prowlarr Event: ", command.Type)
 	}
 }

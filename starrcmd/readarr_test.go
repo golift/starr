@@ -9,14 +9,17 @@ import (
 )
 
 func TestReadarrApplicationUpdate(t *testing.T) {
-	starrcmd.EventType = starrcmd.EventApplicationUpdate
-
 	t.Setenv("readarr_eventtype", string(starrcmd.EventApplicationUpdate))
 	t.Setenv("readarr_update_previousversion", "6.0.3.5875")
 	t.Setenv("readarr_update_newversion", "6.0.4.5909")
 	t.Setenv("readarr_update_message", "Readarr updated from 6.0.3.5875 to 6.0.4.5909")
 
-	switch info, err := starrcmd.GetReadarrApplicationUpdate(); {
+	cmd, err := starrcmd.New()
+	if err != nil {
+		t.Fatalf("got an unexpected error: %s", err)
+	}
+
+	switch info, err := cmd.GetReadarrApplicationUpdate(); {
 	case err != nil:
 		t.Fatalf("got an unexpected error: %s", err)
 	case info.Message != os.Getenv("readarr_update_message"):
@@ -29,15 +32,18 @@ func TestReadarrApplicationUpdate(t *testing.T) {
 }
 
 func TestReadarrHealthIssue(t *testing.T) {
-	starrcmd.EventType = starrcmd.EventHealthIssue
-
 	t.Setenv("readarr_eventtype", string(starrcmd.EventHealthIssue))
 	t.Setenv("readarr_health_issue_type", "SomeIssueTypeForReadarr")
 	t.Setenv("readarr_health_issue_wiki", "https://wiki.servarr.com/readarr")
 	t.Setenv("readarr_health_issue_level", "Info")
 	t.Setenv("readarr_health_issue_message", "Lists unavailable due to failures: List name here")
 
-	switch info, err := starrcmd.GetReadarrHealthIssue(); {
+	cmd, err := starrcmd.New()
+	if err != nil {
+		t.Fatalf("got an unexpected error: %s", err)
+	}
+
+	switch info, err := cmd.GetReadarrHealthIssue(); {
 	case err != nil:
 		t.Fatalf("got an unexpected error: %s", err)
 	case info.Message != os.Getenv("readarr_health_issue_message"):
@@ -52,11 +58,14 @@ func TestReadarrHealthIssue(t *testing.T) {
 }
 
 func TestReadarrTest(t *testing.T) {
-	starrcmd.EventType = starrcmd.EventTest
-
 	t.Setenv("readarr_eventtype", string(starrcmd.EventTest))
 
-	switch info, err := starrcmd.GetReadarrTest(); {
+	cmd, err := starrcmd.New()
+	if err != nil {
+		t.Fatalf("got an unexpected error: %s", err)
+	}
+
+	switch info, err := cmd.GetReadarrTest(); {
 	case err != nil:
 		t.Fatalf("got an unexpected error: %s", err)
 	case info != starrcmd.ReadarrTest{}:

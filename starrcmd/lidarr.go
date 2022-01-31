@@ -49,21 +49,21 @@ type LidarrGrab struct {
 type LidarrTest struct{}
 
 // GetLidarrApplicationUpdate returns the ApplicationUpdate event data.
-func GetLidarrApplicationUpdate() (output LidarrApplicationUpdate, err error) {
-	return output, get(EventApplicationUpdate, &output)
+func (c *CmdEvent) GetLidarrApplicationUpdate() (output LidarrApplicationUpdate, err error) {
+	return output, c.get(EventApplicationUpdate, &output)
 }
 
 // GetLidarrHealthIssue returns the ApplicationUpdate event data.
-func GetLidarrHealthIssue() (output LidarrHealthIssue, err error) {
-	return output, get(EventHealthIssue, &output)
+func (c *CmdEvent) GetLidarrHealthIssue() (output LidarrHealthIssue, err error) {
+	return output, c.get(EventHealthIssue, &output)
 }
 
 // GetLidarrGrab returns the Grab event data.
-func GetLidarrGrab() (output LidarrGrab, err error) {
-	return output, get(EventGrab, &output)
+func (c *CmdEvent) GetLidarrGrab() (output LidarrGrab, err error) {
+	return output, c.get(EventGrab, &output)
 }
 
 // GetLidarrTest returns the ApplicationUpdate event data.
-func GetLidarrTest() (output LidarrTest, err error) {
-	return output, get(EventTest, &output)
+func (c *CmdEvent) GetLidarrTest() (output LidarrTest, err error) {
+	return output, c.get(EventTest, &output)
 }

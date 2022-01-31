@@ -140,41 +140,41 @@ type SonarrEpisodeFileDelete struct {
 type SonarrTest struct{}
 
 // GetSonarrApplicationUpdate returns the ApplicationUpdate event data.
-func GetSonarrApplicationUpdate() (output SonarrApplicationUpdate, err error) {
-	return output, get(EventApplicationUpdate, &output)
+func (c *CmdEvent) GetSonarrApplicationUpdate() (output SonarrApplicationUpdate, err error) {
+	return output, c.get(EventApplicationUpdate, &output)
 }
 
 // GetSonarrHealthIssue returns the ApplicationUpdate event data.
-func GetSonarrHealthIssue() (output SonarrHealthIssue, err error) {
-	return output, get(EventHealthIssue, &output)
+func (c *CmdEvent) GetSonarrHealthIssue() (output SonarrHealthIssue, err error) {
+	return output, c.get(EventHealthIssue, &output)
 }
 
 // GetSonarrTest returns the ApplicationUpdate event data.
-func GetSonarrTest() (output SonarrTest, err error) {
-	return output, get(EventTest, &output)
+func (c *CmdEvent) GetSonarrTest() (output SonarrTest, err error) {
+	return output, c.get(EventTest, &output)
 }
 
 // GetSonarrGrab returns the Grab event data.
-func GetSonarrGrab() (output SonarrGrab, err error) {
-	return output, get(EventGrab, &output)
+func (c *CmdEvent) GetSonarrGrab() (output SonarrGrab, err error) {
+	return output, c.get(EventGrab, &output)
 }
 
 // GetSonarrDownload returns the Download event data.
-func GetSonarrDownload() (output SonarrDownload, err error) {
-	return output, get(EventDownload, &output)
+func (c *CmdEvent) GetSonarrDownload() (output SonarrDownload, err error) {
+	return output, c.get(EventDownload, &output)
 }
 
 // GetSonarrRename returns the Rename event data.
-func GetSonarrRename() (output SonarrRename, err error) {
-	return output, get(EventRename, &output)
+func (c *CmdEvent) GetSonarrRename() (output SonarrRename, err error) {
+	return output, c.get(EventRename, &output)
 }
 
 // GetSonarrSeriesDelete returns the SeriesDelete event data.
-func GetSonarrSeriesDelete() (output SonarrSeriesDelete, err error) {
-	return output, get(EventSeriesDelete, &output)
+func (c *CmdEvent) GetSonarrSeriesDelete() (output SonarrSeriesDelete, err error) {
+	return output, c.get(EventSeriesDelete, &output)
 }
 
 // GetSonarrEpisodeFileDelete returns the EpisodeFileDelete event data.
-func GetSonarrEpisodeFileDelete() (output SonarrEpisodeFileDelete, err error) {
-	return output, get(EventEpisodeFileDelete, &output)
+func (c *CmdEvent) GetSonarrEpisodeFileDelete() (output SonarrEpisodeFileDelete, err error) {
+	return output, c.get(EventEpisodeFileDelete, &output)
 }
