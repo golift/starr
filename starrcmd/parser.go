@@ -66,7 +66,7 @@ func fillStructFromEnv(dataStruct interface{}) error {
 /* All of the code below was taken from the golift.io/cnfg module. */
 
 // This is trimmed and does not parse some types.
-func parseStructMember(field reflect.Value, value, splitVal string) error {
+func parseStructMember(field reflect.Value, value, splitVal string) error { //nolint:cyclop
 	var err error
 
 	switch fieldType := field.Type().String(); fieldType {
@@ -147,10 +147,10 @@ func parseSlices(field reflect.Value, value, splitVal string) (bool, error) { //
 				if err != nil {
 					var err2 error
 					if vals[idx], err2 = time.Parse(DateFormat2, value); err2 != nil {
-						err = fmt.Errorf("error1: %v, error2: %w", err, err2)
-					} else {
-						err = nil
+						return false, fmt.Errorf("error1: %v, error2: %w", err, err2)
 					}
+
+					err = nil
 				}
 			}
 		}
