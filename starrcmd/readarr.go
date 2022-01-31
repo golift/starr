@@ -2,7 +2,7 @@
 package starrcmd
 
 /*
-All 9 Readarr events accounted for; 1/30/2022.
+All 10 Readarr events accounted for; 1/30/2022.
 https://github.com/Readarr/Readarr/blob/develop/src/NzbDrone.Core/Notifications/CustomScript/CustomScript.cs
 */
 

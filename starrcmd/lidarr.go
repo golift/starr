@@ -2,7 +2,7 @@
 package starrcmd
 
 /*
-INCOMPLETE.
+All 7 Lidarr events are accounted for; 1/30/2022.
 https://github.com/Lidarr/Lidarr/blob/develop/src/NzbDrone.Core/Notifications/CustomScript/CustomScript.cs
 */
 
