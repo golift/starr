@@ -66,18 +66,42 @@ type CmdEvent struct {
 	Type Event
 }
 
+// New returns the current Event and Application it's from, or an error if the type doesn't exist.
+// When running from a Starr App Custom Script this should not return an error.
 func New() (*CmdEvent, error) {
-	for _, starrApp := range []*CmdEvent{
+	for _, cmdEvent := range []*CmdEvent{
 		{starr.Radarr, Event(os.Getenv("radarr_eventtype"))},
 		{starr.Sonarr, Event(os.Getenv("sonarr_eventtype"))},
 		{starr.Lidarr, Event(os.Getenv("lidarr_eventtype"))},
 		{starr.Readarr, Event(os.Getenv("readarr_eventtype"))},
 		{starr.Prowlarr, Event(os.Getenv("prowlarr_eventtype"))},
 	} {
-		if starrApp.Type != "" {
-			return starrApp, nil
+		if cmdEvent.Type != "" {
+			return cmdEvent, nil
 		}
 	}
 
 	return nil, ErrNoEventFound
+}
+
+// NewMust returns a command event without returning an error. It will panic if the event does not exist.
+// When running from a Starr App Custom Script this should not panic.
+func NewMust() *CmdEvent {
+	cmdEvent, _ := New()
+	if cmdEvent == nil {
+		panic(ErrNoEventFound)
+	}
+
+	return cmdEvent
+}
+
+// NewMustNoPanic returns a command event and allows your code to handle the problem.
+// When running from a Starr App Custom Script this should always return a proper event.
+func NewMustNoPanic() *CmdEvent {
+	cmdEvent, _ := New()
+	if cmdEvent == nil {
+		return &CmdEvent{}
+	}
+
+	return cmdEvent
 }
