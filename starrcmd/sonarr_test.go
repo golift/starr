@@ -8,26 +8,59 @@ import (
 	"golift.io/starr/starrcmd"
 )
 
+func TestSonarrApplicationUpdate(t *testing.T) {
+	starrcmd.EventType = starrcmd.EventApplicationUpdate
+
+	t.Setenv("sonarr_eventtype", string(starrcmd.EventApplicationUpdate))
+	t.Setenv("sonarr_update_previousversion", "2.0.3.5875")
+	t.Setenv("sonarr_update_newversion", "2.0.4.5909")
+	t.Setenv("sonarr_update_message", "Sonarr updated from 2.0.3.5875 to 2.0.4.5909")
+
+	switch info, err := starrcmd.GetSonarrApplicationUpdate(); {
+	case err != nil:
+		t.Fatalf("got an unexpected error: %s", err)
+	case info.Message != os.Getenv("sonarr_update_message"):
+		t.Fatalf("got wrong Message? %s", info.Message)
+	case info.NewVersion != "2.0.4.5909":
+		t.Fatalf("got wrong new version? wanted: '2.0.4.5909' got: %s", info.Message)
+	case info.PreviousVersion != "2.0.3.5875":
+		t.Fatalf("got wrong Message? wanted: '2.0.3.5875' got: %s", info.Message)
+	}
+}
+
 func TestSonarrHealthIssue(t *testing.T) {
 	starrcmd.EventType = starrcmd.EventHealthIssue
 
 	t.Setenv("sonarr_eventtype", string(starrcmd.EventHealthIssue))
-	t.Setenv("sonarr_health_issue_type", "ImportListStatusCheck")
-	t.Setenv("sonarr_health_issue_wiki", "https://wiki.servarr.com/")
-	t.Setenv("sonarr_health_issue_level", "Warning")
-	t.Setenv("sonarr_health_issue_message", "Lists unavailable due to failures:Listnamehere")
+	t.Setenv("sonarr_health_issue_type", "SomeIssueTypeForSonarr")
+	t.Setenv("sonarr_health_issue_wiki", "https://wiki.servarr.com/sonarr")
+	t.Setenv("sonarr_health_issue_level", "Error")
+	t.Setenv("sonarr_health_issue_message", "Lists unavailable due to failures: List name here")
 
 	switch info, err := starrcmd.GetSonarrHealthIssue(); {
 	case err != nil:
 		t.Fatalf("got an unexpected error: %s", err)
 	case info.Message != os.Getenv("sonarr_health_issue_message"):
 		t.Fatalf("got wrong Message? %s", info.Message)
-	case info.Wiki != "https://wiki.servarr.com/":
-		t.Fatalf("got wrong wiki link? wanted: 'https://wiki.servarr.com/' got: %s", info.Wiki)
-	case info.Level != "Warning":
-		t.Fatalf("got wrong level? wanted: 'Warning' got: %s", info.Level)
-	case info.IssueType != "ImportListStatusCheck":
+	case info.Wiki != "https://wiki.servarr.com/sonarr":
+		t.Fatalf("got wrong wiki link? wanted: 'https://wiki.servarr.com/sonarr' got: %s", info.Wiki)
+	case info.Level != "Error":
+		t.Fatalf("got wrong level? wanted: 'Error' got: %s", info.Level)
+	case info.IssueType != "SomeIssueTypeForSonarr":
 		t.Fatalf("got wrong issue type? wanted: 'ImportListStatusCheck' got: %s", info.IssueType)
+	}
+}
+
+func TestSonarrTest(t *testing.T) {
+	starrcmd.EventType = starrcmd.EventTest
+
+	t.Setenv("sonarr_eventtype", string(starrcmd.EventTest))
+
+	switch info, err := starrcmd.GetSonarrTest(); {
+	case err != nil:
+		t.Fatalf("got an unexpected error: %s", err)
+	case info != starrcmd.SonarrTest{}:
+		t.Fatalf("got an wrong structure in return")
 	}
 }
 

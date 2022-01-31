@@ -11,9 +11,9 @@ import (
 func TestRadarrApplicationUpdate(t *testing.T) {
 	starrcmd.EventType = starrcmd.EventApplicationUpdate
 
+	t.Setenv("radarr_eventtype", string(starrcmd.EventApplicationUpdate))
 	t.Setenv("radarr_update_previousversion", "4.0.3.5875")
 	t.Setenv("radarr_update_newversion", "4.0.4.5909")
-	t.Setenv("radarr_eventtype", string(starrcmd.EventApplicationUpdate))
 	t.Setenv("radarr_update_message", "Radarr updated from 4.0.3.5875 to 4.0.4.5909")
 
 	switch info, err := starrcmd.GetRadarrApplicationUpdate(); {
@@ -31,10 +31,10 @@ func TestRadarrApplicationUpdate(t *testing.T) {
 func TestRadarrHealthIssue(t *testing.T) {
 	starrcmd.EventType = starrcmd.EventHealthIssue
 
+	t.Setenv("radarr_eventtype", string(starrcmd.EventHealthIssue))
 	t.Setenv("radarr_health_issue_type", "ImportListStatusCheck")
 	t.Setenv("radarr_health_issue_wiki", "https://wiki.servarr.com/")
 	t.Setenv("radarr_health_issue_level", "Warning")
-	t.Setenv("radarr_eventtype", string(starrcmd.EventHealthIssue))
 	t.Setenv("radarr_health_issue_message", "Lists unavailable due to failures: List name here")
 
 	switch info, err := starrcmd.GetRadarrHealthIssue(); {
@@ -48,6 +48,19 @@ func TestRadarrHealthIssue(t *testing.T) {
 		t.Fatalf("got wrong level? wanted: 'Warning' got: %s", info.Level)
 	case info.IssueType != "ImportListStatusCheck":
 		t.Fatalf("got wrong issue type? wanted: 'ImportListStatusCheck' got: %s", info.IssueType)
+	}
+}
+
+func TestRadarrTest(t *testing.T) {
+	starrcmd.EventType = starrcmd.EventTest
+
+	t.Setenv("radarr_eventtype", string(starrcmd.EventTest))
+
+	switch info, err := starrcmd.GetRadarrTest(); {
+	case err != nil:
+		t.Fatalf("got an unexpected error: %s", err)
+	case info != starrcmd.RadarrTest{}:
+		t.Fatalf("got an wrong structure in return")
 	}
 }
 
