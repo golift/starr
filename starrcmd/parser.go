@@ -96,9 +96,16 @@ func parseStructMember(field reflect.Value, value, splitVal string) error {
 	case "time.Time":
 		var val time.Time
 
-		val, err = time.Parse(DateFormat, value)
-		field.Set(reflect.ValueOf(val))
+		if val, err = time.Parse(DateFormat, value); err != nil {
+			var err2 error
+			if val, err2 = time.Parse(DateFormat2, value); err2 != nil {
+				err = fmt.Errorf("error1: %v, error2: %w", err, err2)
+			} else {
+				err = nil
+			}
+		}
 
+		field.Set(reflect.ValueOf(val))
 	case "bool":
 		var val bool
 
@@ -120,7 +127,7 @@ func parseStructMember(field reflect.Value, value, splitVal string) error {
 	return nil
 }
 
-func parseSlices(field reflect.Value, value, splitVal string) (bool, error) {
+func parseSlices(field reflect.Value, value, splitVal string) (bool, error) { //nolint:cyclop
 	if splitVal == "" {
 		// this will trigger a panic() if you forget a splitVal on an env tag.
 		return true, nil
@@ -137,7 +144,25 @@ func parseSlices(field reflect.Value, value, splitVal string) (bool, error) {
 
 		for idx, val := range split {
 			if vals[idx], err = time.Parse(DateFormat, val); err != nil {
-				return false, fmt.Errorf("(%s) %s: %w", splitVal, val, err)
+				if err != nil {
+					var err2 error
+					if vals[idx], err2 = time.Parse(DateFormat2, value); err2 != nil {
+						err = fmt.Errorf("error1: %v, error2: %w", err, err2)
+					} else {
+						err = nil
+					}
+				}
+			}
+		}
+
+		field.Set(reflect.ValueOf(vals))
+	case "[]int":
+		split := strings.Split(value, splitVal)
+		vals := make([]int, len(split))
+
+		for idx, val := range split {
+			if vals[idx], err = strconv.Atoi(val); err != nil {
+				return false, fmt.Errorf("%s: %w", value, err)
 			}
 		}
 

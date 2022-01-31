@@ -13,7 +13,7 @@ import (
 */
 
 // This is an example main() function that uses the golft.io/starr/starrcmd module.
-func ExampleMain() {
+func Example() {
 	// Do your own configuration input here.
 	cmd, err := starrcmd.New()
 	if err != nil {

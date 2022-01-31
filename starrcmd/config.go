@@ -17,7 +17,7 @@ import (
   - Slices must have a split character. ,, or ,| (usually).
   - Missing the split character will cause a panic() during parsing.
   - Add tests for all methods and data types to catch panics before release.
-- The time.Time format is hard coded. If new formats arise, find a way to fix it?
+- The time.Time format is hard coded (twice). If new formats arise, find a way to fix it.
 - No time.Duration types exist, but we can write a parser for those if they arise.
 */
 
@@ -29,8 +29,11 @@ var (
 	ErrNoEventFound = fmt.Errorf("no eventType environment variable found")
 )
 
-// DateFormat matches the date output from all five starr apps. Hopefully it doesn't change!
+// DateFormat matches the date output from most apps.
 const DateFormat = "1/2/2006 3:04:05 PM"
+
+// DateFormat2 matches the date output from Readarr.
+const DateFormat2 = "01/02/2006 15:04:05"
 
 // Event is a custom type to hold our EventType.
 type Event string

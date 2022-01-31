@@ -107,7 +107,7 @@ type ReadarrDownload struct {
 	GrID           int64    `env:"readarr_book_grid"`        // book.Editions.Value.Single(e => e.Monitored).ForeignEditionId.ToString())
 	ReleaseDate    string   `env:"readarr_book_releasedate"` // book.ReleaseDate.ToString())
 	DownloadClient string   `env:"readarr_download_client"`  // message.DownloadClient ?? string.Empty)
-	DownloadID     int64    `env:"readarr_download_id"`      // message.DownloadId ?? string.Empty)
+	DownloadID     string   `env:"readarr_download_id"`      // message.DownloadId ?? string.Empty)
 	AddedBookPaths []string `env:"readarr_addedbookpaths,|"` // string.Join("|", message.BookFiles.Select(e => e.Path)))
 	DeletedPaths   []string `env:"readarr_deletedpaths,|"`   // string.Join("|", message.OldFiles.Select(e => e.Path)))
 }
@@ -117,7 +117,7 @@ type ReadarrTrackRetag struct {
 	AuthorID       int64     `env:"readarr_author_id"`               // author.Id.ToString())
 	AuthorName     string    `env:"readarr_author_name"`             // author.Metadata.Value.Name)
 	Path           string    `env:"readarr_author_path"`             // author.Path)
-	AuthorGRId     int64     `env:"readarr_author_grid"`             // author.Metadata.Value.ForeignAuthorId)
+	AuthorGrID     int64     `env:"readarr_author_grid"`             // author.Metadata.Value.ForeignAuthorId)
 	ID             int64     `env:"readarr_book_id"`                 // book.Id.ToString())
 	Title          string    `env:"readarr_book_title"`              // book.Title)
 	GrID           int64     `env:"readarr_book_grid"`               // book.Editions.Value.Single(e => e.Monitored).ForeignEditionId.ToString())
@@ -153,6 +153,11 @@ func (c *CmdEvent) GetReadarrGrab() (output ReadarrGrab, err error) {
 // GetReadarrBookDelete returns the BookDelete event data.
 func (c *CmdEvent) GetReadarrBookDelete() (output ReadarrBookDelete, err error) {
 	return output, c.get(EventBookDelete, &output)
+}
+
+// GetReadarrAuthorDelete returns the AuthorDelete event data.
+func (c *CmdEvent) GetReadarrAuthorDelete() (output ReadarrAuthorDelete, err error) {
+	return output, c.get(EventAuthorDelete, &output)
 }
 
 // GetReadarrBookFileDelete returns the BookFileDelete event data.
