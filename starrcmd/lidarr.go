@@ -45,6 +45,59 @@ type LidarrGrab struct {
 	ArtistType     string      `env:"lidarr_artist_type"`                 // Group
 }
 
+// LidarrAlbumDownload is the AlbumDownload event.
+type LidarrAlbumDownload struct {
+	ArtistID         int64     `env:"lidarr_artist_id"`         // artist.Id.ToString())
+	ArtistName       string    `env:"lidarr_artist_name"`       // artist.Metadata.Value.Name)
+	Path             string    `env:"lidarr_artist_path"`       // artist.Path)
+	ArtistMBID       string    `env:"lidarr_artist_mbid"`       // artist.Metadata.Value.ForeignArtistId)
+	ArtistType       string    `env:"lidarr_artist_type"`       // artist.Metadata.Value.Type)
+	AlbumID          int64     `env:"lidarr_album_id"`          // album.Id.ToString())
+	Title            string    `env:"lidarr_album_title"`       // album.Title)
+	MBID             string    `env:"lidarr_album_mbid"`        // album.ForeignAlbumId)
+	AlbumReleaseMBID string    `env:"lidarr_albumrelease_mbid"` // release.ForeignReleaseId)
+	ReleaseDate      time.Time `env:"lidarr_album_releasedate"` // album.ReleaseDate.ToString())
+	DownloadClient   string    `env:"lidarr_download_client"`   // message.DownloadClient ?? string.Empty)
+	DownloadID       string    `env:"lidarr_download_id"`       // message.DownloadId ?? string.Empty)
+	AddedTrackPaths  []string  `env:"lidarr_addedtrackpaths,|"` // string.Join("|", message.TrackFiles.Select(e => e.Path)))
+	DeletedPaths     []string  `env:"lidarr_deletedpaths,|"`    // string.Join("|", message.OldFiles.Select(e => e.Path)))
+
+}
+
+// LidarrRename is the Rename event.
+type LidarrRename struct {
+	ArtistID   int64  `env:"lidarr_artist_id"`   // artist.Id.ToString())
+	ArtistName string `env:"lidarr_artist_name"` // artist.Metadata.Value.Name)
+	Path       string `env:"lidarr_artist_path"` // artist.Path)
+	ArtistMBID string `env:"lidarr_artist_mbid"` // artist.Metadata.Value.ForeignArtistId)
+	ArtistType string `env:"lidarr_artist_type"` // artist.Metadata.Value.Type)
+}
+
+// LidarrTrackRetag is the TrackRetag event.
+type LidarrTrackRetag struct {
+	ArtistID         int64     `env:"lidarr_artist_id"`                // artist.Id.ToString())
+	ArtistName       string    `env:"lidarr_artist_name"`              // artist.Metadata.Value.Name)
+	Path             string    `env:"lidarr_artist_path"`              // artist.Path)
+	ArtistMBID       string    `env:"lidarr_artist_mbid"`              // artist.Metadata.Value.ForeignArtistId)
+	ArtistType       string    `env:"lidarr_artist_type"`              // artist.Metadata.Value.Type)
+	ID               int64     `env:"lidarr_album_id"`                 // album.Id.ToString())
+	Title            string    `env:"lidarr_album_title"`              // album.Title)
+	MBID             string    `env:"lidarr_album_mbid"`               // album.ForeignAlbumId)
+	AlbumReleaseMBID string    `env:"lidarr_albumrelease_mbid"`        // release.ForeignReleaseId)
+	ReleaseDate      time.Time `env:"lidarr_album_releasedate"`        // album.ReleaseDate.ToString())
+	FileID           int64     `env:"lidarr_trackfile_id"`             // trackFile.Id.ToString())
+	TrackCount       string    `env:"lidarr_trackfile_trackcount"`     // trackFile.Tracks.Value.Count.ToString())
+	FilePath         string    `env:"lidarr_trackfile_path"`           // trackFile.Path)
+	TrackNumbers     []int     `env:"lidarr_trackfile_tracknumbers,,"` // string.Join(",", trackFile.Tracks.Value.Select(e => e.TrackNumber)))
+	TrackTitles      []string  `env:"lidarr_trackfile_tracktitles,|"`  // string.Join("|", trackFile.Tracks.Value.Select(e => e.Title)))
+	Quality          string    `env:"lidarr_trackfile_quality"`        // trackFile.Quality.Quality.Name)
+	QualityVersion   int64     `env:"lidarr_trackfile_qualityversion"` // trackFile.Quality.Revision.Version.ToString())
+	ReleaseGroup     string    `env:"lidarr_trackfile_releasegroup"`   // trackFile.ReleaseGroup ?? string.Empty)
+	SceneName        string    `env:"lidarr_trackfile_scenename"`      // trackFile.SceneName ?? string.Empty)
+	TagsDiff         string    `env:"lidarr_tags_diff"`                // message.Diff.ToJson())
+	TagsScrubbed     bool      `env:"lidarr_tags_scrubbed"`            // message.Scrubbed.ToString())
+}
+
 // LidarrTest has no members.
 type LidarrTest struct{}
 
@@ -61,6 +114,21 @@ func (c *CmdEvent) GetLidarrHealthIssue() (output LidarrHealthIssue, err error) 
 // GetLidarrGrab returns the Grab event data.
 func (c *CmdEvent) GetLidarrGrab() (output LidarrGrab, err error) {
 	return output, c.get(EventGrab, &output)
+}
+
+// GetLidarrAlbumDownload returns the AlbumDownload event data.
+func (c *CmdEvent) GetLidarrAlbumDownload() (output LidarrAlbumDownload, err error) {
+	return output, c.get(EventAlbumDownload, &output)
+}
+
+// GetLidarrRename returns the Rename event data.
+func (c *CmdEvent) GetLidarrRename() (output LidarrRename, err error) {
+	return output, c.get(EventRename, &output)
+}
+
+// GetLidarrTrackRetag returns the TrackRetag event data.
+func (c *CmdEvent) GetLidarrTrackRetag() (output LidarrTrackRetag, err error) {
+	return output, c.get(EventTrackRetag, &output)
 }
 
 // GetLidarrTest returns the ApplicationUpdate event data.
