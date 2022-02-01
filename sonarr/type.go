@@ -336,3 +336,38 @@ type HistoryRecord struct {
 		TvdbID             string    `json:"tvdbId"`
 	} `json:"data"`
 }
+
+// EpisodeFile is the output from the /api/v3/episodeFile endpoint.
+type EpisodeFile struct {
+	ID                   int64          `json:"id"`
+	SeriesID             int64          `json:"seriesId"`
+	SeasonNumber         int            `json:"seasonNumber"`
+	RelativePath         string         `json:"relativePath"`
+	Path                 string         `json:"path"`
+	Size                 int64          `json:"size"`
+	DateAdded            time.Time      `json:"dateAdded"`
+	SceneName            string         `json:"sceneName"`
+	ReleaseGroup         string         `json:"releaseGroup"`
+	Language             *starr.Value   `json:"language"`
+	Quality              *starr.Quality `json:"quality"`
+	MediaInfo            *MediaInfo     `json:"mediaInfo"`
+	QualityCutoffNotMet  bool           `json:"qualityCutoffNotMet"`
+	LanguageCutoffNotMet bool           `json:"languageCutoffNotMet"`
+}
+
+// MediaInfo is part of an EpisodeFile.
+type MediaInfo struct {
+	AudioBitrate     int            `json:"audioBitrate"`
+	AudioChannels    float64        `json:"audioChannels"`
+	AudioCodec       string         `json:"audioCodec"`
+	AudioLanguages   string         `json:"audioLanguages"`
+	AudioStreamCount int            `json:"audioStreamCount"`
+	VideoBitDepth    int            `json:"videoBitDepth"`
+	VideoBitrate     int            `json:"videoBitrate"`
+	VideoCodec       string         `json:"videoCodec"`
+	VideoFPS         float64        `json:"videoFps"`
+	Resolution       string         `json:"resolution"`
+	RunTime          starr.PlayTime `json:"runTime"`
+	ScanType         string         `json:"scanType"`
+	Subtitles        string         `json:"subtitles"`
+}
