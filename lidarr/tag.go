@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"golift.io/starr"
 )
@@ -58,9 +59,39 @@ func (l *Lidarr) UpdateTagContext(ctx context.Context, tagID int, label string) 
 	}
 
 	var tag starr.Tag
-	if err = l.PutInto(ctx, "v1/tag", nil, body, &tag); err != nil {
+	if err = l.PutInto(ctx, "v1/tag/"+strconv.Itoa(tagID), nil, body, &tag); err != nil {
 		return tag.ID, fmt.Errorf("api.Put(tag): %w", err)
 	}
 
 	return tag.ID, nil
+}
+
+// GetTag returns a single tag.
+func (l *Lidarr) GetTag(tagID int) (*starr.Tag, error) {
+	return l.GetTagContext(context.Background(), tagID)
+}
+
+func (l *Lidarr) GetTagContext(ctx context.Context, tagID int) (*starr.Tag, error) {
+	var tag *starr.Tag
+
+	err := l.GetInto(ctx, "v1/tag/"+strconv.Itoa(tagID), nil, &tag)
+	if err != nil {
+		return nil, fmt.Errorf("api.Get(tag): %w", err)
+	}
+
+	return tag, nil
+}
+
+// DeleteTag removes a single tag.
+func (l *Lidarr) DeleteTag(tagID int) error {
+	return l.DeleteTagContext(context.Background(), tagID)
+}
+
+func (l *Lidarr) DeleteTagContext(ctx context.Context, tagID int) error {
+	_, err := l.Delete(ctx, "v1/tag/"+strconv.Itoa(tagID), nil)
+	if err != nil {
+		return fmt.Errorf("api.Delete(tag): %w", err)
+	}
+
+	return nil
 }
