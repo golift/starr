@@ -6,6 +6,9 @@ import (
 	"golift.io/starr"
 )
 
+// APIver is the Sonarr API version supported by this library.
+const APIver = "v3"
+
 // QualityProfile is the /api/v3/qualityprofile endpoint.
 type QualityProfile struct {
 	ID             int64            `json:"id"`
