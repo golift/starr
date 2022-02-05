@@ -1,6 +1,7 @@
 package sonarr
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -73,16 +74,16 @@ func (s *Sonarr) AddSeries(series *AddSeriesInput) (*AddSeriesOutput, error) {
 }
 
 func (s *Sonarr) AddSeriesContext(ctx context.Context, series *AddSeriesInput) (*AddSeriesOutput, error) {
-	body, err := json.Marshal(series)
-	if err != nil {
-		return nil, fmt.Errorf("json.Marshal(series): %w", err)
-	}
-
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(series); err != nil {
+		return nil, fmt.Errorf("json.Marshal(series): %w", err)
+	}
+
 	var output AddSeriesOutput
-	if err = s.PostInto(ctx, "v3/series", params, body, &output); err != nil {
+	if err := s.PostInto(ctx, "v3/series", params, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(series): %w", err)
 	}
 

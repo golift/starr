@@ -34,11 +34,6 @@ func (c *Config) Req(ctx context.Context, path, method string, params url.Values
 		return resp.StatusCode, nil, resp.Header, fmt.Errorf("ioutil.ReadAll: %w", err)
 	}
 
-	// #############################################
-	// DEBUG: useful for viewing payloads from apps.
-	// log.Println(resp.StatusCode, resp.Header.Get("location"), string(body))
-	// #############################################
-
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		return resp.StatusCode, respBody, resp.Header, fmt.Errorf("failed: %v (status: %s): %w: %s",
 			resp.Request.RequestURI, resp.Status, ErrInvalidStatusCode, string(respBody))

@@ -1,6 +1,7 @@
 package readarr
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -31,15 +32,13 @@ func (r *Readarr) AddQualityProfile(profile *QualityProfile) (int64, error) {
 }
 
 func (r *Readarr) AddQualityProfileContext(ctx context.Context, profile *QualityProfile) (int64, error) {
-	post, err := json.Marshal(profile)
-	if err != nil {
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(profile); err != nil {
 		return 0, fmt.Errorf("json.Marshal(profile): %w", err)
 	}
 
 	var output QualityProfile
-
-	err = r.PostInto(ctx, "v1/qualityProfile", nil, post, &output)
-	if err != nil {
+	if err := r.PostInto(ctx, "v1/qualityProfile", nil, &body, &output); err != nil {
 		return 0, fmt.Errorf("api.Post(qualityProfile): %w", err)
 	}
 

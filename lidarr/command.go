@@ -1,6 +1,7 @@
 package lidarr
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -35,12 +36,12 @@ func (l *Lidarr) SendCommandContext(ctx context.Context, cmd *CommandRequest) (*
 		return &output, nil
 	}
 
-	body, err := json.Marshal(cmd)
-	if err != nil {
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(cmd); err != nil {
 		return nil, fmt.Errorf("json.Marshal(cmd): %w", err)
 	}
 
-	if err := l.PostInto(ctx, "v1/command", nil, body, &output); err != nil {
+	if err := l.PostInto(ctx, "v1/command", nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(command): %w", err)
 	}
 

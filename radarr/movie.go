@@ -1,6 +1,7 @@
 package radarr
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -79,16 +80,16 @@ func (r *Radarr) AddMovie(movie *AddMovieInput) (*AddMovieOutput, error) {
 
 // AddMovieContext adds a movie to the queue.
 func (r *Radarr) AddMovieContext(ctx context.Context, movie *AddMovieInput) (*AddMovieOutput, error) {
-	body, err := json.Marshal(movie)
-	if err != nil {
-		return nil, fmt.Errorf("json.Marshal(movie): %w", err)
-	}
-
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(movie); err != nil {
+		return nil, fmt.Errorf("json.Marshal(movie): %w", err)
+	}
+
 	var output AddMovieOutput
-	if err := r.PostInto(ctx, "v3/movie", params, body, &output); err != nil {
+	if err := r.PostInto(ctx, "v3/movie", params, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(movie): %w", err)
 	}
 

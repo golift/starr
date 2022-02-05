@@ -1,6 +1,7 @@
 package lidarr
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -33,15 +34,13 @@ func (l *Lidarr) AddQualityProfile(profile *QualityProfile) (int64, error) {
 
 // AddQualityProfileContext updates a quality profile in place.
 func (l *Lidarr) AddQualityProfileContext(ctx context.Context, profile *QualityProfile) (int64, error) {
-	post, err := json.Marshal(profile)
-	if err != nil {
-		return 0, fmt.Errorf("json.Marshal(profile): %w", err)
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(profile); err != nil {
+		return 0, fmt.Errorf("json.Marshal(qualityProfile): %w", err)
 	}
 
 	var output QualityProfile
-
-	err = l.PostInto(ctx, "v1/qualityProfile", nil, post, &output)
-	if err != nil {
+	if err := l.PostInto(ctx, "v1/qualityProfile", nil, &body, &output); err != nil {
 		return 0, fmt.Errorf("api.Post(qualityProfile): %w", err)
 	}
 

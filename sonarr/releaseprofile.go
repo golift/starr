@@ -1,6 +1,7 @@
 package sonarr
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -31,15 +32,13 @@ func (s *Sonarr) AddReleaseProfile(profile *ReleaseProfile) (int64, error) {
 }
 
 func (s *Sonarr) AddReleaseProfileContext(ctx context.Context, profile *ReleaseProfile) (int64, error) {
-	post, err := json.Marshal(profile)
-	if err != nil {
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(profile); err != nil {
 		return 0, fmt.Errorf("json.Marshal(profile): %w", err)
 	}
 
 	var output ReleaseProfile
-
-	err = s.PostInto(ctx, "v3/releaseProfile", nil, post, &output)
-	if err != nil {
+	if err := s.PostInto(ctx, "v3/releaseProfile", nil, &body, &output); err != nil {
 		return 0, fmt.Errorf("api.Post(releaseProfile): %w", err)
 	}
 
