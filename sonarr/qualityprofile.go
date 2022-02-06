@@ -34,7 +34,7 @@ func (s *Sonarr) AddQualityProfile(profile *QualityProfile) (int64, error) {
 func (s *Sonarr) AddQualityProfileContext(ctx context.Context, profile *QualityProfile) (int64, error) {
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(profile); err != nil {
-		return 0, fmt.Errorf("json.Marshal(profile): %w", err)
+		return 0, fmt.Errorf("json.Marshal(qualityProfile): %w", err)
 	}
 
 	var output QualityProfile
@@ -51,12 +51,12 @@ func (s *Sonarr) UpdateQualityProfile(profile *QualityProfile) error {
 }
 
 func (s *Sonarr) UpdateQualityProfileContext(ctx context.Context, profile *QualityProfile) error {
-	put, err := json.Marshal(profile)
-	if err != nil {
-		return fmt.Errorf("json.Marshal(profile): %w", err)
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(profile); err != nil {
+		return fmt.Errorf("json.Marshal(qualityProfile): %w", err)
 	}
 
-	_, err = s.Put(ctx, "v3/qualityProfile/"+strconv.FormatInt(profile.ID, starr.Base10), nil, put)
+	_, err := s.Put(ctx, "v3/qualityProfile/"+strconv.FormatInt(profile.ID, starr.Base10), nil, &body)
 	if err != nil {
 		return fmt.Errorf("api.Put(qualityProfile): %w", err)
 	}

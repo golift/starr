@@ -54,12 +54,12 @@ func (r *Radarr) UpdateQualityProfile(profile *QualityProfile) error {
 
 // UpdateQualityProfileContext updates a quality profile in place.
 func (r *Radarr) UpdateQualityProfileContext(ctx context.Context, profile *QualityProfile) error {
-	put, err := json.Marshal(profile)
-	if err != nil {
-		return fmt.Errorf("json.Marshal(profile): %w", err)
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(profile); err != nil {
+		return fmt.Errorf("json.Marshal(qualityProfile): %w", err)
 	}
 
-	_, err = r.Put(ctx, "v3/qualityProfile/"+strconv.FormatInt(profile.ID, starr.Base10), nil, put)
+	_, err := r.Put(ctx, "v3/qualityProfile/"+strconv.FormatInt(profile.ID, starr.Base10), nil, &body)
 	if err != nil {
 		return fmt.Errorf("api.Put(qualityProfile): %w", err)
 	}

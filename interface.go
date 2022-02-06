@@ -118,6 +118,7 @@ func (c *Config) Get(ctx context.Context, path string, params url.Values) ([]byt
 func (c *Config) Post(ctx context.Context, path string, params url.Values, postBody io.Reader) ([]byte, error) {
 	if c.Debugf == nil { // no log, pass it through.
 		_, data, _, err := c.Req(ctx, path, http.MethodPost, params, postBody)
+
 		return data, err
 	}
 
@@ -133,6 +134,7 @@ func (c *Config) Post(ctx context.Context, path string, params url.Values, postB
 func (c *Config) Put(ctx context.Context, path string, params url.Values, putBody io.Reader) ([]byte, error) {
 	if c.Debugf == nil { // no log, pass it through.
 		_, data, _, err := c.Req(ctx, path, http.MethodPut, params, putBody)
+
 		return data, err
 	}
 

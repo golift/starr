@@ -1,6 +1,7 @@
 package sonarr
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -33,12 +34,12 @@ func (s *Sonarr) UpdateSeasonPass(seasonPass *SeasonPass) error {
 
 // UpdateSeasonPassContext allows monitoring many series and episodes at once.
 func (s *Sonarr) UpdateSeasonPassContext(ctx context.Context, seasonPass *SeasonPass) error {
-	body, err := json.Marshal(seasonPass)
-	if err != nil {
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(seasonPass); err != nil {
 		return fmt.Errorf("json.Marshal(seasonPass): %w", err)
 	}
 
-	if _, err = s.Post(ctx, "v3/seasonPass", nil, body); err != nil {
+	if _, err := s.Post(ctx, "v3/seasonPass", nil, &body); err != nil {
 		return fmt.Errorf("api.Post(seasonPass): %w", err)
 	}
 

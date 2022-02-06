@@ -56,15 +56,15 @@ func (r *Readarr) UpdateBook(bookID int64, book *Book) error {
 }
 
 func (r *Readarr) UpdateBookContext(ctx context.Context, bookID int64, book *Book) error {
-	put, err := json.Marshal(book)
-	if err != nil {
-		return fmt.Errorf("json.Marshal(book): %w", err)
-	}
-
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
-	b, err := r.Put(ctx, "v1/book/"+strconv.FormatInt(bookID, starr.Base10), params, put)
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(book); err != nil {
+		return fmt.Errorf("json.Marshal(book): %w", err)
+	}
+
+	b, err := r.Put(ctx, "v1/book/"+strconv.FormatInt(bookID, starr.Base10), params, &body)
 	if err != nil {
 		return fmt.Errorf("api.Put(book): %w", err)
 	}

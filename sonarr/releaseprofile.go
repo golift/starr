@@ -51,12 +51,12 @@ func (s *Sonarr) UpdateReleaseProfile(profile *ReleaseProfile) error {
 }
 
 func (s *Sonarr) UpdateReleaseProfileContext(ctx context.Context, profile *ReleaseProfile) error {
-	put, err := json.Marshal(profile)
-	if err != nil {
-		return fmt.Errorf("json.Marshal(profile): %w", err)
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(profile); err != nil {
+		return fmt.Errorf("json.Marshal(releaseProfile): %w", err)
 	}
 
-	_, err = s.Put(ctx, "v3/releaseProfile/"+strconv.FormatInt(profile.ID, starr.Base10), nil, put)
+	_, err := s.Put(ctx, "v3/releaseProfile/"+strconv.FormatInt(profile.ID, starr.Base10), nil, &body)
 	if err != nil {
 		return fmt.Errorf("api.Put(releaseProfile): %w", err)
 	}
