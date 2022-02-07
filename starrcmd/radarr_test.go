@@ -194,7 +194,7 @@ func TestRadarrDownload(t *testing.T) {
 	t.Setenv("radarr_movie_path", "/movies/Just Go with It (2011)")
 	t.Setenv("radarr_moviefile_relativepath", "Just.Go.with.It.2011.Bluray-1080p.mkv")
 	t.Setenv("radarr_download_client", "Deluge")
-	t.Setenv("radarr_moviefile_sourcepath", "/downloads/Seeding/Just.Go.with.It.2011.1080p.BluRay.x264-OFT/Just.Go.with.It.2011.1080p.BluRay.x264-OFT.mkv")
+	t.Setenv("radarr_moviefile_sourcepath", "/downloads/Seeding/Just.Go.with.It/Just.Go.with.It.2011.x264-OFT.mkv")
 	t.Setenv("radarr_movie_tmdbid", "50546")
 	t.Setenv("radarr_movie_id", "924")
 	t.Setenv("radarr_moviefile_quality", "Bluray-1080p")
