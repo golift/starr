@@ -1,0 +1,70 @@
+package sonarr_test
+
+import (
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"golift.io/starr"
+	"golift.io/starr/sonarr"
+)
+
+func TestGetTags(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		responseStatus   int
+		name             string
+		expectedPath     string
+		responseBody     string
+		withError        error
+		expectedResponse []*starr.Tag
+	}{
+		{
+			name:           "200",
+			expectedPath:   "/api/v3/tag",
+			responseStatus: 200,
+			responseBody:   "[{\"label\": \"amzn\",\"id\": 1},{\"label\": \"netflix\",\"id\": 2}]",
+			expectedResponse: []*starr.Tag{
+				{
+					Label: "amzn",
+					ID:    1,
+				},
+				{
+					Label: "netflix",
+					ID:    2,
+				},
+			},
+			withError: nil,
+		},
+		{
+			name:           "404",
+			expectedPath:   "/api/v3/tag",
+			responseStatus: 404,
+			responseBody: `
+				{
+					"message": "NotFound"
+				}`,
+			withError:        starr.ErrInvalidStatusCode,
+			expectedResponse: nil,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				assert.Equal(t, test.expectedPath, r.URL.String())
+				w.WriteHeader(test.responseStatus)
+				_, err := w.Write([]byte(test.responseBody))
+				assert.NoError(t, err)
+			}))
+			client := sonarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
+			output, err := client.GetTags()
+			assert.ErrorIs(t, err, test.withError, "error is not the same as expected")
+			assert.EqualValues(t, output, test.expectedResponse, "response is not the same as expected")
+		})
+	}
+}
