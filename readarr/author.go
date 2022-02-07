@@ -1,6 +1,7 @@
 package readarr
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -35,15 +36,15 @@ func (r *Readarr) UpdateAuthor(authorID int64, author *Author) error {
 
 // UpdateAuthorContext updates an author in place.
 func (r *Readarr) UpdateAuthorContext(ctx context.Context, authorID int64, author *Author) error {
-	put, err := json.Marshal(author)
-	if err != nil {
-		return fmt.Errorf("json.Marshal(author): %w", err)
-	}
-
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
-	b, err := r.Put(ctx, "v1/author/"+strconv.FormatInt(authorID, starr.Base10), params, put)
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(author); err != nil {
+		return fmt.Errorf("json.Marshal(author): %w", err)
+	}
+
+	b, err := r.Put(ctx, "v1/author/"+strconv.FormatInt(authorID, starr.Base10), params, &body)
 	if err != nil {
 		return fmt.Errorf("api.Put(author): %w", err)
 	}

@@ -1,6 +1,7 @@
 package sonarr
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -37,15 +38,16 @@ func (s *Sonarr) MonitorEpisode(episodeIDs []int64, monitor bool) ([]*Episode, e
 }
 
 func (s *Sonarr) MonitorEpisodeContext(ctx context.Context, episodeIDs []int64, monitor bool) ([]*Episode, error) {
-	var (
-		input, _ = json.Marshal(&struct {
-			E []int64 `json:"episodeIds"`
-			M bool    `json:"monitored"`
-		}{E: episodeIDs, M: monitor})
-		output []*Episode
-	)
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(&struct {
+		E []int64 `json:"episodeIds"`
+		M bool    `json:"monitored"`
+	}{E: episodeIDs, M: monitor}); err != nil {
+		return nil, fmt.Errorf("json.Marshal(episodeIDs): %w", err)
+	}
 
-	if err := s.PutInto(ctx, "v3/episode/monitor", nil, input, &output); err != nil {
+	var output []*Episode
+	if err := s.PutInto(ctx, "v3/episode/monitor", nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(episode/monitor): %w", err)
 	}
 

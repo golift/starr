@@ -1,6 +1,7 @@
 package radarr
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -33,15 +34,13 @@ func (r *Radarr) AddQualityProfile(profile *QualityProfile) (int64, error) {
 
 // AddQualityProfileContext updates a quality profile in place.
 func (r *Radarr) AddQualityProfileContext(ctx context.Context, profile *QualityProfile) (int64, error) {
-	post, err := json.Marshal(profile)
-	if err != nil {
-		return 0, fmt.Errorf("json.Marshal(profile): %w", err)
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(profile); err != nil {
+		return 0, fmt.Errorf("json.Marshal(qualityProfile): %w", err)
 	}
 
 	var output QualityProfile
-
-	err = r.PostInto(ctx, "v3/qualityProfile", nil, post, &output)
-	if err != nil {
+	if err := r.PostInto(ctx, "v3/qualityProfile", nil, &body, &output); err != nil {
 		return 0, fmt.Errorf("api.Post(qualityProfile): %w", err)
 	}
 
@@ -55,12 +54,12 @@ func (r *Radarr) UpdateQualityProfile(profile *QualityProfile) error {
 
 // UpdateQualityProfileContext updates a quality profile in place.
 func (r *Radarr) UpdateQualityProfileContext(ctx context.Context, profile *QualityProfile) error {
-	put, err := json.Marshal(profile)
-	if err != nil {
-		return fmt.Errorf("json.Marshal(profile): %w", err)
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(profile); err != nil {
+		return fmt.Errorf("json.Marshal(qualityProfile): %w", err)
 	}
 
-	_, err = r.Put(ctx, "v3/qualityProfile/"+strconv.FormatInt(profile.ID, starr.Base10), nil, put)
+	_, err := r.Put(ctx, "v3/qualityProfile/"+strconv.FormatInt(profile.ID, starr.Base10), nil, &body)
 	if err != nil {
 		return fmt.Errorf("api.Put(qualityProfile): %w", err)
 	}

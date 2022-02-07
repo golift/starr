@@ -1,6 +1,7 @@
 package radarr
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -60,12 +61,12 @@ func (r *Radarr) AddExclusionsContext(ctx context.Context, exclusions []*Exclusi
 		exclusions[i].ID = 0
 	}
 
-	body, err := json.Marshal(exclusions)
-	if err != nil {
-		return fmt.Errorf("json.Marshal(movie): %w", err)
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(exclusions); err != nil {
+		return fmt.Errorf("json.Marshal(exclusions): %w", err)
 	}
 
-	_, err = r.Post(ctx, "v3/exclusions/bulk", nil, body)
+	_, err := r.Post(ctx, "v3/exclusions/bulk", nil, &body)
 	if err != nil {
 		return fmt.Errorf("api.Post(exclusions): %w", err)
 	}

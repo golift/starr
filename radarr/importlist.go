@@ -1,6 +1,7 @@
 package radarr
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -30,16 +31,16 @@ func (r *Radarr) CreateImportList(il *ImportList) (*ImportList, error) {
 }
 
 // CreateImportListContext creates an import list in Radarr.
-func (r *Radarr) CreateImportListContext(ctx context.Context, il *ImportList) (*ImportList, error) {
-	il.ID = 0
+func (r *Radarr) CreateImportListContext(ctx context.Context, list *ImportList) (*ImportList, error) {
+	list.ID = 0
 
-	body, err := json.Marshal(il)
-	if err != nil {
-		return nil, fmt.Errorf("json.Marshal(importlist): %w", err)
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(list); err != nil {
+		return nil, fmt.Errorf("json.Marshal(list): %w", err)
 	}
 
 	var output ImportList
-	if err := r.PostInto(ctx, "v3/importlist", nil, body, &output); err != nil {
+	if err := r.PostInto(ctx, "v3/importlist", nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(importlist): %w", err)
 	}
 
@@ -76,14 +77,14 @@ func (r *Radarr) UpdateImportList(list *ImportList) (*ImportList, error) {
 
 // UpdateImportListContext updates an existing import list and returns the response.
 func (r *Radarr) UpdateImportListContext(ctx context.Context, list *ImportList) (*ImportList, error) {
-	body, err := json.Marshal(list)
-	if err != nil {
-		return nil, fmt.Errorf("json.Marshal(importlist): %w", err)
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(list); err != nil {
+		return nil, fmt.Errorf("json.Marshal(list): %w", err)
 	}
 
 	var output ImportList
 
-	err = r.PutInto(ctx, "v3/importlist/"+strconv.FormatInt(list.ID, starr.Base10), nil, body, &output)
+	err := r.PutInto(ctx, "v3/importlist/"+strconv.FormatInt(list.ID, starr.Base10), nil, &body, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Put(importlist): %w", err)
 	}

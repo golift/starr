@@ -1,6 +1,7 @@
 package prowlarr
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -33,13 +34,13 @@ func (p *Prowlarr) AddTag(label string) (int, error) {
 
 // AddTagContext adds a tag or returns the ID for an existing tag.
 func (p *Prowlarr) AddTagContext(ctx context.Context, label string) (int, error) {
-	body, err := json.Marshal(&starr.Tag{Label: label, ID: 0})
-	if err != nil {
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(&starr.Tag{Label: label}); err != nil {
 		return 0, fmt.Errorf("json.Marshal(tag): %w", err)
 	}
 
 	var tag starr.Tag
-	if err = p.PostInto(ctx, "v1/tag", nil, body, &tag); err != nil {
+	if err := p.PostInto(ctx, "v1/tag", nil, &body, &tag); err != nil {
 		return tag.ID, fmt.Errorf("api.Post(tag): %w", err)
 	}
 
@@ -53,13 +54,13 @@ func (p *Prowlarr) UpdateTag(tagID int, label string) (int, error) {
 
 // UpdateTagContext updates the label for a tag.
 func (p *Prowlarr) UpdateTagContext(ctx context.Context, tagID int, label string) (int, error) {
-	body, err := json.Marshal(&starr.Tag{Label: label, ID: tagID})
-	if err != nil {
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(&starr.Tag{Label: label, ID: tagID}); err != nil {
 		return 0, fmt.Errorf("json.Marshal(tag): %w", err)
 	}
 
 	var tag starr.Tag
-	if err = p.PutInto(ctx, "v1/tag/"+strconv.Itoa(tagID), nil, body, &tag); err != nil {
+	if err := p.PutInto(ctx, "v1/tag/"+strconv.Itoa(tagID), nil, &body, &tag); err != nil {
 		return tag.ID, fmt.Errorf("api.Put(tag): %w", err)
 	}
 
