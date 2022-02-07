@@ -18,32 +18,33 @@ import (
 )
 
 // APIer is used by the sub packages to allow mocking the http methods in tests.
-// This also allows consuming packages to override methods.
+// It changes once in a while, so avoid making hard dependencies on it.
 type APIer interface {
 	Login(ctx context.Context) error
-	// Normal data, returns http body.
+	// Normal data, returns response body.
 	Get(ctx context.Context, path string, params url.Values) (respBody []byte, err error)
-	Post(ctx context.Context, path string, params url.Values, postBody []byte) (respBody []byte, err error)
-	Put(ctx context.Context, path string, params url.Values, putBody []byte) (respBody []byte, err error)
+	Post(ctx context.Context, path string, params url.Values, postBody io.Reader) (respBody []byte, err error)
+	Put(ctx context.Context, path string, params url.Values, putBody io.Reader) (respBody []byte, err error)
 	Delete(ctx context.Context, path string, params url.Values) (respBody []byte, err error)
 	// Normal data, unmarshals into provided interface.
-	GetInto(ctx context.Context, path string, params url.Values, v interface{}) error
-	PostInto(ctx context.Context, path string, params url.Values, postBody []byte, v interface{}) error
-	PutInto(ctx context.Context, path string, params url.Values, putBody []byte, v interface{}) error
-	DeleteInto(ctx context.Context, path string, params url.Values, v interface{}) error
+	GetInto(ctx context.Context, path string, params url.Values, output interface{}) error
+	PostInto(ctx context.Context, path string, params url.Values, postBody io.Reader, output interface{}) error
+	PutInto(ctx context.Context, path string, params url.Values, putBody io.Reader, output interface{}) error
+	DeleteInto(ctx context.Context, path string, params url.Values, output interface{}) error
 	// Body methods.
 	GetBody(ctx context.Context, path string, params url.Values) (respBody io.ReadCloser, status int, err error)
 	PostBody(ctx context.Context, path string, params url.Values,
-		postBody []byte) (respBody io.ReadCloser, status int, err error)
+		postBody io.Reader) (respBody io.ReadCloser, status int, err error)
 	PutBody(ctx context.Context, path string, params url.Values,
-		putBody []byte) (respBody io.ReadCloser, status int, err error)
+		putBody io.Reader) (respBody io.ReadCloser, status int, err error)
 	DeleteBody(ctx context.Context, path string, params url.Values) (respBody io.ReadCloser, status int, err error)
 }
 
 // Config must satify the APIer struct.
 var _ APIer = (*Config)(nil)
 
-func (c *Config) log(code int, data, body []byte, header http.Header, path, method string, err error) {
+// log the request. Do not call this if c.Debugf is nil.
+func (c *Config) log(code int, data, body string, header http.Header, path, method string, err error) {
 	headers := ""
 
 	for header, value := range header {
@@ -52,22 +53,20 @@ func (c *Config) log(code int, data, body []byte, header http.Header, path, meth
 		}
 	}
 
-	bodyStr := string(body)
-	if c.MaxBody > 0 && len(bodyStr) > c.MaxBody {
-		bodyStr = bodyStr[:c.MaxBody] + " <body truncated>"
+	if c.MaxBody > 0 && len(body) > c.MaxBody {
+		body = body[:c.MaxBody] + " <body truncated>"
 	}
 
-	dataStr := string(data)
-	if c.MaxBody > 0 && len(dataStr) > c.MaxBody {
-		dataStr = dataStr[:c.MaxBody] + " <data truncated>"
+	if c.MaxBody > 0 && len(data) > c.MaxBody {
+		data = data[:c.MaxBody] + " <data truncated>"
 	}
 
 	if len(body) > 0 {
 		c.Debugf("Sent (%s) %d bytes to %s: %s\n Response: %s\n%s%s (err: %v)",
-			method, len(body), path, bodyStr, http.StatusText(code), headers, dataStr, err)
+			method, len(body), path, body, http.StatusText(code), headers, data, err)
 	} else {
 		c.Debugf("Sent (%s) to %s, Response: %s\n%s%s (err: %v)",
-			method, path, http.StatusText(code), headers, dataStr, err)
+			method, path, http.StatusText(code), headers, data, err)
 	}
 }
 
@@ -82,10 +81,10 @@ func (c *Config) Login(ctx context.Context) error {
 		c.Client.Jar = jar
 	}
 
-	post := []byte("username=" + c.Username + "&password=" + c.Password)
+	post := "username=" + c.Username + "&password=" + c.Password
 
-	code, resp, header, err := c.body(ctx, "/login", http.MethodPost, nil, bytes.NewBuffer(post))
-	c.log(code, nil, post, header, c.URL+"/login", http.MethodPost, err)
+	code, resp, header, err := c.body(ctx, "/login", http.MethodPost, nil, bytes.NewBufferString(post))
+	c.log(code, "", post, header, c.URL+"/login", http.MethodPost, err)
 
 	if err != nil {
 		return fmt.Errorf("authenticating as user '%s' failed: %w", c.Username, err)
@@ -107,23 +106,42 @@ func (c *Config) Login(ctx context.Context) error {
 // Get makes a GET http request and returns the body.
 func (c *Config) Get(ctx context.Context, path string, params url.Values) ([]byte, error) {
 	code, data, header, err := c.Req(ctx, path, http.MethodGet, params, nil)
-	c.log(code, data, nil, header, c.SetPathParams(path, params), http.MethodGet, err)
+
+	if c.Debugf != nil { // log the request.
+		c.log(code, string(data), "", header, c.SetPathParams(path, params), http.MethodGet, err)
+	}
 
 	return data, err
 }
 
 // Post makes a POST http request and returns the body.
-func (c *Config) Post(ctx context.Context, path string, params url.Values, postBody []byte) ([]byte, error) {
-	code, data, header, err := c.Req(ctx, path, http.MethodPost, params, bytes.NewBuffer(postBody))
-	c.log(code, data, postBody, header, c.SetPathParams(path, params), http.MethodPost, err)
+func (c *Config) Post(ctx context.Context, path string, params url.Values, postBody io.Reader) ([]byte, error) {
+	if c.Debugf == nil { // no log, pass it through.
+		_, data, _, err := c.Req(ctx, path, http.MethodPost, params, postBody)
+
+		return data, err
+	}
+
+	var buf bytes.Buffer                // split the reader for request and log.
+	tee := io.TeeReader(postBody, &buf) // must read tee first.
+	code, data, header, err := c.Req(ctx, path, http.MethodPost, params, tee)
+	c.log(code, string(data), buf.String(), header, c.SetPathParams(path, params), http.MethodPost, err)
 
 	return data, err
 }
 
 // Put makes a PUT http request and returns the body.
-func (c *Config) Put(ctx context.Context, path string, params url.Values, putBody []byte) ([]byte, error) {
-	code, data, header, err := c.Req(ctx, path, http.MethodPut, params, bytes.NewBuffer(putBody))
-	c.log(code, data, putBody, header, c.SetPathParams(path, params), http.MethodPut, err)
+func (c *Config) Put(ctx context.Context, path string, params url.Values, putBody io.Reader) ([]byte, error) {
+	if c.Debugf == nil { // no log, pass it through.
+		_, data, _, err := c.Req(ctx, path, http.MethodPut, params, putBody)
+
+		return data, err
+	}
+
+	var buf bytes.Buffer               // split the reader for request and log.
+	tee := io.TeeReader(putBody, &buf) // must read tee first.
+	code, data, header, err := c.Req(ctx, path, http.MethodPut, params, tee)
+	c.log(code, string(data), buf.String(), header, c.SetPathParams(path, params), http.MethodPut, err)
 
 	return data, err
 }
@@ -131,43 +149,70 @@ func (c *Config) Put(ctx context.Context, path string, params url.Values, putBod
 // Delete makes a DELETE http request and returns the body.
 func (c *Config) Delete(ctx context.Context, path string, params url.Values) ([]byte, error) {
 	code, data, header, err := c.Req(ctx, path, http.MethodDelete, params, nil)
-	c.log(code, data, nil, header, c.SetPathParams(path, params), http.MethodDelete, err)
+
+	if c.Debugf != nil {
+		c.log(code, string(data), "", header, c.SetPathParams(path, params), http.MethodDelete, err)
+	}
 
 	return data, err
 }
 
 // GetInto performs an HTTP GET against an API path and
 // unmarshals the payload into the provided pointer interface.
-func (c *Config) GetInto(ctx context.Context, path string, params url.Values, v interface{}) error {
-	data, err := c.Get(ctx, path, params)
+func (c *Config) GetInto(ctx context.Context, path string, params url.Values, output interface{}) error {
+	if c.Debugf == nil { // no log, pass it through.
+		_, data, _, err := c.body(ctx, path, http.MethodGet, params, nil)
 
-	return unmarshal(v, data, err)
+		return unmarshalBody(output, data, err)
+	}
+
+	data, err := c.Get(ctx, path, params) // log the request
+
+	return unmarshal(output, data, err)
 }
 
 // PostInto performs an HTTP POST against an API path and
 // unmarshals the payload into the provided pointer interface.
-func (c *Config) PostInto(ctx context.Context, path string,
-	params url.Values, postBody []byte, v interface{}) error {
-	data, err := c.Post(ctx, path, params, postBody)
+func (c *Config) PostInto(ctx context.Context,
+	path string, params url.Values, postBody io.Reader, output interface{}) error {
+	if c.Debugf == nil { // no log, pass it through.
+		_, data, _, err := c.body(ctx, path, http.MethodPost, params, postBody)
 
-	return unmarshal(v, data, err)
+		return unmarshalBody(output, data, err)
+	}
+
+	data, err := c.Post(ctx, path, params, postBody) // log the request
+
+	return unmarshal(output, data, err)
 }
 
 // PutInto performs an HTTP PUT against an API path and
 // unmarshals the payload into the provided pointer interface.
-func (c *Config) PutInto(ctx context.Context, path string,
-	params url.Values, putBody []byte, v interface{}) error {
-	data, err := c.Put(ctx, path, params, putBody)
+func (c *Config) PutInto(ctx context.Context,
+	path string, params url.Values, putBody io.Reader, output interface{}) error {
+	if c.Debugf == nil { // no log, pass it through.
+		_, data, _, err := c.body(ctx, path, http.MethodPut, params, putBody)
 
-	return unmarshal(v, data, err)
+		return unmarshalBody(output, data, err)
+	}
+
+	data, err := c.Put(ctx, path, params, putBody) // log the request
+
+	return unmarshal(output, data, err)
 }
 
 // DeleteInto performs an HTTP DELETE against an API path
 // and unmarshals the payload into a pointer interface.
-func (c *Config) DeleteInto(ctx context.Context, path string, params url.Values, v interface{}) error {
-	data, err := c.Delete(ctx, path, params)
+func (c *Config) DeleteInto(ctx context.Context, path string, params url.Values, output interface{}) error {
+	if c.Debugf == nil { // no log, pass it through.
+		_, data, _, err := c.body(ctx, path, http.MethodDelete, params, nil)
 
-	return unmarshal(v, data, err)
+		return unmarshalBody(output, data, err)
+	}
+
+	data, err := c.Delete(ctx, path, params) // log the request
+
+	return unmarshal(output, data, err)
 }
 
 // GetBody makes an http request and returns the resp.Body (io.ReadCloser).
@@ -177,7 +222,10 @@ func (c *Config) DeleteInto(ctx context.Context, path string, params url.Values,
 // If it's not 200, it's possible the request had an error or was not authenticated.
 func (c *Config) GetBody(ctx context.Context, path string, params url.Values) (io.ReadCloser, int, error) {
 	code, data, header, err := c.body(ctx, path, http.MethodGet, params, nil)
-	c.log(code, nil, nil, header, c.URL+path, http.MethodGet, err)
+
+	if c.Debugf != nil {
+		c.log(code, "", "", header, c.URL+path, http.MethodGet, err)
+	}
 
 	return data, code, err
 }
@@ -186,10 +234,13 @@ func (c *Config) GetBody(ctx context.Context, path string, params url.Values) (i
 // Always remember to close the io.ReadCloser.
 // Before you use the returned data, check the HTTP status code.
 // If it's not 200, it's possible the request had an error or was not authenticated.
-func (c *Config) PostBody(ctx context.Context, path string, params url.Values,
-	postBody []byte) (io.ReadCloser, int, error) {
-	code, data, header, err := c.body(ctx, path, http.MethodPost, params, bytes.NewBuffer(postBody))
-	c.log(code, nil, postBody, header, c.URL+path, http.MethodPost, err)
+func (c *Config) PostBody(ctx context.Context,
+	path string, params url.Values, postBody io.Reader) (io.ReadCloser, int, error) {
+	code, data, header, err := c.body(ctx, path, http.MethodPost, params, postBody)
+
+	if c.Debugf != nil {
+		c.log(code, "", "", header, c.URL+path, http.MethodPost, err)
+	}
 
 	return data, code, err
 }
@@ -197,10 +248,13 @@ func (c *Config) PostBody(ctx context.Context, path string, params url.Values,
 // PutBody makes a PUT http request and returns the resp.Body (io.ReadCloser).
 // Always remember to close the io.ReadCloser.
 // Before you use the returned data, check the HTTP status code.
-func (c *Config) PutBody(ctx context.Context, path string, params url.Values,
-	putBody []byte) (io.ReadCloser, int, error) {
-	code, data, header, err := c.body(ctx, path, http.MethodPut, params, bytes.NewBuffer(putBody))
-	c.log(code, nil, putBody, header, c.URL+path, http.MethodPut, err)
+func (c *Config) PutBody(ctx context.Context,
+	path string, params url.Values, putBody io.Reader) (io.ReadCloser, int, error) {
+	code, data, header, err := c.body(ctx, path, http.MethodPut, params, putBody)
+
+	if c.Debugf != nil {
+		c.log(code, "", "", header, c.URL+path, http.MethodPut, err)
+	}
 
 	return data, code, err
 }
@@ -211,7 +265,10 @@ func (c *Config) PutBody(ctx context.Context, path string, params url.Values,
 // If it's not 200, it's possible the request had an error or was not authenticated.
 func (c *Config) DeleteBody(ctx context.Context, path string, params url.Values) (io.ReadCloser, int, error) {
 	code, data, header, err := c.body(ctx, path, http.MethodDelete, params, nil)
-	c.log(code, nil, nil, header, c.URL+path, http.MethodDelete, err)
+
+	if c.Debugf != nil {
+		c.log(code, "", "", header, c.URL+path, http.MethodDelete, err)
+	}
 
 	return data, code, err
 }
@@ -224,6 +281,22 @@ func unmarshal(v interface{}, data []byte, err error) error {
 	} else if v == nil {
 		return fmt.Errorf("this is a code bug: %w", ErrNilInterface)
 	} else if err = json.Unmarshal(data, v); err != nil {
+		return fmt.Errorf("json parse error: %w", err)
+	}
+
+	return nil
+}
+
+// unmarshalBody is an extra procedure to check an error and unmarshal the resp.Body payload.
+// This version unmarshals the resp.Body directly.
+func unmarshalBody(output interface{}, data io.ReadCloser, err error) error {
+	defer data.Close()
+
+	if err != nil {
+		return err
+	} else if output == nil {
+		return fmt.Errorf("this is a code bug: %w", ErrNilInterface)
+	} else if err = json.NewDecoder(data).Decode(output); err != nil {
 		return fmt.Errorf("json parse error: %w", err)
 	}
 

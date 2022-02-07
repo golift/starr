@@ -1,6 +1,7 @@
 package readarr
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -55,15 +56,15 @@ func (r *Readarr) UpdateBook(bookID int64, book *Book) error {
 }
 
 func (r *Readarr) UpdateBookContext(ctx context.Context, bookID int64, book *Book) error {
-	put, err := json.Marshal(book)
-	if err != nil {
-		return fmt.Errorf("json.Marshal(book): %w", err)
-	}
-
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
-	b, err := r.Put(ctx, "v1/book/"+strconv.FormatInt(bookID, starr.Base10), params, put)
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(book); err != nil {
+		return fmt.Errorf("json.Marshal(book): %w", err)
+	}
+
+	b, err := r.Put(ctx, "v1/book/"+strconv.FormatInt(bookID, starr.Base10), params, &body)
 	if err != nil {
 		return fmt.Errorf("api.Put(book): %w", err)
 	}
@@ -79,18 +80,16 @@ func (r *Readarr) AddBook(book *AddBookInput) (*AddBookOutput, error) {
 }
 
 func (r *Readarr) AddBookContext(ctx context.Context, book *AddBookInput) (*AddBookOutput, error) {
-	body, err := json.Marshal(book)
-	if err != nil {
-		return nil, fmt.Errorf("json.Marshal(book): %w", err)
-	}
-
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
-	var output AddBookOutput
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(book); err != nil {
+		return nil, fmt.Errorf("json.Marshal(book): %w", err)
+	}
 
-	err = r.PostInto(ctx, "v1/book", params, body, &output)
-	if err != nil {
+	var output AddBookOutput
+	if err := r.PostInto(ctx, "v1/book", params, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(book): %w", err)
 	}
 

@@ -141,7 +141,7 @@ func (mr *MockAPIerMockRecorder) Login(arg0 interface{}) *gomock.Call {
 }
 
 // Post mocks base method.
-func (m *MockAPIer) Post(arg0 context.Context, arg1 string, arg2 url.Values, arg3 []byte) ([]byte, error) {
+func (m *MockAPIer) Post(arg0 context.Context, arg1 string, arg2 url.Values, arg3 io.Reader) ([]byte, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Post", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].([]byte)
@@ -156,7 +156,7 @@ func (mr *MockAPIerMockRecorder) Post(arg0, arg1, arg2, arg3 interface{}) *gomoc
 }
 
 // PostBody mocks base method.
-func (m *MockAPIer) PostBody(arg0 context.Context, arg1 string, arg2 url.Values, arg3 []byte) (io.ReadCloser, int, error) {
+func (m *MockAPIer) PostBody(arg0 context.Context, arg1 string, arg2 url.Values, arg3 io.Reader) (io.ReadCloser, int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PostBody", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(io.ReadCloser)
@@ -172,7 +172,7 @@ func (mr *MockAPIerMockRecorder) PostBody(arg0, arg1, arg2, arg3 interface{}) *g
 }
 
 // PostInto mocks base method.
-func (m *MockAPIer) PostInto(arg0 context.Context, arg1 string, arg2 url.Values, arg3 []byte, arg4 interface{}) error {
+func (m *MockAPIer) PostInto(arg0 context.Context, arg1 string, arg2 url.Values, arg3 io.Reader, arg4 interface{}) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PostInto", arg0, arg1, arg2, arg3, arg4)
 	ret0, _ := ret[0].(error)
@@ -186,7 +186,7 @@ func (mr *MockAPIerMockRecorder) PostInto(arg0, arg1, arg2, arg3, arg4 interface
 }
 
 // Put mocks base method.
-func (m *MockAPIer) Put(arg0 context.Context, arg1 string, arg2 url.Values, arg3 []byte) ([]byte, error) {
+func (m *MockAPIer) Put(arg0 context.Context, arg1 string, arg2 url.Values, arg3 io.Reader) ([]byte, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Put", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].([]byte)
@@ -201,7 +201,7 @@ func (mr *MockAPIerMockRecorder) Put(arg0, arg1, arg2, arg3 interface{}) *gomock
 }
 
 // PutBody mocks base method.
-func (m *MockAPIer) PutBody(arg0 context.Context, arg1 string, arg2 url.Values, arg3 []byte) (io.ReadCloser, int, error) {
+func (m *MockAPIer) PutBody(arg0 context.Context, arg1 string, arg2 url.Values, arg3 io.Reader) (io.ReadCloser, int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PutBody", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(io.ReadCloser)
@@ -217,7 +217,7 @@ func (mr *MockAPIerMockRecorder) PutBody(arg0, arg1, arg2, arg3 interface{}) *go
 }
 
 // PutInto mocks base method.
-func (m *MockAPIer) PutInto(arg0 context.Context, arg1 string, arg2 url.Values, arg3 []byte, arg4 interface{}) error {
+func (m *MockAPIer) PutInto(arg0 context.Context, arg1 string, arg2 url.Values, arg3 io.Reader, arg4 interface{}) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PutInto", arg0, arg1, arg2, arg3, arg4)
 	ret0, _ := ret[0].(error)

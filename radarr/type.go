@@ -6,6 +6,9 @@ import (
 	"golift.io/starr"
 )
 
+// APIver is the Radarr API version supported by this library.
+const APIver = "v3"
+
 // SystemStatus is the /api/v3/system/status endpoint.
 type SystemStatus struct {
 	Version           string    `json:"version"`

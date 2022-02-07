@@ -1,6 +1,7 @@
 package lidarr
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -57,9 +58,9 @@ func (l *Lidarr) AddArtist(artist *Artist) (*Artist, error) {
 
 // AddArtistContext adds a new artist to Lidarr, and probably does not yet work.
 func (l *Lidarr) AddArtistContext(ctx context.Context, artist *Artist) (*Artist, error) {
-	body, err := json.Marshal(artist)
-	if err != nil {
-		return nil, fmt.Errorf("json.Marshal(album): %w", err)
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(artist); err != nil {
+		return nil, fmt.Errorf("json.Marshal(artist): %w", err)
 	}
 
 	params := make(url.Values)
@@ -67,7 +68,7 @@ func (l *Lidarr) AddArtistContext(ctx context.Context, artist *Artist) (*Artist,
 
 	var output Artist
 
-	err = l.PostInto(ctx, "v1/artist", params, body, &output)
+	err := l.PostInto(ctx, "v1/artist", params, &body, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Post(artist): %w", err)
 	}
@@ -82,9 +83,9 @@ func (l *Lidarr) UpdateArtist(artist *Artist) (*Artist, error) {
 
 // UpdateArtistContext updates an artist in place.
 func (l *Lidarr) UpdateArtistContext(ctx context.Context, artist *Artist) (*Artist, error) {
-	body, err := json.Marshal(artist)
-	if err != nil {
-		return nil, fmt.Errorf("json.Marshal(album): %w", err)
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(artist); err != nil {
+		return nil, fmt.Errorf("json.Marshal(artist): %w", err)
 	}
 
 	params := make(url.Values)
@@ -92,7 +93,7 @@ func (l *Lidarr) UpdateArtistContext(ctx context.Context, artist *Artist) (*Arti
 
 	var output Artist
 
-	err = l.PutInto(ctx, "v1/artist/"+strconv.FormatInt(artist.ID, starr.Base10), params, body, &output)
+	err := l.PutInto(ctx, "v1/artist/"+strconv.FormatInt(artist.ID, starr.Base10), params, &body, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Put(artist): %w", err)
 	}

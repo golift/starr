@@ -1,6 +1,8 @@
 package starr
 
 import (
+	"encoding/json"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -55,12 +57,12 @@ type BaseQuality struct {
 
 // Quality is a download quality profile attached to a movie, book, track or series.
 // It may contain 1 or more profiles.
-// Readarr does not use Name or ID in this struct.
+// Sonarr nor Readarr use Name or ID in this struct.
 type Quality struct {
 	Name     string           `json:"name,omitempty"`
 	ID       int              `json:"id,omitempty"`
 	Quality  *BaseQuality     `json:"quality,omitempty"`
-	Items    []*Quality       `json:"items"`
+	Items    []*Quality       `json:"items,omitempty"`
 	Allowed  bool             `json:"allowed"`
 	Revision *QualityRevision `json:"revision,omitempty"` // Not sure which app had this....
 }
@@ -131,3 +133,38 @@ type BackupFile struct {
 	ID   int64     `json:"id"`
 	Size int64     `json:"size"`
 }
+
+// PlayTime is used in at least Sonarr, maybe other places.
+// Holds a string duration converted from hh:mm:ss.
+type PlayTime struct {
+	Original string
+	time.Duration
+}
+
+// UnmarshalJSON parses a run time duration in format hh:mm:ss.
+func (d *PlayTime) UnmarshalJSON(b []byte) error {
+	d.Original = strings.Trim(string(b), `"'`)
+
+	switch parts := strings.Split(d.Original, ":"); len(parts) {
+	case 3: //nolint:gomnd // hh:mm:ss
+		h, _ := strconv.Atoi(parts[0])
+		m, _ := strconv.Atoi(parts[1])
+		s, _ := strconv.Atoi(parts[2])
+		d.Duration = (time.Hour * time.Duration(h)) + (time.Minute * time.Duration(m)) + (time.Second * time.Duration(s))
+	case 2: //nolint:gomnd // mm:ss
+		m, _ := strconv.Atoi(parts[0])
+		s, _ := strconv.Atoi(parts[1])
+		d.Duration = (time.Minute * time.Duration(m)) + (time.Second * time.Duration(s))
+	case 1: // ss
+		s, _ := strconv.Atoi(parts[0])
+		d.Duration += (time.Second * time.Duration(s))
+	}
+
+	return nil
+}
+
+func (d *PlayTime) MarshalJSON() ([]byte, error) {
+	return []byte(`"` + d.Original + `"`), nil
+}
+
+var _ json.Unmarshaler = (*PlayTime)(nil)

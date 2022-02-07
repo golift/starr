@@ -92,7 +92,7 @@ func New(apiKey, appURL string, timeout time.Duration) *Config {
 		ValidSSL: false,
 		Timeout:  Duration{Duration: timeout},
 		Client:   nil, // Let each sub package handle its own client.
-		Debugf:   func(string, ...interface{}) {},
+		Debugf:   nil,
 	}
 }
 

@@ -1,6 +1,7 @@
 package radarr
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -56,15 +57,15 @@ func (r *Radarr) UpdateMovie(movieID int64, movie *Movie) error {
 
 // UpdateMovieContext sends a PUT request to update a movie in place.
 func (r *Radarr) UpdateMovieContext(ctx context.Context, movieID int64, movie *Movie) error {
-	put, err := json.Marshal(movie)
-	if err != nil {
-		return fmt.Errorf("json.Marshal(movie): %w", err)
-	}
-
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
-	_, err = r.Put(ctx, "v3/movie/"+strconv.FormatInt(movieID, starr.Base10), params, put)
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(movie); err != nil {
+		return fmt.Errorf("json.Marshal(movie): %w", err)
+	}
+
+	_, err := r.Put(ctx, "v3/movie/"+strconv.FormatInt(movieID, starr.Base10), params, &body)
 	if err != nil {
 		return fmt.Errorf("api.Put(movie): %w", err)
 	}
@@ -79,16 +80,16 @@ func (r *Radarr) AddMovie(movie *AddMovieInput) (*AddMovieOutput, error) {
 
 // AddMovieContext adds a movie to the queue.
 func (r *Radarr) AddMovieContext(ctx context.Context, movie *AddMovieInput) (*AddMovieOutput, error) {
-	body, err := json.Marshal(movie)
-	if err != nil {
-		return nil, fmt.Errorf("json.Marshal(movie): %w", err)
-	}
-
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(movie); err != nil {
+		return nil, fmt.Errorf("json.Marshal(movie): %w", err)
+	}
+
 	var output AddMovieOutput
-	if err := r.PostInto(ctx, "v3/movie", params, body, &output); err != nil {
+	if err := r.PostInto(ctx, "v3/movie", params, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(movie): %w", err)
 	}
 

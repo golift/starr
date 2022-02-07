@@ -1,6 +1,7 @@
 package radarr
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -37,12 +38,12 @@ func (r *Radarr) AddCustomFormatContext(ctx context.Context, format *CustomForma
 
 	format.ID = 0 // ID must be zero when adding.
 
-	body, err := json.Marshal(format)
-	if err != nil {
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(format); err != nil {
 		return nil, fmt.Errorf("json.Marshal(customFormat): %w", err)
 	}
 
-	if err := r.PostInto(ctx, "v3/customFormat", nil, body, &output); err != nil {
+	if err := r.PostInto(ctx, "v3/customFormat", nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(customFormat): %w", err)
 	}
 
@@ -55,18 +56,18 @@ func (r *Radarr) UpdateCustomFormat(cf *CustomFormat, cfID int) (*CustomFormat, 
 }
 
 // UpdateCustomFormatContext updates an existing custom format and returns the response.
-func (r *Radarr) UpdateCustomFormatContext(ctx context.Context, cf *CustomFormat, cfID int) (*CustomFormat, error) {
+func (r *Radarr) UpdateCustomFormatContext(ctx context.Context, format *CustomFormat, cfID int) (*CustomFormat, error) {
 	if cfID == 0 {
-		cfID = cf.ID
+		cfID = format.ID
 	}
 
-	body, err := json.Marshal(cf)
-	if err != nil {
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(format); err != nil {
 		return nil, fmt.Errorf("json.Marshal(customFormat): %w", err)
 	}
 
 	var output CustomFormat
-	if err := r.PutInto(ctx, "v3/customFormat/"+strconv.Itoa(cfID), nil, body, &output); err != nil {
+	if err := r.PutInto(ctx, "v3/customFormat/"+strconv.Itoa(cfID), nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(customFormat): %w", err)
 	}
 

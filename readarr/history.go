@@ -1,6 +1,7 @@
 package readarr
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"strconv"
@@ -75,9 +76,8 @@ func (r *Readarr) FailContext(ctx context.Context, historyID int64) error {
 		return fmt.Errorf("%w: invalid history ID: %d", starr.ErrRequestError, historyID)
 	}
 
-	post := []byte("id=" + strconv.FormatInt(historyID, starr.Base10))
-
-	_, err := r.Post(ctx, "v1/history/failed", nil, post)
+	_, err := r.Post(ctx,
+		"v1/history/failed", nil, bytes.NewBufferString("id="+strconv.FormatInt(historyID, starr.Base10)))
 	if err != nil {
 		return fmt.Errorf("api.Post(history/failed): %w", err)
 	}
