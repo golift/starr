@@ -177,3 +177,98 @@ func TestRadarrRename(t *testing.T) {
 		t.Fatalf("got wrong previous paths? got: %v", info.PreviousPaths)
 	}
 }
+
+func TestRadarrDownload(t *testing.T) {
+	t.Setenv("radarr_eventtype", string(starrcmd.EventDownload))
+	t.Setenv("radarr_movie_physical_release_date", "")
+	t.Setenv("radarr_moviefile_path", "/movies/Just Go with It (2011)/Just.Go.with.It.2011.Bluray-1080p.mkv")
+	t.Setenv("radarr_movie_imdbid", "tt1564367")
+	t.Setenv("radarr_moviefile_scenename", "Just.Go.with.It.2011.1080p.BluRay.x264-OFT")
+	t.Setenv("radarr_moviefile_id", "3594")
+	t.Setenv("radarr_moviefile_releasegroup", "OFT")
+	t.Setenv("radarr_download_id", "string F3D870942BFDD643488852284E917336170CEA00")
+	t.Setenv("radarr_movie_in_cinemas_date", "2/10/2011 12:00:00 AM")
+	t.Setenv("radarr_moviefile_sourcefolder", "/downloads/Seeding/Just.Go.with.It.2011.1080p.BluRay.x264-OFT")
+	t.Setenv("radarr_movie_year", "2011")
+	t.Setenv("radarr_isupgrade", "False")
+	t.Setenv("radarr_movie_path", "/movies/Just Go with It (2011)")
+	t.Setenv("radarr_moviefile_relativepath", "Just.Go.with.It.2011.Bluray-1080p.mkv")
+	t.Setenv("radarr_download_client", "Deluge")
+	t.Setenv("radarr_moviefile_sourcepath", "/downloads/Seeding/Just.Go.with.It.2011.1080p.BluRay.x264-OFT/Just.Go.with.It.2011.1080p.BluRay.x264-OFT.mkv")
+	t.Setenv("radarr_movie_tmdbid", "50546")
+	t.Setenv("radarr_movie_id", "924")
+	t.Setenv("radarr_moviefile_quality", "Bluray-1080p")
+	t.Setenv("radarr_movie_title", "Just Go with It")
+	t.Setenv("radarr_moviefile_qualityversion", "1")
+	t.Setenv("radarr_deletedrelativepaths", "1")
+	t.Setenv("radarr_deletedpaths", "1")
+
+	cmd, err := starrcmd.New()
+	if err != nil {
+		t.Fatalf("got an unexpected error: %s", err)
+	}
+
+	switch info, err := cmd.GetRadarrDownload(); {
+	case err != nil:
+		t.Fatalf("got an unexpected error: %s", err)
+	case info.IMDbID != "tt1564367":
+		t.Fatalf("got an wrong IMDBID? wanted: 'tt1564367', got: %v", info.IMDbID)
+	}
+}
+
+func TestRadarrMovieFileDelete(t *testing.T) {
+	t.Setenv("radarr_eventtype", string(starrcmd.EventMovieFileDelete))
+
+	t.Setenv("radarr_moviefile_deletereason", "Upgrade")
+	t.Setenv("radarr_moviefile_path", "/movies/The French Dispatch (2021)/The.French.Dispatch.2021.Bluray-720p.mkv")
+	t.Setenv("radarr_moviefile_scenename", "The.French.Dispatch.2021.720p.BluRay.x264-WoAT")
+	t.Setenv("radarr_movie_imdbid", "tt1564368")
+	t.Setenv("radarr_moviefile_id", "3531")
+	t.Setenv("radarr_moviefile_releasegroup", "WoAT")
+	t.Setenv("radarr_movie_year", "2021")
+	t.Setenv("radarr_movie_path", "/movies/The French Dispatch (2021)")
+	t.Setenv("radarr_moviefile_relativepath", "The.French.Dispatch.2021.Bluray-720p.mkv")
+	t.Setenv("radarr_moviefile_size", "3593317970")
+	t.Setenv("radarr_movie_tmdbid", "542178")
+	t.Setenv("radarr_movie_id", "2173")
+	t.Setenv("radarr_moviefile_quality", "Bluray-720p")
+	t.Setenv("radarr_movie_title", "The French Dispatch")
+	t.Setenv("radarr_moviefile_qualityversion", "1")
+
+	cmd, err := starrcmd.New()
+	if err != nil {
+		t.Fatalf("got an unexpected error: %s", err)
+	}
+
+	switch info, err := cmd.GetRadarrMovieFileDelete(); {
+	case err != nil:
+		t.Fatalf("got an unexpected error: %s", err)
+	case info.IMDbID != "tt1564368":
+		t.Fatalf("got an wrong IMDBID? wanted: 'tt1564368', got: %v", info.IMDbID)
+	}
+}
+
+func TestRadarrMovieDelete(t *testing.T) {
+	t.Setenv("radarr_eventtype", string(starrcmd.EventMovieDelete))
+
+	t.Setenv("radarr_movie_id", "2173")
+	t.Setenv("radarr_movie_title", "The French Dispatch")
+	t.Setenv("radarr_movie_year", "2021")
+	t.Setenv("radarr_movie_path", "/movies/The French Dispatch (2021)")
+	t.Setenv("radarr_movie_imdbid", "tt1564397")
+	t.Setenv("radarr_movie_tmdbid", "542178")
+	t.Setenv("radarr_movie_folder_size", "3593317970")
+	t.Setenv("radarr_movie_deletedfiles", "XXX: no example. Does this need a split?")
+
+	cmd, err := starrcmd.New()
+	if err != nil {
+		t.Fatalf("got an unexpected error: %s", err)
+	}
+
+	switch info, err := cmd.GetRadarrMovieDelete(); {
+	case err != nil:
+		t.Fatalf("got an unexpected error: %s", err)
+	case info.IMDbID != "tt1564397":
+		t.Fatalf("got an wrong IMDBID? wanted: 'tt1564397', got: %v", info.IMDbID)
+	}
+}
