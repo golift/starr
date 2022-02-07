@@ -1,6 +1,7 @@
 package lidarr
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -59,17 +60,17 @@ func (l *Lidarr) UpdateAlbum(albumID int64, album *Album) (*Album, error) {
 
 // UpdateAlbumContext updates an album in place; the output of this is currently unknown!!!!
 func (l *Lidarr) UpdateAlbumContext(ctx context.Context, albumID int64, album *Album) (*Album, error) {
-	put, err := json.Marshal(album)
-	if err != nil {
-		return nil, fmt.Errorf("json.Marshal(album): %w", err)
-	}
-
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(album); err != nil {
+		return nil, fmt.Errorf("json.Marshal(album): %w", err)
+	}
+
 	var output Album
 
-	err = l.PutInto(ctx, "v1/album/"+strconv.FormatInt(albumID, starr.Base10), params, put, &output)
+	err := l.PutInto(ctx, "v1/album/"+strconv.FormatInt(albumID, starr.Base10), params, &body, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Put(album): %w", err)
 	}
@@ -88,18 +89,16 @@ func (l *Lidarr) AddAlbumContext(ctx context.Context, album *AddAlbumInput) (*Al
 		album.Releases = make([]*AddAlbumInputRelease, 0)
 	}
 
-	body, err := json.Marshal(album)
-	if err != nil {
-		return nil, fmt.Errorf("json.Marshal(album): %w", err)
-	}
-
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
-	var output Album
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(album); err != nil {
+		return nil, fmt.Errorf("json.Marshal(album): %w", err)
+	}
 
-	err = l.PostInto(ctx, "v1/album", params, body, &output)
-	if err != nil {
+	var output Album
+	if err := l.PostInto(ctx, "v1/album", params, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(album): %w", err)
 	}
 

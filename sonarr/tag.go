@@ -1,6 +1,7 @@
 package sonarr
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -31,13 +32,13 @@ func (s *Sonarr) UpdateTag(tagID int, label string) (int, error) {
 }
 
 func (s *Sonarr) UpdateTagContext(ctx context.Context, tagID int, label string) (int, error) {
-	body, err := json.Marshal(&starr.Tag{Label: label, ID: tagID})
-	if err != nil {
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(&starr.Tag{Label: label, ID: tagID}); err != nil {
 		return 0, fmt.Errorf("json.Marshal(tag): %w", err)
 	}
 
 	var tag starr.Tag
-	if err = s.PutInto(ctx, "v3/tag/"+strconv.Itoa(tagID), nil, body, &tag); err != nil {
+	if err := s.PutInto(ctx, "v3/tag/"+strconv.Itoa(tagID), nil, &body, &tag); err != nil {
 		return tag.ID, fmt.Errorf("api.Put(tag): %w", err)
 	}
 
@@ -50,13 +51,13 @@ func (s *Sonarr) AddTag(label string) (int, error) {
 }
 
 func (s *Sonarr) AddTagContext(ctx context.Context, label string) (int, error) {
-	body, err := json.Marshal(&starr.Tag{Label: label, ID: 0})
-	if err != nil {
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(&starr.Tag{Label: label}); err != nil {
 		return 0, fmt.Errorf("json.Marshal(tag): %w", err)
 	}
 
 	var tag starr.Tag
-	if err = s.PostInto(ctx, "v3/tag", nil, body, &tag); err != nil {
+	if err := s.PostInto(ctx, "v3/tag", nil, &body, &tag); err != nil {
 		return tag.ID, fmt.Errorf("api.Post(tag): %w", err)
 	}
 

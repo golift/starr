@@ -1,6 +1,7 @@
 package lidarr
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"strconv"
@@ -79,7 +80,7 @@ func (l *Lidarr) FailContext(ctx context.Context, historyID int64) error {
 		return fmt.Errorf("%w: invalid history ID: %d", starr.ErrRequestError, historyID)
 	}
 
-	post := []byte("id=" + strconv.FormatInt(historyID, starr.Base10))
+	post := bytes.NewBufferString("id=" + strconv.FormatInt(historyID, starr.Base10))
 
 	_, err := l.Post(ctx, "v1/history/failed", nil, post)
 	if err != nil {

@@ -1,6 +1,7 @@
 package sonarr
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -65,17 +66,17 @@ func (s *Sonarr) UpdateEpisodeFileQuality(episodeFileID, qualityID int64) (*Epis
 // UpdateEpisodeFileQualityContext updates an episode file, and takes a context.
 func (s *Sonarr) UpdateEpisodeFileQualityContext(ctx context.Context,
 	episodeFileID, qualityID int64) (*EpisodeFile, error) {
-	put, err := json.Marshal(&EpisodeFile{
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(&EpisodeFile{
 		ID:      episodeFileID,
 		Quality: &starr.Quality{Quality: &starr.BaseQuality{ID: qualityID}},
-	})
-	if err != nil {
-		return nil, fmt.Errorf("json.Marshal(episodeFile): %w", err)
+	}); err != nil {
+		return nil, fmt.Errorf("json.Marshal(episodeFileID): %w", err)
 	}
 
 	var output EpisodeFile
 
-	err = s.PutInto(ctx, "v3/episodeFile/"+strconv.FormatInt(episodeFileID, starr.Base10), nil, put, &output)
+	err := s.PutInto(ctx, "v3/episodeFile/"+strconv.FormatInt(episodeFileID, starr.Base10), nil, &body, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Put(episodeFile): %w", err)
 	}

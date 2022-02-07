@@ -1,10 +1,10 @@
 package sonarr
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/url"
 	"strconv"
 
@@ -49,20 +49,18 @@ func (s *Sonarr) UpdateSeries(seriesID int64, series *Series) error {
 }
 
 func (s *Sonarr) UpdateSeriesContext(ctx context.Context, seriesID int64, series *Series) error {
-	put, err := json.Marshal(series)
-	if err != nil {
-		return fmt.Errorf("json.Marshal(series): %w", err)
-	}
-
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
-	b, err := s.Put(ctx, "v3/series/"+strconv.FormatInt(seriesID, starr.Base10), params, put)
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(series); err != nil {
+		return fmt.Errorf("json.Marshal(series): %w", err)
+	}
+
+	_, err := s.Put(ctx, "v3/series/"+strconv.FormatInt(seriesID, starr.Base10), params, &body)
 	if err != nil {
 		return fmt.Errorf("api.Put(series): %w", err)
 	}
-
-	log.Println("SHOW THIS TO CAPTAIN plz:", string(b))
 
 	return nil
 }
@@ -73,16 +71,16 @@ func (s *Sonarr) AddSeries(series *AddSeriesInput) (*AddSeriesOutput, error) {
 }
 
 func (s *Sonarr) AddSeriesContext(ctx context.Context, series *AddSeriesInput) (*AddSeriesOutput, error) {
-	body, err := json.Marshal(series)
-	if err != nil {
-		return nil, fmt.Errorf("json.Marshal(series): %w", err)
-	}
-
 	params := make(url.Values)
 	params.Add("moveFiles", "true")
 
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(series); err != nil {
+		return nil, fmt.Errorf("json.Marshal(series): %w", err)
+	}
+
 	var output AddSeriesOutput
-	if err = s.PostInto(ctx, "v3/series", params, body, &output); err != nil {
+	if err := s.PostInto(ctx, "v3/series", params, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(series): %w", err)
 	}
 
