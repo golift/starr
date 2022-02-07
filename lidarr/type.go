@@ -6,6 +6,9 @@ import (
 	"golift.io/starr"
 )
 
+// APIver is the Lidarr API version supported by this library.
+const APIver = "v1"
+
 // Queue is the /api/v1/queue endpoint.
 type Queue struct {
 	Page          int            `json:"page"`
