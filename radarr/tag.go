@@ -75,7 +75,7 @@ func (r *Radarr) GetTag(tagID int) (*starr.Tag, error) {
 func (r *Radarr) GetTagContext(ctx context.Context, tagID int) (*starr.Tag, error) {
 	var tag *starr.Tag
 
-	err := r.GetInto(ctx, "v3/tag"+strconv.Itoa(tagID), nil, &tag)
+	err := r.GetInto(ctx, "v3/tag/"+strconv.Itoa(tagID), nil, &tag)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(tag): %w", err)
 	}
@@ -89,9 +89,9 @@ func (r *Radarr) DeleteTag(tagID int) error {
 }
 
 func (r *Radarr) DeleteTagContext(ctx context.Context, tagID int) error {
-	_, err := r.Delete(ctx, "v3/tag"+strconv.Itoa(tagID), nil)
+	_, err := r.Delete(ctx, "v3/tag/"+strconv.Itoa(tagID), nil)
 	if err != nil {
-		return fmt.Errorf("api.Get(tag): %w", err)
+		return fmt.Errorf("api.Delete(tag): %w", err)
 	}
 
 	return nil
