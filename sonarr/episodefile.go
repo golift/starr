@@ -30,7 +30,7 @@ func (s *Sonarr) GetEpisodeFilesContext(ctx context.Context, episodeFileIDs ...i
 	params := make(url.Values)
 	params.Add("episodeFileIds", ids)
 
-	err := s.GetInto(ctx, "v3/episodeFile", params, &output)
+	_, err := s.GetInto(ctx, "v3/episodeFile", params, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(episodeFile): %w", err)
 	}
@@ -50,7 +50,7 @@ func (s *Sonarr) GetSeriesEpisodeFilesContext(ctx context.Context, seriesID int6
 	params := make(url.Values)
 	params.Add("seriesId", strconv.FormatInt(seriesID, starr.Base10))
 
-	err := s.GetInto(ctx, "v3/episodeFile", params, &output)
+	_, err := s.GetInto(ctx, "v3/episodeFile", params, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(episodeFile): %w", err)
 	}
@@ -76,7 +76,7 @@ func (s *Sonarr) UpdateEpisodeFileQualityContext(ctx context.Context,
 
 	var output EpisodeFile
 
-	err := s.PutInto(ctx, "v3/episodeFile/"+strconv.FormatInt(episodeFileID, starr.Base10), nil, &body, &output)
+	_, err := s.PutInto(ctx, "v3/episodeFile/"+strconv.FormatInt(episodeFileID, starr.Base10), nil, &body, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Put(episodeFile): %w", err)
 	}

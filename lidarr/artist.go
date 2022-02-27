@@ -26,7 +26,7 @@ func (l *Lidarr) GetArtistContext(ctx context.Context, mbID string) ([]*Artist, 
 
 	var artist []*Artist
 
-	err := l.GetInto(ctx, "v1/artist", params, &artist)
+	_, err := l.GetInto(ctx, "v1/artist", params, &artist)
 	if err != nil {
 		return artist, fmt.Errorf("api.Get(artist): %w", err)
 	}
@@ -43,7 +43,7 @@ func (l *Lidarr) GetArtistByID(artistID int64) (*Artist, error) {
 func (l *Lidarr) GetArtistByIDContext(ctx context.Context, artistID int64) (*Artist, error) {
 	var artist Artist
 
-	err := l.GetInto(ctx, "v1/artist/"+strconv.FormatInt(artistID, starr.Base10), nil, &artist)
+	_, err := l.GetInto(ctx, "v1/artist/"+strconv.FormatInt(artistID, starr.Base10), nil, &artist)
 	if err != nil {
 		return &artist, fmt.Errorf("api.Get(artist): %w", err)
 	}
@@ -68,7 +68,7 @@ func (l *Lidarr) AddArtistContext(ctx context.Context, artist *Artist) (*Artist,
 
 	var output Artist
 
-	err := l.PostInto(ctx, "v1/artist", params, &body, &output)
+	_, err := l.PostInto(ctx, "v1/artist", params, &body, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Post(artist): %w", err)
 	}
@@ -93,7 +93,7 @@ func (l *Lidarr) UpdateArtistContext(ctx context.Context, artist *Artist) (*Arti
 
 	var output Artist
 
-	err := l.PutInto(ctx, "v1/artist/"+strconv.FormatInt(artist.ID, starr.Base10), params, &body, &output)
+	_, err := l.PutInto(ctx, "v1/artist/"+strconv.FormatInt(artist.ID, starr.Base10), params, &body, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Put(artist): %w", err)
 	}

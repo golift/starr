@@ -25,7 +25,7 @@ func (r *Radarr) GetMovieContext(ctx context.Context, tmdbID int64) ([]*Movie, e
 
 	var movie []*Movie
 
-	err := r.GetInto(ctx, "v3/movie", params, &movie)
+	_, err := r.GetInto(ctx, "v3/movie", params, &movie)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(movie): %w", err)
 	}
@@ -42,7 +42,7 @@ func (r *Radarr) GetMovieByID(movieID int64) (*Movie, error) {
 func (r *Radarr) GetMovieByIDContext(ctx context.Context, movieID int64) (*Movie, error) {
 	var movie Movie
 
-	err := r.GetInto(ctx, "v3/movie/"+strconv.FormatInt(movieID, starr.Base10), nil, &movie)
+	_, err := r.GetInto(ctx, "v3/movie/"+strconv.FormatInt(movieID, starr.Base10), nil, &movie)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(movie): %w", err)
 	}
@@ -89,7 +89,7 @@ func (r *Radarr) AddMovieContext(ctx context.Context, movie *AddMovieInput) (*Ad
 	}
 
 	var output AddMovieOutput
-	if err := r.PostInto(ctx, "v3/movie", params, &body, &output); err != nil {
+	if _, err := r.PostInto(ctx, "v3/movie", params, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(movie): %w", err)
 	}
 
@@ -112,7 +112,7 @@ func (r *Radarr) LookupContext(ctx context.Context, term string) ([]*Movie, erro
 	params := make(url.Values)
 	params.Set("term", term)
 
-	err := r.GetInto(ctx, "v3/movie/lookup", params, &output)
+	_, err := r.GetInto(ctx, "v3/movie/lookup", params, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(movie/lookup): %w", err)
 	}

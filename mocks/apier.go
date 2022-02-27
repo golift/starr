@@ -68,11 +68,12 @@ func (mr *MockAPIerMockRecorder) DeleteBody(arg0, arg1, arg2 interface{}) *gomoc
 }
 
 // DeleteInto mocks base method.
-func (m *MockAPIer) DeleteInto(arg0 context.Context, arg1 string, arg2 url.Values, arg3 interface{}) error {
+func (m *MockAPIer) DeleteInto(arg0 context.Context, arg1 string, arg2 url.Values, arg3 interface{}) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteInto", arg0, arg1, arg2, arg3)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // DeleteInto indicates an expected call of DeleteInto.
@@ -113,11 +114,12 @@ func (mr *MockAPIerMockRecorder) GetBody(arg0, arg1, arg2 interface{}) *gomock.C
 }
 
 // GetInto mocks base method.
-func (m *MockAPIer) GetInto(arg0 context.Context, arg1 string, arg2 url.Values, arg3 interface{}) error {
+func (m *MockAPIer) GetInto(arg0 context.Context, arg1 string, arg2 url.Values, arg3 interface{}) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetInto", arg0, arg1, arg2, arg3)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetInto indicates an expected call of GetInto.
@@ -172,11 +174,12 @@ func (mr *MockAPIerMockRecorder) PostBody(arg0, arg1, arg2, arg3 interface{}) *g
 }
 
 // PostInto mocks base method.
-func (m *MockAPIer) PostInto(arg0 context.Context, arg1 string, arg2 url.Values, arg3 io.Reader, arg4 interface{}) error {
+func (m *MockAPIer) PostInto(arg0 context.Context, arg1 string, arg2 url.Values, arg3 io.Reader, arg4 interface{}) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PostInto", arg0, arg1, arg2, arg3, arg4)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // PostInto indicates an expected call of PostInto.
@@ -217,11 +220,12 @@ func (mr *MockAPIerMockRecorder) PutBody(arg0, arg1, arg2, arg3 interface{}) *go
 }
 
 // PutInto mocks base method.
-func (m *MockAPIer) PutInto(arg0 context.Context, arg1 string, arg2 url.Values, arg3 io.Reader, arg4 interface{}) error {
+func (m *MockAPIer) PutInto(arg0 context.Context, arg1 string, arg2 url.Values, arg3 io.Reader, arg4 interface{}) (int64, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "PutInto", arg0, arg1, arg2, arg3, arg4)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // PutInto indicates an expected call of PutInto.

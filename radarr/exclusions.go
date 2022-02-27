@@ -19,7 +19,7 @@ func (r *Radarr) GetExclusions() ([]*Exclusion, error) {
 func (r *Radarr) GetExclusionsContext(ctx context.Context) ([]*Exclusion, error) {
 	var exclusions []*Exclusion
 
-	err := r.GetInto(ctx, "v3/exclusions", nil, &exclusions)
+	_, err := r.GetInto(ctx, "v3/exclusions", nil, &exclusions)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(exclusions): %w", err)
 	}

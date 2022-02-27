@@ -105,7 +105,7 @@ func (r *Readarr) GetQueuePageContext(ctx context.Context, params *starr.Req) (*
 	params.CheckSet("sortKey", "timeleft")
 	params.CheckSet("includeUnknownAuthorItems", "true")
 
-	err := r.GetInto(ctx, "v1/queue", params.Params(), &queue)
+	_, err := r.GetInto(ctx, "v1/queue", params.Params(), &queue)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(queue): %w", err)
 	}
@@ -121,7 +121,7 @@ func (r *Readarr) GetRootFolders() ([]*RootFolder, error) {
 func (r *Readarr) GetRootFoldersContext(ctx context.Context) ([]*RootFolder, error) {
 	var folders []*RootFolder
 
-	err := r.GetInto(ctx, "v1/rootFolder", nil, &folders)
+	_, err := r.GetInto(ctx, "v1/rootFolder", nil, &folders)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(rootFolder): %w", err)
 	}
@@ -137,7 +137,7 @@ func (r *Readarr) GetMetadataProfiles() ([]*MetadataProfile, error) {
 func (r *Readarr) GetMetadataProfilesContext(ctx context.Context) ([]*MetadataProfile, error) {
 	var profiles []*MetadataProfile
 
-	err := r.GetInto(ctx, "v1/metadataprofile", nil, &profiles)
+	_, err := r.GetInto(ctx, "v1/metadataprofile", nil, &profiles)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(metadataprofile): %w", err)
 	}

@@ -102,7 +102,7 @@ func (s *Sonarr) GetQueuePageContext(ctx context.Context, params *starr.Req) (*Q
 	params.CheckSet("sortKey", "timeleft")
 	params.CheckSet("includeUnknownSeriesItems", "true")
 
-	err := s.GetInto(ctx, "v3/queue", params.Params(), &queue)
+	_, err := s.GetInto(ctx, "v3/queue", params.Params(), &queue)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(queue): %w", err)
 	}
@@ -118,7 +118,7 @@ func (s *Sonarr) GetLanguageProfiles() ([]*LanguageProfile, error) {
 func (s *Sonarr) GetLanguageProfilesContext(ctx context.Context) ([]*LanguageProfile, error) {
 	var profiles []*LanguageProfile
 
-	err := s.GetInto(ctx, "v3/languageprofile", nil, &profiles)
+	_, err := s.GetInto(ctx, "v3/languageprofile", nil, &profiles)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(languageprofile): %w", err)
 	}
@@ -134,7 +134,7 @@ func (s *Sonarr) GetRootFolders() ([]*RootFolder, error) {
 func (s *Sonarr) GetRootFoldersContext(ctx context.Context) ([]*RootFolder, error) {
 	var folders []*RootFolder
 
-	err := s.GetInto(ctx, "v3/rootfolder", nil, &folders)
+	_, err := s.GetInto(ctx, "v3/rootfolder", nil, &folders)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(rootfolder): %w", err)
 	}

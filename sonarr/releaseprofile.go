@@ -18,7 +18,7 @@ func (s *Sonarr) GetReleaseProfiles() ([]*ReleaseProfile, error) {
 func (s *Sonarr) GetReleaseProfilesContext(ctx context.Context) ([]*ReleaseProfile, error) {
 	var profiles []*ReleaseProfile
 
-	err := s.GetInto(ctx, "v3/releaseProfile", nil, &profiles)
+	_, err := s.GetInto(ctx, "v3/releaseProfile", nil, &profiles)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(releaseProfile): %w", err)
 	}
@@ -38,7 +38,7 @@ func (s *Sonarr) AddReleaseProfileContext(ctx context.Context, profile *ReleaseP
 	}
 
 	var output ReleaseProfile
-	if err := s.PostInto(ctx, "v3/releaseProfile", nil, &body, &output); err != nil {
+	if _, err := s.PostInto(ctx, "v3/releaseProfile", nil, &body, &output); err != nil {
 		return 0, fmt.Errorf("api.Post(releaseProfile): %w", err)
 	}
 

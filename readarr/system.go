@@ -15,7 +15,7 @@ func (r *Readarr) GetSystemStatus() (*SystemStatus, error) {
 func (r *Readarr) GetSystemStatusContext(ctx context.Context) (*SystemStatus, error) {
 	var status SystemStatus
 
-	err := r.GetInto(ctx, "v1/system/status", nil, &status)
+	_, err := r.GetInto(ctx, "v1/system/status", nil, &status)
 	if err != nil {
 		return &status, fmt.Errorf("api.Get(system/status): %w", err)
 	}
@@ -32,7 +32,7 @@ func (r *Readarr) GetBackupFiles() ([]*starr.BackupFile, error) {
 func (r *Readarr) GetBackupFilesContext(ctx context.Context) ([]*starr.BackupFile, error) {
 	var output []*starr.BackupFile
 
-	if err := r.GetInto(ctx, "v1/system/backup", nil, &output); err != nil {
+	if _, err := r.GetInto(ctx, "v1/system/backup", nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(system/backup): %w", err)
 	}
 

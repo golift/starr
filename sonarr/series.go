@@ -35,7 +35,7 @@ func (s *Sonarr) GetSeriesContext(ctx context.Context, tvdbID int64) ([]*Series,
 
 	var series []*Series
 
-	err := s.GetInto(ctx, "v3/series", params, &series)
+	_, err := s.GetInto(ctx, "v3/series", params, &series)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(series): %w", err)
 	}
@@ -80,7 +80,7 @@ func (s *Sonarr) AddSeriesContext(ctx context.Context, series *AddSeriesInput) (
 	}
 
 	var output AddSeriesOutput
-	if err := s.PostInto(ctx, "v3/series", params, &body, &output); err != nil {
+	if _, err := s.PostInto(ctx, "v3/series", params, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(series): %w", err)
 	}
 
@@ -95,7 +95,7 @@ func (s *Sonarr) GetSeriesByID(seriesID int64) (*Series, error) {
 func (s *Sonarr) GetSeriesByIDContext(ctx context.Context, seriesID int64) (*Series, error) {
 	var series Series
 
-	err := s.GetInto(ctx, "v3/series/"+strconv.FormatInt(seriesID, starr.Base10), nil, &series)
+	_, err := s.GetInto(ctx, "v3/series/"+strconv.FormatInt(seriesID, starr.Base10), nil, &series)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(series): %w", err)
 	}
@@ -120,7 +120,7 @@ func (s *Sonarr) GetSeriesLookupContext(ctx context.Context, term string, tvdbID
 
 	var series []*Series
 
-	err := s.GetInto(ctx, "v3/series/lookup", params, &series)
+	_, err := s.GetInto(ctx, "v3/series/lookup", params, &series)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(series/lookup): %w", err)
 	}

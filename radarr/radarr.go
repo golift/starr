@@ -107,7 +107,7 @@ func (r *Radarr) GetQueuePageContext(ctx context.Context, params *starr.Req) (*Q
 	params.CheckSet("sortKey", "timeleft")
 	params.CheckSet("includeUnknownMovieItems", "true")
 
-	err := r.GetInto(ctx, "v3/queue", params.Params(), &queue)
+	_, err := r.GetInto(ctx, "v3/queue", params.Params(), &queue)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(queue): %w", err)
 	}
@@ -124,7 +124,7 @@ func (r *Radarr) GetRootFolders() ([]*RootFolder, error) {
 func (r *Radarr) GetRootFoldersContext(ctx context.Context) ([]*RootFolder, error) {
 	var folders []*RootFolder
 
-	err := r.GetInto(ctx, "v3/rootFolder", nil, &folders)
+	_, err := r.GetInto(ctx, "v3/rootFolder", nil, &folders)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(rootFolder): %w", err)
 	}
