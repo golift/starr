@@ -15,6 +15,7 @@ import (
 	"strings"
 
 	"golang.org/x/net/publicsuffix"
+	"golift.io/datacounter"
 )
 
 // APIer is used by the sub packages to allow mocking the http methods in tests.
@@ -27,10 +28,10 @@ type APIer interface {
 	Put(ctx context.Context, path string, params url.Values, putBody io.Reader) (respBody []byte, err error)
 	Delete(ctx context.Context, path string, params url.Values) (respBody []byte, err error)
 	// Normal data, unmarshals into provided interface.
-	GetInto(ctx context.Context, path string, params url.Values, output interface{}) error
-	PostInto(ctx context.Context, path string, params url.Values, postBody io.Reader, output interface{}) error
-	PutInto(ctx context.Context, path string, params url.Values, putBody io.Reader, output interface{}) error
-	DeleteInto(ctx context.Context, path string, params url.Values, output interface{}) error
+	GetInto(ctx context.Context, path string, params url.Values, output interface{}) (int64, error)
+	PostInto(ctx context.Context, path string, params url.Values, postBody io.Reader, output interface{}) (int64, error)
+	PutInto(ctx context.Context, path string, params url.Values, putBody io.Reader, output interface{}) (int64, error)
+	DeleteInto(ctx context.Context, path string, params url.Values, output interface{}) (int64, error)
 	// Body methods.
 	GetBody(ctx context.Context, path string, params url.Values) (respBody io.ReadCloser, status int, err error)
 	PostBody(ctx context.Context, path string, params url.Values,
@@ -159,7 +160,7 @@ func (c *Config) Delete(ctx context.Context, path string, params url.Values) ([]
 
 // GetInto performs an HTTP GET against an API path and
 // unmarshals the payload into the provided pointer interface.
-func (c *Config) GetInto(ctx context.Context, path string, params url.Values, output interface{}) error {
+func (c *Config) GetInto(ctx context.Context, path string, params url.Values, output interface{}) (int64, error) {
 	if c.Debugf == nil { // no log, pass it through.
 		_, data, _, err := c.body(ctx, path, http.MethodGet, params, nil)
 
@@ -174,7 +175,7 @@ func (c *Config) GetInto(ctx context.Context, path string, params url.Values, ou
 // PostInto performs an HTTP POST against an API path and
 // unmarshals the payload into the provided pointer interface.
 func (c *Config) PostInto(ctx context.Context,
-	path string, params url.Values, postBody io.Reader, output interface{}) error {
+	path string, params url.Values, postBody io.Reader, output interface{}) (int64, error) {
 	if c.Debugf == nil { // no log, pass it through.
 		_, data, _, err := c.body(ctx, path, http.MethodPost, params, postBody)
 
@@ -189,7 +190,7 @@ func (c *Config) PostInto(ctx context.Context,
 // PutInto performs an HTTP PUT against an API path and
 // unmarshals the payload into the provided pointer interface.
 func (c *Config) PutInto(ctx context.Context,
-	path string, params url.Values, putBody io.Reader, output interface{}) error {
+	path string, params url.Values, putBody io.Reader, output interface{}) (int64, error) {
 	if c.Debugf == nil { // no log, pass it through.
 		_, data, _, err := c.body(ctx, path, http.MethodPut, params, putBody)
 
@@ -203,7 +204,7 @@ func (c *Config) PutInto(ctx context.Context,
 
 // DeleteInto performs an HTTP DELETE against an API path
 // and unmarshals the payload into a pointer interface.
-func (c *Config) DeleteInto(ctx context.Context, path string, params url.Values, output interface{}) error {
+func (c *Config) DeleteInto(ctx context.Context, path string, params url.Values, output interface{}) (int64, error) {
 	if c.Debugf == nil { // no log, pass it through.
 		_, data, _, err := c.body(ctx, path, http.MethodDelete, params, nil)
 
@@ -275,30 +276,32 @@ func (c *Config) DeleteBody(ctx context.Context, path string, params url.Values)
 
 // unmarshal is an extra procedure to check an error and unmarshal the payload.
 // This allows the methods above to have all their logic abstracted.
-func unmarshal(v interface{}, data []byte, err error) error {
+func unmarshal(v interface{}, data []byte, err error) (int64, error) {
 	if err != nil {
-		return err
+		return int64(len(data)), err
 	} else if v == nil {
-		return fmt.Errorf("this is a code bug: %w", ErrNilInterface)
+		return int64(len(data)), fmt.Errorf("this is a code bug: %w", ErrNilInterface)
 	} else if err = json.Unmarshal(data, v); err != nil {
-		return fmt.Errorf("json parse error: %w", err)
+		return int64(len(data)), fmt.Errorf("json parse error: %w", err)
 	}
 
-	return nil
+	return int64(len(data)), nil
 }
 
 // unmarshalBody is an extra procedure to check an error and unmarshal the resp.Body payload.
 // This version unmarshals the resp.Body directly.
-func unmarshalBody(output interface{}, data io.ReadCloser, err error) error {
+func unmarshalBody(output interface{}, data io.ReadCloser, err error) (int64, error) {
 	defer data.Close()
 
+	counter := datacounter.NewReaderCounter(data)
+
 	if err != nil {
-		return err
+		return int64(counter.Count()), err
 	} else if output == nil {
-		return fmt.Errorf("this is a code bug: %w", ErrNilInterface)
-	} else if err = json.NewDecoder(data).Decode(output); err != nil {
-		return fmt.Errorf("json parse error: %w", err)
+		return int64(counter.Count()), fmt.Errorf("this is a code bug: %w", ErrNilInterface)
+	} else if err = json.NewDecoder(counter).Decode(output); err != nil {
+		return int64(counter.Count()), fmt.Errorf("json parse error: %w", err)
 	}
 
-	return nil
+	return int64(counter.Count()), nil
 }

@@ -16,7 +16,7 @@ func TestGetCommands(t *testing.T) {
 	mock, app, assert := testGetReady(t)
 
 	// Setup an expectation, return values and some test code for the APIer call (GetInto).
-	mock.EXPECT().GetInto(gomock.Any(), apparr.APIver+"/command", nil, gomock.Any()).Return(nil).Do(
+	mock.EXPECT().GetInto(gomock.Any(), apparr.APIver+"/command", nil, gomock.Any()).Return(int64(0), nil).Do(
 		// This is a fake starr.GetInto() func. This is used to mock and validate data in this method call.
 		// The last argument is normally an interface{};
 		// using the correct type here causes a panic if the funcion is (somehow) wrong.

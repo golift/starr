@@ -16,7 +16,7 @@ func (r *Radarr) GetCustomFormats() ([]*CustomFormat, error) {
 // GetCustomFormatsContext returns all configured Custom Formats.
 func (r *Radarr) GetCustomFormatsContext(ctx context.Context) ([]*CustomFormat, error) {
 	var output []*CustomFormat
-	if err := r.GetInto(ctx, "v3/customFormat", nil, &output); err != nil {
+	if _, err := r.GetInto(ctx, "v3/customFormat", nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(customFormat): %w", err)
 	}
 
@@ -43,7 +43,7 @@ func (r *Radarr) AddCustomFormatContext(ctx context.Context, format *CustomForma
 		return nil, fmt.Errorf("json.Marshal(customFormat): %w", err)
 	}
 
-	if err := r.PostInto(ctx, "v3/customFormat", nil, &body, &output); err != nil {
+	if _, err := r.PostInto(ctx, "v3/customFormat", nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(customFormat): %w", err)
 	}
 
@@ -67,7 +67,7 @@ func (r *Radarr) UpdateCustomFormatContext(ctx context.Context, format *CustomFo
 	}
 
 	var output CustomFormat
-	if err := r.PutInto(ctx, "v3/customFormat/"+strconv.Itoa(cfID), nil, &body, &output); err != nil {
+	if _, err := r.PutInto(ctx, "v3/customFormat/"+strconv.Itoa(cfID), nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(customFormat): %w", err)
 	}
 

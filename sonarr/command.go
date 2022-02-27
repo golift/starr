@@ -19,7 +19,7 @@ func (s *Sonarr) GetCommands() ([]*CommandResponse, error) {
 func (s *Sonarr) GetCommandsContext(ctx context.Context) ([]*CommandResponse, error) {
 	var output []*CommandResponse
 
-	if err := s.GetInto(ctx, "v3/command", nil, &output); err != nil {
+	if _, err := s.GetInto(ctx, "v3/command", nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(command): %w", err)
 	}
 
@@ -43,7 +43,7 @@ func (s *Sonarr) SendCommandContext(ctx context.Context, cmd *CommandRequest) (*
 		return nil, fmt.Errorf("json.Marshal(cmd): %w", err)
 	}
 
-	if err := s.PostInto(ctx, "v3/command", nil, &body, &output); err != nil {
+	if _, err := s.PostInto(ctx, "v3/command", nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(command): %w", err)
 	}
 
@@ -62,7 +62,7 @@ func (s *Sonarr) GetCommandStatusContext(ctx context.Context, commandID int64) (
 		return &output, nil
 	}
 
-	err := s.GetInto(ctx, "v3/command/"+strconv.FormatInt(commandID, starr.Base10), nil, &output)
+	_, err := s.GetInto(ctx, "v3/command/"+strconv.FormatInt(commandID, starr.Base10), nil, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Post(command): %w", err)
 	}

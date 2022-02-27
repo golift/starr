@@ -16,7 +16,7 @@ func TestGetCommands(t *testing.T) {
 	mock, app, assert := testGetReady(t)
 
 	// Setup an expectation, return values and some test code for the APIer call (GetInto).
-	mock.EXPECT().GetInto(gomock.Any(), apparr.APIver+"/command", nil, gomock.Any()).Return(nil).Do(
+	mock.EXPECT().GetInto(gomock.Any(), apparr.APIver+"/command", nil, gomock.Any()).Return(int64(0), nil).Do(
 		// This is a fake starr.GetInto() func. This is used to mock and validate data in this method call.
 		func(ctx context.Context, path string, params url.Values, output *[]*apparr.CommandResponse) {
 			// This may change, but for now there are no params needed to get commands.

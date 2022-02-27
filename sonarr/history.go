@@ -57,7 +57,7 @@ func (s *Sonarr) GetHistoryPage(params *starr.Req) (*History, error) {
 func (s *Sonarr) GetHistoryPageContext(ctx context.Context, params *starr.Req) (*History, error) {
 	var history History
 
-	err := s.GetInto(ctx, "v3/history", params.Params(), &history)
+	_, err := s.GetInto(ctx, "v3/history", params.Params(), &history)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(history): %w", err)
 	}

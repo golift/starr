@@ -19,7 +19,7 @@ func (p *Prowlarr) GetTags() ([]*starr.Tag, error) {
 func (p *Prowlarr) GetTagsContext(ctx context.Context) ([]*starr.Tag, error) {
 	var tags []*starr.Tag
 
-	err := p.GetInto(ctx, "v1/tag", nil, &tags)
+	_, err := p.GetInto(ctx, "v1/tag", nil, &tags)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(tag): %w", err)
 	}
@@ -40,7 +40,7 @@ func (p *Prowlarr) AddTagContext(ctx context.Context, label string) (int, error)
 	}
 
 	var tag starr.Tag
-	if err := p.PostInto(ctx, "v1/tag", nil, &body, &tag); err != nil {
+	if _, err := p.PostInto(ctx, "v1/tag", nil, &body, &tag); err != nil {
 		return tag.ID, fmt.Errorf("api.Post(tag): %w", err)
 	}
 
@@ -60,7 +60,7 @@ func (p *Prowlarr) UpdateTagContext(ctx context.Context, tagID int, label string
 	}
 
 	var tag starr.Tag
-	if err := p.PutInto(ctx, "v1/tag/"+strconv.Itoa(tagID), nil, &body, &tag); err != nil {
+	if _, err := p.PutInto(ctx, "v1/tag/"+strconv.Itoa(tagID), nil, &body, &tag); err != nil {
 		return tag.ID, fmt.Errorf("api.Put(tag): %w", err)
 	}
 
@@ -75,7 +75,7 @@ func (p *Prowlarr) GetTag(tagID int) (*starr.Tag, error) {
 func (p *Prowlarr) GetTagContext(ctx context.Context, tagID int) (*starr.Tag, error) {
 	var tag *starr.Tag
 
-	err := p.GetInto(ctx, "v1/tag/"+strconv.Itoa(tagID), nil, &tag)
+	_, err := p.GetInto(ctx, "v1/tag/"+strconv.Itoa(tagID), nil, &tag)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(tag): %w", err)
 	}

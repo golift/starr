@@ -21,7 +21,7 @@ func (r *Readarr) GetAuthorByID(authorID int64) (*Author, error) {
 func (r *Readarr) GetAuthorByIDContext(ctx context.Context, authorID int64) (*Author, error) {
 	var author Author
 
-	err := r.GetInto(ctx, "v1/author/"+strconv.FormatInt(authorID, starr.Base10), nil, &author)
+	_, err := r.GetInto(ctx, "v1/author/"+strconv.FormatInt(authorID, starr.Base10), nil, &author)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(author): %w", err)
 	}

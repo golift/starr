@@ -2,7 +2,10 @@ module golift.io/starr
 
 go 1.17
 
-require golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // publicsuffix, cookiejar.
+require (
+	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // publicsuffix, cookiejar.
+	golift.io/datacounter v1.0.3 // Counts bytes read from starr apps.
+)
 
 // All of this is for the tests.
 require (

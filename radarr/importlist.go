@@ -18,7 +18,7 @@ func (r *Radarr) GetImportLists() ([]*ImportList, error) {
 // GetImportListsContext returns all import lists.
 func (r *Radarr) GetImportListsContext(ctx context.Context) ([]*ImportList, error) {
 	var output []*ImportList
-	if err := r.GetInto(ctx, "v3/importlist", nil, &output); err != nil {
+	if _, err := r.GetInto(ctx, "v3/importlist", nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(importlist): %w", err)
 	}
 
@@ -40,7 +40,7 @@ func (r *Radarr) CreateImportListContext(ctx context.Context, list *ImportList) 
 	}
 
 	var output ImportList
-	if err := r.PostInto(ctx, "v3/importlist", nil, &body, &output); err != nil {
+	if _, err := r.PostInto(ctx, "v3/importlist", nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(importlist): %w", err)
 	}
 
@@ -84,7 +84,7 @@ func (r *Radarr) UpdateImportListContext(ctx context.Context, list *ImportList) 
 
 	var output ImportList
 
-	err := r.PutInto(ctx, "v3/importlist/"+strconv.FormatInt(list.ID, starr.Base10), nil, &body, &output)
+	_, err := r.PutInto(ctx, "v3/importlist/"+strconv.FormatInt(list.ID, starr.Base10), nil, &body, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Put(importlist): %w", err)
 	}

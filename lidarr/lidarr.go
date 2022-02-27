@@ -108,7 +108,7 @@ func (l *Lidarr) GetQueuePageContext(ctx context.Context, params *starr.Req) (*Q
 	params.CheckSet("sortKey", "timeleft")
 	params.CheckSet("includeUnknownArtistItems", "true")
 
-	err := l.GetInto(ctx, "v1/queue", params.Params(), &queue)
+	_, err := l.GetInto(ctx, "v1/queue", params.Params(), &queue)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(queue): %w", err)
 	}
@@ -125,7 +125,7 @@ func (l *Lidarr) GetQualityDefinition() ([]*QualityDefinition, error) {
 func (l *Lidarr) GetQualityDefinitionContext(ctx context.Context) ([]*QualityDefinition, error) {
 	var definition []*QualityDefinition
 
-	err := l.GetInto(ctx, "v1/qualitydefinition", nil, &definition)
+	_, err := l.GetInto(ctx, "v1/qualitydefinition", nil, &definition)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(qualitydefinition): %w", err)
 	}
@@ -142,7 +142,7 @@ func (l *Lidarr) GetRootFolders() ([]*RootFolder, error) {
 func (l *Lidarr) GetRootFoldersContext(ctx context.Context) ([]*RootFolder, error) {
 	var folders []*RootFolder
 
-	err := l.GetInto(ctx, "v1/rootFolder", nil, &folders)
+	_, err := l.GetInto(ctx, "v1/rootFolder", nil, &folders)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(rootFolder): %w", err)
 	}
@@ -159,7 +159,7 @@ func (l *Lidarr) GetMetadataProfiles() ([]*MetadataProfile, error) {
 func (l *Lidarr) GetMetadataProfilesContext(ctx context.Context) ([]*MetadataProfile, error) {
 	var profiles []*MetadataProfile
 
-	err := l.GetInto(ctx, "v1/metadataprofile", nil, &profiles)
+	_, err := l.GetInto(ctx, "v1/metadataprofile", nil, &profiles)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(metadataprofile): %w", err)
 	}

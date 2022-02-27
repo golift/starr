@@ -16,7 +16,7 @@ func (r *Radarr) GetCommands() ([]*CommandResponse, error) {
 func (r *Radarr) GetCommandsContext(ctx context.Context) ([]*CommandResponse, error) {
 	var output []*CommandResponse
 
-	if err := r.GetInto(ctx, "v3/command", nil, &output); err != nil {
+	if _, err := r.GetInto(ctx, "v3/command", nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(command): %w", err)
 	}
 
@@ -41,7 +41,7 @@ func (r *Radarr) SendCommandContext(ctx context.Context, cmd *CommandRequest) (*
 		return nil, fmt.Errorf("json.Marshal(cmd): %w", err)
 	}
 
-	if err := r.PostInto(ctx, "v3/command", nil, &body, &output); err != nil {
+	if _, err := r.PostInto(ctx, "v3/command", nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(command): %w", err)
 	}
 

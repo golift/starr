@@ -19,7 +19,7 @@ func (r *Radarr) GetQualityProfiles() ([]*QualityProfile, error) {
 func (r *Radarr) GetQualityProfilesContext(ctx context.Context) ([]*QualityProfile, error) {
 	var profiles []*QualityProfile
 
-	err := r.GetInto(ctx, "v3/qualityProfile", nil, &profiles)
+	_, err := r.GetInto(ctx, "v3/qualityProfile", nil, &profiles)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(qualityProfile): %w", err)
 	}
@@ -40,7 +40,7 @@ func (r *Radarr) AddQualityProfileContext(ctx context.Context, profile *QualityP
 	}
 
 	var output QualityProfile
-	if err := r.PostInto(ctx, "v3/qualityProfile", nil, &body, &output); err != nil {
+	if _, err := r.PostInto(ctx, "v3/qualityProfile", nil, &body, &output); err != nil {
 		return 0, fmt.Errorf("api.Post(qualityProfile): %w", err)
 	}
 

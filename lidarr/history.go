@@ -61,7 +61,7 @@ func (l *Lidarr) GetHistoryPage(params *starr.Req) (*History, error) {
 func (l *Lidarr) GetHistoryPageContext(ctx context.Context, params *starr.Req) (*History, error) {
 	var history History
 
-	err := l.GetInto(ctx, "v1/history", params.Params(), &history)
+	_, err := l.GetInto(ctx, "v1/history", params.Params(), &history)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(history): %w", err)
 	}

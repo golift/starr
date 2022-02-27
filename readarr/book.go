@@ -26,7 +26,7 @@ func (r *Readarr) GetBookContext(ctx context.Context, gridID string) ([]*Book, e
 
 	var books []*Book
 
-	err := r.GetInto(ctx, "v1/book", params, &books)
+	_, err := r.GetInto(ctx, "v1/book", params, &books)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(book): %w", err)
 	}
@@ -42,7 +42,7 @@ func (r *Readarr) GetBookByID(bookID int64) (*Book, error) {
 func (r *Readarr) GetBookByIDContext(ctx context.Context, bookID int64) (*Book, error) {
 	var book Book
 
-	err := r.GetInto(ctx, "v1/book/"+strconv.FormatInt(bookID, starr.Base10), nil, &book)
+	_, err := r.GetInto(ctx, "v1/book/"+strconv.FormatInt(bookID, starr.Base10), nil, &book)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(book): %w", err)
 	}
@@ -89,7 +89,7 @@ func (r *Readarr) AddBookContext(ctx context.Context, book *AddBookInput) (*AddB
 	}
 
 	var output AddBookOutput
-	if err := r.PostInto(ctx, "v1/book", params, &body, &output); err != nil {
+	if _, err := r.PostInto(ctx, "v1/book", params, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(book): %w", err)
 	}
 
@@ -111,7 +111,7 @@ func (r *Readarr) LookupContext(ctx context.Context, term string) ([]*Book, erro
 	params := make(url.Values)
 	params.Set("term", term)
 
-	err := r.GetInto(ctx, "v1/book/lookup", params, &output)
+	_, err := r.GetInto(ctx, "v1/book/lookup", params, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(book/lookup): %w", err)
 	}

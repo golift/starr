@@ -16,7 +16,7 @@ func (l *Lidarr) GetSystemStatus() (*SystemStatus, error) {
 func (l *Lidarr) GetSystemStatusContext(ctx context.Context) (*SystemStatus, error) {
 	var status SystemStatus
 
-	err := l.GetInto(ctx, "v1/system/status", nil, &status)
+	_, err := l.GetInto(ctx, "v1/system/status", nil, &status)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(system/status): %w", err)
 	}
@@ -35,7 +35,7 @@ func (l *Lidarr) GetBackupFiles() ([]*starr.BackupFile, error) {
 func (l *Lidarr) GetBackupFilesContext(ctx context.Context) ([]*starr.BackupFile, error) {
 	var output []*starr.BackupFile
 
-	if err := l.GetInto(ctx, "v1/system/backup", nil, &output); err != nil {
+	if _, err := l.GetInto(ctx, "v1/system/backup", nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(system/backup): %w", err)
 	}
 

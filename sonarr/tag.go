@@ -18,7 +18,7 @@ func (s *Sonarr) GetTags() ([]*starr.Tag, error) {
 func (s *Sonarr) GetTagsContext(ctx context.Context) ([]*starr.Tag, error) {
 	var tags []*starr.Tag
 
-	err := s.GetInto(ctx, "v3/tag", nil, &tags)
+	_, err := s.GetInto(ctx, "v3/tag", nil, &tags)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(tag): %w", err)
 	}
@@ -38,7 +38,7 @@ func (s *Sonarr) UpdateTagContext(ctx context.Context, tagID int, label string) 
 	}
 
 	var tag starr.Tag
-	if err := s.PutInto(ctx, "v3/tag/"+strconv.Itoa(tagID), nil, &body, &tag); err != nil {
+	if _, err := s.PutInto(ctx, "v3/tag/"+strconv.Itoa(tagID), nil, &body, &tag); err != nil {
 		return tag.ID, fmt.Errorf("api.Put(tag): %w", err)
 	}
 
@@ -57,7 +57,7 @@ func (s *Sonarr) AddTagContext(ctx context.Context, label string) (int, error) {
 	}
 
 	var tag starr.Tag
-	if err := s.PostInto(ctx, "v3/tag", nil, &body, &tag); err != nil {
+	if _, err := s.PostInto(ctx, "v3/tag", nil, &body, &tag); err != nil {
 		return tag.ID, fmt.Errorf("api.Post(tag): %w", err)
 	}
 
@@ -72,7 +72,7 @@ func (s *Sonarr) GetTag(tagID int) (*starr.Tag, error) {
 func (s *Sonarr) GetTagContext(ctx context.Context, tagID int) (*starr.Tag, error) {
 	var tag *starr.Tag
 
-	err := s.GetInto(ctx, "v3/tag/"+strconv.Itoa(tagID), nil, &tag)
+	_, err := s.GetInto(ctx, "v3/tag/"+strconv.Itoa(tagID), nil, &tag)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(tag): %w", err)
 	}
