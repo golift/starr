@@ -109,19 +109,3 @@ func (s *Sonarr) GetQueuePageContext(ctx context.Context, params *starr.Req) (*Q
 
 	return &queue, nil
 }
-
-// GetRootFolders returns all configured root folders.
-func (s *Sonarr) GetRootFolders() ([]*RootFolder, error) {
-	return s.GetRootFoldersContext(context.Background())
-}
-
-func (s *Sonarr) GetRootFoldersContext(ctx context.Context) ([]*RootFolder, error) {
-	var folders []*RootFolder
-
-	_, err := s.GetInto(ctx, "v3/rootfolder", nil, &folders)
-	if err != nil {
-		return nil, fmt.Errorf("api.Get(rootfolder): %w", err)
-	}
-
-	return folders, nil
-}

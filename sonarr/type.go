@@ -39,15 +39,6 @@ type SystemStatus struct {
 	PackageUpdateMechanism string    `json:"packageUpdateMechanism"`
 }
 
-// RootFolder is the /api/v3/rootfolder endpoint.
-type RootFolder struct {
-	ID              int64         `json:"id"`
-	Path            string        `json:"path"`
-	Accessible      bool          `json:"accessible"`
-	FreeSpace       int64         `json:"freeSpace"`
-	UnmappedFolders []*starr.Path `json:"unmappedFolders"`
-}
-
 // Queue is the /api/v3/queue endpoint.
 type Queue struct {
 	Page          int            `json:"page"`
