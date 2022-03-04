@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"path"
 	"strconv"
 
 	"golift.io/starr"
@@ -20,6 +21,9 @@ type QualityDefinition struct {
 	Qualities []*starr.Quality `json:"items"`
 }
 
+// Define Base Path for Quality Definition calls.
+const bpQualityDefinition = APIver + "/qualityDefinition"
+
 // GetQualityDefinitions returns all configured quality definitions.
 func (s *Sonarr) GetQualityDefinitions() ([]*QualityDefinition, error) {
 	return s.GetQualityDefinitionsContext(context.Background())
@@ -28,7 +32,7 @@ func (s *Sonarr) GetQualityDefinitions() ([]*QualityDefinition, error) {
 func (s *Sonarr) GetQualityDefinitionsContext(ctx context.Context) ([]*QualityDefinition, error) {
 	var output []*QualityDefinition
 
-	if _, err := s.GetInto(ctx, "v3/qualityDefinition", nil, &output); err != nil {
+	if _, err := s.GetInto(ctx, bpQualityDefinition, nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(qualityDefinition): %w", err)
 	}
 
@@ -43,8 +47,8 @@ func (s *Sonarr) GetQualityDefinition(qualityDefinitionID int) (*QualityDefiniti
 func (s *Sonarr) GetQualityDefinitionContext(ctx context.Context, qualityDefinitionID int) (*QualityDefinition, error) {
 	var output *QualityDefinition
 
-	id := strconv.Itoa(qualityDefinitionID)
-	if _, err := s.GetInto(ctx, "v3/qualityDefinition/"+id, nil, &output); err != nil {
+	uri := path.Join(bpQualityDefinition, strconv.Itoa(qualityDefinitionID))
+	if _, err := s.GetInto(ctx, uri, nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(qualityDefinition): %w", err)
 	}
 
@@ -65,8 +69,8 @@ func (s *Sonarr) UpdateQualityDefinitionContext(ctx context.Context,
 		return nil, fmt.Errorf("json.Marshal(qualityDefinition): %w", err)
 	}
 
-	id := strconv.Itoa(int(definition.ID))
-	if _, err := s.PutInto(ctx, "v3/qualityDefinition/"+id, nil, &body, &output); err != nil {
+	uri := path.Join(bpQualityDefinition, strconv.Itoa(int(definition.ID)))
+	if _, err := s.PutInto(ctx, uri, nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(qualityDefinition): %w", err)
 	}
 
