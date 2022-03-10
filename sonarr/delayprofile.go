@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"path"
 	"strconv"
 )
 
@@ -21,6 +22,9 @@ type DelayProfile struct {
 	PreferredProtocol      string `json:"preferredProtocol"`
 }
 
+// Define Base Path for Delay Profile calls.
+const bpDelayProfile = APIver + "/delayProfile"
+
 // GetDelayProfiles returns all configured delay profiles.
 func (s *Sonarr) GetDelayProfiles() ([]*DelayProfile, error) {
 	return s.GetDelayProfilesContext(context.Background())
@@ -29,7 +33,7 @@ func (s *Sonarr) GetDelayProfiles() ([]*DelayProfile, error) {
 func (s *Sonarr) GetDelayProfilesContext(ctx context.Context) ([]*DelayProfile, error) {
 	var output []*DelayProfile
 
-	if _, err := s.GetInto(ctx, "v3/delayProfile", nil, &output); err != nil {
+	if _, err := s.GetInto(ctx, bpDelayProfile, nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(delayProfile): %w", err)
 	}
 
@@ -44,8 +48,8 @@ func (s *Sonarr) GetDelayProfile(profileID int) (*DelayProfile, error) {
 func (s *Sonarr) GetDelayProfileContext(ctx context.Context, profileID int) (*DelayProfile, error) {
 	var output *DelayProfile
 
-	id := strconv.Itoa(profileID)
-	if _, err := s.GetInto(ctx, "v3/delayProfile/"+id, nil, &output); err != nil {
+	uri := path.Join(bpDelayProfile, strconv.Itoa(profileID))
+	if _, err := s.GetInto(ctx, uri, nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(delayProfile): %w", err)
 	}
 
@@ -65,7 +69,7 @@ func (s *Sonarr) AddDelayProfileContext(ctx context.Context, profile *DelayProfi
 		return nil, fmt.Errorf("json.Marshal(delayProfile): %w", err)
 	}
 
-	if _, err := s.PostInto(ctx, "v3/delayProfile", nil, &body, &output); err != nil {
+	if _, err := s.PostInto(ctx, bpDelayProfile, nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(delayProfile): %w", err)
 	}
 
@@ -85,8 +89,8 @@ func (s *Sonarr) UpdateDelayProfileContext(ctx context.Context, profile *DelayPr
 		return nil, fmt.Errorf("json.Marshal(delayProfile): %w", err)
 	}
 
-	id := strconv.Itoa(int(profile.ID))
-	if _, err := s.PutInto(ctx, "v3/delayProfile/"+id, nil, &body, &output); err != nil {
+	uri := path.Join(bpDelayProfile, strconv.Itoa(int(profile.ID)))
+	if _, err := s.PutInto(ctx, uri, nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(delayProfile): %w", err)
 	}
 
@@ -99,8 +103,8 @@ func (s *Sonarr) DeleteDelayProfile(profileID int) error {
 }
 
 func (s *Sonarr) DeleteDelayProfileContext(ctx context.Context, profileID int) error {
-	id := strconv.Itoa(profileID)
-	if _, err := s.Delete(ctx, "v3/delayProfile/"+id, nil); err != nil {
+	uri := path.Join(bpDelayProfile, strconv.Itoa(profileID))
+	if _, err := s.Delete(ctx, uri, nil); err != nil {
 		return fmt.Errorf("api.Delete(delayProfile): %w", err)
 	}
 

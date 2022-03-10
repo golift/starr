@@ -9,28 +9,6 @@ import (
 // APIver is the Sonarr API version supported by this library.
 const APIver = "v3"
 
-// QualityProfile is the /api/v3/qualityprofile endpoint.
-type QualityProfile struct {
-	ID             int64            `json:"id"`
-	Name           string           `json:"name"`
-	Cutoff         int64            `json:"cutoff"`
-	Qualities      []*starr.Quality `json:"items"`
-	UpgradeAllowed bool             `json:"upgradeAllowed"`
-}
-
-// ReleaseProfile defines a release profile's data from Sonarr.
-type ReleaseProfile struct {
-	Name            string            `json:"name"`
-	Required        []string          `json:"required"`
-	Ignored         []string          `json:"ignored"`
-	Preferred       []*starr.KeyValue `json:"preferred"`
-	IndexerID       int64             `json:"indexerId"`
-	Tags            []int             `json:"tags"`
-	ID              int64             `json:"id"`
-	IncPrefOnRename bool              `json:"includePreferredWhenRenaming"`
-	Enabled         bool              `json:"enabled"`
-}
-
 // SystemStatus is the /api/v3/system/status endpoint.
 type SystemStatus struct {
 	Version                string    `json:"version"`
@@ -177,21 +155,6 @@ type Episode struct {
 	UnverifiedSceneNumbering bool      `json:"unverifiedSceneNumbering"`
 	HasFile                  bool      `json:"hasFile"`
 	Monitored                bool      `json:"monitored"`
-}
-
-// LanguageProfile is the /api/v3/languageprofile endpoint.
-type LanguageProfile struct {
-	Name           string       `json:"name"`
-	UpgradeAllowed bool         `json:"upgradeAllowed"`
-	Cutoff         *starr.Value `json:"cutoff"`
-	Languages      []Language   `json:"languages"`
-	ID             int64        `json:"id"`
-}
-
-// Language is part of LanguageProfile.
-type Language struct {
-	Language *starr.Value `json:"language"`
-	Allowed  bool         `json:"allowed"`
 }
 
 // AddSeriesInput is the input for a POST to the /api/v3/series endpoint.

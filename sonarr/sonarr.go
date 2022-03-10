@@ -110,22 +110,6 @@ func (s *Sonarr) GetQueuePageContext(ctx context.Context, params *starr.Req) (*Q
 	return &queue, nil
 }
 
-// GetLanguageProfiles returns all configured language profiles.
-func (s *Sonarr) GetLanguageProfiles() ([]*LanguageProfile, error) {
-	return s.GetLanguageProfilesContext(context.Background())
-}
-
-func (s *Sonarr) GetLanguageProfilesContext(ctx context.Context) ([]*LanguageProfile, error) {
-	var profiles []*LanguageProfile
-
-	_, err := s.GetInto(ctx, "v3/languageprofile", nil, &profiles)
-	if err != nil {
-		return nil, fmt.Errorf("api.Get(languageprofile): %w", err)
-	}
-
-	return profiles, nil
-}
-
 // GetRootFolders returns all configured root folders.
 func (s *Sonarr) GetRootFolders() ([]*RootFolder, error) {
 	return s.GetRootFoldersContext(context.Background())
