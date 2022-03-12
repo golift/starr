@@ -104,9 +104,8 @@ func (c *Config) SetHeaders(req *http.Request) {
 
 // SetPath makes sure the path starts with /api and returns the full URL.
 func (c *Config) SetPath(uriPath string) string {
-	if strings.HasPrefix(uriPath, API) ||
-		strings.HasPrefix(uriPath, path.Join("/", API)) ||
-		strings.HasPrefix(uriPath, path.Join("/", API, "/")) {
+	if strings.HasPrefix(uriPath, API+"/") ||
+		strings.HasPrefix(uriPath, path.Join("/", API)+"/") {
 		uriPath = path.Join("/", uriPath)
 	} else {
 		uriPath = path.Join("/", API, uriPath)
