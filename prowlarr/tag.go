@@ -5,66 +5,27 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"path"
 	"strconv"
 
 	"golift.io/starr"
 )
 
-// GetTags returns all the tags.
+const bpTag = APIver + "/tag"
+
+// GetTags returns all configured tags.
 func (p *Prowlarr) GetTags() ([]*starr.Tag, error) {
 	return p.GetTagsContext(context.Background())
 }
 
-// GetTagsContext returns all the tags.
 func (p *Prowlarr) GetTagsContext(ctx context.Context) ([]*starr.Tag, error) {
-	var tags []*starr.Tag
+	var output []*starr.Tag
 
-	_, err := p.GetInto(ctx, "v1/tag", nil, &tags)
-	if err != nil {
+	if _, err := p.GetInto(ctx, bpTag, nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(tag): %w", err)
 	}
 
-	return tags, nil
-}
-
-// AddTag adds a tag or returns the ID for an existing tag.
-func (p *Prowlarr) AddTag(label string) (int, error) {
-	return p.AddTagContext(context.Background(), label)
-}
-
-// AddTagContext adds a tag or returns the ID for an existing tag.
-func (p *Prowlarr) AddTagContext(ctx context.Context, label string) (int, error) {
-	var body bytes.Buffer
-	if err := json.NewEncoder(&body).Encode(&starr.Tag{Label: label}); err != nil {
-		return 0, fmt.Errorf("json.Marshal(tag): %w", err)
-	}
-
-	var tag starr.Tag
-	if _, err := p.PostInto(ctx, "v1/tag", nil, &body, &tag); err != nil {
-		return tag.ID, fmt.Errorf("api.Post(tag): %w", err)
-	}
-
-	return tag.ID, nil
-}
-
-// UpdateTag updates the label for a tag.
-func (p *Prowlarr) UpdateTag(tagID int, label string) (int, error) {
-	return p.UpdateTagContext(context.Background(), tagID, label)
-}
-
-// UpdateTagContext updates the label for a tag.
-func (p *Prowlarr) UpdateTagContext(ctx context.Context, tagID int, label string) (int, error) {
-	var body bytes.Buffer
-	if err := json.NewEncoder(&body).Encode(&starr.Tag{Label: label, ID: tagID}); err != nil {
-		return 0, fmt.Errorf("json.Marshal(tag): %w", err)
-	}
-
-	var tag starr.Tag
-	if _, err := p.PutInto(ctx, "v1/tag/"+strconv.Itoa(tagID), nil, &body, &tag); err != nil {
-		return tag.ID, fmt.Errorf("api.Put(tag): %w", err)
-	}
-
-	return tag.ID, nil
+	return output, nil
 }
 
 // GetTag returns a single tag.
@@ -73,14 +34,55 @@ func (p *Prowlarr) GetTag(tagID int) (*starr.Tag, error) {
 }
 
 func (p *Prowlarr) GetTagContext(ctx context.Context, tagID int) (*starr.Tag, error) {
-	var tag *starr.Tag
+	var output *starr.Tag
 
-	_, err := p.GetInto(ctx, "v1/tag/"+strconv.Itoa(tagID), nil, &tag)
-	if err != nil {
+	uri := path.Join(bpTag, strconv.Itoa(tagID))
+	if _, err := p.GetInto(ctx, uri, nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(tag): %w", err)
 	}
 
-	return tag, nil
+	return output, nil
+}
+
+// AddTag creates a tag.
+func (p *Prowlarr) AddTag(tag *starr.Tag) (*starr.Tag, error) {
+	return p.AddTagContext(context.Background(), tag)
+}
+
+func (p *Prowlarr) AddTagContext(ctx context.Context, tag *starr.Tag) (*starr.Tag, error) {
+	var output starr.Tag
+
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(tag); err != nil {
+		return nil, fmt.Errorf("json.Marshal(tag): %w", err)
+	}
+
+	if _, err := p.PostInto(ctx, bpTag, nil, &body, &output); err != nil {
+		return nil, fmt.Errorf("api.Post(tag): %w", err)
+	}
+
+	return &output, nil
+}
+
+// UpdateTag updates the tag.
+func (p *Prowlarr) UpdateTag(tag *starr.Tag) (*starr.Tag, error) {
+	return p.UpdateTagContext(context.Background(), tag)
+}
+
+func (p *Prowlarr) UpdateTagContext(ctx context.Context, tag *starr.Tag) (*starr.Tag, error) {
+	var output starr.Tag
+
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(tag); err != nil {
+		return nil, fmt.Errorf("json.Marshal(tag): %w", err)
+	}
+
+	uri := path.Join(bpTag, strconv.Itoa(tag.ID))
+	if _, err := p.PutInto(ctx, uri, nil, &body, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(tag): %w", err)
+	}
+
+	return &output, nil
 }
 
 // DeleteTag removes a single tag.
@@ -89,8 +91,8 @@ func (p *Prowlarr) DeleteTag(tagID int) error {
 }
 
 func (p *Prowlarr) DeleteTagContext(ctx context.Context, tagID int) error {
-	_, err := p.Delete(ctx, "v1/tag/"+strconv.Itoa(tagID), nil)
-	if err != nil {
+	uri := path.Join(bpTag, strconv.Itoa(tagID))
+	if _, err := p.Delete(ctx, uri, nil); err != nil {
 		return fmt.Errorf("api.Delete(tag): %w", err)
 	}
 
