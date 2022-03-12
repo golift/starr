@@ -109,7 +109,7 @@ func (c *Config) Get(ctx context.Context, path string, params url.Values) ([]byt
 	code, data, header, err := c.Req(ctx, path, http.MethodGet, params, nil)
 
 	if c.Debugf != nil { // log the request.
-		c.log(code, string(data), "", header, c.SetPathParams(path, params), http.MethodGet, err)
+		c.log(code, string(data), "", header, c.SetPath(path), http.MethodGet, err)
 	}
 
 	return data, err
@@ -126,7 +126,7 @@ func (c *Config) Post(ctx context.Context, path string, params url.Values, postB
 	var buf bytes.Buffer                // split the reader for request and log.
 	tee := io.TeeReader(postBody, &buf) // must read tee first.
 	code, data, header, err := c.Req(ctx, path, http.MethodPost, params, tee)
-	c.log(code, string(data), buf.String(), header, c.SetPathParams(path, params), http.MethodPost, err)
+	c.log(code, string(data), buf.String(), header, c.SetPath(path), http.MethodPost, err)
 
 	return data, err
 }
@@ -142,7 +142,7 @@ func (c *Config) Put(ctx context.Context, path string, params url.Values, putBod
 	var buf bytes.Buffer               // split the reader for request and log.
 	tee := io.TeeReader(putBody, &buf) // must read tee first.
 	code, data, header, err := c.Req(ctx, path, http.MethodPut, params, tee)
-	c.log(code, string(data), buf.String(), header, c.SetPathParams(path, params), http.MethodPut, err)
+	c.log(code, string(data), buf.String(), header, c.SetPath(path), http.MethodPut, err)
 
 	return data, err
 }
@@ -152,7 +152,7 @@ func (c *Config) Delete(ctx context.Context, path string, params url.Values) ([]
 	code, data, header, err := c.Req(ctx, path, http.MethodDelete, params, nil)
 
 	if c.Debugf != nil {
-		c.log(code, string(data), "", header, c.SetPathParams(path, params), http.MethodDelete, err)
+		c.log(code, string(data), "", header, c.SetPath(path), http.MethodDelete, err)
 	}
 
 	return data, err

@@ -246,34 +246,6 @@ type AlbumAddOptions struct {
 	SearchForNewAlbum bool `json:"searchForNewAlbum,omitempty"`
 }
 
-// CommandRequest goes into the /api/v1/command endpoint.
-// This was created from the search command and may not support other commands yet.
-type CommandRequest struct {
-	Name     string  `json:"name"`
-	AlbumIDs []int64 `json:"albumIds,omitempty"`
-	AlbumID  int64   `json:"albumId,omitempty"`
-}
-
-// CommandResponse comes from the /api/v1/command endpoint.
-type CommandResponse struct {
-	ID                  int64                  `json:"id"`
-	Name                string                 `json:"name"`
-	CommandName         string                 `json:"commandName"`
-	Message             string                 `json:"message,omitempty"`
-	Priority            string                 `json:"priority"`
-	Status              string                 `json:"status"`
-	Queued              time.Time              `json:"queued"`
-	Started             time.Time              `json:"started,omitempty"`
-	Ended               time.Time              `json:"ended,omitempty"`
-	StateChangeTime     time.Time              `json:"stateChangeTime,omitempty"`
-	LastExecutionTime   time.Time              `json:"lastExecutionTime,omitempty"`
-	Duration            string                 `json:"duration,omitempty"`
-	Trigger             string                 `json:"trigger"`
-	SendUpdatesToClient bool                   `json:"sendUpdatesToClient"`
-	UpdateScheduledTask bool                   `json:"updateScheduledTask"`
-	Body                map[string]interface{} `json:"body"`
-}
-
 // History represents the /api/v1/history endpoint.
 type History struct {
 	Page          int              `json:"page"`
