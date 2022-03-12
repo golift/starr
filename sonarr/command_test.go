@@ -17,7 +17,7 @@ import (
 func TestGetCommands(t *testing.T) {
 	t.Parallel()
 
-	somedate := time.Now().Add(-36 * time.Hour).Round(time.Millisecond)
+	somedate := time.Now().Add(-36 * time.Hour).Round(time.Millisecond).UTC()
 	datejson, _ := somedate.MarshalJSON()
 
 	tests := []struct {
@@ -95,7 +95,7 @@ func TestGetCommands(t *testing.T) {
 func TestSendCommand(t *testing.T) {
 	t.Parallel()
 
-	somedate := time.Now().Add(-36 * time.Hour).Round(time.Millisecond)
+	somedate := time.Now().Add(-36 * time.Hour).Round(time.Millisecond).UTC()
 	datejson, _ := somedate.MarshalJSON()
 
 	tests := []struct {
@@ -193,7 +193,7 @@ func TestSendCommand(t *testing.T) {
 func TestGetCommandStatus(t *testing.T) {
 	t.Parallel()
 
-	somedate := time.Now().Add(-36 * time.Hour).Round(time.Millisecond)
+	somedate := time.Now().Add(-36 * time.Hour).Round(time.Millisecond).UTC()
 	datejson, _ := somedate.MarshalJSON()
 
 	tests := []struct {
@@ -249,7 +249,7 @@ func TestGetCommandStatus(t *testing.T) {
 			expectedResponse: nil,
 		},
 		{
-			name:             "command0",
+			name:             "command0", // command zero returns empty (non-nil) response.
 			withCommandID:    0,
 			withError:        nil,
 			expectedMethod:   "GET",

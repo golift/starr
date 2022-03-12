@@ -17,7 +17,7 @@ import (
 func TestGetCommands(t *testing.T) {
 	t.Parallel()
 
-	somedate := time.Now().Add(-36 * time.Hour).Round(time.Millisecond)
+	somedate := time.Now().Add(-36 * time.Hour).Round(time.Millisecond).UTC()
 	datejson, _ := somedate.MarshalJSON()
 
 	tests := []struct {
@@ -95,7 +95,7 @@ func TestGetCommands(t *testing.T) {
 func TestSendCommand(t *testing.T) {
 	t.Parallel()
 
-	somedate := time.Now().Add(-36 * time.Hour).Round(time.Millisecond)
+	somedate := time.Now().Add(-36 * time.Hour).Round(time.Millisecond).UTC()
 	datejson, _ := somedate.MarshalJSON()
 
 	tests := []struct {
