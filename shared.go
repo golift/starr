@@ -101,7 +101,7 @@ type Tag struct {
 // Image is used in a few places.
 type Image struct {
 	CoverType string `json:"coverType"`
-	URL       string `json:"url"`
+	URL       string `json:"url,omitempty"`
 	RemoteURL string `json:"remoteUrl,omitempty"`
 	Extension string `json:"extension,omitempty"`
 }
