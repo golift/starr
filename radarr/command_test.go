@@ -1,35 +1,148 @@
 package radarr_test
 
 import (
-	"context"
-	"net/url"
+	"net/http"
+	"path"
 	"testing"
+	"time"
 
-	gomock "github.com/golang/mock/gomock"
-
-	// override this name to make all tests look the same. ez.
-	apparr "golift.io/starr/radarr"
+	"github.com/stretchr/testify/assert"
+	"golift.io/starr"
+	"golift.io/starr/radarr"
 )
 
 func TestGetCommands(t *testing.T) {
 	t.Parallel()
-	mock, app, assert := testGetReady(t)
 
-	// Setup an expectation, return values and some test code for the APIer call (GetInto).
-	mock.EXPECT().GetInto(gomock.Any(), apparr.APIver+"/command", nil, gomock.Any()).Return(int64(0), nil).Do(
-		// This is a fake starr.GetInto() func. This is used to mock and validate data in this method call.
-		func(ctx context.Context, path string, params url.Values, output *[]*apparr.CommandResponse) {
-			// This may change, but for now there are no params needed to get commands.
-			assert.Nil(params, "params passed to GetInto must be nil")
-			// Add something to the provided interface to make sure it comes out right.
-			*output = append(*output, &apparr.CommandResponse{ID: 1, Name: "mine"})
+	somedate := time.Now().Add(-36 * time.Hour).Round(time.Millisecond).UTC()
+	datejson, _ := somedate.MarshalJSON()
+	tests := []*starr.TestMockData{
+		{
+			Name:           "200",
+			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "command"),
+			ResponseStatus: http.StatusOK,
+			ResponseBody: `[{"id":1234,"name":"SomeCommand","commandName":"SomeCommandName","message":` +
+				`"Command Message","priority":"testalert","status":"statusalert","queued":` + string(datejson) +
+				`,"started":` + string(datejson) + `,"ended":` + string(datejson) +
+				`,"stateChangeTime":` + string(datejson) + `,"lastExecutionTime":` + string(datejson) +
+				`,"duration":"woofun","trigger":"someTrigger","sendUpdatesToClient":true,"updateScheduledTask":true` +
+				`,"body": {"mapstring": "mapinterface"}` +
+				`}]`,
+			WithError:      nil,
+			ExpectedMethod: "GET",
+			WithResponse: []*radarr.CommandResponse{{
+				ID:                  1234,
+				Name:                "SomeCommand",
+				CommandName:         "SomeCommandName",
+				Message:             "Command Message",
+				Priority:            "testalert",
+				Status:              "statusalert",
+				Queued:              somedate,
+				Started:             somedate,
+				Ended:               somedate,
+				StateChangeTime:     somedate,
+				LastExecutionTime:   somedate,
+				Duration:            "woofun",
+				Trigger:             "someTrigger",
+				SendUpdatesToClient: true,
+				UpdateScheduledTask: true,
+				Body:                map[string]interface{}{"mapstring": "mapinterface"},
+			}},
+		},
+		{
+			Name:           "404",
+			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "command"),
+			ResponseStatus: http.StatusNotFound,
+			ResponseBody:   `{"message": "NotFound"}`,
+			WithError:      starr.ErrInvalidStatusCode,
+			ExpectedMethod: "GET",
+			WithResponse:   []*radarr.CommandResponse(nil),
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.Name, func(t *testing.T) {
+			t.Parallel()
+			mockServer := test.GetMockServer(t)
+			client := radarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
+			output, err := client.GetCommands()
+			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
+	}
+}
 
-	// Now that the mock is ready, run the test.
-	output, err := app.GetCommands()
-	// Verify the output from the test.
-	assert.Nil(err, "no error must be returned")
-	assert.NotNil(output, "output must not be returned nil")
-	assert.Len(output, 1, "wrong length returned by the output")
-	assert.EqualValues(output[0].ID, 1, "wrong ID returned")
+func TestSendCommand(t *testing.T) {
+	t.Parallel()
+
+	somedate := time.Now().Add(-36 * time.Hour).Round(time.Millisecond).UTC()
+	datejson, _ := somedate.MarshalJSON()
+	tests := []*starr.TestMockData{
+		{
+			Name:           "200",
+			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "command"),
+			ResponseStatus: http.StatusOK,
+			ResponseBody: `{"id":1234,"name":"SomeCommand","commandName":"SomeCommandName","message":` +
+				`"Command Message","priority":"testalert","status":"statusalert","queued":` + string(datejson) +
+				`,"started":` + string(datejson) + `,"ended":` + string(datejson) +
+				`,"stateChangeTime":` + string(datejson) + `,"lastExecutionTime":` + string(datejson) +
+				`,"duration":"woofun","trigger":"someTrigger","sendUpdatesToClient":true,"updateScheduledTask":true` +
+				`,"body": {"mapstring": "mapinterface"}` +
+				`}`,
+			WithError: nil,
+			WithRequest: &radarr.CommandRequest{
+				Name:     "SomeCommand",
+				MovieIDs: []int64{1, 3, 7},
+			},
+			ExpectedRequest: `{"name":"SomeCommand","movieIds":[1,3,7]}` + "\n",
+			ExpectedMethod:  "POST",
+			WithResponse: &radarr.CommandResponse{
+				ID:                  1234,
+				Name:                "SomeCommand",
+				CommandName:         "SomeCommandName",
+				Message:             "Command Message",
+				Priority:            "testalert",
+				Status:              "statusalert",
+				Queued:              somedate,
+				Started:             somedate,
+				Ended:               somedate,
+				StateChangeTime:     somedate,
+				LastExecutionTime:   somedate,
+				Duration:            "woofun",
+				Trigger:             "someTrigger",
+				SendUpdatesToClient: true,
+				UpdateScheduledTask: true,
+				Body:                map[string]interface{}{"mapstring": "mapinterface"},
+			},
+		},
+		{
+			Name:            "404",
+			ExpectedPath:    path.Join("/", starr.API, radarr.APIver, "command"),
+			ResponseStatus:  http.StatusNotFound,
+			ResponseBody:    `{"message": "NotFound"}`,
+			WithError:       starr.ErrInvalidStatusCode,
+			ExpectedMethod:  "POST",
+			WithResponse:    (*radarr.CommandResponse)(nil),
+			WithRequest:     &radarr.CommandRequest{Name: "Something"},
+			ExpectedRequest: `{"name":"Something"}` + "\n",
+		},
+		{
+			Name:         "noname", // no name provided? returns empty (non-nil) response.
+			WithRequest:  &radarr.CommandRequest{Name: ""},
+			WithResponse: &radarr.CommandResponse{},
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.Name, func(t *testing.T) {
+			t.Parallel()
+			mockServer := test.GetMockServer(t)
+			client := radarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
+			output, err := client.SendCommand(test.WithRequest.(*radarr.CommandRequest))
+			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
+		})
+	}
 }

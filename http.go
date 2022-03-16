@@ -13,12 +13,15 @@ import (
 	"strings"
 )
 
+// API is the beginning of every API path.
+const API = "api"
+
 /* The methods in this file provide assumption-ridden HTTP calls for Starr apps. */
 
 // Req makes an http request and returns the body in []byte form (already read).
 func (c *Config) Req(ctx context.Context, path, method string, params url.Values,
 	body io.Reader) (int, []byte, http.Header, error) {
-	req, err := c.newReq(ctx, c.SetPathParams(path, params), method, params, body)
+	req, err := c.newReq(ctx, c.SetPath(path), method, params, body)
 	if err != nil {
 		return 0, nil, nil, err
 	}
@@ -70,7 +73,10 @@ func (c *Config) newReq(ctx context.Context, path, method string,
 	}
 
 	c.SetHeaders(req)
-	req.URL.RawQuery = params.Encode()
+
+	if params != nil {
+		req.URL.RawQuery = params.Encode()
+	}
 
 	return req, nil
 }
@@ -96,23 +102,13 @@ func (c *Config) SetHeaders(req *http.Request) {
 	req.Header.Set("X-API-Key", c.APIKey)
 }
 
-// SetPathParams makes sure the path starts with /api and returns the full URL.
-// Also makes sure params is not nil (so it can be encoded later).
-// Sets the apikey as a path parameter for use by older radarr/sonarr versions.
-func (c *Config) SetPathParams(uriPath string, params url.Values) string {
-	if strings.Contains(uriPath, "api/") {
+// SetPath makes sure the path starts with /api and returns the full URL.
+func (c *Config) SetPath(uriPath string) string {
+	if strings.HasPrefix(uriPath, API+"/") ||
+		strings.HasPrefix(uriPath, path.Join("/", API)+"/") {
 		uriPath = path.Join("/", uriPath)
 	} else {
-		uriPath = path.Join("/", "api", uriPath)
-	}
-
-	if params == nil {
-		params = make(url.Values)
-	}
-
-	if !strings.HasPrefix(uriPath, "/api/v") {
-		// api paths with /v1 or /v3 in them use a header instead.
-		params.Add("apikey", c.APIKey)
+		uriPath = path.Join("/", API, uriPath)
 	}
 
 	return strings.TrimSuffix(c.URL, "/") + uriPath
