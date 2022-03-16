@@ -1,8 +1,5 @@
 package starr
 
-// The following go:generate directive re-creates the mocks for this API when you run go generate.
-//go:generate mockgen -package mocks -destination=mocks/apier.go golift.io/starr APIer
-
 import (
 	"bytes"
 	"context"
