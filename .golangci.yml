@@ -1,0 +1,20 @@
+issues:
+  exclude-rules:
+    # Exclude funlen for testing files.
+    - linters:
+        - funlen
+      path: '(.+)_test\.go'
+
+linters:
+  enable-all: true
+  disable:
+    - maligned
+    - scopelint
+    - interfacer
+    - golint
+    - tagliatelle
+    - exhaustivestruct
+    - dupl
+
+run:
+  timeout: 35m
