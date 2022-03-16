@@ -1,4 +1,4 @@
-//nolint:paralleltest,cyclop,funlen
+//nolint:paralleltest,cyclop
 package starrcmd_test
 
 import (

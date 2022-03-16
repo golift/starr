@@ -9,10 +9,10 @@ test: lint nopollution
 
 lint:
 	# Test lint on four platforms.
-	GOOS=linux golangci-lint run --enable-all -D maligned,scopelint,interfacer,golint,tagliatelle,exhaustivestruct,dupl
-	GOOS=darwin golangci-lint run --enable-all -D maligned,scopelint,interfacer,golint,tagliatelle,exhaustivestruct,dupl
-	GOOS=windows golangci-lint run --enable-all -D maligned,scopelint,interfacer,golint,tagliatelle,exhaustivestruct,dupl
-	GOOS=freebsd golangci-lint run --enable-all -D maligned,scopelint,interfacer,golint,tagliatelle,exhaustivestruct,dupl
+	GOOS=linux golangci-lint run
+	GOOS=darwin golangci-lint run
+	GOOS=windows golangci-lint run
+	GOOS=freebsd golangci-lint run
 
 # Some of these are borderline. For instance "edition" shows up in radarr payloads. "series" shows up in Readarr, "author" in Sonarr, etc.
 # If these catch legitimate uses, just remove the piece that caught it.
