@@ -1,8 +1,7 @@
 package readarr_test
 
 import (
-	"net/http"
-	"net/http/httptest"
+	"path"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -13,20 +12,14 @@ import (
 func TestGetTags(t *testing.T) {
 	t.Parallel()
 
-	tests := []struct {
-		responseStatus   int
-		name             string
-		expectedPath     string
-		responseBody     string
-		withError        error
-		expectedResponse []*starr.Tag
-	}{
+	tests := []*starr.TestMockData{
 		{
-			name:           "200",
-			expectedPath:   "/api/v1/tag",
-			responseStatus: 200,
-			responseBody:   "[{\"label\": \"amzn\",\"id\": 1},{\"label\": \"epub\",\"id\": 2}]",
-			expectedResponse: []*starr.Tag{
+			Name:           "200",
+			ExpectedPath:   path.Join("/", starr.API, readarr.APIver, "tag"),
+			ExpectedMethod: "GET",
+			ResponseStatus: 200,
+			ResponseBody:   `[{"label": "amzn","id": 1},{"label": "epub","id": 2}]`,
+			WithResponse: []*starr.Tag{
 				{
 					Label: "amzn",
 					ID:    1,
@@ -36,32 +29,28 @@ func TestGetTags(t *testing.T) {
 					ID:    2,
 				},
 			},
-			withError: nil,
+			WithError: nil,
 		},
 		{
-			name:             "404",
-			expectedPath:     "/api/v1/tag",
-			responseStatus:   404,
-			responseBody:     `{"message": "NotFound"}`,
-			withError:        starr.ErrInvalidStatusCode,
-			expectedResponse: nil,
+			Name:           "404",
+			ExpectedPath:   path.Join("/", starr.API, readarr.APIver, "tag"),
+			ExpectedMethod: "GET",
+			ResponseStatus: 404,
+			ResponseBody:   `{"message": "NotFound"}`,
+			WithError:      starr.ErrInvalidStatusCode,
+			WithResponse:   []*starr.Tag(nil),
 		},
 	}
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
+		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
-			mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				assert.Equal(t, test.expectedPath, r.URL.String())
-				w.WriteHeader(test.responseStatus)
-				_, err := w.Write([]byte(test.responseBody))
-				assert.NoError(t, err)
-			}))
+			mockServer := test.GetMockServer(t)
 			client := readarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.GetTags()
-			assert.ErrorIs(t, err, test.withError, "error is not the same as expected")
-			assert.EqualValues(t, output, test.expectedResponse, "response is not the same as expected")
+			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
 }
@@ -69,52 +58,41 @@ func TestGetTags(t *testing.T) {
 func TestGetTag(t *testing.T) {
 	t.Parallel()
 
-	tests := []struct {
-		responseStatus   int
-		tagID            int
-		name             string
-		expectedPath     string
-		responseBody     string
-		withError        error
-		expectedResponse *starr.Tag
-	}{
+	tests := []*starr.TestMockData{
 		{
-			name:           "200",
-			tagID:          1,
-			expectedPath:   "/api/v1/tag/1",
-			responseStatus: 200,
-			responseBody:   "{\"label\": \"amzn\",\"id\": 1}",
-			expectedResponse: &starr.Tag{
+			Name:           "200",
+			ExpectedPath:   path.Join("/", starr.API, readarr.APIver, "tag/1"),
+			ExpectedMethod: "GET",
+			ResponseStatus: 200,
+			WithRequest:    1,
+			ResponseBody:   `{"label": "amzn","id": 1}`,
+			WithResponse: &starr.Tag{
 				Label: "amzn",
 				ID:    1,
 			},
-			withError: nil,
+			WithError: nil,
 		},
 		{
-			name:             "404",
-			tagID:            1,
-			expectedPath:     "/api/v1/tag/1",
-			responseStatus:   404,
-			responseBody:     `{"message": "NotFound"}`,
-			withError:        starr.ErrInvalidStatusCode,
-			expectedResponse: nil,
+			Name:           "404",
+			ExpectedPath:   path.Join("/", starr.API, readarr.APIver, "tag/1"),
+			ExpectedMethod: "GET",
+			ResponseStatus: 404,
+			WithRequest:    1,
+			ResponseBody:   `{"message": "NotFound"}`,
+			WithResponse:   (*starr.Tag)(nil),
+			WithError:      starr.ErrInvalidStatusCode,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
+		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
-			mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				assert.Equal(t, test.expectedPath, r.URL.String())
-				w.WriteHeader(test.responseStatus)
-				_, err := w.Write([]byte(test.responseBody))
-				assert.NoError(t, err)
-			}))
+			mockServer := test.GetMockServer(t)
 			client := readarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			output, err := client.GetTag(test.tagID)
-			assert.ErrorIs(t, err, test.withError, "error is not the same as expected")
-			assert.EqualValues(t, output, test.expectedResponse, "response is not the same as expected")
+			output, err := client.GetTag(test.WithRequest.(int))
+			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
 }
@@ -122,53 +100,47 @@ func TestGetTag(t *testing.T) {
 func TestAddTag(t *testing.T) {
 	t.Parallel()
 
-	tests := []struct {
-		responseStatus   int
-		name             string
-		expectedPath     string
-		responseBody     string
-		withError        error
-		tag              *starr.Tag
-		expectedResponse *starr.Tag
-	}{
+	tests := []*starr.TestMockData{
 		{
-			name:           "200",
-			expectedPath:   "/api/v1/tag",
-			responseStatus: 200,
-			tag: &starr.Tag{
+			Name:           "200",
+			ExpectedPath:   path.Join("/", starr.API, readarr.APIver, "tag"),
+			ExpectedMethod: "POST",
+			ResponseStatus: 200,
+			WithRequest: &starr.Tag{
 				Label: "amzn",
 			},
-			responseBody: "{\"label\": \"amzn\",\"id\": 1}",
-			expectedResponse: &starr.Tag{
+			ExpectedRequest: `{"label":"amzn"}` + "\n",
+			ResponseBody:    `{"label": "amzn","id": 1}`,
+			WithResponse: &starr.Tag{
 				Label: "amzn",
 				ID:    1,
 			},
-			withError: nil,
+			WithError: nil,
 		},
 		{
-			name:             "404",
-			expectedPath:     "/api/v1/tag",
-			responseStatus:   404,
-			responseBody:     `{"message": "NotFound"}`,
-			withError:        starr.ErrInvalidStatusCode,
-			expectedResponse: nil,
+			Name:           "200",
+			ExpectedPath:   path.Join("/", starr.API, readarr.APIver, "tag"),
+			ExpectedMethod: "POST",
+			ResponseStatus: 404,
+			WithRequest: &starr.Tag{
+				Label: "amzn",
+			},
+			ExpectedRequest: `{"label":"amzn"}` + "\n",
+			ResponseBody:    `{"message": "NotFound"}`,
+			WithError:       starr.ErrInvalidStatusCode,
+			WithResponse:    (*starr.Tag)(nil),
 		},
 	}
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
+		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
-			mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				assert.Equal(t, test.expectedPath, r.URL.String())
-				w.WriteHeader(test.responseStatus)
-				_, err := w.Write([]byte(test.responseBody))
-				assert.NoError(t, err)
-			}))
+			mockServer := test.GetMockServer(t)
 			client := readarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			output, err := client.AddTag(test.tag)
-			assert.ErrorIs(t, err, test.withError, "error is not the same as expected")
-			assert.EqualValues(t, output, test.expectedResponse, "response is not the same as expected")
+			output, err := client.AddTag(test.WithRequest.(*starr.Tag))
+			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
 }
@@ -176,58 +148,49 @@ func TestAddTag(t *testing.T) {
 func TestUpdateTag(t *testing.T) {
 	t.Parallel()
 
-	tests := []struct {
-		responseStatus   int
-		name             string
-		expectedPath     string
-		responseBody     string
-		withError        error
-		tag              *starr.Tag
-		expectedResponse *starr.Tag
-	}{
+	tests := []*starr.TestMockData{
 		{
-			name:           "200",
-			expectedPath:   "/api/v1/tag/1",
-			responseStatus: 200,
-			tag: &starr.Tag{
-				Label: "amzn",
+			Name:           "200",
+			ExpectedPath:   path.Join("/", starr.API, readarr.APIver, "tag/1"),
+			ExpectedMethod: "PUT",
+			ResponseStatus: 200,
+			WithRequest: &starr.Tag{
 				ID:    1,
-			},
-			responseBody: "{\"label\": \"amzn\",\"id\": 1}",
-			expectedResponse: &starr.Tag{
 				Label: "amzn",
-				ID:    1,
 			},
-			withError: nil,
+			ExpectedRequest: `{"id":1,"label":"amzn"}` + "\n",
+			ResponseBody:    `{"id": 1,"label": "amzn"}`,
+			WithResponse: &starr.Tag{
+				ID:    1,
+				Label: "amzn",
+			},
+			WithError: nil,
 		},
 		{
-			name:         "404",
-			expectedPath: "/api/v1/tag/1",
-			tag: &starr.Tag{
-				Label: "amzn",
+			Name:           "404",
+			ExpectedPath:   path.Join("/", starr.API, readarr.APIver, "tag/1"),
+			ExpectedMethod: "PUT",
+			ResponseStatus: 404,
+			WithRequest: &starr.Tag{
 				ID:    1,
+				Label: "amzn",
 			},
-			responseStatus:   404,
-			responseBody:     `{"message": "NotFound"}`,
-			withError:        starr.ErrInvalidStatusCode,
-			expectedResponse: nil,
+			ExpectedRequest: `{"id":1,"label":"amzn"}` + "\n",
+			ResponseBody:    `{"message": "NotFound"}`,
+			WithError:       starr.ErrInvalidStatusCode,
+			WithResponse:    (*starr.Tag)(nil),
 		},
 	}
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
+		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
-			mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				assert.Equal(t, test.expectedPath, r.URL.String())
-				w.WriteHeader(test.responseStatus)
-				_, err := w.Write([]byte(test.responseBody))
-				assert.NoError(t, err)
-			}))
+			mockServer := test.GetMockServer(t)
 			client := readarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			output, err := client.UpdateTag(test.tag)
-			assert.ErrorIs(t, err, test.withError, "error is not the same as expected")
-			assert.EqualValues(t, output, test.expectedResponse, "response is not the same as expected")
+			output, err := client.UpdateTag(test.WithRequest.(*starr.Tag))
+			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
 }
@@ -235,45 +198,35 @@ func TestUpdateTag(t *testing.T) {
 func TestDeleteTag(t *testing.T) {
 	t.Parallel()
 
-	tests := []struct {
-		responseStatus int
-		tagID          int
-		name           string
-		expectedPath   string
-		responseBody   string
-		withError      error
-	}{
+	tests := []*starr.TestMockData{
 		{
-			name:           "200",
-			tagID:          1,
-			expectedPath:   "/api/v1/tag/1",
-			responseStatus: 200,
-			responseBody:   "{}",
-			withError:      nil,
+			Name:           "200",
+			ExpectedPath:   path.Join("/", starr.API, readarr.APIver, "tag/1"),
+			ExpectedMethod: "DELETE",
+			WithRequest:    1,
+			ResponseStatus: 200,
+			ResponseBody:   "{}",
+			WithError:      nil,
 		},
 		{
-			name:           "404",
-			tagID:          1,
-			expectedPath:   "/api/v1/tag/1",
-			responseStatus: 404,
-			responseBody:   `{"message": "NotFound"}`,
-			withError:      starr.ErrInvalidStatusCode,
+			Name:           "404",
+			ExpectedPath:   path.Join("/", starr.API, readarr.APIver, "tag/1"),
+			ExpectedMethod: "DELETE",
+			WithRequest:    1,
+			ResponseStatus: 404,
+			ResponseBody:   `{"message": "NotFound"}`,
+			WithError:      starr.ErrInvalidStatusCode,
 		},
 	}
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
+		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
-			mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				assert.Equal(t, test.expectedPath, r.URL.String())
-				w.WriteHeader(test.responseStatus)
-				_, err := w.Write([]byte(test.responseBody))
-				assert.NoError(t, err)
-			}))
+			mockServer := test.GetMockServer(t)
 			client := readarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			err := client.DeleteTag(test.tagID)
-			assert.ErrorIs(t, err, test.withError, "error is not the same as expected")
+			err := client.DeleteTag(test.WithRequest.(int))
+			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 		})
 	}
 }
