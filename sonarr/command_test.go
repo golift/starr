@@ -1,9 +1,7 @@
 package sonarr_test
 
 import (
-	"io/ioutil"
 	"net/http"
-	"net/http/httptest"
 	"path"
 	"testing"
 	"time"
@@ -13,36 +11,27 @@ import (
 	"golift.io/starr/sonarr"
 )
 
-//nolint:funlen
 func TestGetCommands(t *testing.T) {
 	t.Parallel()
 
 	somedate := time.Now().Add(-36 * time.Hour).Round(time.Millisecond).UTC()
 	datejson, _ := somedate.MarshalJSON()
 
-	tests := []struct {
-		responseStatus   int
-		name             string
-		expectedPath     string
-		responseBody     string
-		withError        error
-		expectedMethod   string
-		expectedResponse []*sonarr.CommandResponse
-	}{
+	tests := []*starr.TestMockData{
 		{
-			name:           "200",
-			expectedPath:   path.Join("/", starr.API, sonarr.APIver, "command"),
-			responseStatus: http.StatusOK,
-			responseBody: `[{"id":1234,"name":"SomeCommand","commandName":"SomeCommandName","message":` +
+			Name:           "200",
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "command"),
+			ResponseStatus: http.StatusOK,
+			ResponseBody: `[{"id":1234,"name":"SomeCommand","commandName":"SomeCommandName","message":` +
 				`"Command Message","priority":"testalert","status":"statusalert","queued":` + string(datejson) +
 				`,"started":` + string(datejson) + `,"ended":` + string(datejson) +
 				`,"stateChangeTime":` + string(datejson) + `,"lastExecutionTime":` + string(datejson) +
 				`,"duration":"woofun","trigger":"someTrigger","sendUpdatesToClient":true,"updateScheduledTask":true` +
 				`,"body": {"mapstring": "mapinterface"}` +
 				`}]`,
-			withError:      nil,
-			expectedMethod: "GET",
-			expectedResponse: []*sonarr.CommandResponse{{
+			WithError:      nil,
+			ExpectedMethod: "GET",
+			WithResponse: []*sonarr.CommandResponse{{
 				ID:                  1234,
 				Name:                "SomeCommand",
 				CommandName:         "SomeCommandName",
@@ -62,72 +51,55 @@ func TestGetCommands(t *testing.T) {
 			}},
 		},
 		{
-			name:             "404",
-			expectedPath:     path.Join("/", starr.API, sonarr.APIver, "command"),
-			responseStatus:   http.StatusNotFound,
-			responseBody:     `{"message": "NotFound"}`,
-			withError:        starr.ErrInvalidStatusCode,
-			expectedMethod:   "GET",
-			expectedResponse: nil,
+			Name:           "404",
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "command"),
+			ResponseStatus: http.StatusNotFound,
+			ResponseBody:   `{"message": "NotFound"}`,
+			WithError:      starr.ErrInvalidStatusCode,
+			ExpectedMethod: "GET",
+			WithResponse:   []*sonarr.CommandResponse(nil),
 		},
 	}
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
+		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
-			mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				assert.Equal(t, test.expectedPath, r.URL.String())
-				w.WriteHeader(test.responseStatus)
-				_, err := w.Write([]byte(test.responseBody))
-				assert.NoError(t, err)
-				assert.Equal(t, r.Method, test.expectedMethod)
-			}))
+			mockServer := test.GetMockServer(t)
 			client := sonarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.GetCommands()
-			assert.ErrorIs(t, err, test.withError, "error is not the same as expected")
-			assert.EqualValues(t, test.expectedResponse, output, "response is not the same as expected")
+			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
 }
 
-//nolint:funlen
 func TestSendCommand(t *testing.T) {
 	t.Parallel()
 
 	somedate := time.Now().Add(-36 * time.Hour).Round(time.Millisecond).UTC()
 	datejson, _ := somedate.MarshalJSON()
 
-	tests := []struct {
-		responseStatus   int
-		name             string
-		expectedPath     string
-		responseBody     string
-		withError        error
-		withRequest      *sonarr.CommandRequest
-		expectedRequest  string
-		expectedMethod   string
-		expectedResponse *sonarr.CommandResponse
-	}{
+	tests := []*starr.TestMockData{
 		{
-			name:           "200",
-			expectedPath:   path.Join("/", starr.API, sonarr.APIver, "command"),
-			responseStatus: http.StatusOK,
-			responseBody: `{"id":1234,"name":"SomeCommand","commandName":"SomeCommandName","message":` +
+			Name:           "200",
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "command"),
+			ResponseStatus: http.StatusOK,
+			ResponseBody: `{"id":1234,"name":"SomeCommand","commandName":"SomeCommandName","message":` +
 				`"Command Message","priority":"testalert","status":"statusalert","queued":` + string(datejson) +
 				`,"started":` + string(datejson) + `,"ended":` + string(datejson) +
 				`,"stateChangeTime":` + string(datejson) + `,"lastExecutionTime":` + string(datejson) +
 				`,"duration":"woofun","trigger":"someTrigger","sendUpdatesToClient":true,"updateScheduledTask":true` +
 				`,"body": {"mapstring": "mapinterface"}` +
 				`}`,
-			withError: nil,
-			withRequest: &sonarr.CommandRequest{
+			WithError: nil,
+			WithRequest: &sonarr.CommandRequest{
 				Name:      "SomeCommand",
 				SeriesIDs: []int64{1, 3, 7},
 			},
-			expectedRequest: `{"name":"SomeCommand","seriesIds":[1,3,7]}` + "\n",
-			expectedMethod:  "POST",
-			expectedResponse: &sonarr.CommandResponse{
+			ExpectedRequest: `{"name":"SomeCommand","seriesIds":[1,3,7]}` + "\n",
+			ExpectedMethod:  "POST",
+			WithResponse: &sonarr.CommandResponse{
 				ID:                  1234,
 				Name:                "SomeCommand",
 				CommandName:         "SomeCommandName",
@@ -147,79 +119,57 @@ func TestSendCommand(t *testing.T) {
 			},
 		},
 		{
-			name:             "404",
-			expectedPath:     path.Join("/", starr.API, sonarr.APIver, "command"),
-			responseStatus:   http.StatusNotFound,
-			responseBody:     `{"message": "NotFound"}`,
-			withError:        starr.ErrInvalidStatusCode,
-			expectedMethod:   "POST",
-			expectedResponse: nil,
-			withRequest:      &sonarr.CommandRequest{Name: "Something"},
-			expectedRequest:  `{"name":"Something"}` + "\n",
+			Name:            "404",
+			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "command"),
+			ResponseStatus:  http.StatusNotFound,
+			ResponseBody:    `{"message": "NotFound"}`,
+			WithError:       starr.ErrInvalidStatusCode,
+			ExpectedMethod:  "POST",
+			WithResponse:    (*sonarr.CommandResponse)(nil),
+			WithRequest:     &sonarr.CommandRequest{Name: "Something"},
+			ExpectedRequest: `{"name":"Something"}` + "\n",
 		},
 		{
-			name:             "noname", // no name provided? returns empty (non-nil) response.
-			withRequest:      &sonarr.CommandRequest{Name: ""},
-			expectedResponse: &sonarr.CommandResponse{},
+			Name:         "noname", // no name provided? returns empty (non-nil) response.
+			WithRequest:  &sonarr.CommandRequest{Name: ""},
+			WithResponse: &sonarr.CommandResponse{},
 		},
 	}
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
+		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
-			mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-				assert.Equal(t, test.expectedPath, req.URL.String())
-				w.WriteHeader(test.responseStatus)
-
-				_, err := w.Write([]byte(test.responseBody))
-				assert.NoError(t, err)
-				assert.Equal(t, req.Method, test.expectedMethod)
-
-				body, err := ioutil.ReadAll(req.Body)
-				assert.NoError(t, err)
-				assert.Equal(t, test.expectedRequest, string(body))
-			}))
-
+			mockServer := test.GetMockServer(t)
 			client := sonarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			output, err := client.SendCommand(test.withRequest)
-			assert.ErrorIs(t, err, test.withError, "error is not the same as expected")
-			assert.EqualValues(t, test.expectedResponse, output, "response is not the same as expected")
+			output, err := client.SendCommand(test.WithRequest.(*sonarr.CommandRequest))
+			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
 }
 
-//nolint:funlen
 func TestGetCommandStatus(t *testing.T) {
 	t.Parallel()
 
 	somedate := time.Now().Add(-36 * time.Hour).Round(time.Millisecond).UTC()
 	datejson, _ := somedate.MarshalJSON()
 
-	tests := []struct {
-		responseStatus   int
-		name             string
-		expectedPath     string
-		responseBody     string
-		withError        error
-		expectedMethod   string
-		withCommandID    int64
-		expectedResponse *sonarr.CommandResponse
-	}{
+	tests := []*starr.TestMockData{
 		{
-			name:           "200",
-			expectedPath:   path.Join("/", starr.API, sonarr.APIver, "command", "146"),
-			responseStatus: http.StatusOK,
-			responseBody: `{"id":1234,"name":"SomeCommand","commandName":"SomeCommandName","message":` +
+			Name:           "200",
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "command", "146"),
+			ResponseStatus: http.StatusOK,
+			ResponseBody: `{"id":1234,"name":"SomeCommand","commandName":"SomeCommandName","message":` +
 				`"Command Message","priority":"testalert","status":"statusalert","queued":` + string(datejson) +
 				`,"started":` + string(datejson) + `,"ended":` + string(datejson) +
 				`,"stateChangeTime":` + string(datejson) + `,"lastExecutionTime":` + string(datejson) +
 				`,"duration":"woofun","trigger":"someTrigger","sendUpdatesToClient":true,"updateScheduledTask":true` +
 				`,"body": {"mapstring": "mapinterface"}}`,
-			withError:      nil,
-			expectedMethod: "GET",
-			withCommandID:  146,
-			expectedResponse: &sonarr.CommandResponse{
+			WithError:      nil,
+			ExpectedMethod: "GET",
+			WithRequest:    int64(146),
+			WithResponse: &sonarr.CommandResponse{
 				ID:                  1234,
 				Name:                "SomeCommand",
 				CommandName:         "SomeCommandName",
@@ -239,39 +189,33 @@ func TestGetCommandStatus(t *testing.T) {
 			},
 		},
 		{
-			name:             "404",
-			expectedPath:     path.Join("/", starr.API, sonarr.APIver, "command", "123"),
-			responseStatus:   http.StatusNotFound,
-			withCommandID:    123,
-			responseBody:     `{"message": "NotFound"}`,
-			withError:        starr.ErrInvalidStatusCode,
-			expectedMethod:   "GET",
-			expectedResponse: nil,
+			Name:           "404",
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "command", "123"),
+			ResponseStatus: http.StatusNotFound,
+			WithRequest:    int64(123),
+			ResponseBody:   `{"message": "NotFound"}`,
+			WithError:      starr.ErrInvalidStatusCode,
+			ExpectedMethod: "GET",
+			WithResponse:   (*sonarr.CommandResponse)(nil),
 		},
 		{
-			name:             "command0", // command zero returns empty (non-nil) response.
-			withCommandID:    0,
-			withError:        nil,
-			expectedMethod:   "GET",
-			expectedResponse: &sonarr.CommandResponse{},
+			Name:           "command0", // command zero returns empty (non-nil) response.
+			WithRequest:    int64(0),
+			WithError:      nil,
+			ExpectedMethod: "GET",
+			WithResponse:   &sonarr.CommandResponse{},
 		},
 	}
 
 	for _, test := range tests {
 		test := test
-		t.Run(test.name, func(t *testing.T) {
+		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
-			mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				assert.Equal(t, test.expectedPath, r.URL.String())
-				w.WriteHeader(test.responseStatus)
-				_, err := w.Write([]byte(test.responseBody))
-				assert.NoError(t, err)
-				assert.Equal(t, r.Method, test.expectedMethod)
-			}))
+			mockServer := test.GetMockServer(t)
 			client := sonarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			output, err := client.GetCommandStatus(test.withCommandID)
-			assert.ErrorIs(t, err, test.withError, "error is not the same as expected")
-			assert.EqualValues(t, test.expectedResponse, output, "response is not the same as expected")
+			output, err := client.GetCommandStatus(test.WithRequest.(int64))
+			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
 }
