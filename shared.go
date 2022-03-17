@@ -94,8 +94,8 @@ type Link struct {
 
 // Tag may be applied to nearly anything.
 type Tag struct {
-	ID    int
-	Label string
+	ID    int    `json:"id,omitempty"`
+	Label string `json:"label"`
 }
 
 // Image is used in a few places.
