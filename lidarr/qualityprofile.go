@@ -10,6 +10,15 @@ import (
 	"golift.io/starr"
 )
 
+// QualityProfile is the /api/v1/qualityprofile endpoint.
+type QualityProfile struct {
+	ID             int64            `json:"id"`
+	Name           string           `json:"name"`
+	UpgradeAllowed bool             `json:"upgradeAllowed"`
+	Cutoff         int64            `json:"cutoff"`
+	Qualities      []*starr.Quality `json:"items"`
+}
+
 // GetQualityProfiles returns the quality profiles.
 func (l *Lidarr) GetQualityProfiles() ([]*QualityProfile, error) {
 	return l.GetQualityProfilesContext(context.Background())

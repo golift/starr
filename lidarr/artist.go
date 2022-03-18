@@ -7,9 +7,53 @@ import (
 	"fmt"
 	"net/url"
 	"strconv"
+	"time"
 
 	"golift.io/starr"
 )
+
+// Artist represents the /api/v1/artist endpoint, and it's part of an Album.
+type Artist struct {
+	ID                int64             `json:"id"`
+	Status            string            `json:"status,omitempty"`
+	LastInfoSync      time.Time         `json:"lastInfoSync,omitempty"`
+	ArtistName        string            `json:"artistName,omitempty"`
+	ForeignArtistID   string            `json:"foreignArtistId,omitempty"`
+	TadbID            int64             `json:"tadbId,omitempty"`
+	DiscogsID         int64             `json:"discogsId,omitempty"`
+	QualityProfileID  int64             `json:"qualityProfileId,omitempty"`
+	MetadataProfileID int64             `json:"metadataProfileId,omitempty"`
+	Overview          string            `json:"overview,omitempty"`
+	ArtistType        string            `json:"artistType,omitempty"`
+	Disambiguation    string            `json:"disambiguation,omitempty"`
+	RootFolderPath    string            `json:"rootFolderPath,omitempty"`
+	Path              string            `json:"path,omitempty"`
+	CleanName         string            `json:"cleanName,omitempty"`
+	SortName          string            `json:"sortName,omitempty"`
+	Links             []*starr.Link     `json:"links,omitempty"`
+	Images            []*starr.Image    `json:"images,omitempty"`
+	Genres            []string          `json:"genres,omitempty"`
+	Tags              []int             `json:"tags,omitempty"`
+	Added             time.Time         `json:"added,omitempty"`
+	Ratings           *starr.Ratings    `json:"ratings,omitempty"`
+	Statistics        *Statistics       `json:"statistics,omitempty"`
+	LastAlbum         *Album            `json:"lastAlbum,omitempty"`
+	NextAlbum         *Album            `json:"nextAlbum,omitempty"`
+	AddOptions        *ArtistAddOptions `json:"addOptions,omitempty"`
+	AlbumFolder       bool              `json:"albumFolder,omitempty"`
+	Monitored         bool              `json:"monitored"`
+	Ended             bool              `json:"ended,omitempty"`
+}
+
+// Statistics is part of Artist and Album.
+type Statistics struct {
+	AlbumCount      int     `json:"albumCount,omitempty"`
+	TrackFileCount  int     `json:"trackFileCount"`
+	TrackCount      int     `json:"trackCount"`
+	TotalTrackCount int     `json:"totalTrackCount"`
+	SizeOnDisk      int     `json:"sizeOnDisk"`
+	PercentOfTracks float64 `json:"percentOfTracks"`
+}
 
 // GetArtist returns an artist or all artists.
 func (l *Lidarr) GetArtist(mbID string) ([]*Artist, error) {

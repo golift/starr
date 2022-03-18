@@ -7,9 +7,93 @@ import (
 	"fmt"
 	"net/url"
 	"strconv"
+	"time"
 
 	"golift.io/starr"
 )
+
+// Album is the /api/v1/album endpoint.
+type Album struct {
+	ID             int64            `json:"id,omitempty"`
+	Title          string           `json:"title"`
+	Disambiguation string           `json:"disambiguation"`
+	Overview       string           `json:"overview"`
+	ArtistID       int64            `json:"artistId"`
+	ForeignAlbumID string           `json:"foreignAlbumId"`
+	ProfileID      int64            `json:"profileId"`
+	Duration       int              `json:"duration"`
+	AlbumType      string           `json:"albumType"`
+	SecondaryTypes []interface{}    `json:"secondaryTypes"`
+	MediumCount    int              `json:"mediumCount"`
+	Ratings        *starr.Ratings   `json:"ratings"`
+	ReleaseDate    time.Time        `json:"releaseDate"`
+	Releases       []*Release       `json:"releases"`
+	Genres         []interface{}    `json:"genres"`
+	Media          []*Media         `json:"media"`
+	Artist         *Artist          `json:"artist"`
+	Links          []*starr.Link    `json:"links"`
+	Images         []*starr.Image   `json:"images"`
+	Statistics     *Statistics      `json:"statistics"`
+	RemoteCover    string           `json:"remoteCover,omitempty"`
+	AddOptions     *AlbumAddOptions `json:"addOptions,omitempty"`
+	Monitored      bool             `json:"monitored"`
+	AnyReleaseOk   bool             `json:"anyReleaseOk"`
+	Grabbed        bool             `json:"grabbed"`
+}
+
+// Release is part of an Album.
+type Release struct {
+	ID               int64    `json:"id"`
+	AlbumID          int64    `json:"albumId"`
+	ForeignReleaseID string   `json:"foreignReleaseId"`
+	Title            string   `json:"title"`
+	Status           string   `json:"status"`
+	Duration         int      `json:"duration"`
+	TrackCount       int      `json:"trackCount"`
+	Media            []*Media `json:"media"`
+	MediumCount      int      `json:"mediumCount"`
+	Disambiguation   string   `json:"disambiguation"`
+	Country          []string `json:"country"`
+	Label            []string `json:"label"`
+	Format           string   `json:"format"`
+	Monitored        bool     `json:"monitored"`
+}
+
+// Media is part of an Album.
+type Media struct {
+	MediumNumber int64  `json:"mediumNumber"`
+	MediumName   string `json:"mediumName"`
+	MediumFormat string `json:"mediumFormat"`
+}
+
+// ArtistAddOptions is part of an artist and an album.
+type ArtistAddOptions struct {
+	Monitor                string `json:"monitor,omitempty"`
+	Monitored              bool   `json:"monitored,omitempty"`
+	SearchForMissingAlbums bool   `json:"searchForMissingAlbums,omitempty"`
+}
+
+// AddAlbumInput is currently unknown.
+type AddAlbumInput struct {
+	ForeignAlbumID string                  `json:"foreignAlbumId"`
+	Monitored      bool                    `json:"monitored"`
+	Releases       []*AddAlbumInputRelease `json:"releases"`
+	AddOptions     *AlbumAddOptions        `json:"addOptions"`
+	Artist         *Artist                 `json:"artist"`
+}
+
+// AddAlbumInputRelease is part of AddAlbumInput.
+type AddAlbumInputRelease struct {
+	ForeignReleaseID string   `json:"foreignReleaseId"`
+	Title            string   `json:"title"`
+	Media            []*Media `json:"media"`
+	Monitored        bool     `json:"monitored"`
+}
+
+// AlbumAddOptions is part of an Album.
+type AlbumAddOptions struct {
+	SearchForNewAlbum bool `json:"searchForNewAlbum,omitempty"`
+}
 
 // GetAlbum returns an album or all albums if mbID is "" (empty).
 // mbID is the music brainz UUID for a "release-group".
