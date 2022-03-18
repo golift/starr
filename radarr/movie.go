@@ -7,9 +7,163 @@ import (
 	"fmt"
 	"net/url"
 	"strconv"
+	"time"
 
 	"golift.io/starr"
 )
+
+// Movie is the /api/v3/movie endpoint.
+type Movie struct {
+	ID                    int64               `json:"id"`
+	Title                 string              `json:"title,omitempty"`
+	Path                  string              `json:"path,omitempty"`
+	MinimumAvailability   string              `json:"minimumAvailability,omitempty"`
+	QualityProfileID      int64               `json:"qualityProfileId,omitempty"`
+	TmdbID                int64               `json:"tmdbId,omitempty"`
+	OriginalTitle         string              `json:"originalTitle,omitempty"`
+	AlternateTitles       []*AlternativeTitle `json:"alternateTitles,omitempty"`
+	SecondaryYearSourceID int                 `json:"secondaryYearSourceId,omitempty"`
+	SortTitle             string              `json:"sortTitle,omitempty"`
+	SizeOnDisk            int64               `json:"sizeOnDisk,omitempty"`
+	Status                string              `json:"status,omitempty"`
+	Overview              string              `json:"overview,omitempty"`
+	InCinemas             time.Time           `json:"inCinemas,omitempty"`
+	PhysicalRelease       time.Time           `json:"physicalRelease,omitempty"`
+	DigitalRelease        time.Time           `json:"digitalRelease,omitempty"`
+	Images                []*starr.Image      `json:"images,omitempty"`
+	Website               string              `json:"website,omitempty"`
+	Year                  int                 `json:"year,omitempty"`
+	YouTubeTrailerID      string              `json:"youTubeTrailerId,omitempty"`
+	Studio                string              `json:"studio,omitempty"`
+	FolderName            string              `json:"folderName,omitempty"`
+	Runtime               int                 `json:"runtime,omitempty"`
+	CleanTitle            string              `json:"cleanTitle,omitempty"`
+	ImdbID                string              `json:"imdbId,omitempty"`
+	TitleSlug             string              `json:"titleSlug,omitempty"`
+	Certification         string              `json:"certification,omitempty"`
+	Genres                []string            `json:"genres,omitempty"`
+	Tags                  []int               `json:"tags,omitempty"`
+	Added                 time.Time           `json:"added,omitempty"`
+	Ratings               *starr.Ratings      `json:"ratings,omitempty"`
+	MovieFile             *MovieFile          `json:"movieFile,omitempty"`
+	Collection            *Collection         `json:"collection,omitempty"`
+	HasFile               bool                `json:"hasFile,omitempty"`
+	IsAvailable           bool                `json:"isAvailable,omitempty"`
+	Monitored             bool                `json:"monitored"`
+}
+
+// Collection belongs to a Movie.
+type Collection struct {
+	Name   string         `json:"name"`
+	TmdbID int64          `json:"tmdbId"`
+	Images []*starr.Image `json:"images"`
+}
+
+// MovieFile is part of a Movie.
+type MovieFile struct {
+	ID                  int64          `json:"id"`
+	MovieID             int64          `json:"movieId"`
+	RelativePath        string         `json:"relativePath"`
+	Path                string         `json:"path"`
+	Size                int64          `json:"size"`
+	DateAdded           time.Time      `json:"dateAdded"`
+	SceneName           string         `json:"sceneName"`
+	IndexerFlags        int64          `json:"indexerFlags"`
+	Quality             *starr.Quality `json:"quality"`
+	MediaInfo           *MediaInfo     `json:"mediaInfo"`
+	QualityCutoffNotMet bool           `json:"qualityCutoffNotMet"`
+	Languages           []*starr.Value `json:"languages"`
+	ReleaseGroup        string         `json:"releaseGroup"`
+	Edition             string         `json:"edition"`
+}
+
+// MediaInfo is part of a MovieFile.
+type MediaInfo struct {
+	AudioAdditionalFeatures string  `json:"audioAdditionalFeatures"`
+	AudioBitrate            int     `json:"audioBitrate"`
+	AudioChannels           float64 `json:"audioChannels"`
+	AudioCodec              string  `json:"audioCodec"`
+	AudioLanguages          string  `json:"audioLanguages"`
+	AudioStreamCount        int     `json:"audioStreamCount"`
+	VideoBitDepth           int     `json:"videoBitDepth"`
+	VideoBitrate            int     `json:"videoBitrate"`
+	VideoCodec              string  `json:"videoCodec"`
+	VideoFps                float64 `json:"videoFps"`
+	Resolution              string  `json:"resolution"`
+	RunTime                 string  `json:"runTime"`
+	ScanType                string  `json:"scanType"`
+	Subtitles               string  `json:"subtitles"`
+}
+
+// AddMovieInput is the input for a new movie.
+type AddMovieInput struct {
+	Title               string           `json:"title,omitempty"`
+	TitleSlug           string           `json:"titleSlug,omitempty"`
+	MinimumAvailability string           `json:"minimumAvailability,omitempty"`
+	RootFolderPath      string           `json:"rootFolderPath"`
+	TmdbID              int64            `json:"tmdbId"`
+	QualityProfileID    int64            `json:"qualityProfileId"`
+	ProfileID           int64            `json:"profileId,omitempty"`
+	Year                int              `json:"year,omitempty"`
+	Images              []*starr.Image   `json:"images,omitempty"`
+	AddOptions          *AddMovieOptions `json:"addOptions"`
+	Tags                []int            `json:"tags,omitempty"`
+	Monitored           bool             `json:"monitored"`
+}
+
+// AddMovieOptions are the options for finding a new movie.
+type AddMovieOptions struct {
+	SearchForMovie bool `json:"searchForMovie"`
+}
+
+// AddMovieOutput is the data returned when adding a movier.
+type AddMovieOutput struct {
+	ID                    int64               `json:"id"`
+	Title                 string              `json:"title"`
+	OriginalTitle         string              `json:"originalTitle"`
+	AlternateTitles       []*AlternativeTitle `json:"alternateTitles"`
+	SecondaryYearSourceID int64               `json:"secondaryYearSourceId"`
+	SortTitle             string              `json:"sortTitle"`
+	SizeOnDisk            int                 `json:"sizeOnDisk"`
+	Status                string              `json:"status"`
+	Overview              string              `json:"overview"`
+	InCinemas             time.Time           `json:"inCinemas"`
+	DigitalRelease        time.Time           `json:"digitalRelease"`
+	Images                []*starr.Image      `json:"images"`
+	Website               string              `json:"website"`
+	Year                  int                 `json:"year"`
+	YouTubeTrailerID      string              `json:"youTubeTrailerId"`
+	Studio                string              `json:"studio"`
+	Path                  string              `json:"path"`
+	QualityProfileID      int64               `json:"qualityProfileId"`
+	MinimumAvailability   string              `json:"minimumAvailability"`
+	FolderName            string              `json:"folderName"`
+	Runtime               int                 `json:"runtime"`
+	CleanTitle            string              `json:"cleanTitle"`
+	ImdbID                string              `json:"imdbId"`
+	TmdbID                int64               `json:"tmdbId"`
+	TitleSlug             string              `json:"titleSlug"`
+	Genres                []string            `json:"genres"`
+	Tags                  []int               `json:"tags"`
+	Added                 time.Time           `json:"added"`
+	AddOptions            *AddMovieOptions    `json:"addOptions"`
+	Ratings               *starr.Ratings      `json:"ratings"`
+	HasFile               bool                `json:"hasFile"`
+	Monitored             bool                `json:"monitored"`
+	IsAvailable           bool                `json:"isAvailable"`
+}
+
+// AlternativeTitle is part of a Movie.
+type AlternativeTitle struct {
+	MovieID    int          `json:"movieId"`
+	Title      string       `json:"title"`
+	SourceType string       `json:"sourceType"`
+	SourceID   int          `json:"sourceId"`
+	Votes      int          `json:"votes"`
+	VoteCount  int          `json:"voteCount"`
+	Language   *starr.Value `json:"language"`
+	ID         int          `json:"id"`
+}
 
 // GetMovie grabs a movie from the queue, or all movies if tmdbId is 0.
 func (r *Radarr) GetMovie(tmdbID int64) ([]*Movie, error) {
