@@ -10,6 +10,14 @@ import (
 	"golift.io/starr"
 )
 
+// Exclusion is a Radarr excluded item.
+type Exclusion struct {
+	TMDBID int64  `json:"tmdbId"`
+	Title  string `json:"movieTitle"`
+	Year   int    `json:"movieYear"`
+	ID     int64  `json:"id,omitempty"`
+}
+
 // GetExclusions returns all configured exclusions from Radarr.
 func (r *Radarr) GetExclusions() ([]*Exclusion, error) {
 	return r.GetExclusionsContext(context.Background())
