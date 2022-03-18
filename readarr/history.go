@@ -5,9 +5,55 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"time"
 
 	"golift.io/starr"
 )
+
+// History is the /api/v1/history endpoint.
+type History struct {
+	Page          int             `json:"page"`
+	PageSize      int             `json:"pageSize"`
+	SortKey       string          `json:"sortKey"`
+	SortDirection string          `json:"sortDirection"`
+	TotalRecords  int             `json:"totalRecords"`
+	Records       []HistoryRecord `json:"records"`
+}
+
+// HistoryRecord is part of the history. Not all items have all Data members.
+// Check EventType for events you need.
+type HistoryRecord struct {
+	ID                  int64          `json:"id"`
+	BookID              int64          `json:"bookId"`
+	AuthorID            int64          `json:"authorId"`
+	SourceTitle         string         `json:"sourceTitle"`
+	Quality             *starr.Quality `json:"quality"`
+	QualityCutoffNotMet bool           `json:"qualityCutoffNotMet"`
+	Date                time.Time      `json:"date"`
+	DownloadID          string         `json:"downloadId"`
+	EventType           string         `json:"eventType"`
+	Data                struct {
+		Age             string    `json:"age"`
+		AgeHours        string    `json:"ageHours"`
+		AgeMinutes      string    `json:"ageMinutes"`
+		DownloadClient  string    `json:"downloadClient"`
+		DownloadForced  string    `json:"downloadForced"`
+		DownloadURL     string    `json:"downloadUrl"`
+		DroppedPath     string    `json:"droppedPath"`
+		GUID            string    `json:"guid"`
+		ImportedPath    string    `json:"importedPath"`
+		Indexer         string    `json:"indexer"`
+		Message         string    `json:"message"`
+		NzbInfoURL      string    `json:"nzbInfoUrl"`
+		Protocol        string    `json:"protocol"`
+		PublishedDate   time.Time `json:"publishedDate"`
+		Reason          string    `json:"reason"`
+		ReleaseGroup    string    `json:"releaseGroup"`
+		Size            string    `json:"size"`
+		StatusMessages  string    `json:"statusMessages"`
+		TorrentInfoHash string    `json:"torrentInfoHash"`
+	} `json:"data"`
+}
 
 // GetHistory returns the Readarr History (grabs/failures/completed).
 // WARNING: 12/30/2021 - this method changed.

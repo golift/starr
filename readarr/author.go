@@ -8,9 +8,69 @@ import (
 	"log"
 	"net/url"
 	"strconv"
+	"time"
 
 	"golift.io/starr"
 )
+
+// Author is the /api/v1/author endpoint.
+type Author struct {
+	ID                int64          `json:"id"`
+	Status            string         `json:"status,omitempty"`
+	AuthorName        string         `json:"authorName,omitempty"`
+	ForeignAuthorID   string         `json:"foreignAuthorId,omitempty"`
+	TitleSlug         string         `json:"titleSlug,omitempty"`
+	Overview          string         `json:"overview,omitempty"`
+	Links             []*starr.Link  `json:"links,omitempty"`
+	Images            []*starr.Image `json:"images,omitempty"`
+	Path              string         `json:"path,omitempty"`
+	QualityProfileID  int            `json:"qualityProfileId,omitempty"`
+	MetadataProfileID int            `json:"metadataProfileId,omitempty"`
+	Genres            []interface{}  `json:"genres,omitempty"`
+	CleanName         string         `json:"cleanName,omitempty"`
+	SortName          string         `json:"sortName,omitempty"`
+	Tags              []int          `json:"tags,omitempty"`
+	Added             time.Time      `json:"added,omitempty"`
+	Ratings           *starr.Ratings `json:"ratings,omitempty"`
+	Statistics        *Statistics    `json:"statistics,omitempty"`
+	LastBook          *AuthorBook    `json:"lastBook,omitempty"`
+	NextBook          *AuthorBook    `json:"nextBook,omitempty"`
+	Ended             bool           `json:"ended,omitempty"`
+	Monitored         bool           `json:"monitored"`
+}
+
+// AuthorBook is part of an Author.
+type AuthorBook struct {
+	ID               int64           `json:"id"`
+	AuthorMetadataID int             `json:"authorMetadataId"`
+	ForeignBookID    string          `json:"foreignBookId"`
+	TitleSlug        string          `json:"titleSlug"`
+	Title            string          `json:"title"`
+	ReleaseDate      time.Time       `json:"releaseDate"`
+	Links            []*starr.Link   `json:"links"`
+	Genres           []interface{}   `json:"genres"`
+	Ratings          *starr.Ratings  `json:"ratings"`
+	CleanTitle       string          `json:"cleanTitle"`
+	Monitored        bool            `json:"monitored"`
+	AnyEditionOk     bool            `json:"anyEditionOk"`
+	LastInfoSync     time.Time       `json:"lastInfoSync"`
+	Added            time.Time       `json:"added"`
+	AddOptions       *AddBookOptions `json:"addOptions"`
+	AuthorMetadata   *starr.IsLoaded `json:"authorMetadata"`
+	Author           *starr.IsLoaded `json:"author"`
+	Editions         *starr.IsLoaded `json:"editions"`
+	BookFiles        *starr.IsLoaded `json:"bookFiles"`
+	SeriesLinks      *starr.IsLoaded `json:"seriesLinks"`
+}
+
+// Statistics for a Book, or maybe an author.
+type Statistics struct {
+	BookCount      int     `json:"bookCount"`
+	BookFileCount  int     `json:"bookFileCount"`
+	TotalBookCount int     `json:"totalBookCount"`
+	SizeOnDisk     int     `json:"sizeOnDisk"`
+	PercentOfBooks float64 `json:"percentOfBooks"`
+}
 
 // GetAuthorByID returns an author.
 func (r *Readarr) GetAuthorByID(authorID int64) (*Author, error) {
