@@ -82,64 +82,6 @@ type QueueRecord struct {
 	ErrorMessage            string                 `json:"errorMessage"`
 }
 
-// Series the /api/v3/series endpoint.
-type Series struct {
-	ID                int64             `json:"id"`
-	Title             string            `json:"title,omitempty"`
-	AlternateTitles   []*AlternateTitle `json:"alternateTitles,omitempty"`
-	SortTitle         string            `json:"sortTitle,omitempty"`
-	Status            string            `json:"status,omitempty"`
-	Overview          string            `json:"overview,omitempty"`
-	PreviousAiring    time.Time         `json:"previousAiring,omitempty"`
-	Network           string            `json:"network,omitempty"`
-	Images            []*starr.Image    `json:"images,omitempty"`
-	Seasons           []*Season         `json:"seasons,omitempty"`
-	Year              int               `json:"year,omitempty"`
-	Path              string            `json:"path,omitempty"`
-	QualityProfileID  int64             `json:"qualityProfileId,omitempty"`
-	LanguageProfileID int64             `json:"languageProfileId,omitempty"`
-	Runtime           int               `json:"runtime,omitempty"`
-	TvdbID            int64             `json:"tvdbId,omitempty"`
-	TvRageID          int64             `json:"tvRageId,omitempty"`
-	TvMazeID          int64             `json:"tvMazeId,omitempty"`
-	FirstAired        time.Time         `json:"firstAired,omitempty"`
-	SeriesType        string            `json:"seriesType,omitempty"`
-	CleanTitle        string            `json:"cleanTitle,omitempty"`
-	ImdbID            string            `json:"imdbId,omitempty"`
-	TitleSlug         string            `json:"titleSlug,omitempty"`
-	RootFolderPath    string            `json:"rootFolderPath,omitempty"`
-	Certification     string            `json:"certification,omitempty"`
-	Genres            []string          `json:"genres,omitempty"`
-	Tags              []int             `json:"tags,omitempty"`
-	Added             time.Time         `json:"added,omitempty"`
-	Ratings           *starr.Ratings    `json:"ratings,omitempty"`
-	Statistics        *Statistics       `json:"statistics,omitempty"`
-	NextAiring        time.Time         `json:"nextAiring,omitempty"`
-	AirTime           string            `json:"airTime,omitempty"`
-	Ended             bool              `json:"ended,omitempty"`
-	SeasonFolder      bool              `json:"seasonFolder,omitempty"`
-	Monitored         bool              `json:"monitored"`
-	UseSceneNumbering bool              `json:"useSceneNumbering,omitempty"`
-}
-
-// Statistics is part of Queue.
-type Statistics struct {
-	SeasonCount       int       `json:"seasonCount"`
-	PreviousAiring    time.Time `json:"previousAiring"`
-	EpisodeFileCount  int       `json:"episodeFileCount"`
-	EpisodeCount      int       `json:"episodeCount"`
-	TotalEpisodeCount int       `json:"totalEpisodeCount"`
-	SizeOnDisk        int64     `json:"sizeOnDisk"`
-	PercentOfEpisodes float64   `json:"percentOfEpisodes"`
-}
-
-// Season is part of Queue and used in a few places.
-type Season struct {
-	SeasonNumber int         `json:"seasonNumber"`
-	Monitored    bool        `json:"monitored"`
-	Statistics   *Statistics `json:"statistics,omitempty"`
-}
-
 // Episode is the /api/v3/episode endpoint.
 type Episode struct {
 	ID                       int64     `json:"id"`
@@ -155,73 +97,6 @@ type Episode struct {
 	UnverifiedSceneNumbering bool      `json:"unverifiedSceneNumbering"`
 	HasFile                  bool      `json:"hasFile"`
 	Monitored                bool      `json:"monitored"`
-}
-
-// AddSeriesInput is the input for a POST to the /api/v3/series endpoint.
-type AddSeriesInput struct {
-	ID                int64             `json:"id,omitempty"`
-	TvdbID            int64             `json:"tvdbId"`
-	QualityProfileID  int64             `json:"qualityProfileId"`
-	LanguageProfileID int64             `json:"languageProfileId"`
-	Tags              []int             `json:"tags"`
-	RootFolderPath    string            `json:"rootFolderPath"`
-	Title             string            `json:"title,omitempty"`
-	SeriesType        string            `json:"seriesType,omitempty"`
-	Seasons           []*Season         `json:"seasons"`
-	AddOptions        *AddSeriesOptions `json:"addOptions"`
-	SeasonFolder      bool              `json:"seasonFolder"`
-	Monitored         bool              `json:"monitored"`
-}
-
-// AddSeriesOptions is part of AddSeriesInput.
-type AddSeriesOptions struct {
-	SearchForMissingEpisodes     bool `json:"searchForMissingEpisodes"`
-	SearchForCutoffUnmetEpisodes bool `json:"searchForCutoffUnmetEpisodes,omitempty"`
-	IgnoreEpisodesWithFiles      bool `json:"ignoreEpisodesWithFiles,omitempty"`
-	IgnoreEpisodesWithoutFiles   bool `json:"ignoreEpisodesWithoutFiles,omitempty"`
-}
-
-// AddSeriesOutput is currently an unknown format.
-type AddSeriesOutput struct {
-	ID                int64             `json:"id"`
-	Title             string            `json:"title"`
-	AlternateTitles   []*AlternateTitle `json:"alternateTitles"`
-	SortTitle         string            `json:"sortTitle"`
-	Status            string            `json:"status"`
-	Overview          string            `json:"overview"`
-	Network           string            `json:"network"`
-	Images            []*starr.Image    `json:"images"`
-	Seasons           []*Season         `json:"seasons"`
-	Year              int               `json:"year"`
-	Path              string            `json:"path"`
-	QualityProfileID  int64             `json:"qualityProfileId"`
-	LanguageProfileID int64             `json:"languageProfileId"`
-	Runtime           int               `json:"runtime"`
-	TvdbID            int64             `json:"tvdbId"`
-	TvRageID          int64             `json:"tvRageId"`
-	TvMazeID          int64             `json:"tvMazeId"`
-	FirstAired        time.Time         `json:"firstAired"`
-	SeriesType        string            `json:"seriesType"`
-	CleanTitle        string            `json:"cleanTitle"`
-	ImdbID            string            `json:"imdbId"`
-	TitleSlug         string            `json:"titleSlug"`
-	RootFolderPath    string            `json:"rootFolderPath"`
-	Genres            []string          `json:"genres"`
-	Tags              []int             `json:"tags"`
-	Added             time.Time         `json:"added"`
-	AddOptions        *AddSeriesOptions `json:"addOptions"`
-	Ratings           *starr.Ratings    `json:"ratings"`
-	Statistics        *Statistics       `json:"statistics"`
-	Ended             bool              `json:"ended"`
-	SeasonFolder      bool              `json:"seasonFolder"`
-	Monitored         bool              `json:"monitored"`
-	UseSceneNumbering bool              `json:"useSceneNumbering"`
-}
-
-// AlternateTitle is part of a Series.
-type AlternateTitle struct {
-	Title        string `json:"title"`
-	SeasonNumber int    `json:"seasonNumber"`
 }
 
 // History is the data from the /api/v3/history endpoint.

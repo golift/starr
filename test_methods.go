@@ -23,20 +23,30 @@ type TestMockData struct {
 	WithError       error       // Caller's response.
 }
 
+const (
+	// Error body for 401 response.
+	BodyUnauthorized = `{"error": "Unauthorized"}`
+	// Error body for 404 response.
+	BodyNotFound = `{"message": "NotFound"}`
+	// Error body for 405 response.
+	BodyMethodNotAllowed = `{"message": "MethodNotAllowed"}`
+)
+
 // GetMockServer is used in all the http tests.
 func (test *TestMockData) GetMockServer(t *testing.T) *httptest.Server {
 	t.Helper()
 
-	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	return httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, req *http.Request) {
 		assert.EqualValues(t, test.ExpectedPath, req.URL.String())
-		w.WriteHeader(test.ResponseStatus)
+		writer.WriteHeader(test.ResponseStatus)
 
-		_, err := w.Write([]byte(test.ResponseBody))
-		assert.NoError(t, err)
 		assert.EqualValues(t, req.Method, test.ExpectedMethod)
 
 		body, err := ioutil.ReadAll(req.Body)
 		assert.NoError(t, err)
 		assert.EqualValues(t, test.ExpectedRequest, string(body))
+
+		_, err = writer.Write([]byte(test.ResponseBody))
+		assert.NoError(t, err)
 	}))
 }
