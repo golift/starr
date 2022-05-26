@@ -240,7 +240,8 @@ func (s *Sonarr) LookupContext(ctx context.Context, term string) ([]*Series, err
 }
 
 // DeleteSeries removes a single Series.
-// deleteFiles and importExclude flags defines the deleteFiles and addImportListExclusion query paramenters respectively.
+// deleteFiles flag defines the deleteFiles query paramenter.
+// importExclude defines the addImportListExclusion query paramenter.
 func (s *Sonarr) DeleteSeries(seriesID int, deleteFiles bool, importExclude bool) error {
 	return s.DeleteSeriesContext(context.Background(), seriesID, deleteFiles, importExclude)
 }
