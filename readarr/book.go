@@ -105,6 +105,7 @@ type AddBookAuthor struct {
 	MetadataProfileID int64             `json:"metadataProfileId"` // required
 	ForeignAuthorID   string            `json:"foreignAuthorId"`   // required
 	RootFolderPath    string            `json:"rootFolderPath"`    // required
+	Tags              []int             `json:"tags"`
 	AddOptions        *AddAuthorOptions `json:"addOptions"`
 }
 
