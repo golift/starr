@@ -118,6 +118,29 @@ type Value struct {
 	Name string `json:"name"`
 }
 
+// Fields is generic Name/Value struct applied to a few places.
+type Field struct {
+	Advanced                    bool            `json:"advanced,omitempty"`
+	Order                       int64           `json:"order,omitempty"`
+	HelpLink                    string          `json:"helpLink,omitempty"`
+	HelpText                    string          `json:"helpText,omitempty"`
+	Hidden                      string          `json:"hidden,omitempty"`
+	Label                       string          `json:"label,omitempty"`
+	Name                        string          `json:"name"`
+	SelectOptionsProviderAction string          `json:"selectOptionsProviderAction,omitempty"`
+	Type                        string          `json:"type,omitempty"`
+	Value                       interface{}     `json:"value,omitempty"`
+	SelectOptions               []*SelectOption `json:"selectOptions,omitempty"`
+}
+
+// SelectOption is part of Field
+type SelectOption struct {
+	Order int64  `json:"order"`
+	Value int64  `json:"value"`
+	Hint  string `json:"hint"`
+	Name  string `json:"name"`
+}
+
 // KeyValue is yet another reusable generic type.
 type KeyValue struct {
 	Key   string `json:"key"`
