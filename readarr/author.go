@@ -65,11 +65,12 @@ type AuthorBook struct {
 
 // Statistics for a Book, or maybe an author.
 type Statistics struct {
-	BookCount      int     `json:"bookCount"`
-	BookFileCount  int     `json:"bookFileCount"`
-	TotalBookCount int     `json:"totalBookCount"`
-	SizeOnDisk     int     `json:"sizeOnDisk"`
-	PercentOfBooks float64 `json:"percentOfBooks"`
+	BookCount          int     `json:"bookCount"`
+	BookFileCount      int     `json:"bookFileCount"`
+	TotalBookCount     int     `json:"totalBookCount"`
+	SizeOnDisk         int     `json:"sizeOnDisk"`
+	PercentOfBooks     float64 `json:"percentOfBooks"`
+	AvailableBookCount int     `json:"availableBookCount"`
 }
 
 // GetAuthorByID returns an author.

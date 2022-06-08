@@ -17,6 +17,7 @@ import (
 type Book struct {
 	Title          string         `json:"title"`
 	SeriesTitle    string         `json:"seriesTitle"`
+	AuthorTitle    string         `json:"authorTitle"`
 	Overview       string         `json:"overview"`
 	AuthorID       int64          `json:"authorId"`
 	ForeignBookID  string         `json:"foreignBookId"`
@@ -25,15 +26,16 @@ type Book struct {
 	AnyEditionOk   bool           `json:"anyEditionOk"`
 	Ratings        *starr.Ratings `json:"ratings"`
 	ReleaseDate    time.Time      `json:"releaseDate"`
+	Added          time.Time      `json:"added"`
 	PageCount      int            `json:"pageCount"`
-	Genres         []interface{}  `json:"genres"`
-	Author         *BookAuthor    `json:"author,omitempty"`
+	Genres         []string       `json:"genres"`
 	Images         []*starr.Image `json:"images"`
 	Links          []*starr.Link  `json:"links"`
 	Statistics     *Statistics    `json:"statistics,omitempty"`
 	Editions       []*Edition     `json:"editions"`
 	ID             int64          `json:"id"`
 	Disambiguation string         `json:"disambiguation,omitempty"`
+	RemoteCover    string         `json:"remoteCover,omitempty"`
 }
 
 // BookAuthor of a Book.
