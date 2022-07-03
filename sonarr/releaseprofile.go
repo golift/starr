@@ -36,7 +36,7 @@ func (s *Sonarr) GetReleaseProfilesContext(ctx context.Context) ([]*ReleaseProfi
 	var output []*ReleaseProfile
 
 	if _, err := s.GetInto(ctx, bpReleaseProfile, nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(releaseProfile): %w", err)
+		return nil, fmt.Errorf("api.Get(%s): %w", bpReleaseProfile, err)
 	}
 
 	return output, nil
@@ -52,7 +52,7 @@ func (s *Sonarr) GetReleaseProfileContext(ctx context.Context, profileID int) (*
 
 	uri := path.Join(bpReleaseProfile, strconv.Itoa(profileID))
 	if _, err := s.GetInto(ctx, uri, nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(releaseProfile): %w", err)
+		return nil, fmt.Errorf("api.Get(%s): %w", bpReleaseProfile, err)
 	}
 
 	return output, nil
@@ -68,11 +68,11 @@ func (s *Sonarr) AddReleaseProfileContext(ctx context.Context, profile *ReleaseP
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(profile); err != nil {
-		return nil, fmt.Errorf("json.Marshal(releaseProfile): %w", err)
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpReleaseProfile, err)
 	}
 
 	if _, err := s.PostInto(ctx, bpReleaseProfile, nil, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(releaseProfile): %w", err)
+		return nil, fmt.Errorf("api.Post(%s): %w", bpReleaseProfile, err)
 	}
 
 	return &output, nil
@@ -88,12 +88,12 @@ func (s *Sonarr) UpdateReleaseProfileContext(ctx context.Context, profile *Relea
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(profile); err != nil {
-		return nil, fmt.Errorf("json.Marshal(releaseProfile): %w", err)
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpReleaseProfile, err)
 	}
 
 	uri := path.Join(bpReleaseProfile, strconv.Itoa(int(profile.ID)))
 	if _, err := s.PutInto(ctx, uri, nil, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(releaseProfile): %w", err)
+		return nil, fmt.Errorf("api.Put(%s): %w", bpReleaseProfile, err)
 	}
 
 	return &output, nil
@@ -107,7 +107,7 @@ func (s *Sonarr) DeleteReleaseProfile(profileID int) error {
 func (s *Sonarr) DeleteReleaseProfileContext(ctx context.Context, profileID int) error {
 	uri := path.Join(bpReleaseProfile, strconv.Itoa(profileID))
 	if _, err := s.Delete(ctx, uri, nil); err != nil {
-		return fmt.Errorf("api.Delete(releaseProfile): %w", err)
+		return fmt.Errorf("api.Delete(%s): %w", bpReleaseProfile, err)
 	}
 
 	return nil

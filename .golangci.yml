@@ -2,6 +2,10 @@ issues:
   exclude-rules:
     # Exclude funlen for testing files.
     - linters:
+        - nonamedreturns
+      path: 'starrcmd/'
+    - linters:
+        - forcetypeassert
         - funlen
       path: '(.+)_test\.go'
 
@@ -14,6 +18,7 @@ linters:
     - golint
     - tagliatelle
     - exhaustivestruct
+    - exhaustruct
     - dupl
 
 run:

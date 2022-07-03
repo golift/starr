@@ -5,10 +5,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"path"
 	"strconv"
 
 	"golift.io/starr"
 )
+
+const bpQualityProfile = APIver + "/qualityProfile"
 
 // QualityProfile is applied to Movies.
 type QualityProfile struct {
@@ -39,9 +42,9 @@ func (r *Radarr) GetQualityProfiles() ([]*QualityProfile, error) {
 func (r *Radarr) GetQualityProfilesContext(ctx context.Context) ([]*QualityProfile, error) {
 	var profiles []*QualityProfile
 
-	_, err := r.GetInto(ctx, "v3/qualityProfile", nil, &profiles)
+	_, err := r.GetInto(ctx, bpQualityProfile, nil, &profiles)
 	if err != nil {
-		return nil, fmt.Errorf("api.Get(qualityProfile): %w", err)
+		return nil, fmt.Errorf("api.Get(%s): %w", bpQualityProfile, err)
 	}
 
 	return profiles, nil
@@ -56,12 +59,12 @@ func (r *Radarr) AddQualityProfile(profile *QualityProfile) (int64, error) {
 func (r *Radarr) AddQualityProfileContext(ctx context.Context, profile *QualityProfile) (int64, error) {
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(profile); err != nil {
-		return 0, fmt.Errorf("json.Marshal(qualityProfile): %w", err)
+		return 0, fmt.Errorf("json.Marshal(%s): %w", bpQualityProfile, err)
 	}
 
 	var output QualityProfile
-	if _, err := r.PostInto(ctx, "v3/qualityProfile", nil, &body, &output); err != nil {
-		return 0, fmt.Errorf("api.Post(qualityProfile): %w", err)
+	if _, err := r.PostInto(ctx, bpQualityProfile, nil, &body, &output); err != nil {
+		return 0, fmt.Errorf("api.Post(%s): %w", bpQualityProfile, err)
 	}
 
 	return output.ID, nil
@@ -76,12 +79,27 @@ func (r *Radarr) UpdateQualityProfile(profile *QualityProfile) error {
 func (r *Radarr) UpdateQualityProfileContext(ctx context.Context, profile *QualityProfile) error {
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(profile); err != nil {
-		return fmt.Errorf("json.Marshal(qualityProfile): %w", err)
+		return fmt.Errorf("json.Marshal(%s): %w", bpQualityProfile, err)
 	}
 
-	_, err := r.Put(ctx, "v3/qualityProfile/"+strconv.FormatInt(profile.ID, starr.Base10), nil, &body)
-	if err != nil {
-		return fmt.Errorf("api.Put(qualityProfile): %w", err)
+	uri := path.Join(bpQualityProfile, strconv.FormatInt(profile.ID, starr.Base10))
+	if _, err := r.Put(ctx, uri, nil, &body); err != nil {
+		return fmt.Errorf("api.Put(%s): %w", bpQualityProfile, err)
+	}
+
+	return nil
+}
+
+// DeleteQualityProfile deletes a quality profile.
+func (r *Radarr) DeleteQualityProfile(profileID int64) error {
+	return r.DeleteQualityProfileContext(context.Background(), profileID)
+}
+
+// DeleteQualityProfileContext deletes a quality profile.
+func (r *Radarr) DeleteQualityProfileContext(ctx context.Context, profileID int64) error {
+	uri := path.Join(bpQualityProfile, strconv.FormatInt(profileID, starr.Base10))
+	if _, err := r.Delete(ctx, uri, nil); err != nil {
+		return fmt.Errorf("api.Delete(%s): %w", bpQualityProfile, err)
 	}
 
 	return nil
