@@ -68,7 +68,7 @@ func (r *Readarr) UpdateQualityProfileContext(ctx context.Context, profile *Qual
 		return fmt.Errorf("json.Marshal(%s): %w", bpQualityProfile, err)
 	}
 
-	uri := path.Join(bpQualityProfile, strconv.FormatInt(profil.ID, starr.Base10))
+	uri := path.Join(bpQualityProfile, strconv.FormatInt(profile.ID, starr.Base10))
 	if _, err := r.Put(ctx, uri, nil, &body); err != nil {
 		return fmt.Errorf("api.Put(%s): %w", bpQualityProfile, err)
 	}

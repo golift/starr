@@ -19,8 +19,13 @@ const API = "api"
 /* The methods in this file provide assumption-ridden HTTP calls for Starr apps. */
 
 // Req makes an http request and returns the body in []byte form (already read).
-func (c *Config) Req(ctx context.Context, path, method string, params url.Values,
-	body io.Reader) (int, []byte, http.Header, error) {
+func (c *Config) Req(
+	ctx context.Context,
+	path string,
+	method string,
+	params url.Values,
+	body io.Reader,
+) (int, []byte, http.Header, error) {
 	req, err := c.newReq(ctx, c.SetPath(path), method, params, body)
 	if err != nil {
 		return 0, nil, nil, err
@@ -46,8 +51,13 @@ func (c *Config) Req(ctx context.Context, path, method string, params url.Values
 }
 
 // body returns the body in io.ReadCloser form (read and close it yourself).
-func (c *Config) body(ctx context.Context, uri, method string, params url.Values,
-	body io.Reader) (int, io.ReadCloser, http.Header, error) {
+func (c *Config) body(
+	ctx context.Context,
+	uri string,
+	method string,
+	params url.Values,
+	body io.Reader,
+) (int, io.ReadCloser, http.Header, error) {
 	req, err := c.newReq(ctx, c.URL+uri, method, params, body)
 	if err != nil {
 		return 0, nil, nil, err
@@ -61,8 +71,13 @@ func (c *Config) body(ctx context.Context, uri, method string, params url.Values
 	return resp.StatusCode, resp.Body, resp.Header, nil
 }
 
-func (c *Config) newReq(ctx context.Context, path, method string,
-	params url.Values, body io.Reader) (*http.Request, error) {
+func (c *Config) newReq(
+	ctx context.Context,
+	path string,
+	method string,
+	params url.Values,
+	body io.Reader,
+) (*http.Request, error) {
 	if c.Client == nil { // we must have an http client.
 		return nil, ErrNilClient
 	}

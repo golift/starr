@@ -61,7 +61,6 @@ type LidarrAlbumDownload struct {
 	DownloadID       string    `env:"lidarr_download_id"`       // message.DownloadId ?? string.Empty)
 	AddedTrackPaths  []string  `env:"lidarr_addedtrackpaths,|"` // string.Join("|", message.TrackFiles.Select(e => e.Path)))
 	DeletedPaths     []string  `env:"lidarr_deletedpaths,|"`    // string.Join("|", message.OldFiles.Select(e => e.Path)))
-
 }
 
 // LidarrRename is the Rename event.

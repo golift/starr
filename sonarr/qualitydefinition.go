@@ -60,8 +60,10 @@ func (s *Sonarr) UpdateQualityDefinition(definition *QualityDefinition) (*Qualit
 	return s.UpdateQualityDefinitionContext(context.Background(), definition)
 }
 
-func (s *Sonarr) UpdateQualityDefinitionContext(ctx context.Context,
-	definition *QualityDefinition) (*QualityDefinition, error) {
+func (s *Sonarr) UpdateQualityDefinitionContext(
+	ctx context.Context,
+	definition *QualityDefinition,
+) (*QualityDefinition, error) {
 	var output QualityDefinition
 
 	var body bytes.Buffer

@@ -171,8 +171,13 @@ func (c *Config) GetInto(ctx context.Context, path string, params url.Values, ou
 
 // PostInto performs an HTTP POST against an API path and
 // unmarshals the payload into the provided pointer interface.
-func (c *Config) PostInto(ctx context.Context,
-	path string, params url.Values, postBody io.Reader, output interface{}) (int64, error) {
+func (c *Config) PostInto(
+	ctx context.Context,
+	path string,
+	params url.Values,
+	postBody io.Reader,
+	output interface{},
+) (int64, error) {
 	if c.Debugf == nil { // no log, pass it through.
 		_, data, _, err := c.body(ctx, path, http.MethodPost, params, postBody)
 
@@ -186,8 +191,13 @@ func (c *Config) PostInto(ctx context.Context,
 
 // PutInto performs an HTTP PUT against an API path and
 // unmarshals the payload into the provided pointer interface.
-func (c *Config) PutInto(ctx context.Context,
-	path string, params url.Values, putBody io.Reader, output interface{}) (int64, error) {
+func (c *Config) PutInto(
+	ctx context.Context,
+	path string,
+	params url.Values,
+	putBody io.Reader,
+	output interface{},
+) (int64, error) {
 	if c.Debugf == nil { // no log, pass it through.
 		_, data, _, err := c.body(ctx, path, http.MethodPut, params, putBody)
 
@@ -232,8 +242,12 @@ func (c *Config) GetBody(ctx context.Context, path string, params url.Values) (i
 // Always remember to close the io.ReadCloser.
 // Before you use the returned data, check the HTTP status code.
 // If it's not 200, it's possible the request had an error or was not authenticated.
-func (c *Config) PostBody(ctx context.Context,
-	path string, params url.Values, postBody io.Reader) (io.ReadCloser, int, error) {
+func (c *Config) PostBody(
+	ctx context.Context,
+	path string,
+	params url.Values,
+	postBody io.Reader,
+) (io.ReadCloser, int, error) {
 	code, data, header, err := c.body(ctx, path, http.MethodPost, params, postBody)
 
 	if c.Debugf != nil {
@@ -246,8 +260,12 @@ func (c *Config) PostBody(ctx context.Context,
 // PutBody makes a PUT http request and returns the resp.Body (io.ReadCloser).
 // Always remember to close the io.ReadCloser.
 // Before you use the returned data, check the HTTP status code.
-func (c *Config) PutBody(ctx context.Context,
-	path string, params url.Values, putBody io.Reader) (io.ReadCloser, int, error) {
+func (c *Config) PutBody(
+	ctx context.Context,
+	path string,
+	params url.Values,
+	putBody io.Reader,
+) (io.ReadCloser, int, error) {
 	code, data, header, err := c.body(ctx, path, http.MethodPut, params, putBody)
 
 	if c.Debugf != nil {

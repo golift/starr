@@ -97,10 +97,15 @@ func New(apiKey, appURL string, timeout time.Duration) *Config {
 }
 
 // UnmarshalText parses a duration type from a config file.
-func (d *Duration) UnmarshalText(data []byte) (err error) {
-	d.Duration, err = time.ParseDuration(string(data))
+func (d *Duration) UnmarshalText(data []byte) error {
+	var err error
 
-	return
+	d.Duration, err = time.ParseDuration(string(data))
+	if err != nil {
+		return fmt.Errorf("invalid duration: %w", err)
+	}
+
+	return nil
 }
 
 // String returns a Duration as string without trailing zero units.

@@ -64,8 +64,11 @@ func (s *Sonarr) UpdateEpisodeFileQuality(episodeFileID, qualityID int64) (*Epis
 }
 
 // UpdateEpisodeFileQualityContext updates an episode file, and takes a context.
-func (s *Sonarr) UpdateEpisodeFileQualityContext(ctx context.Context,
-	episodeFileID, qualityID int64) (*EpisodeFile, error) {
+func (s *Sonarr) UpdateEpisodeFileQualityContext(
+	ctx context.Context,
+	episodeFileID int64,
+	qualityID int64,
+) (*EpisodeFile, error) {
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(&EpisodeFile{
 		ID:      episodeFileID,
