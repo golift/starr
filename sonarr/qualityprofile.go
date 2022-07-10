@@ -32,7 +32,7 @@ func (s *Sonarr) GetQualityProfilesContext(ctx context.Context) ([]*QualityProfi
 	var output []*QualityProfile
 
 	if _, err := s.GetInto(ctx, bpQualityProfile, nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(qualityProfile): %w", err)
+		return nil, fmt.Errorf("api.Get(%s): %w", bpQualityProfile, err)
 	}
 
 	return output, nil
@@ -48,7 +48,7 @@ func (s *Sonarr) GetQualityProfileContext(ctx context.Context, profileID int) (*
 
 	uri := path.Join(bpQualityProfile, strconv.Itoa(profileID))
 	if _, err := s.GetInto(ctx, uri, nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(qualityProfile): %w", err)
+		return nil, fmt.Errorf("api.Get(%s): %w", bpQualityProfile, err)
 	}
 
 	return output, nil
@@ -64,11 +64,11 @@ func (s *Sonarr) AddQualityProfileContext(ctx context.Context, profile *QualityP
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(profile); err != nil {
-		return nil, fmt.Errorf("json.Marshal(qualityProfile): %w", err)
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpQualityProfile, err)
 	}
 
 	if _, err := s.PostInto(ctx, bpQualityProfile, nil, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(qualityProfile): %w", err)
+		return nil, fmt.Errorf("api.Post(%s): %w", bpQualityProfile, err)
 	}
 
 	return &output, nil
@@ -84,12 +84,12 @@ func (s *Sonarr) UpdateQualityProfileContext(ctx context.Context, profile *Quali
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(profile); err != nil {
-		return nil, fmt.Errorf("json.Marshal(qualityProfile): %w", err)
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpQualityProfile, err)
 	}
 
 	uri := path.Join(bpQualityProfile, strconv.Itoa(int(profile.ID)))
 	if _, err := s.PutInto(ctx, uri, nil, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(qualityProfile): %w", err)
+		return nil, fmt.Errorf("api.Put(%s): %w", bpQualityProfile, err)
 	}
 
 	return &output, nil
@@ -103,7 +103,7 @@ func (s *Sonarr) DeleteQualityProfile(profileID int) error {
 func (s *Sonarr) DeleteQualityProfileContext(ctx context.Context, profileID int) error {
 	uri := path.Join(bpQualityProfile, strconv.Itoa(profileID))
 	if _, err := s.Delete(ctx, uri, nil); err != nil {
-		return fmt.Errorf("api.Delete(qualityProfile): %w", err)
+		return fmt.Errorf("api.Delete(%s): %w", bpQualityProfile, err)
 	}
 
 	return nil
