@@ -6,13 +6,26 @@ import (
 	"encoding/json"
 	"fmt"
 	"path"
-	"sort"
 	"strconv"
 
 	"golift.io/starr"
 )
 
-type Indexer struct {
+type IndexerInput struct {
+	EnableAutomaticSearch   bool           `json:"enableAutomaticSearch"`
+	EnableInteractiveSearch bool           `json:"enableInteractiveSearch"`
+	EnableRss               bool           `json:"enableRss"`
+	Priority                int64          `json:"priority"`
+	ID                      int64          `json:"id,omitempty"`
+	ConfigContract          string         `json:"configContract"`
+	Implementation          string         `json:"implementation"`
+	Name                    string         `json:"name"`
+	Protocol                string         `json:"protocol"`
+	Fields                  IndexerFields  `json:"fields"`
+	Tags                    []*starr.Value `json:"tags"`
+}
+
+type IndexerOutput struct {
 	EnableAutomaticSearch   bool           `json:"enableAutomaticSearch"`
 	EnableInteractiveSearch bool           `json:"enableInteractiveSearch"`
 	EnableRss               bool           `json:"enableRss"`
@@ -26,171 +39,196 @@ type Indexer struct {
 	InfoLink                string         `json:"infoLink"`
 	Name                    string         `json:"name"`
 	Protocol                string         `json:"protocol"`
+	Fields                  IndexerFields  `json:"fields"`
+	Tags                    []*starr.Value `json:"tags"`
+}
+
+type IndexerFields struct {
+	AllowZeroSize *bool `json:"allowZeroSize,omitempty"`
+	// RankedOnly           bool    `json:"rankedOnly,omitempty"`
+	// Delay                int64   `json:"delay,omitempty"`
+	// MinimumSeeders       int64   `json:"minimumSeeders,omitempty"`
+	// SeasonPackSeedTime   int64   `json:"seasonPackSeedTime,omitempty"`
+	// SeedTime             int64   `json:"seedTime,omitempty"`
+	// SeedRatio            float64 `json:"seedRatio,omitempty"`
+	// AdditionalParameters string  `json:"additionalParameters,omitempty"`
+	ApiKey  *string `json:"apiKey,omitempty"`
+	ApiPath *string `json:"apiPath,omitempty"`
+	// BaseUrl              string  `json:"baseUrl,omitempty"`
+	// CaptchaToken         string  `json:"captchaToken,omitempty"`
+	// Cookie               string  `json:"cookie,omitempty"`
+	// Passkey              string  `json:"passkey,omitempty"`
+	// Username             string  `json:"username,omitempty"`
+	// AnimeCategories      []int64 `json:"animeCategories,omitempty"`
+	// Categories           []int64 `json:"Categories,omitempty"`
+}
+
+type indexerAPI struct {
+	EnableAutomaticSearch   bool           `json:"enableAutomaticSearch"`
+	EnableInteractiveSearch bool           `json:"enableInteractiveSearch"`
+	EnableRss               bool           `json:"enableRss"`
+	SupportsRss             bool           `json:"supportsRss,omitempty"`
+	SupportsSearch          bool           `json:"supportsSearch,omitempty"`
+	Priority                int64          `json:"priority"`
+	ID                      int64          `json:"id,omitempty"`
+	ConfigContract          string         `json:"configContract"`
+	Implementation          string         `json:"implementation"`
+	ImplementationName      string         `json:"implementationName,omitempty"`
+	InfoLink                string         `json:"infoLink,omitempty"`
+	Name                    string         `json:"name"`
+	Protocol                string         `json:"protocol"`
 	Tags                    []*starr.Value `json:"tags"`
 	Fields                  []*starr.Field `json:"fields"`
 }
 
 const bpIndexer = APIver + "/indexer"
 
-var (
-	IndexerFieldsString   = []string{"additionalParameters", "apiKey", "apiPath", "baseUrl", "captchaToken", "cookie", "passkey", "username"}
-	IndexerFieldsBool     = []string{"allowZeroSize", "rankedOnly"}
-	IndexerFieldsInt      = []string{"delay", "minimumSeeders", "seedCriteria.seasonPackSeedTime", "seedCriteria.seedTime"}
-	IndexerFieldsFloat    = []string{"seedCriteria.seedRatio"}
-	IndexerFieldsIntSlice = []string{"animeCategories", "categories"}
-)
-
-// GetIndexers returns all configured indexers.
-func (s *Sonarr) GetIndexers() ([]*Indexer, error) {
-	return s.GetIndexersContext(context.Background())
-}
-
-func (s *Sonarr) GetIndexersContext(ctx context.Context) ([]*Indexer, error) {
-	var output []*Indexer
-
-	if _, err := s.GetInto(ctx, bpIndexer, nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(indexer): %w", err)
-	}
-
-	for i := range output {
-		output[i].Fields, _ = correctIndexerFieldsValue(output[i].Fields)
-	}
-	return output, nil
-}
+// var (
+// 	IndexerFieldsString   = []string{"additionalParameters", "apiKey", "apiPath", "baseUrl", "captchaToken", "cookie", "passkey", "username"}
+// 	IndexerFieldsBool     = []string{"allowZeroSize", "rankedOnly"}
+// 	IndexerFieldsInt      = []string{"delay", "minimumSeeders", "seedCriteria.seasonPackSeedTime", "seedCriteria.seedTime"}
+// 	IndexerFieldsFloat    = []string{"seedCriteria.seedRatio"}
+// 	IndexerFieldsIntSlice = []string{"animeCategories", "categories"}
+// )
 
 // GetIndexer returns a single indexer.
-func (s *Sonarr) GetIndexer(indexerID int) (*Indexer, error) {
+func (s *Sonarr) GetIndexer(indexerID int) (*IndexerOutput, error) {
 	return s.GetIndexerContext(context.Background(), indexerID)
 }
 
-func (s *Sonarr) GetIndexerContext(ctx context.Context, indexerID int) (*Indexer, error) {
-	var output *Indexer
+func (s *Sonarr) GetIndexerContext(ctx context.Context, indexerID int) (*IndexerOutput, error) {
+	var response *indexerAPI
 
 	uri := path.Join(bpIndexer, strconv.Itoa(indexerID))
-	if _, err := s.GetInto(ctx, uri, nil, &output); err != nil {
+	if _, err := s.GetInto(ctx, uri, nil, &response); err != nil {
 		return nil, fmt.Errorf("api.Get(indexer): %w", err)
 	}
 
-	output.Fields, _ = correctIndexerFieldsValue(output.Fields)
+	output, err := getIndexerOutput(response)
+	if err != nil {
+		return nil, err
+	}
+
 	return output, nil
 }
 
 // AddIndexer creates a indexer.
-func (s *Sonarr) AddIndexer(indexer *Indexer) (*Indexer, error) {
+func (s *Sonarr) AddIndexer(indexer *IndexerInput) (*IndexerOutput, error) {
 	return s.AddIndexerContext(context.Background(), indexer)
 }
 
-func (s *Sonarr) AddIndexerContext(ctx context.Context, indexer *Indexer) (*Indexer, error) {
-	var output Indexer
+func (s *Sonarr) AddIndexerContext(ctx context.Context, indexer *IndexerInput) (*IndexerOutput, error) {
+	request, err := setIndexerInput(indexer)
+	if err != nil {
+		return nil, err
+	}
 
 	var body bytes.Buffer
-	if err := json.NewEncoder(&body).Encode(indexer); err != nil {
+	if err := json.NewEncoder(&body).Encode(request); err != nil {
 		return nil, fmt.Errorf("json.Marshal(indexer): %w", err)
 	}
 
-	if _, err := s.PostInto(ctx, bpIndexer, nil, &body, &output); err != nil {
+	var response *indexerAPI
+	if _, err := s.PostInto(ctx, bpIndexer, nil, &body, &response); err != nil {
 		return nil, fmt.Errorf("api.Post(indexer): %w", err)
 	}
 
-	output.Fields, _ = correctIndexerFieldsValue(output.Fields)
-	return &output, nil
-}
-
-// UpdateIndexer updates the indexer.
-func (s *Sonarr) UpdateIndexer(indexer *Indexer) (*Indexer, error) {
-	return s.UpdateIndexerContext(context.Background(), indexer)
-}
-
-func (s *Sonarr) UpdateIndexerContext(ctx context.Context, indexer *Indexer) (*Indexer, error) {
-	var output Indexer
-
-	var body bytes.Buffer
-	if err := json.NewEncoder(&body).Encode(indexer); err != nil {
-		return nil, fmt.Errorf("json.Marshal(indexer): %w", err)
+	output, err := getIndexerOutput(response)
+	if err != nil {
+		return nil, err
 	}
 
-	uri := path.Join(bpIndexer, strconv.Itoa(int(indexer.ID)))
-	if _, err := s.PutInto(ctx, uri, nil, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(indexer): %w", err)
-	}
-
-	output.Fields, _ = correctIndexerFieldsValue(output.Fields)
-	return &output, nil
-}
-
-// DeleteIndexer removes a single indexer.
-func (s *Sonarr) DeleteIndexer(indexerID int) error {
-	return s.DeleteIndexerContext(context.Background(), indexerID)
-}
-
-func (s *Sonarr) DeleteIndexerContext(ctx context.Context, indexerID int) error {
-	uri := path.Join(bpIndexer, strconv.Itoa(indexerID))
-	if _, err := s.Delete(ctx, uri, nil); err != nil {
-		return fmt.Errorf("api.Delete(indexer): %w", err)
-	}
-
-	return nil
-}
-
-// TestIndexer test the Indexer connectivity.
-func (s *Sonarr) TestIndexer(indexer *Indexer) (*Indexer, error) {
-	return s.AddIndexerContext(context.Background(), indexer)
-}
-
-func (s *Sonarr) TestIndexerContext(ctx context.Context, indexer *Indexer) (*Indexer, error) {
-	var output Indexer
-
-	var body bytes.Buffer
-	if err := json.NewEncoder(&body).Encode(indexer); err != nil {
-		return nil, fmt.Errorf("json.Marshal(indexer): %w", err)
-	}
-
-	uri := path.Join(bpIndexer, "test")
-	if _, err := s.PostInto(ctx, uri, nil, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(indexerTest): %w", err)
-	}
-
-	return &output, nil
-}
-
-func correctIndexerFieldsValue(fields []*starr.Field) ([]*starr.Field, error) {
-	output := make([]*starr.Field, len(fields))
-	for i, f := range fields {
-		output[i].Name = f.Name
-		// check for string paramenters
-		if v, a := f.Value.(string); (sort.SearchStrings(IndexerFieldsString, f.Name) != len(IndexerFieldsString)) && !a {
-			output[i].Value = v
-			continue
-		}
-		// check for int parameters
-		if v, a := f.Value.(int64); (sort.SearchStrings(IndexerFieldsInt, f.Name) != len(IndexerFieldsInt)) && !a {
-			output[i].Value = v
-			continue
-		}
-		// check for bool parameters
-		if v, a := f.Value.(bool); (sort.SearchStrings(IndexerFieldsBool, f.Name) != len(IndexerFieldsBool)) && !a {
-			output[i].Value = v
-			continue
-		}
-		// check for int slice parameters
-		if j := sort.SearchStrings(IndexerFieldsIntSlice, f.Name); j != len(IndexerFieldsIntSlice) {
-			slice := make([]int64, len(f.Value.([]interface{})))
-			var assert bool
-			for k, v := range f.Value.([]interface{}) {
-				slice[k], assert = v.(int64)
-				if !assert {
-					return nil, fmt.Errorf("parameter %s is not of expected type", f.Name)
-				}
-			}
-			output[i].Value = slice
-			continue
-		}
-		// check for float parameters
-		if v, a := f.Value.(float64); (sort.SearchStrings(IndexerFieldsFloat, f.Name) != len(IndexerFieldsFloat)) && !a {
-			output[i].Value = v
-			continue
-		}
-		return nil, fmt.Errorf("parameter %s is not of expected type", f.Name)
-	}
 	return output, nil
+}
+
+func getIndexerOutput(indexer *indexerAPI) (*IndexerOutput, error) {
+	fields, err := getIndexerFields(indexer.Fields)
+	if err != nil {
+		return nil, err
+	}
+	return &IndexerOutput{
+		EnableAutomaticSearch:   indexer.EnableAutomaticSearch,
+		EnableInteractiveSearch: indexer.EnableInteractiveSearch,
+		EnableRss:               indexer.EnableRss,
+		SupportsRss:             indexer.SupportsRss,
+		SupportsSearch:          indexer.SupportsSearch,
+		Priority:                indexer.Priority,
+		ID:                      indexer.ID,
+		ConfigContract:          indexer.ConfigContract,
+		Implementation:          indexer.Implementation,
+		ImplementationName:      indexer.ImplementationName,
+		InfoLink:                indexer.InfoLink,
+		Name:                    indexer.Name,
+		Protocol:                indexer.Protocol,
+		Fields:                  *fields,
+		Tags:                    indexer.Tags,
+	}, nil
+}
+
+func getIndexerFields(fields []*starr.Field) (*IndexerFields, error) {
+	var output *IndexerFields
+	var err error
+	for _, f := range fields {
+		switch f.Name {
+		case "apiKey":
+			*output.ApiKey, err = f.GetFieldValueString()
+			if err != nil {
+				return nil, err
+			}
+		case "apiPath":
+			*output.ApiPath, err = f.GetFieldValueString()
+			if err != nil {
+				return nil, err
+			}
+		case "allowZeroSize":
+			*output.AllowZeroSize, err = f.GetFieldValueBool()
+			if err != nil {
+				return nil, err
+			}
+		default:
+			return nil, fmt.Errorf("Field %s is not a known indexer field", f.Name)
+		}
+	}
+
+	return output, nil
+}
+
+func setIndexerInput(indexer *IndexerInput) (*indexerAPI, error) {
+	fields := setIndexerFields(&indexer.Fields)
+	return &indexerAPI{
+		EnableAutomaticSearch:   indexer.EnableAutomaticSearch,
+		EnableInteractiveSearch: indexer.EnableInteractiveSearch,
+		EnableRss:               indexer.EnableRss,
+		Priority:                indexer.Priority,
+		ID:                      indexer.ID,
+		ConfigContract:          indexer.ConfigContract,
+		Implementation:          indexer.Implementation,
+		Name:                    indexer.Name,
+		Protocol:                indexer.Protocol,
+		Fields:                  fields,
+		Tags:                    indexer.Tags,
+	}, nil
+}
+
+func setIndexerFields(fields *IndexerFields) []*starr.Field {
+	var output []*starr.Field
+	if fields.ApiKey != nil {
+		output = append(output, &starr.Field{
+			Name:  "apiKey",
+			Value: *fields.ApiKey,
+		})
+	}
+	if fields.ApiPath != nil {
+		output = append(output, &starr.Field{
+			Name:  "apiPath",
+			Value: *fields.ApiPath,
+		})
+	}
+	if fields.AllowZeroSize != nil {
+		output = append(output, &starr.Field{
+			Name:  "allowZeroSize",
+			Value: *fields.AllowZeroSize,
+		})
+	}
+	return output
 }
