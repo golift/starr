@@ -2,7 +2,6 @@ package starr
 
 import (
 	"encoding/json"
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -119,8 +118,8 @@ type Value struct {
 	Name string `json:"name"`
 }
 
-// Field is generic Name/Value struct applied to a few places.
-type Field struct {
+// FieldOutput is generic Name/Value struct applied to a few places.
+type FieldOutput struct {
 	Advanced                    bool            `json:"advanced,omitempty"`
 	Order                       int64           `json:"order,omitempty"`
 	HelpLink                    string          `json:"helpLink,omitempty"`
@@ -134,18 +133,10 @@ type Field struct {
 	SelectOptions               []*SelectOption `json:"selectOptions,omitempty"`
 }
 
-func (f *Field) GetFieldValueString() (string, error) {
-	if v, a := f.Value.(string); !a {
-		return v, nil
-	}
-	return "", fmt.Errorf("Field %s has invalid value", f.Name)
-}
-
-func (f *Field) GetFieldValueBool() (bool, error) {
-	if v, a := f.Value.(bool); !a {
-		return v, nil
-	}
-	return false, fmt.Errorf("Field %s has invalid value", f.Name)
+// FieldInput is generic Name/Value struct applied to a few places.
+type FieldInput struct {
+	Name  string      `json:"name"`
+	Value interface{} `json:"value,omitempty"`
 }
 
 // SelectOption is part of Field
