@@ -45,6 +45,7 @@ const indexerResponseBody = `{
 	"tags": [],
 	"id": 1
   }`
+
 const addIndexer = `{"enableAutomaticSearch":true,"enableInteractiveSearch":true,"enableRss":true,` +
 	`"downloadClientId":0,"priority":25,"configContract":"NewznabSettings","implementation":"Newznab"` +
 	`,"name":"NZBgeek","protocol":"usenet","tags":[],` +
