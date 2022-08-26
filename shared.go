@@ -139,7 +139,7 @@ type FieldInput struct {
 	Value interface{} `json:"value,omitempty"`
 }
 
-// SelectOption is part of Field
+// SelectOption is part of Field.
 type SelectOption struct {
 	Order int64  `json:"order"`
 	Value int64  `json:"value"`

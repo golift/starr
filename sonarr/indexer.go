@@ -15,7 +15,7 @@ type IndexerInput struct {
 	EnableAutomaticSearch   bool                `json:"enableAutomaticSearch"`
 	EnableInteractiveSearch bool                `json:"enableInteractiveSearch"`
 	EnableRss               bool                `json:"enableRss"`
-	DownloadClientId        int64               `json:"downloadClientId"`
+	DownloadClientID        int64               `json:"downloadClientId"`
 	Priority                int64               `json:"priority"`
 	ID                      int64               `json:"id,omitempty"`
 	ConfigContract          string              `json:"configContract"`
@@ -32,7 +32,7 @@ type IndexerOutput struct {
 	EnableRss               bool                 `json:"enableRss"`
 	SupportsRss             bool                 `json:"supportsRss"`
 	SupportsSearch          bool                 `json:"supportsSearch"`
-	DownloadClientId        int64                `json:"downloadClientId"`
+	DownloadClientID        int64                `json:"DownloadClientID"`
 	Priority                int64                `json:"priority"`
 	ID                      int64                `json:"id,omitempty"`
 	ConfigContract          string               `json:"configContract"`
@@ -46,6 +46,21 @@ type IndexerOutput struct {
 }
 
 const bpIndexer = APIver + "/indexer"
+
+// GetIndexers returns all configured indexerss.
+func (s *Sonarr) GetIndexers() ([]*IndexerOutput, error) {
+	return s.GetIndexersContext(context.Background())
+}
+
+func (s *Sonarr) GetIndexersContext(ctx context.Context) ([]*IndexerOutput, error) {
+	var output []*IndexerOutput
+
+	if _, err := s.GetInto(ctx, bpIndexer, nil, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(qualityProfile): %w", err)
+	}
+
+	return output, nil
+}
 
 // GetIndexer returns a single indexer.
 func (s *Sonarr) GetIndexer(indexerID int) (*IndexerOutput, error) {
