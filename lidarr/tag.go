@@ -21,7 +21,7 @@ func (l *Lidarr) GetTags() ([]*starr.Tag, error) {
 func (l *Lidarr) GetTagsContext(ctx context.Context) ([]*starr.Tag, error) {
 	var output []*starr.Tag
 
-	if _, err := l.GetInto(ctx, bpTag, nil, &output); err != nil {
+	if err := l.GetInto(ctx, bpTag, nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(tag): %w", err)
 	}
 
@@ -37,7 +37,7 @@ func (l *Lidarr) GetTagContext(ctx context.Context, tagID int) (*starr.Tag, erro
 	var output *starr.Tag
 
 	uri := path.Join(bpTag, strconv.Itoa(tagID))
-	if _, err := l.GetInto(ctx, uri, nil, &output); err != nil {
+	if err := l.GetInto(ctx, uri, nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(tag): %w", err)
 	}
 
@@ -57,7 +57,7 @@ func (l *Lidarr) AddTagContext(ctx context.Context, tag *starr.Tag) (*starr.Tag,
 		return nil, fmt.Errorf("json.Marshal(tag): %w", err)
 	}
 
-	if _, err := l.PostInto(ctx, bpTag, nil, &body, &output); err != nil {
+	if err := l.PostInto(ctx, bpTag, nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(tag): %w", err)
 	}
 
@@ -78,7 +78,7 @@ func (l *Lidarr) UpdateTagContext(ctx context.Context, tag *starr.Tag) (*starr.T
 	}
 
 	uri := path.Join(bpTag, strconv.Itoa(tag.ID))
-	if _, err := l.PutInto(ctx, uri, nil, &body, &output); err != nil {
+	if err := l.PutInto(ctx, uri, nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(tag): %w", err)
 	}
 
@@ -91,8 +91,10 @@ func (l *Lidarr) DeleteTag(tagID int) error {
 }
 
 func (l *Lidarr) DeleteTagContext(ctx context.Context, tagID int) error {
+	var output interface{}
+
 	uri := path.Join(bpTag, strconv.Itoa(tagID))
-	if _, err := l.Delete(ctx, uri, nil); err != nil {
+	if err := l.DeleteInto(ctx, uri, nil, &output); err != nil {
 		return fmt.Errorf("api.Delete(tag): %w", err)
 	}
 

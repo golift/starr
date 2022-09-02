@@ -31,7 +31,7 @@ func (s *Sonarr) GetQualityProfiles() ([]*QualityProfile, error) {
 func (s *Sonarr) GetQualityProfilesContext(ctx context.Context) ([]*QualityProfile, error) {
 	var output []*QualityProfile
 
-	if _, err := s.GetInto(ctx, bpQualityProfile, nil, &output); err != nil {
+	if err := s.GetInto(ctx, bpQualityProfile, nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", bpQualityProfile, err)
 	}
 
@@ -47,7 +47,7 @@ func (s *Sonarr) GetQualityProfileContext(ctx context.Context, profileID int) (*
 	var output *QualityProfile
 
 	uri := path.Join(bpQualityProfile, strconv.Itoa(profileID))
-	if _, err := s.GetInto(ctx, uri, nil, &output); err != nil {
+	if err := s.GetInto(ctx, uri, nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", bpQualityProfile, err)
 	}
 
@@ -67,7 +67,7 @@ func (s *Sonarr) AddQualityProfileContext(ctx context.Context, profile *QualityP
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpQualityProfile, err)
 	}
 
-	if _, err := s.PostInto(ctx, bpQualityProfile, nil, &body, &output); err != nil {
+	if err := s.PostInto(ctx, bpQualityProfile, nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(%s): %w", bpQualityProfile, err)
 	}
 
@@ -88,7 +88,7 @@ func (s *Sonarr) UpdateQualityProfileContext(ctx context.Context, profile *Quali
 	}
 
 	uri := path.Join(bpQualityProfile, strconv.Itoa(int(profile.ID)))
-	if _, err := s.PutInto(ctx, uri, nil, &body, &output); err != nil {
+	if err := s.PutInto(ctx, uri, nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", bpQualityProfile, err)
 	}
 
@@ -101,8 +101,10 @@ func (s *Sonarr) DeleteQualityProfile(profileID int) error {
 }
 
 func (s *Sonarr) DeleteQualityProfileContext(ctx context.Context, profileID int) error {
+	var output interface{}
+
 	uri := path.Join(bpQualityProfile, strconv.Itoa(profileID))
-	if _, err := s.Delete(ctx, uri, nil); err != nil {
+	if err := s.DeleteInto(ctx, uri, nil, &output); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", bpQualityProfile, err)
 	}
 

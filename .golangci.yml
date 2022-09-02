@@ -21,6 +21,7 @@ linters:
     - exhaustivestruct
     - exhaustruct
     - dupl
+    - nlreturn
 
 run:
   timeout: 35m

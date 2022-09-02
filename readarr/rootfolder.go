@@ -31,7 +31,7 @@ func (r *Readarr) GetRootFolders() ([]*RootFolder, error) {
 func (r *Readarr) GetRootFoldersContext(ctx context.Context) ([]*RootFolder, error) {
 	var folders []*RootFolder
 
-	_, err := r.GetInto(ctx, "v1/rootFolder", nil, &folders)
+	err := r.GetInto(ctx, "v1/rootFolder", nil, &folders)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(rootFolder): %w", err)
 	}

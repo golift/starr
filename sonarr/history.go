@@ -57,7 +57,7 @@ func (s *Sonarr) GetHistoryPage(params *starr.Req) (*History, error) {
 func (s *Sonarr) GetHistoryPageContext(ctx context.Context, params *starr.Req) (*History, error) {
 	var history History
 
-	_, err := s.GetInto(ctx, "v3/history", params.Params(), &history)
+	err := s.GetInto(ctx, "v3/history", params.Params(), &history)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(history): %w", err)
 	}
@@ -75,9 +75,10 @@ func (s *Sonarr) FailContext(ctx context.Context, historyID int64) error {
 		return fmt.Errorf("%w: invalid history ID: %d", starr.ErrRequestError, historyID)
 	}
 
+	var output interface{}
 	// Strangely uses a POST without a payload.
-	_, err := s.Post(ctx, "v3/history/failed/"+strconv.FormatInt(historyID, starr.Base10), nil, nil)
-	if err != nil {
+	uri := "v3/history/failed/" + strconv.FormatInt(historyID, starr.Base10)
+	if err := s.PostInto(ctx, uri, nil, nil, &output); err != nil {
 		return fmt.Errorf("api.Post(history/failed): %w", err)
 	}
 

@@ -179,7 +179,7 @@ func (r *Radarr) GetMovieContext(ctx context.Context, tmdbID int64) ([]*Movie, e
 
 	var movie []*Movie
 
-	_, err := r.GetInto(ctx, "v3/movie", params, &movie)
+	err := r.GetInto(ctx, "v3/movie", params, &movie)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(movie): %w", err)
 	}
@@ -196,7 +196,7 @@ func (r *Radarr) GetMovieByID(movieID int64) (*Movie, error) {
 func (r *Radarr) GetMovieByIDContext(ctx context.Context, movieID int64) (*Movie, error) {
 	var movie Movie
 
-	_, err := r.GetInto(ctx, "v3/movie/"+strconv.FormatInt(movieID, starr.Base10), nil, &movie)
+	err := r.GetInto(ctx, "v3/movie/"+strconv.FormatInt(movieID, starr.Base10), nil, &movie)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(movie): %w", err)
 	}
@@ -219,8 +219,10 @@ func (r *Radarr) UpdateMovieContext(ctx context.Context, movieID int64, movie *M
 		return fmt.Errorf("json.Marshal(movie): %w", err)
 	}
 
-	_, err := r.Put(ctx, "v3/movie/"+strconv.FormatInt(movieID, starr.Base10), params, &body)
-	if err != nil {
+	var output interface{}
+
+	uri := "v3/movie/" + strconv.FormatInt(movieID, starr.Base10)
+	if err := r.PutInto(ctx, uri, params, &body, &output); err != nil {
 		return fmt.Errorf("api.Put(movie): %w", err)
 	}
 
@@ -243,7 +245,7 @@ func (r *Radarr) AddMovieContext(ctx context.Context, movie *AddMovieInput) (*Ad
 	}
 
 	var output AddMovieOutput
-	if _, err := r.PostInto(ctx, "v3/movie", params, &body, &output); err != nil {
+	if err := r.PostInto(ctx, "v3/movie", params, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(movie): %w", err)
 	}
 
@@ -266,7 +268,7 @@ func (r *Radarr) LookupContext(ctx context.Context, term string) ([]*Movie, erro
 	params := make(url.Values)
 	params.Set("term", term)
 
-	_, err := r.GetInto(ctx, "v3/movie/lookup", params, &output)
+	err := r.GetInto(ctx, "v3/movie/lookup", params, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(movie/lookup): %w", err)
 	}

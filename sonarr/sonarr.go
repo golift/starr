@@ -2,9 +2,7 @@ package sonarr
 
 import (
 	"context"
-	"crypto/tls"
 	"fmt"
-	"net/http"
 
 	"golift.io/starr"
 )
@@ -15,8 +13,9 @@ type Sonarr struct {
 }
 
 // Filter values are integers. Given names for ease of discovery.
-//nolint:lll
 // https://github.com/Sonarr/Sonarr/blob/0cb8d93069d6310abd39ee2fe73219e17aa83fe6/src/NzbDrone.Core/History/EpisodeHistory.cs#L34-L41
+//
+//nolint:lll
 const (
 	FilterUnknown starr.Filtering = iota
 	FilterGrabbed
@@ -31,20 +30,7 @@ const (
 // New returns a Sonarr object used to interact with the Sonarr API.
 func New(config *starr.Config) *Sonarr {
 	if config.Client == nil {
-		//nolint:exhaustivestruct,gosec
-		config.Client = &http.Client{
-			Timeout: config.Timeout.Duration,
-			CheckRedirect: func(r *http.Request, via []*http.Request) error {
-				return http.ErrUseLastResponse
-			},
-			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: !config.ValidSSL},
-			},
-		}
-	}
-
-	if config.Debugf == nil {
-		config.Debugf = func(string, ...interface{}) {}
+		config.Client = starr.Client(config.Timeout.Duration, config.ValidSSL)
 	}
 
 	return &Sonarr{APIer: config}
@@ -102,7 +88,7 @@ func (s *Sonarr) GetQueuePageContext(ctx context.Context, params *starr.Req) (*Q
 	params.CheckSet("sortKey", "timeleft")
 	params.CheckSet("includeUnknownSeriesItems", "true")
 
-	_, err := s.GetInto(ctx, "v3/queue", params.Params(), &queue)
+	err := s.GetInto(ctx, "v3/queue", params.Params(), &queue)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(queue): %w", err)
 	}

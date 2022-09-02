@@ -26,7 +26,7 @@ func (l *Lidarr) GetQualityDefinition() ([]*QualityDefinition, error) {
 func (l *Lidarr) GetQualityDefinitionContext(ctx context.Context) ([]*QualityDefinition, error) {
 	var definition []*QualityDefinition
 
-	_, err := l.GetInto(ctx, "v1/qualitydefinition", nil, &definition)
+	err := l.GetInto(ctx, "v1/qualitydefinition", nil, &definition)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(qualitydefinition): %w", err)
 	}

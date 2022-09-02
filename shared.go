@@ -1,7 +1,9 @@
 package starr
 
 import (
+	"crypto/tls"
 	"encoding/json"
+	"net/http"
 	"strconv"
 	"strings"
 	"time"
@@ -38,6 +40,19 @@ func (a App) String() string {
 // Lower turns an App name into a lowercase string.
 func (a App) Lower() string {
 	return strings.ToLower(string(a))
+}
+
+// Client returns the default client, and is used if one is not passed in.
+func Client(timeout time.Duration, verifySSL bool) *http.Client {
+	return &http.Client{
+		Timeout: timeout,
+		CheckRedirect: func(r *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: !verifySSL}, //nolint:gosec
+		},
+	}
 }
 
 // StatusMessage represents the status of the item. All apps use this.

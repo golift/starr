@@ -27,7 +27,7 @@ func (s *Sonarr) GetIndexerConfig() (*IndexerConfig, error) {
 func (s *Sonarr) GetIndexerConfigContext(ctx context.Context) (*IndexerConfig, error) {
 	var output *IndexerConfig
 
-	if _, err := s.GetInto(ctx, bpIndexerConfig, nil, &output); err != nil {
+	if err := s.GetInto(ctx, bpIndexerConfig, nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(indexerConfig): %w", err)
 	}
 
@@ -48,7 +48,7 @@ func (s *Sonarr) UpdateIndexerConfigContext(ctx context.Context, indexerConfig *
 	}
 
 	uri := path.Join(bpIndexerConfig, strconv.Itoa(int(indexerConfig.ID)))
-	if _, err := s.PutInto(ctx, uri, nil, &body, &output); err != nil {
+	if err := s.PutInto(ctx, uri, nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(indexerConfig): %w", err)
 	}
 

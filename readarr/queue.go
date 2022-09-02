@@ -94,7 +94,7 @@ func (r *Readarr) GetQueuePageContext(ctx context.Context, params *starr.Req) (*
 	params.CheckSet("sortKey", "timeleft")
 	params.CheckSet("includeUnknownAuthorItems", "true")
 
-	_, err := r.GetInto(ctx, "v1/queue", params.Params(), &queue)
+	err := r.GetInto(ctx, "v1/queue", params.Params(), &queue)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(queue): %w", err)
 	}

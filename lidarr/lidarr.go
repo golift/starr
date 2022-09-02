@@ -1,9 +1,6 @@
 package lidarr
 
 import (
-	"crypto/tls"
-	"net/http"
-
 	"golift.io/starr"
 )
 
@@ -16,8 +13,9 @@ type Lidarr struct {
 }
 
 // Filter values are integers. Given names for ease of discovery.
-//nolint:lll
 // https://github.com/Lidarr/Lidarr/blob/c2adf078345f81012ddb5d2f384e2ee45ff7f1af/src/NzbDrone.Core/History/History.cs#L35-L45
+//
+//nolint:lll
 const (
 	FilterUnknown starr.Filtering = iota
 	FilterGrabbed
@@ -35,20 +33,7 @@ const (
 // New returns a Lidarr object used to interact with the Lidarr API.
 func New(config *starr.Config) *Lidarr {
 	if config.Client == nil {
-		//nolint:exhaustivestruct,gosec
-		config.Client = &http.Client{
-			Timeout: config.Timeout.Duration,
-			CheckRedirect: func(r *http.Request, via []*http.Request) error {
-				return http.ErrUseLastResponse
-			},
-			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: !config.ValidSSL},
-			},
-		}
-	}
-
-	if config.Debugf == nil {
-		config.Debugf = func(string, ...interface{}) {}
+		config.Client = starr.Client(config.Timeout.Duration, config.ValidSSL)
 	}
 
 	return &Lidarr{APIer: config}

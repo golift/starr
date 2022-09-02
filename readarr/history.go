@@ -104,7 +104,7 @@ func (r *Readarr) GetHistoryPage(params *starr.Req) (*History, error) {
 func (r *Readarr) GetHistoryPageContext(ctx context.Context, params *starr.Req) (*History, error) {
 	var history History
 
-	_, err := r.GetInto(ctx, "v1/history", params.Params(), &history)
+	err := r.GetInto(ctx, "v1/history", params.Params(), &history)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(history): %w", err)
 	}
@@ -122,9 +122,12 @@ func (r *Readarr) FailContext(ctx context.Context, historyID int64) error {
 		return fmt.Errorf("%w: invalid history ID: %d", starr.ErrRequestError, historyID)
 	}
 
-	_, err := r.Post(ctx,
-		"v1/history/failed", nil, bytes.NewBufferString("id="+strconv.FormatInt(historyID, starr.Base10)))
-	if err != nil {
+	var output interface{}
+
+	body := bytes.NewBufferString("id=" + strconv.FormatInt(historyID, starr.Base10))
+
+	uri := "v1/history/failed"
+	if err := r.PostInto(ctx, uri, nil, body, &output); err != nil {
 		return fmt.Errorf("api.Post(history/failed): %w", err)
 	}
 

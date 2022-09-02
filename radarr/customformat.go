@@ -48,7 +48,7 @@ func (r *Radarr) GetCustomFormats() ([]*CustomFormat, error) {
 // GetCustomFormatsContext returns all configured Custom Formats.
 func (r *Radarr) GetCustomFormatsContext(ctx context.Context) ([]*CustomFormat, error) {
 	var output []*CustomFormat
-	if _, err := r.GetInto(ctx, bpCustomFormat, nil, &output); err != nil {
+	if err := r.GetInto(ctx, bpCustomFormat, nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", bpCustomFormat, err)
 	}
 
@@ -75,7 +75,7 @@ func (r *Radarr) AddCustomFormatContext(ctx context.Context, format *CustomForma
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpCustomFormat, err)
 	}
 
-	if _, err := r.PostInto(ctx, bpCustomFormat, nil, &body, &output); err != nil {
+	if err := r.PostInto(ctx, bpCustomFormat, nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(%s): %w", bpCustomFormat, err)
 	}
 
@@ -101,7 +101,7 @@ func (r *Radarr) UpdateCustomFormatContext(ctx context.Context, format *CustomFo
 	var output CustomFormat
 
 	uri := path.Join(bpCustomFormat, strconv.Itoa(cfID))
-	if _, err := r.PutInto(ctx, uri, nil, &body, &output); err != nil {
+	if err := r.PutInto(ctx, uri, nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", bpCustomFormat, err)
 	}
 
@@ -115,8 +115,10 @@ func (r *Radarr) DeleteCustomFormat(cfID int) error {
 
 // DeleteCustomFormatContext deletes a custom format.
 func (r *Radarr) DeleteCustomFormatContext(ctx context.Context, cfID int) error {
+	var output interface{}
+
 	uri := path.Join(bpCustomFormat, strconv.Itoa(cfID))
-	if _, err := r.Delete(ctx, uri, nil); err != nil {
+	if err := r.DeleteInto(ctx, uri, nil, &output); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", bpCustomFormat, err)
 	}
 

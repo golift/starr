@@ -112,7 +112,7 @@ func (l *Lidarr) GetAlbumContext(ctx context.Context, mbID string) ([]*Album, er
 
 	var albums []*Album
 
-	_, err := l.GetInto(ctx, "v1/album", params, &albums)
+	err := l.GetInto(ctx, "v1/album", params, &albums)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(album): %w", err)
 	}
@@ -129,7 +129,7 @@ func (l *Lidarr) GetAlbumByID(albumID int64) (*Album, error) {
 func (l *Lidarr) GetAlbumByIDContext(ctx context.Context, albumID int64) (*Album, error) {
 	var album Album
 
-	_, err := l.GetInto(ctx, "v1/album/"+strconv.FormatInt(albumID, starr.Base10), nil, &album)
+	err := l.GetInto(ctx, "v1/album/"+strconv.FormatInt(albumID, starr.Base10), nil, &album)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(album): %w", err)
 	}
@@ -154,7 +154,7 @@ func (l *Lidarr) UpdateAlbumContext(ctx context.Context, albumID int64, album *A
 
 	var output Album
 
-	_, err := l.PutInto(ctx, "v1/album/"+strconv.FormatInt(albumID, starr.Base10), params, &body, &output)
+	err := l.PutInto(ctx, "v1/album/"+strconv.FormatInt(albumID, starr.Base10), params, &body, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Put(album): %w", err)
 	}
@@ -182,7 +182,7 @@ func (l *Lidarr) AddAlbumContext(ctx context.Context, album *AddAlbumInput) (*Al
 	}
 
 	var output Album
-	if _, err := l.PostInto(ctx, "v1/album", params, &body, &output); err != nil {
+	if err := l.PostInto(ctx, "v1/album", params, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(album): %w", err)
 	}
 
@@ -205,7 +205,7 @@ func (l *Lidarr) LookupContext(ctx context.Context, term string) ([]*Album, erro
 	params := make(url.Values)
 	params.Set("term", term)
 
-	_, err := l.GetInto(ctx, "v1/album/lookup", params, &output)
+	err := l.GetInto(ctx, "v1/album/lookup", params, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(album/lookup): %w", err)
 	}
