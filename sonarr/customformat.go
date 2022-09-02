@@ -9,9 +9,12 @@ import (
 	"strconv"
 )
 
+/* Custom Formats do not exist in Sonarr v3; this is v4 only. */
+
 const bpCustomFormat = APIver + "/customFormat"
 
 // CustomFormat is the api/customformat endpoint payload.
+// This data and these endpoints do not exist in Sonarr v3; this is v4 only.
 type CustomFormat struct {
 	ID                    int                 `json:"id"`
 	Name                  string              `json:"name"`
@@ -41,11 +44,13 @@ type CustomFormatField struct {
 }
 
 // GetCustomFormats returns all configured Custom Formats.
+// This data and these endpoints do not exist in Sonarr v3; this is v4 only.
 func (s *Sonarr) GetCustomFormats() ([]*CustomFormat, error) {
 	return s.GetCustomFormatsContext(context.Background())
 }
 
 // GetCustomFormatsContext returns all configured Custom Formats.
+// This data and these endpoints do not exist in Sonarr v3; this is v4 only.
 func (s *Sonarr) GetCustomFormatsContext(ctx context.Context) ([]*CustomFormat, error) {
 	var output []*CustomFormat
 	if err := s.GetInto(ctx, bpCustomFormat, nil, &output); err != nil {
@@ -56,11 +61,13 @@ func (s *Sonarr) GetCustomFormatsContext(ctx context.Context) ([]*CustomFormat, 
 }
 
 // AddCustomFormat creates a new custom format and returns the response (with ID).
+// This data and these endpoints do not exist in Sonarr v3; this is v4 only.
 func (s *Sonarr) AddCustomFormat(format *CustomFormat) (*CustomFormat, error) {
 	return s.AddCustomFormatContext(context.Background(), format)
 }
 
 // AddCustomFormatContext creates a new custom format and returns the response (with ID).
+// This data and these endpoints do not exist in Sonarr v3; this is v4 only.
 func (s *Sonarr) AddCustomFormatContext(ctx context.Context, format *CustomFormat) (*CustomFormat, error) {
 	var output CustomFormat
 
@@ -83,11 +90,13 @@ func (s *Sonarr) AddCustomFormatContext(ctx context.Context, format *CustomForma
 }
 
 // UpdateCustomFormat updates an existing custom format and returns the response.
+// This data and these endpoints do not exist in Sonarr v3; this is v4 only.
 func (s *Sonarr) UpdateCustomFormat(cf *CustomFormat, cfID int) (*CustomFormat, error) {
 	return s.UpdateCustomFormatContext(context.Background(), cf, cfID)
 }
 
 // UpdateCustomFormatContext updates an existing custom format and returns the response.
+// This data and these endpoints do not exist in Sonarr v3; this is v4 only.
 func (s *Sonarr) UpdateCustomFormatContext(ctx context.Context, format *CustomFormat, cfID int) (*CustomFormat, error) {
 	if cfID == 0 {
 		cfID = format.ID
@@ -109,11 +118,13 @@ func (s *Sonarr) UpdateCustomFormatContext(ctx context.Context, format *CustomFo
 }
 
 // DeleteCustomFormat deletes a custom format.
+// This data and these endpoints do not exist in Sonarr v3; this is v4 only.
 func (s *Sonarr) DeleteCustomFormat(cfID int) error {
 	return s.DeleteCustomFormatContext(context.Background(), cfID)
 }
 
 // DeleteCustomFormatContext deletes a custom format.
+// This data and these endpoints do not exist in Sonarr v3; this is v4 only.
 func (s *Sonarr) DeleteCustomFormatContext(ctx context.Context, cfID int) error {
 	var output interface{}
 

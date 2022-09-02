@@ -13,15 +13,15 @@ import (
 
 // ReleaseProfile defines a release profile's data from Sonarr.
 type ReleaseProfile struct {
-	Enabled         bool              `json:"enabled"`
-	IncPrefOnRename bool              `json:"includePreferredWhenRenaming"`
-	ID              int64             `json:"id,omitempty"`
-	IndexerID       int64             `json:"indexerId"`
 	Name            string            `json:"name"`
-	Tags            []int             `json:"tags"`
+	Enabled         bool              `json:"enabled"`
 	Required        []string          `json:"required"`
 	Ignored         []string          `json:"ignored"`
-	Preferred       []*starr.KeyValue `json:"preferred"`
+	IndexerID       int64             `json:"indexerId"`
+	Tags            []int             `json:"tags"`
+	ID              int64             `json:"id,omitempty"`
+	IncPrefOnRename *bool             `json:"includePreferredWhenRenaming,omitempty"` // V3 only, removed from v4.
+	Preferred       []*starr.KeyValue `json:"preferred,omitempty"`                    // V3 only, removed from v4.
 }
 
 // Define Base Path for Release Profile calls.
