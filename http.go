@@ -17,8 +17,8 @@ const API = "api"
 
 /* The methods in this file provide assumption-ridden HTTP calls for Starr apps. */
 
-// req returns the body in io.ReadCloser form (read and close it yourself).
-func (c *Config) req(
+// Req returns the body in io.ReadCloser form (read and close it yourself).
+func (c *Config) Req(
 	ctx context.Context,
 	uri string,
 	method string,
@@ -34,7 +34,7 @@ func (c *Config) req(
 		return nil, fmt.Errorf("http.NewRequestWithContext(path): %w", err)
 	}
 
-	c.setHeaders(req)
+	c.SetHeaders(req)
 
 	if params != nil {
 		req.URL.RawQuery = params.Encode()
@@ -61,8 +61,8 @@ func closeResp(resp *http.Response) {
 	}
 }
 
-// setHeaders sets all our request headers based on method and other data.
-func (c *Config) setHeaders(req *http.Request) {
+// SetHeaders sets all our request headers based on method and other data.
+func (c *Config) SetHeaders(req *http.Request) {
 	// This app allows http auth, in addition to api key (nginx proxy).
 	if auth := c.HTTPUser + ":" + c.HTTPPass; auth != ":" {
 		req.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(auth)))

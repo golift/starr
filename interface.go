@@ -46,7 +46,7 @@ func (c *Config) Login(ctx context.Context) error {
 
 	post := "username=" + c.Username + "&password=" + c.Password
 
-	resp, err := c.req(ctx, "/login", http.MethodPost, nil, bytes.NewBufferString(post))
+	resp, err := c.Req(ctx, "/login", http.MethodPost, nil, bytes.NewBufferString(post))
 	if err != nil {
 		return fmt.Errorf("authenticating as user '%s' failed: %w", c.Username, err)
 	}
@@ -65,28 +65,28 @@ func (c *Config) Login(ctx context.Context) error {
 
 // Get makes a GET http request and returns the body.
 func (c *Config) Get(ctx context.Context, path string, params url.Values) (*http.Response, error) {
-	return c.req(ctx, path, http.MethodGet, params, nil)
+	return c.Req(ctx, path, http.MethodGet, params, nil)
 }
 
 // Post makes a POST http request and returns the body.
 func (c *Config) Post(ctx context.Context, path string, params url.Values, postBody io.Reader) (*http.Response, error) {
-	return c.req(ctx, path, http.MethodPost, params, postBody)
+	return c.Req(ctx, path, http.MethodPost, params, postBody)
 }
 
 // Put makes a PUT http request and returns the body.
 func (c *Config) Put(ctx context.Context, path string, params url.Values, putBody io.Reader) (*http.Response, error) {
-	return c.req(ctx, path, http.MethodPut, params, putBody)
+	return c.Req(ctx, path, http.MethodPut, params, putBody)
 }
 
 // Delete makes a DELETE http request and returns the body.
 func (c *Config) Delete(ctx context.Context, path string, params url.Values) (*http.Response, error) {
-	return c.req(ctx, path, http.MethodDelete, params, nil)
+	return c.Req(ctx, path, http.MethodDelete, params, nil)
 }
 
 // GetInto performs an HTTP GET against an API path and
 // unmarshals the payload into the provided pointer interface.
 func (c *Config) GetInto(ctx context.Context, path string, params url.Values, output interface{}) error {
-	resp, err := c.req(ctx, path, http.MethodGet, params, nil)
+	resp, err := c.Req(ctx, path, http.MethodGet, params, nil)
 	return decode(output, resp, err)
 }
 
@@ -99,7 +99,7 @@ func (c *Config) PostInto(
 	postBody io.Reader,
 	output interface{},
 ) error {
-	resp, err := c.req(ctx, path, http.MethodPost, params, postBody)
+	resp, err := c.Req(ctx, path, http.MethodPost, params, postBody)
 	return decode(output, resp, err)
 }
 
@@ -112,14 +112,14 @@ func (c *Config) PutInto(
 	putBody io.Reader,
 	output interface{},
 ) error {
-	resp, err := c.req(ctx, path, http.MethodPut, params, putBody)
+	resp, err := c.Req(ctx, path, http.MethodPut, params, putBody)
 	return decode(output, resp, err)
 }
 
 // DeleteInto performs an HTTP DELETE against an API path
 // and unmarshals the payload into a pointer interface.
 func (c *Config) DeleteInto(ctx context.Context, path string, params url.Values, output interface{}) error {
-	resp, err := c.req(ctx, path, http.MethodDelete, params, nil)
+	resp, err := c.Req(ctx, path, http.MethodDelete, params, nil)
 	return decode(output, resp, err)
 }
 
