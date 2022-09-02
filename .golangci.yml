@@ -19,6 +19,10 @@ linters:
     - interfacer
     - golint
     - ifshort
+    - deadcode
+    - nosnakecase
+    - structcheck
+    - varcheck
     # unused
     - tagliatelle
     - exhaustivestruct

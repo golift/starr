@@ -3,8 +3,8 @@ os: linux
 dist: bionic
 language: go
 go:
-  - 1.18.x
+  - 1.19.x
 install:
-  - curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin 1.48.0
+  - curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.49.0
 script:
   - make test
