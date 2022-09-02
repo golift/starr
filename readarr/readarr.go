@@ -33,7 +33,7 @@ const (
 // New returns a Readarr object used to interact with the Readarr API.
 func New(config *starr.Config) *Readarr {
 	if config.Client == nil {
-		config.Client = starr.Client(config.Timeout.Duration, config.ValidSSL)
+		config.Client = starr.Client(0, false)
 	}
 
 	return &Readarr{APIer: config}

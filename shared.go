@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"golift.io/starr/debuglog"
 )
 
 /* This file contains shared structs or constants for all the *arr apps. */
@@ -53,6 +55,14 @@ func Client(timeout time.Duration, verifySSL bool) *http.Client {
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: !verifySSL}, //nolint:gosec
 		},
 	}
+}
+
+// ClientWithDebug returns an http client with a debug logger enabled.
+func ClientWithDebug(timeout time.Duration, verifySSL bool, logConfig debuglog.LogConfig) *http.Client {
+	client := Client(timeout, verifySSL)
+	client.Transport = debuglog.NewLoggingRoundTripper(logConfig, nil)
+
+	return client
 }
 
 // StatusMessage represents the status of the item. All apps use this.

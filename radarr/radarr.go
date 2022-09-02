@@ -32,7 +32,7 @@ const (
 // New returns a Radarr object used to interact with the Radarr API.
 func New(config *starr.Config) *Radarr {
 	if config.Client == nil {
-		config.Client = starr.Client(config.Timeout.Duration, config.ValidSSL)
+		config.Client = starr.Client(0, false)
 	}
 
 	return &Radarr{APIer: config}

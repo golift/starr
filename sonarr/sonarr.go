@@ -30,7 +30,7 @@ const (
 // New returns a Sonarr object used to interact with the Sonarr API.
 func New(config *starr.Config) *Sonarr {
 	if config.Client == nil {
-		config.Client = starr.Client(config.Timeout.Duration, config.ValidSSL)
+		config.Client = starr.Client(0, false)
 	}
 
 	return &Sonarr{APIer: config}

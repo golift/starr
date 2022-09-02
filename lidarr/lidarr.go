@@ -33,7 +33,7 @@ const (
 // New returns a Lidarr object used to interact with the Lidarr API.
 func New(config *starr.Config) *Lidarr {
 	if config.Client == nil {
-		config.Client = starr.Client(config.Timeout.Duration, config.ValidSSL)
+		config.Client = starr.Client(0, false)
 	}
 
 	return &Lidarr{APIer: config}

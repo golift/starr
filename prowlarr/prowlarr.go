@@ -15,7 +15,7 @@ const APIver = "v1"
 // New returns a Prowlarr object used to interact with the Prowlarr API.
 func New(config *starr.Config) *Prowlarr {
 	if config.Client == nil {
-		config.Client = starr.Client(config.Timeout.Duration, config.ValidSSL)
+		config.Client = starr.Client(0, false)
 	}
 
 	return &Prowlarr{APIer: config}
