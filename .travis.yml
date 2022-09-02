@@ -5,6 +5,6 @@ language: go
 go:
   - 1.18.x
 install:
-  - curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.46.2
+  - curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin 1.48.0
 script:
   - make test

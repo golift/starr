@@ -13,10 +13,13 @@ issues:
 linters:
   enable-all: true
   disable:
+    # deprecated
     - maligned
     - scopelint
     - interfacer
     - golint
+    - ifshort
+    # unused
     - tagliatelle
     - exhaustivestruct
     - exhaustruct
