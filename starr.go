@@ -24,7 +24,7 @@ import (
 
 // Defaults for New().
 const (
-	DefaultTimeout = 10 * time.Second
+	DefaultTimeout = 30 * time.Second
 )
 
 // Errors you may receive from this package.
@@ -57,7 +57,7 @@ type Config struct {
 }
 
 // New returns a *starr.Config pointer. This pointer is safe to modify
-// further before passing it into one of the arr app New() procedures.
+// further before passing it into one of the starr app New() procedures.
 func New(apiKey, appURL string, timeout time.Duration) *Config {
 	if timeout == 0 {
 		timeout = DefaultTimeout

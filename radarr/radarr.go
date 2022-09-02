@@ -1,6 +1,8 @@
 package radarr
 
 import (
+	"strings"
+
 	"golift.io/starr"
 )
 
@@ -34,6 +36,8 @@ func New(config *starr.Config) *Radarr {
 	if config.Client == nil {
 		config.Client = starr.Client(0, false)
 	}
+
+	config.URL = strings.TrimSuffix(config.URL, "/")
 
 	return &Radarr{APIer: config}
 }
