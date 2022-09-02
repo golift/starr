@@ -33,7 +33,7 @@ type APIer interface {
 // Config must satify the APIer struct.
 var _ APIer = (*Config)(nil)
 
-// LoginC POSTs to the login form in a Starr app and saves the authentication cookie for future use.
+// Login POSTs to the login form in a Starr app and saves the authentication cookie for future use.
 func (c *Config) Login(ctx context.Context) error {
 	if c.Client.Jar == nil {
 		jar, err := cookiejar.New(&cookiejar.Options{PublicSuffixList: publicsuffix.List})

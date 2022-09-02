@@ -9,17 +9,20 @@ import (
 	"net/http"
 )
 
-// LogConfig is the input data for the logger.
-type LogConfig struct {
-	MaxBody int                            // Limit payloads to this many bytes. 0=unlimited
-	Debugf  func(string, ...interface{})   // This is where logs go.
-	Caller  func(sentBytes, rcvdBytes int) // This can be used for byte counters.
+// Config is the input data for the logger.
+type Config struct {
+	MaxBody int                          // Limit payloads to this many bytes. 0=unlimited
+	Debugf  func(string, ...interface{}) // This is where logs go.
+	Caller  Caller                       // This can be used for byte counters.
 }
+
+// Caller is a callback function you may use to collect statistics.
+type Caller func(status, method string, sentBytes, rcvdBytes int, err error)
 
 // LoggingRoundTripper allows us to use a datacounter to log http request data.
 type LoggingRoundTripper struct {
 	next   http.RoundTripper // The next Transport to call after logging.
-	config *LogConfig
+	config *Config
 }
 
 type fakeCloser struct {
@@ -31,11 +34,11 @@ type fakeCloser struct {
 	URL     string
 	Status  string
 	Header  http.Header
-	*LogConfig
+	*Config
 }
 
 // NewLoggingRoundTripper returns a round tripper to log requests counts and response sizes.
-func NewLoggingRoundTripper(config LogConfig, next http.RoundTripper) *LoggingRoundTripper {
+func NewLoggingRoundTripper(config Config, next http.RoundTripper) *LoggingRoundTripper {
 	if next == nil {
 		next = http.DefaultTransport
 	}
@@ -61,35 +64,40 @@ func (rt *LoggingRoundTripper) RoundTrip(req *http.Request) (*http.Response, err
 	}
 
 	resp, err := rt.next.RoundTrip(req)
-	if resp == nil || resp.Body == nil {
+	if err != nil {
+		if rt.config.Caller != nil {
+			// Send this report now since .Close() will never be called.
+			rt.config.Caller("000 Failed", req.Method, buf.Len(), 0, err)
+		}
+
 		return resp, err //nolint:wrapcheck
 	}
 
 	resp.Body = rt.newFakeCloser(resp, &buf)
 
-	return resp, err //nolint:wrapcheck
+	return resp, nil
 }
 
 func (rt *LoggingRoundTripper) newFakeCloser(resp *http.Response, sent *bytes.Buffer) io.ReadCloser {
 	var buf bytes.Buffer
 
 	return &fakeCloser{
-		CloseFn:   resp.Body.Close,
-		Reader:    io.TeeReader(resp.Body, &buf),
-		Body:      &buf,
-		Method:    resp.Request.Method,
-		Status:    resp.Status,
-		URL:       resp.Request.URL.String(),
-		Sent:      sent,
-		Header:    resp.Header,
-		LogConfig: rt.config,
+		CloseFn: resp.Body.Close,
+		Reader:  io.TeeReader(resp.Body, &buf),
+		Body:    &buf,
+		Method:  resp.Request.Method,
+		Status:  resp.Status,
+		URL:     resp.Request.URL.String(),
+		Sent:    sent,
+		Header:  resp.Header,
+		Config:  rt.config,
 	}
 }
 
 func (f *fakeCloser) Close() error {
 	sentBytes, rcvdBytes := f.logRequest()
 	if f.Caller != nil {
-		f.Caller(sentBytes, rcvdBytes)
+		f.Caller(f.Status, f.Method, sentBytes, rcvdBytes, nil)
 	}
 
 	return f.CloseFn()
