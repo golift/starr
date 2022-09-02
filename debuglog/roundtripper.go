@@ -105,25 +105,29 @@ func (f *fakeCloser) Close() error {
 
 func (f *fakeCloser) logRequest() (int, int) {
 	var (
-		headers   = ""
-		rcvd      = ""
-		sent      = ""
+		sent      string
+		rcvd      string
+		headers   string
 		rcvdBytes = f.Body.Len()
 		sentBytes = f.Sent.Len()
 	)
+
+	if f.MaxBody > 0 && sentBytes > f.MaxBody {
+		sent = string(f.Sent.Bytes()[:f.MaxBody]) + " <data truncated>"
+	} else {
+		sent = f.Sent.String()
+	}
+
+	if f.MaxBody > 0 && rcvdBytes > f.MaxBody {
+		rcvd = string(f.Body.Bytes()[:f.MaxBody]) + " <body truncated>"
+	} else {
+		rcvd = f.Body.String()
+	}
 
 	for header, value := range f.Header {
 		for _, v := range value {
 			headers += header + ": " + v + "\n"
 		}
-	}
-
-	if f.MaxBody > 0 && rcvdBytes > f.MaxBody {
-		rcvd = string(f.Body.Bytes()[:f.MaxBody]) + " <body truncated>"
-	}
-
-	if f.MaxBody > 0 && sentBytes > f.MaxBody {
-		sent = string(f.Sent.Bytes()[:f.MaxBody]) + " <data truncated>"
 	}
 
 	if sentBytes > 0 {
