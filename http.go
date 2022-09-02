@@ -29,7 +29,7 @@ func (c *Config) req(
 		return nil, ErrNilClient
 	}
 
-	req, err := http.NewRequestWithContext(ctx, method, c.setPath(uri), body)
+	req, err := http.NewRequestWithContext(ctx, method, c.SetPath(uri), body)
 	if err != nil {
 		return nil, fmt.Errorf("http.NewRequestWithContext(path): %w", err)
 	}
@@ -82,8 +82,8 @@ func (c *Config) setHeaders(req *http.Request) {
 	req.Header.Set("X-API-Key", c.APIKey)
 }
 
-// setPath makes sure the path starts with /api and returns the full URL.
-func (c *Config) setPath(uriPath string) string {
+// SetPath makes sure the path starts with /api and returns the full URL.
+func (c *Config) SetPath(uriPath string) string {
 	if strings.HasPrefix(uriPath, API+"/") ||
 		strings.HasPrefix(uriPath, path.Join("/", API)+"/") {
 		uriPath = path.Join("/", uriPath)
