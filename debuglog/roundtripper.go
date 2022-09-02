@@ -55,12 +55,12 @@ func NewLoggingRoundTripper(config Config, next http.RoundTripper) *LoggingRound
 
 // RoundTrip satisfies the http.RoundTripper interface.
 func (rt *LoggingRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
-	defer req.Body.Close()
-
 	buf := bytes.Buffer{}
 	if req.Body != nil {
 		sent := io.TeeReader(req.Body, &buf)
 		req.Body = io.NopCloser(sent)
+
+		defer req.Body.Close()
 	}
 
 	resp, err := rt.next.RoundTrip(req)
