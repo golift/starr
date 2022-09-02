@@ -19,6 +19,7 @@ import (
 type APIer interface {
 	Login(ctx context.Context) error
 	// Normal data, returns response. Do not use these in starr app methods.
+	// These methods are generally for non-api paths and will not ensure an /api uri prefix.
 	Get(ctx context.Context, path string, params url.Values) (*http.Response, error)
 	Post(ctx context.Context, path string, params url.Values, postBody io.Reader) (*http.Response, error)
 	Put(ctx context.Context, path string, params url.Values, putBody io.Reader) (*http.Response, error)
@@ -65,22 +66,22 @@ func (c *Config) Login(ctx context.Context) error {
 
 // Get makes a GET http request and returns the body.
 func (c *Config) Get(ctx context.Context, path string, params url.Values) (*http.Response, error) {
-	return c.api(ctx, path, http.MethodGet, params, nil)
+	return c.Req(ctx, path, http.MethodGet, params, nil)
 }
 
 // Post makes a POST http request and returns the body.
 func (c *Config) Post(ctx context.Context, path string, params url.Values, postBody io.Reader) (*http.Response, error) {
-	return c.api(ctx, path, http.MethodPost, params, postBody)
+	return c.Req(ctx, path, http.MethodPost, params, postBody)
 }
 
 // Put makes a PUT http request and returns the body.
 func (c *Config) Put(ctx context.Context, path string, params url.Values, putBody io.Reader) (*http.Response, error) {
-	return c.api(ctx, path, http.MethodPut, params, putBody)
+	return c.Req(ctx, path, http.MethodPut, params, putBody)
 }
 
 // Delete makes a DELETE http request and returns the body.
 func (c *Config) Delete(ctx context.Context, path string, params url.Values) (*http.Response, error) {
-	return c.api(ctx, path, http.MethodDelete, params, nil)
+	return c.Req(ctx, path, http.MethodDelete, params, nil)
 }
 
 // GetInto performs an HTTP GET against an API path and
