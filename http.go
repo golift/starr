@@ -17,10 +17,33 @@ const API = "api"
 
 /* The methods in this file provide assumption-ridden HTTP calls for Starr apps. */
 
-// Req returns the body in io.ReadCloser form (read and close it yourself).
+// Req makes an authenticated request to a starr application and returns the response.
+// Do not forget to read and close the response Body if there is no error.
 func (c *Config) Req(
 	ctx context.Context,
 	uri string,
+	method string,
+	params url.Values,
+	body io.Reader,
+) (*http.Response, error) {
+	return c.req(ctx, c.URL+uri, method, params, body)
+}
+
+// api is an internal function to call an api path.
+func (c *Config) api(
+	ctx context.Context,
+	uri string,
+	method string,
+	params url.Values,
+	body io.Reader,
+) (*http.Response, error) {
+	return c.req(ctx, c.SetPath(uri), method, params, body)
+}
+
+// req is our abstraction method for calling a starr application.
+func (c *Config) req(
+	ctx context.Context,
+	url string,
 	method string,
 	params url.Values,
 	body io.Reader,
@@ -29,7 +52,7 @@ func (c *Config) Req(
 		return nil, ErrNilClient
 	}
 
-	req, err := http.NewRequestWithContext(ctx, method, c.SetPath(uri), body)
+	req, err := http.NewRequestWithContext(ctx, method, url, body)
 	if err != nil {
 		return nil, fmt.Errorf("http.NewRequestWithContext(path): %w", err)
 	}

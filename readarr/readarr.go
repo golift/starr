@@ -1,6 +1,8 @@
 package readarr
 
 import (
+	"strings"
+
 	"golift.io/starr"
 )
 
@@ -35,6 +37,8 @@ func New(config *starr.Config) *Readarr {
 	if config.Client == nil {
 		config.Client = starr.Client(0, false)
 	}
+
+	config.URL = strings.TrimSuffix(config.URL, "/")
 
 	return &Readarr{APIer: config}
 }

@@ -3,6 +3,7 @@ package sonarr
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"golift.io/starr"
 )
@@ -32,6 +33,8 @@ func New(config *starr.Config) *Sonarr {
 	if config.Client == nil {
 		config.Client = starr.Client(0, false)
 	}
+
+	config.URL = strings.TrimSuffix(config.URL, "/")
 
 	return &Sonarr{APIer: config}
 }

@@ -1,6 +1,8 @@
 package prowlarr
 
 import (
+	"strings"
+
 	"golift.io/starr"
 )
 
@@ -17,6 +19,8 @@ func New(config *starr.Config) *Prowlarr {
 	if config.Client == nil {
 		config.Client = starr.Client(0, false)
 	}
+
+	config.URL = strings.TrimSuffix(config.URL, "/")
 
 	return &Prowlarr{APIer: config}
 }
