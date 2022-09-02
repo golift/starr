@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 )
 
 // Config is the input data for the logger.
@@ -118,9 +119,12 @@ func (f *fakeCloser) logRequest() (int, int) {
 		sent = f.Sent.String()
 	}
 
-	if f.MaxBody > 0 && rcvdBytes > f.MaxBody {
+	switch ctype := f.Header.Get("content-type"); {
+	case !strings.Contains(ctype, "json"):
+		rcvd = "<data not logged, content-type: " + ctype + ">"
+	case f.MaxBody > 0 && rcvdBytes > f.MaxBody:
 		rcvd = string(f.Body.Bytes()[:f.MaxBody]) + " <body truncated>"
-	} else {
+	default:
 		rcvd = f.Body.String()
 	}
 
