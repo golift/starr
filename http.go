@@ -3,6 +3,7 @@ package starr
 import (
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -69,12 +70,41 @@ func (c *Config) req(
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		closeResp(resp)
-		return nil, fmt.Errorf("failed: %v (status: %s): %w",
-			req.RequestURI, resp.Status, ErrInvalidStatusCode)
+		return nil, parseNon200(req, resp)
 	}
 
 	return resp, nil
+}
+
+// parseNon200 attempts to extract an error message from a non-200 response.
+func parseNon200(req *http.Request, resp *http.Response) error {
+	defer resp.Body.Close()
+
+	var msg struct {
+		Msg string `json:"message"`
+	}
+
+	reply, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("failed: %v (status: %s): %w",
+			req.RequestURI, resp.Status, ErrInvalidStatusCode)
+	}
+
+	if err := json.Unmarshal(reply, &msg); err == nil {
+		return fmt.Errorf("failed: %v (status: %s): %w: %s",
+			req.RequestURI, resp.Status, ErrInvalidStatusCode, msg.Msg)
+	}
+
+	const maxSize = 200 // arbitrary max size
+
+	replyStr := string(reply)
+	if len(replyStr) > maxSize {
+		return fmt.Errorf("failed: %v (status: %s): %w: %s",
+			req.RequestURI, resp.Status, ErrInvalidStatusCode, replyStr[:maxSize])
+	}
+
+	return fmt.Errorf("failed: %v (status: %s): %w: %s",
+		req.RequestURI, resp.Status, ErrInvalidStatusCode, replyStr)
 }
 
 func closeResp(resp *http.Response) {

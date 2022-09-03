@@ -35,7 +35,7 @@ func (s *Sonarr) GetQualityDefinitionsContext(ctx context.Context) ([]*QualityDe
 	var output []*QualityDefinition
 
 	if err := s.GetInto(ctx, bpQualityDefinition, nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(qualityDefinition): %w", err)
+		return nil, fmt.Errorf("api.Get(%s): %w", bpQualityDefinition, err)
 	}
 
 	return output, nil
@@ -52,7 +52,7 @@ func (s *Sonarr) GetQualityDefinitionContext(ctx context.Context, qdID int64) (*
 
 	uri := path.Join(bpQualityDefinition, strconv.FormatInt(qdID, starr.Base10))
 	if err := s.GetInto(ctx, uri, nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(qualityDefinition): %w", err)
+		return nil, fmt.Errorf("api.Get(%s): %w", uri, err)
 	}
 
 	return &output, nil
@@ -77,7 +77,7 @@ func (s *Sonarr) UpdateQualityDefinitionsContext(
 
 	uri := path.Join(bpQualityDefinition, "update")
 	if err := s.PutInto(ctx, uri, nil, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(qualityDefinition): %w", err)
+		return nil, fmt.Errorf("api.Put(%s): %w", uri, err)
 	}
 
 	return output, nil
