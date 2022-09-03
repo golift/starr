@@ -30,6 +30,7 @@ func (r *Radarr) GetQualityDefinitions() ([]*QualityDefinition, error) {
 	return r.GetQualityDefinitionsContext(context.Background())
 }
 
+// GetQualityDefinitionsContext returns all configured quality definitions.
 func (r *Radarr) GetQualityDefinitionsContext(ctx context.Context) ([]*QualityDefinition, error) {
 	var output []*QualityDefinition
 
@@ -45,37 +46,39 @@ func (r *Radarr) GetQualityDefinition(qualityDefinitionID int64) (*QualityDefini
 	return r.GetQualityDefinitionContext(context.Background(), qualityDefinitionID)
 }
 
+// GetQualityDefinitionContext returns a single quality definition.
 func (r *Radarr) GetQualityDefinitionContext(ctx context.Context, qdID int64) (*QualityDefinition, error) {
-	var output *QualityDefinition
+	var output QualityDefinition
 
 	uri := path.Join(bpQualityDefinition, strconv.FormatInt(qdID, starr.Base10))
 	if err := r.GetInto(ctx, uri, nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(qualityDefinition): %w", err)
 	}
 
-	return output, nil
+	return &output, nil
 }
 
-// UpdateQualityDefinition updates the quality definition.
-func (r *Radarr) UpdateQualityDefinition(definition *QualityDefinition) (*QualityDefinition, error) {
-	return r.UpdateQualityDefinitionContext(context.Background(), definition)
+// UpdateQualityDefinitions updates the quality definition.
+func (r *Radarr) UpdateQualityDefinitions(definition []*QualityDefinition) ([]*QualityDefinition, error) {
+	return r.UpdateQualityDefinitionsContext(context.Background(), definition)
 }
 
-func (r *Radarr) UpdateQualityDefinitionContext(
+// UpdateQualityDefinitionsContext updates the quality definition.
+func (r *Radarr) UpdateQualityDefinitionsContext(
 	ctx context.Context,
-	definition *QualityDefinition,
-) (*QualityDefinition, error) {
-	var output QualityDefinition
+	definition []*QualityDefinition,
+) ([]*QualityDefinition, error) {
+	var output []*QualityDefinition
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(definition); err != nil {
 		return nil, fmt.Errorf("json.Marshal(qualityDefinition): %w", err)
 	}
 
-	uri := path.Join(bpQualityDefinition, strconv.Itoa(int(definition.ID)))
+	uri := path.Join(bpQualityDefinition, "update")
 	if err := r.PutInto(ctx, uri, nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(qualityDefinition): %w", err)
 	}
 
-	return &output, nil
+	return output, nil
 }
