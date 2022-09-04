@@ -91,10 +91,8 @@ func (r *Readarr) DeleteTag(tagID int) error {
 }
 
 func (r *Readarr) DeleteTagContext(ctx context.Context, tagID int) error {
-	var output interface{}
-
 	uri := path.Join(bpTag, strconv.Itoa(tagID))
-	if err := r.DeleteInto(ctx, uri, nil, &output); err != nil {
+	if err := r.DeleteAny(ctx, uri, nil); err != nil {
 		return fmt.Errorf("api.Delete(tag): %w", err)
 	}
 

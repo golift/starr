@@ -107,10 +107,8 @@ func (s *Sonarr) DeleteLanguageProfile(profileID int) error {
 }
 
 func (s *Sonarr) DeleteLanguageProfileContext(ctx context.Context, profileID int) error {
-	var output interface{}
-
 	uri := path.Join(bpLanguageProfile, strconv.Itoa(profileID))
-	if err := s.DeleteInto(ctx, uri, nil, &output); err != nil {
+	if err := s.DeleteAny(ctx, uri, nil); err != nil {
 		return fmt.Errorf("api.Delete(languageProfile): %w", err)
 	}
 

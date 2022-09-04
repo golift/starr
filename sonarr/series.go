@@ -247,14 +247,12 @@ func (s *Sonarr) DeleteSeries(seriesID int, deleteFiles bool, importExclude bool
 }
 
 func (s *Sonarr) DeleteSeriesContext(ctx context.Context, seriesID int, deleteFiles bool, importExclude bool) error {
-	var output interface{}
-
 	params := make(url.Values)
 	params.Add("deleteFiles", strconv.FormatBool(deleteFiles))
 	params.Add("addImportListExclusion", strconv.FormatBool(importExclude))
 
 	uri := path.Join(bpSeries, strconv.Itoa(seriesID))
-	if err := s.DeleteInto(ctx, uri, params, &output); err != nil {
+	if err := s.DeleteAny(ctx, uri, params); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", uri, err)
 	}
 

@@ -91,10 +91,8 @@ func (l *Lidarr) DeleteTag(tagID int) error {
 }
 
 func (l *Lidarr) DeleteTagContext(ctx context.Context, tagID int) error {
-	var output interface{}
-
 	uri := path.Join(bpTag, strconv.Itoa(tagID))
-	if err := l.DeleteInto(ctx, uri, nil, &output); err != nil {
+	if err := l.DeleteAny(ctx, uri, nil); err != nil {
 		return fmt.Errorf("api.Delete(tag): %w", err)
 	}
 
