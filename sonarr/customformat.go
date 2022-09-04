@@ -126,10 +126,8 @@ func (s *Sonarr) DeleteCustomFormat(cfID int) error {
 // DeleteCustomFormatContext deletes a custom format.
 // This data and these endpoints do not exist in Sonarr v3; this is v4 only.
 func (s *Sonarr) DeleteCustomFormatContext(ctx context.Context, cfID int) error {
-	var output interface{}
-
 	uri := path.Join(bpCustomFormat, strconv.Itoa(cfID))
-	if err := s.DeleteInto(ctx, uri, nil, &output); err != nil {
+	if err := s.DeleteAny(ctx, uri, nil); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", bpCustomFormat, err)
 	}
 
