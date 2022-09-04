@@ -108,7 +108,7 @@ func (l *Lidarr) GetHistoryPage(params *starr.Req) (*History, error) {
 func (l *Lidarr) GetHistoryPageContext(ctx context.Context, params *starr.Req) (*History, error) {
 	var history History
 
-	_, err := l.GetInto(ctx, "v1/history", params.Params(), &history)
+	err := l.GetInto(ctx, "v1/history", params.Params(), &history)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(history): %w", err)
 	}
@@ -127,10 +127,12 @@ func (l *Lidarr) FailContext(ctx context.Context, historyID int64) error {
 		return fmt.Errorf("%w: invalid history ID: %d", starr.ErrRequestError, historyID)
 	}
 
+	var output interface{}
+
 	post := bytes.NewBufferString("id=" + strconv.FormatInt(historyID, starr.Base10))
 
-	_, err := l.Post(ctx, "v1/history/failed", nil, post)
-	if err != nil {
+	uri := "v1/history/failed"
+	if err := l.PostInto(ctx, uri, nil, post, &output); err != nil {
 		return fmt.Errorf("api.Post(history/failed): %w", err)
 	}
 

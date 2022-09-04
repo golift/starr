@@ -40,7 +40,7 @@ func (s *Sonarr) GetMediaManagement() (*MediaManagement, error) {
 func (s *Sonarr) GetMediaManagementContext(ctx context.Context) (*MediaManagement, error) {
 	var output *MediaManagement
 
-	if _, err := s.GetInto(ctx, bpMediaManagement, nil, &output); err != nil {
+	if err := s.GetInto(ctx, bpMediaManagement, nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(mediaManagement): %w", err)
 	}
 
@@ -60,7 +60,7 @@ func (s *Sonarr) UpdateMediaManagementContext(ctx context.Context, mMgt *MediaMa
 		return nil, fmt.Errorf("json.Marshal(mediaManagement): %w", err)
 	}
 
-	if _, err := s.PutInto(ctx, bpMediaManagement, nil, &body, &output); err != nil {
+	if err := s.PutInto(ctx, bpMediaManagement, nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(mediaManagement): %w", err)
 	}
 

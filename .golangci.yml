@@ -13,14 +13,22 @@ issues:
 linters:
   enable-all: true
   disable:
+    # deprecated
     - maligned
     - scopelint
     - interfacer
     - golint
+    - ifshort
+    - deadcode
+    - nosnakecase
+    - structcheck
+    - varcheck
+    # unused
     - tagliatelle
     - exhaustivestruct
     - exhaustruct
     - dupl
+    - nlreturn
 
 run:
   timeout: 35m

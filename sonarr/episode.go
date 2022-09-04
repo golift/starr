@@ -23,7 +23,7 @@ func (s *Sonarr) GetSeriesEpisodesContext(ctx context.Context, seriesID int64) (
 	params := make(url.Values)
 	params.Add("seriesId", strconv.FormatInt(seriesID, starr.Base10))
 
-	_, err := s.GetInto(ctx, "v3/episode?seriesId", params, &output)
+	err := s.GetInto(ctx, "v3/episode?seriesId", params, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(episode): %w", err)
 	}
@@ -47,7 +47,7 @@ func (s *Sonarr) MonitorEpisodeContext(ctx context.Context, episodeIDs []int64, 
 	}
 
 	var output []*Episode
-	if _, err := s.PutInto(ctx, "v3/episode/monitor", nil, &body, &output); err != nil {
+	if err := s.PutInto(ctx, "v3/episode/monitor", nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(episode/monitor): %w", err)
 	}
 

@@ -27,7 +27,7 @@ func (r *Radarr) GetExclusions() ([]*Exclusion, error) {
 func (r *Radarr) GetExclusionsContext(ctx context.Context) ([]*Exclusion, error) {
 	var exclusions []*Exclusion
 
-	_, err := r.GetInto(ctx, "v3/exclusions", nil, &exclusions)
+	err := r.GetInto(ctx, "v3/exclusions", nil, &exclusions)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(exclusions): %w", err)
 	}
@@ -45,8 +45,8 @@ func (r *Radarr) DeleteExclusionsContext(ctx context.Context, ids []int64) error
 	var errs string
 
 	for _, id := range ids {
-		_, err := r.Delete(ctx, "v3/exclusions/"+strconv.FormatInt(id, starr.Base10), nil)
-		if err != nil {
+		uri := "v3/exclusions/" + strconv.FormatInt(id, starr.Base10)
+		if err := r.DeleteAny(ctx, uri, nil); err != nil {
 			errs += err.Error() + " "
 		}
 	}
@@ -74,8 +74,10 @@ func (r *Radarr) AddExclusionsContext(ctx context.Context, exclusions []*Exclusi
 		return fmt.Errorf("json.Marshal(exclusions): %w", err)
 	}
 
-	_, err := r.Post(ctx, "v3/exclusions/bulk", nil, &body)
-	if err != nil {
+	var output interface{}
+
+	uri := "v3/exclusions/bulk"
+	if err := r.PostInto(ctx, uri, nil, &body, &output); err != nil {
 		return fmt.Errorf("api.Post(exclusions): %w", err)
 	}
 

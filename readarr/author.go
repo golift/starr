@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/url"
 	"strconv"
 	"time"
@@ -82,7 +81,7 @@ func (r *Readarr) GetAuthorByID(authorID int64) (*Author, error) {
 func (r *Readarr) GetAuthorByIDContext(ctx context.Context, authorID int64) (*Author, error) {
 	var author Author
 
-	_, err := r.GetInto(ctx, "v1/author/"+strconv.FormatInt(authorID, starr.Base10), nil, &author)
+	err := r.GetInto(ctx, "v1/author/"+strconv.FormatInt(authorID, starr.Base10), nil, &author)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(author): %w", err)
 	}
@@ -105,12 +104,12 @@ func (r *Readarr) UpdateAuthorContext(ctx context.Context, authorID int64, autho
 		return fmt.Errorf("json.Marshal(author): %w", err)
 	}
 
-	b, err := r.Put(ctx, "v1/author/"+strconv.FormatInt(authorID, starr.Base10), params, &body)
-	if err != nil {
+	var output interface{}
+
+	uri := "v1/author/" + strconv.FormatInt(authorID, starr.Base10)
+	if err := r.PutInto(ctx, uri, params, &body, &output); err != nil {
 		return fmt.Errorf("api.Put(author): %w", err)
 	}
-
-	log.Println("SHOW THIS TO CAPTAIN plz:", string(b))
 
 	return nil
 }

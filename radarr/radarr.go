@@ -1,8 +1,7 @@
 package radarr
 
 import (
-	"crypto/tls"
-	"net/http"
+	"strings"
 
 	"golift.io/starr"
 )
@@ -16,8 +15,9 @@ type Radarr struct {
 }
 
 // Filter values are integers. Given names for ease of discovery.
-//nolint:lll
 // https://github.com/Radarr/Radarr/blob/2bca1a71a2ed5130ea642343cb76250f3bf5bc4e/src/NzbDrone.Core/History/History.cs#L33-L44
+//
+//nolint:lll
 const (
 	FilterUnknown starr.Filtering = iota
 	FilterGrabbed
@@ -34,21 +34,10 @@ const (
 // New returns a Radarr object used to interact with the Radarr API.
 func New(config *starr.Config) *Radarr {
 	if config.Client == nil {
-		//nolint:exhaustivestruct,gosec
-		config.Client = &http.Client{
-			Timeout: config.Timeout.Duration,
-			CheckRedirect: func(r *http.Request, via []*http.Request) error {
-				return http.ErrUseLastResponse
-			},
-			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: !config.ValidSSL},
-			},
-		}
+		config.Client = starr.Client(0, false)
 	}
 
-	if config.Debugf == nil {
-		config.Debugf = func(string, ...interface{}) {}
-	}
+	config.URL = strings.TrimSuffix(config.URL, "/")
 
 	return &Radarr{APIer: config}
 }

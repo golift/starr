@@ -135,7 +135,7 @@ func (s *Sonarr) GetSeriesContext(ctx context.Context, tvdbID int64) ([]*Series,
 		params.Add("tvdbId", strconv.FormatInt(tvdbID, starr.Base10))
 	}
 
-	if _, err := s.GetInto(ctx, bpSeries, params, &output); err != nil {
+	if err := s.GetInto(ctx, bpSeries, params, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", bpSeries, err)
 	}
 
@@ -159,7 +159,7 @@ func (s *Sonarr) UpdateSeriesContext(ctx context.Context, series *AddSeriesInput
 	}
 
 	uri := path.Join(bpSeries, strconv.Itoa(int(series.ID)))
-	if _, err := s.PutInto(ctx, uri, params, &body, &output); err != nil {
+	if err := s.PutInto(ctx, uri, params, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", uri, err)
 	}
 
@@ -182,7 +182,7 @@ func (s *Sonarr) AddSeriesContext(ctx context.Context, series *AddSeriesInput) (
 		return nil, fmt.Errorf("json.Marshal(series): %w", err)
 	}
 
-	if _, err := s.PostInto(ctx, bpSeries, params, &body, &output); err != nil {
+	if err := s.PostInto(ctx, bpSeries, params, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(%s): %w", bpSeries, err)
 	}
 
@@ -198,7 +198,7 @@ func (s *Sonarr) GetSeriesByIDContext(ctx context.Context, seriesID int64) (*Ser
 	var output Series
 
 	uri := path.Join(bpSeries, strconv.Itoa(int(seriesID)))
-	if _, err := s.GetInto(ctx, uri, nil, &output); err != nil {
+	if err := s.GetInto(ctx, uri, nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", uri, err)
 	}
 
@@ -222,7 +222,7 @@ func (s *Sonarr) GetSeriesLookupContext(ctx context.Context, term string, tvdbID
 	}
 
 	uri := path.Join(bpSeries, "lookup")
-	if _, err := s.GetInto(ctx, uri, params, &output); err != nil {
+	if err := s.GetInto(ctx, uri, params, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", uri, err)
 	}
 
@@ -252,7 +252,7 @@ func (s *Sonarr) DeleteSeriesContext(ctx context.Context, seriesID int, deleteFi
 	params.Add("addImportListExclusion", strconv.FormatBool(importExclude))
 
 	uri := path.Join(bpSeries, strconv.Itoa(seriesID))
-	if _, err := s.Delete(ctx, uri, params); err != nil {
+	if err := s.DeleteAny(ctx, uri, params); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", uri, err)
 	}
 

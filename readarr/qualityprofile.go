@@ -30,7 +30,7 @@ func (r *Readarr) GetQualityProfiles() ([]*QualityProfile, error) {
 func (r *Readarr) GetQualityProfilesContext(ctx context.Context) ([]*QualityProfile, error) {
 	var profiles []*QualityProfile
 
-	_, err := r.GetInto(ctx, bpQualityProfile, nil, &profiles)
+	err := r.GetInto(ctx, bpQualityProfile, nil, &profiles)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", bpQualityProfile, err)
 	}
@@ -50,7 +50,7 @@ func (r *Readarr) AddQualityProfileContext(ctx context.Context, profile *Quality
 	}
 
 	var output QualityProfile
-	if _, err := r.PostInto(ctx, bpQualityProfile, nil, &body, &output); err != nil {
+	if err := r.PostInto(ctx, bpQualityProfile, nil, &body, &output); err != nil {
 		return 0, fmt.Errorf("api.Post(%s): %w", bpQualityProfile, err)
 	}
 
@@ -68,8 +68,10 @@ func (r *Readarr) UpdateQualityProfileContext(ctx context.Context, profile *Qual
 		return fmt.Errorf("json.Marshal(%s): %w", bpQualityProfile, err)
 	}
 
+	var output interface{}
+
 	uri := path.Join(bpQualityProfile, strconv.FormatInt(profile.ID, starr.Base10))
-	if _, err := r.Put(ctx, uri, nil, &body); err != nil {
+	if err := r.PutInto(ctx, uri, nil, &body, &output); err != nil {
 		return fmt.Errorf("api.Put(%s): %w", bpQualityProfile, err)
 	}
 
@@ -84,7 +86,7 @@ func (r *Readarr) DeleteQualityProfile(profileID int64) error {
 // DeleteQualityProfileContext deletes a quality profile.
 func (r *Readarr) DeleteQualityProfileContext(ctx context.Context, profileID int64) error {
 	uri := path.Join(bpQualityProfile, strconv.FormatInt(profileID, starr.Base10))
-	if _, err := r.Delete(ctx, uri, nil); err != nil {
+	if err := r.DeleteAny(ctx, uri, nil); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", bpQualityProfile, err)
 	}
 

@@ -37,7 +37,7 @@ func (l *Lidarr) GetMetadataProfiles() ([]*MetadataProfile, error) {
 func (l *Lidarr) GetMetadataProfilesContext(ctx context.Context) ([]*MetadataProfile, error) {
 	var profiles []*MetadataProfile
 
-	_, err := l.GetInto(ctx, "v1/metadataprofile", nil, &profiles)
+	err := l.GetInto(ctx, "v1/metadataprofile", nil, &profiles)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(metadataprofile): %w", err)
 	}

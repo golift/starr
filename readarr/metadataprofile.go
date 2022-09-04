@@ -25,7 +25,7 @@ func (r *Readarr) GetMetadataProfiles() ([]*MetadataProfile, error) {
 func (r *Readarr) GetMetadataProfilesContext(ctx context.Context) ([]*MetadataProfile, error) {
 	var profiles []*MetadataProfile
 
-	_, err := r.GetInto(ctx, "v1/metadataprofile", nil, &profiles)
+	err := r.GetInto(ctx, "v1/metadataprofile", nil, &profiles)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(metadataprofile): %w", err)
 	}

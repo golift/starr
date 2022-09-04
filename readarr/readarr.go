@@ -1,8 +1,7 @@
 package readarr
 
 import (
-	"crypto/tls"
-	"net/http"
+	"strings"
 
 	"golift.io/starr"
 )
@@ -16,8 +15,9 @@ type Readarr struct {
 }
 
 // Filter values are integers. Given names for ease of discovery.
-//nolint:lll
 // https://github.com/Readarr/Readarr/blob/de72cfcaaa22495c7ce9fcb596a93beff6efb3d6/src/NzbDrone.Core/History/EntityHistory.cs#L31-L43
+//
+//nolint:lll
 const (
 	FilterAll starr.Filtering = iota
 	FilterGrabbed
@@ -35,21 +35,10 @@ const (
 // New returns a Readarr object used to interact with the Readarr API.
 func New(config *starr.Config) *Readarr {
 	if config.Client == nil {
-		//nolint:exhaustivestruct,gosec
-		config.Client = &http.Client{
-			Timeout: config.Timeout.Duration,
-			CheckRedirect: func(r *http.Request, via []*http.Request) error {
-				return http.ErrUseLastResponse
-			},
-			Transport: &http.Transport{
-				TLSClientConfig: &tls.Config{InsecureSkipVerify: !config.ValidSSL},
-			},
-		}
+		config.Client = starr.Client(0, false)
 	}
 
-	if config.Debugf == nil {
-		config.Debugf = func(string, ...interface{}) {}
-	}
+	config.URL = strings.TrimSuffix(config.URL, "/")
 
 	return &Readarr{APIer: config}
 }

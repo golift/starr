@@ -30,7 +30,7 @@ func (s *Sonarr) GetEpisodeFilesContext(ctx context.Context, episodeFileIDs ...i
 	params := make(url.Values)
 	params.Add("episodeFileIds", ids)
 
-	_, err := s.GetInto(ctx, "v3/episodeFile", params, &output)
+	err := s.GetInto(ctx, "v3/episodeFile", params, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(episodeFile): %w", err)
 	}
@@ -50,7 +50,7 @@ func (s *Sonarr) GetSeriesEpisodeFilesContext(ctx context.Context, seriesID int6
 	params := make(url.Values)
 	params.Add("seriesId", strconv.FormatInt(seriesID, starr.Base10))
 
-	_, err := s.GetInto(ctx, "v3/episodeFile", params, &output)
+	err := s.GetInto(ctx, "v3/episodeFile", params, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(episodeFile): %w", err)
 	}
@@ -79,7 +79,7 @@ func (s *Sonarr) UpdateEpisodeFileQualityContext(
 
 	var output EpisodeFile
 
-	_, err := s.PutInto(ctx, "v3/episodeFile/"+strconv.FormatInt(episodeFileID, starr.Base10), nil, &body, &output)
+	err := s.PutInto(ctx, "v3/episodeFile/"+strconv.FormatInt(episodeFileID, starr.Base10), nil, &body, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Put(episodeFile): %w", err)
 	}
@@ -94,8 +94,8 @@ func (s *Sonarr) DeleteEpisodeFile(episodeFileID int64) error {
 
 // DeleteEpisodeFileContext deletes an episode file, and takes a context.
 func (s *Sonarr) DeleteEpisodeFileContext(ctx context.Context, episodeFileID int64) error {
-	_, err := s.Delete(ctx, "v3/episodeFile/"+strconv.FormatInt(episodeFileID, starr.Base10), nil)
-	if err != nil {
+	url := "v3/episodeFile/" + strconv.FormatInt(episodeFileID, starr.Base10)
+	if err := s.DeleteAny(ctx, url, nil); err != nil {
 		return fmt.Errorf("api.Delete(episodeFile): %w", err)
 	}
 

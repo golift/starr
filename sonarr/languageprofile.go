@@ -37,7 +37,7 @@ func (s *Sonarr) GetLanguageProfiles() ([]*LanguageProfile, error) {
 func (s *Sonarr) GetLanguageProfilesContext(ctx context.Context) ([]*LanguageProfile, error) {
 	var output []*LanguageProfile
 
-	if _, err := s.GetInto(ctx, bpLanguageProfile, nil, &output); err != nil {
+	if err := s.GetInto(ctx, bpLanguageProfile, nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(languageProfile): %w", err)
 	}
 
@@ -53,7 +53,7 @@ func (s *Sonarr) GetLanguageProfileContext(ctx context.Context, profileID int) (
 	var output *LanguageProfile
 
 	uri := path.Join(bpLanguageProfile, strconv.Itoa(profileID))
-	if _, err := s.GetInto(ctx, uri, nil, &output); err != nil {
+	if err := s.GetInto(ctx, uri, nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(languageProfile): %w", err)
 	}
 
@@ -73,7 +73,7 @@ func (s *Sonarr) AddLanguageProfileContext(ctx context.Context, profile *Languag
 		return nil, fmt.Errorf("json.Marshal(languageProfile): %w", err)
 	}
 
-	if _, err := s.PostInto(ctx, bpLanguageProfile, nil, &body, &output); err != nil {
+	if err := s.PostInto(ctx, bpLanguageProfile, nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(languageProfile): %w", err)
 	}
 
@@ -94,7 +94,7 @@ func (s *Sonarr) UpdateLanguageProfileContext(ctx context.Context, profile *Lang
 	}
 
 	uri := path.Join(bpLanguageProfile, strconv.Itoa(int(profile.ID)))
-	if _, err := s.PutInto(ctx, uri, nil, &body, &output); err != nil {
+	if err := s.PutInto(ctx, uri, nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(languageProfile): %w", err)
 	}
 
@@ -108,7 +108,7 @@ func (s *Sonarr) DeleteLanguageProfile(profileID int) error {
 
 func (s *Sonarr) DeleteLanguageProfileContext(ctx context.Context, profileID int) error {
 	uri := path.Join(bpLanguageProfile, strconv.Itoa(profileID))
-	if _, err := s.Delete(ctx, uri, nil); err != nil {
+	if err := s.DeleteAny(ctx, uri, nil); err != nil {
 		return fmt.Errorf("api.Delete(languageProfile): %w", err)
 	}
 

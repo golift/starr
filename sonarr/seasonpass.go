@@ -39,7 +39,10 @@ func (s *Sonarr) UpdateSeasonPassContext(ctx context.Context, seasonPass *Season
 		return fmt.Errorf("json.Marshal(seasonPass): %w", err)
 	}
 
-	if _, err := s.Post(ctx, "v3/seasonPass", nil, &body); err != nil {
+	var output interface{}
+
+	uri := "v3/seasonPass"
+	if err := s.PostInto(ctx, uri, nil, &body, &output); err != nil {
 		return fmt.Errorf("api.Post(seasonPass): %w", err)
 	}
 

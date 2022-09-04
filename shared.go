@@ -1,10 +1,14 @@
 package starr
 
 import (
+	"crypto/tls"
 	"encoding/json"
+	"net/http"
 	"strconv"
 	"strings"
 	"time"
+
+	"golift.io/starr/debuglog"
 )
 
 /* This file contains shared structs or constants for all the *arr apps. */
@@ -38,6 +42,27 @@ func (a App) String() string {
 // Lower turns an App name into a lowercase string.
 func (a App) Lower() string {
 	return strings.ToLower(string(a))
+}
+
+// Client returns the default client, and is used if one is not passed in.
+func Client(timeout time.Duration, verifySSL bool) *http.Client {
+	return &http.Client{
+		Timeout: timeout,
+		CheckRedirect: func(r *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: !verifySSL}, //nolint:gosec
+		},
+	}
+}
+
+// ClientWithDebug returns an http client with a debug logger enabled.
+func ClientWithDebug(timeout time.Duration, verifySSL bool, logConfig debuglog.Config) *http.Client {
+	client := Client(timeout, verifySSL)
+	client.Transport = debuglog.NewLoggingRoundTripper(logConfig, nil)
+
+	return client
 }
 
 // StatusMessage represents the status of the item. All apps use this.

@@ -96,7 +96,7 @@ func (l *Lidarr) GetQueuePageContext(ctx context.Context, params *starr.Req) (*Q
 	params.CheckSet("sortKey", "timeleft")
 	params.CheckSet("includeUnknownArtistItems", "true")
 
-	_, err := l.GetInto(ctx, "v1/queue", params.Params(), &queue)
+	err := l.GetInto(ctx, "v1/queue", params.Params(), &queue)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(queue): %w", err)
 	}

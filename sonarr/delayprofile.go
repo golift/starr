@@ -33,7 +33,7 @@ func (s *Sonarr) GetDelayProfiles() ([]*DelayProfile, error) {
 func (s *Sonarr) GetDelayProfilesContext(ctx context.Context) ([]*DelayProfile, error) {
 	var output []*DelayProfile
 
-	if _, err := s.GetInto(ctx, bpDelayProfile, nil, &output); err != nil {
+	if err := s.GetInto(ctx, bpDelayProfile, nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(delayProfile): %w", err)
 	}
 
@@ -49,7 +49,7 @@ func (s *Sonarr) GetDelayProfileContext(ctx context.Context, profileID int) (*De
 	var output *DelayProfile
 
 	uri := path.Join(bpDelayProfile, strconv.Itoa(profileID))
-	if _, err := s.GetInto(ctx, uri, nil, &output); err != nil {
+	if err := s.GetInto(ctx, uri, nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(delayProfile): %w", err)
 	}
 
@@ -69,7 +69,7 @@ func (s *Sonarr) AddDelayProfileContext(ctx context.Context, profile *DelayProfi
 		return nil, fmt.Errorf("json.Marshal(delayProfile): %w", err)
 	}
 
-	if _, err := s.PostInto(ctx, bpDelayProfile, nil, &body, &output); err != nil {
+	if err := s.PostInto(ctx, bpDelayProfile, nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(delayProfile): %w", err)
 	}
 
@@ -90,7 +90,7 @@ func (s *Sonarr) UpdateDelayProfileContext(ctx context.Context, profile *DelayPr
 	}
 
 	uri := path.Join(bpDelayProfile, strconv.Itoa(int(profile.ID)))
-	if _, err := s.PutInto(ctx, uri, nil, &body, &output); err != nil {
+	if err := s.PutInto(ctx, uri, nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(delayProfile): %w", err)
 	}
 
@@ -104,7 +104,7 @@ func (s *Sonarr) DeleteDelayProfile(profileID int) error {
 
 func (s *Sonarr) DeleteDelayProfileContext(ctx context.Context, profileID int) error {
 	uri := path.Join(bpDelayProfile, strconv.Itoa(profileID))
-	if _, err := s.Delete(ctx, uri, nil); err != nil {
+	if err := s.DeleteAny(ctx, uri, nil); err != nil {
 		return fmt.Errorf("api.Delete(delayProfile): %w", err)
 	}
 

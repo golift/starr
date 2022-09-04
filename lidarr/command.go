@@ -45,7 +45,7 @@ func (l *Lidarr) GetCommands() ([]*CommandResponse, error) {
 func (l *Lidarr) GetCommandsContext(ctx context.Context) ([]*CommandResponse, error) {
 	var output []*CommandResponse
 
-	if _, err := l.GetInto(ctx, "v1/command", nil, &output); err != nil {
+	if err := l.GetInto(ctx, "v1/command", nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(command): %w", err)
 	}
 
@@ -70,7 +70,7 @@ func (l *Lidarr) SendCommandContext(ctx context.Context, cmd *CommandRequest) (*
 		return nil, fmt.Errorf("json.Marshal(cmd): %w", err)
 	}
 
-	if _, err := l.PostInto(ctx, "v1/command", nil, &body, &output); err != nil {
+	if err := l.PostInto(ctx, "v1/command", nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(command): %w", err)
 	}
 

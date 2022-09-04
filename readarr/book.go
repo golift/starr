@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/url"
 	"strconv"
 	"time"
@@ -165,7 +164,7 @@ func (r *Readarr) GetBookContext(ctx context.Context, gridID string) ([]*Book, e
 
 	var books []*Book
 
-	_, err := r.GetInto(ctx, "v1/book", params, &books)
+	err := r.GetInto(ctx, "v1/book", params, &books)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(book): %w", err)
 	}
@@ -181,7 +180,7 @@ func (r *Readarr) GetBookByID(bookID int64) (*Book, error) {
 func (r *Readarr) GetBookByIDContext(ctx context.Context, bookID int64) (*Book, error) {
 	var book Book
 
-	_, err := r.GetInto(ctx, "v1/book/"+strconv.FormatInt(bookID, starr.Base10), nil, &book)
+	err := r.GetInto(ctx, "v1/book/"+strconv.FormatInt(bookID, starr.Base10), nil, &book)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(book): %w", err)
 	}
@@ -203,12 +202,12 @@ func (r *Readarr) UpdateBookContext(ctx context.Context, bookID int64, book *Boo
 		return fmt.Errorf("json.Marshal(book): %w", err)
 	}
 
-	b, err := r.Put(ctx, "v1/book/"+strconv.FormatInt(bookID, starr.Base10), params, &body)
+	var unknown interface{}
+
+	err := r.PutInto(ctx, "v1/book/"+strconv.FormatInt(bookID, starr.Base10), params, &body, &unknown)
 	if err != nil {
 		return fmt.Errorf("api.Put(book): %w", err)
 	}
-
-	log.Println("SHOW THIS TO CAPTAIN plz:", string(b))
 
 	return nil
 }
@@ -228,7 +227,7 @@ func (r *Readarr) AddBookContext(ctx context.Context, book *AddBookInput) (*AddB
 	}
 
 	var output AddBookOutput
-	if _, err := r.PostInto(ctx, "v1/book", params, &body, &output); err != nil {
+	if err := r.PostInto(ctx, "v1/book", params, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(book): %w", err)
 	}
 
@@ -250,7 +249,7 @@ func (r *Readarr) LookupContext(ctx context.Context, term string) ([]*Book, erro
 	params := make(url.Values)
 	params.Set("term", term)
 
-	_, err := r.GetInto(ctx, "v1/book/lookup", params, &output)
+	err := r.GetInto(ctx, "v1/book/lookup", params, &output)
 	if err != nil {
 		return nil, fmt.Errorf("api.Get(book/lookup): %w", err)
 	}

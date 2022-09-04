@@ -1,7 +1,7 @@
 package starr
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -42,7 +42,7 @@ func (test *TestMockData) GetMockServer(t *testing.T) *httptest.Server {
 
 		assert.EqualValues(t, req.Method, test.ExpectedMethod)
 
-		body, err := ioutil.ReadAll(req.Body)
+		body, err := io.ReadAll(req.Body)
 		assert.NoError(t, err)
 		assert.EqualValues(t, test.ExpectedRequest, string(body))
 

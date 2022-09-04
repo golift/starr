@@ -37,7 +37,7 @@ func (s *Sonarr) GetNaming() (*Naming, error) {
 func (s *Sonarr) GetNamingContext(ctx context.Context) (*Naming, error) {
 	var output *Naming
 
-	if _, err := s.GetInto(ctx, bpNaming, nil, &output); err != nil {
+	if err := s.GetInto(ctx, bpNaming, nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(naming): %w", err)
 	}
 
@@ -57,7 +57,7 @@ func (s *Sonarr) UpdateNamingContext(ctx context.Context, naming *Naming) (*Nami
 		return nil, fmt.Errorf("json.Marshal(naming): %w", err)
 	}
 
-	if _, err := s.PutInto(ctx, bpNaming, nil, &body, &output); err != nil {
+	if err := s.PutInto(ctx, bpNaming, nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(naming): %w", err)
 	}
 
