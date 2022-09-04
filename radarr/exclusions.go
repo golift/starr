@@ -45,10 +45,8 @@ func (r *Radarr) DeleteExclusionsContext(ctx context.Context, ids []int64) error
 	var errs string
 
 	for _, id := range ids {
-		var output interface{}
-
 		uri := "v3/exclusions/" + strconv.FormatInt(id, starr.Base10)
-		if err := r.DeleteInto(ctx, uri, nil, &output); err != nil {
+		if err := r.DeleteAny(ctx, uri, nil); err != nil {
 			errs += err.Error() + " "
 		}
 	}

@@ -80,10 +80,8 @@ func (s *Sonarr) DeleteRootFolder(folderID int) error {
 }
 
 func (s *Sonarr) DeleteRootFolderContext(ctx context.Context, folderID int) error {
-	var output interface{}
-
 	uri := path.Join(bpRootFolder, strconv.Itoa(folderID))
-	if err := s.DeleteInto(ctx, uri, nil, &output); err != nil {
+	if err := s.DeleteAny(ctx, uri, nil); err != nil {
 		return fmt.Errorf("api.Delete(rootFolder): %w", err)
 	}
 

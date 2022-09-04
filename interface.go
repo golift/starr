@@ -28,7 +28,7 @@ type APIer interface {
 	GetInto(ctx context.Context, path string, params url.Values, output interface{}) error
 	PostInto(ctx context.Context, path string, params url.Values, postBody io.Reader, output interface{}) error
 	PutInto(ctx context.Context, path string, params url.Values, putBody io.Reader, output interface{}) error
-	DeleteInto(ctx context.Context, path string, params url.Values, output interface{}) error
+	DeleteAny(ctx context.Context, path string, params url.Values) error
 }
 
 // Config must satify the APIer struct.
@@ -117,11 +117,12 @@ func (c *Config) PutInto(
 	return decode(output, resp, err)
 }
 
-// DeleteInto performs an HTTP DELETE against an API path
-// and unmarshals the payload into a pointer interface.
-func (c *Config) DeleteInto(ctx context.Context, path string, params url.Values, output interface{}) error {
+// DeleteAny performs an HTTP DELETE against an API path, output is ignored.
+func (c *Config) DeleteAny(ctx context.Context, path string, params url.Values) error {
 	resp, err := c.api(ctx, path, http.MethodDelete, params, nil)
-	return decode(output, resp, err)
+	closeResp(resp)
+
+	return err
 }
 
 // decode is an extra procedure to check an error and decode the JSON resp.Body payload.

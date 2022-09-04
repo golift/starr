@@ -103,10 +103,8 @@ func (s *Sonarr) DeleteDelayProfile(profileID int) error {
 }
 
 func (s *Sonarr) DeleteDelayProfileContext(ctx context.Context, profileID int) error {
-	var output interface{}
-
 	uri := path.Join(bpDelayProfile, strconv.Itoa(profileID))
-	if err := s.DeleteInto(ctx, uri, nil, &output); err != nil {
+	if err := s.DeleteAny(ctx, uri, nil); err != nil {
 		return fmt.Errorf("api.Delete(delayProfile): %w", err)
 	}
 
