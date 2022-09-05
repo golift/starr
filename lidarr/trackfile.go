@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"net/url"
 	"path"
-	"strconv"
 	"time"
 
 	"golift.io/starr"
@@ -178,7 +177,7 @@ func (l *Lidarr) UpdateTrackFileContext(ctx context.Context, trackFile *TrackFil
 		return nil, fmt.Errorf("json.Marshal(trackFile): %w", err)
 	}
 
-	uri := path.Join(bpTrackFile, strconv.FormatInt(trackFile.ID, starr.Base10))
+	uri := path.Join(bpTrackFile, fmt.Sprint(trackFile.ID))
 	if err := l.PutInto(ctx, uri, nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", uri, err)
 	}
@@ -193,7 +192,7 @@ func (l *Lidarr) DeleteTrackFile(trackFileID int64) error {
 
 // DeleteTrackFileContext deletes a track file.
 func (l *Lidarr) DeleteTrackFileContext(ctx context.Context, trackFileID int64) error {
-	uri := path.Join(bpTrackFile, strconv.FormatInt(trackFileID, starr.Base10))
+	uri := path.Join(bpTrackFile, fmt.Sprint(trackFileID))
 	if err := l.DeleteAny(ctx, uri, nil); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", uri, err)
 	}
