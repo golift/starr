@@ -28,7 +28,7 @@ type APIer interface {
 	GetInto(ctx context.Context, path string, params url.Values, output interface{}) error
 	PostInto(ctx context.Context, path string, params url.Values, postBody io.Reader, output interface{}) error
 	PutInto(ctx context.Context, path string, params url.Values, putBody io.Reader, output interface{}) error
-	DeleteAny(ctx context.Context, path string, params url.Values) error
+	DeleteAny(ctx context.Context, path string, params interface{}) error
 }
 
 // Config must satify the APIer struct.
@@ -118,9 +118,23 @@ func (c *Config) PutInto(
 }
 
 // DeleteAny performs an HTTP DELETE against an API path, output is ignored.
-func (c *Config) DeleteAny(ctx context.Context, path string, params url.Values) error {
-	resp, err := c.api(ctx, path, http.MethodDelete, params, nil)
-	closeResp(resp)
+// The third argument 'params' may be url.Values, or a body payload as io.Reader.
+func (c *Config) DeleteAny(ctx context.Context, path string, params interface{}) error {
+	var (
+		resp *http.Response
+		err  error
+	)
+
+	if urlValues, ok := params.(url.Values); ok {
+		resp, err = c.api(ctx, path, http.MethodDelete, urlValues, nil)
+		closeResp(resp)
+	} else if body, ok := params.(io.Reader); ok {
+		resp, err = c.api(ctx, path, http.MethodDelete, nil, body)
+		closeResp(resp)
+	} else {
+		resp, err = c.api(ctx, path, http.MethodDelete, nil, nil)
+		closeResp(resp)
+	}
 
 	return err
 }
