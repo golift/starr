@@ -212,7 +212,7 @@ func (l *Lidarr) DeleteTrackFilesContext(ctx context.Context, trackFileIDs []int
 	}{trackFileIDs}
 
 	var body bytes.Buffer
-	if err := json.NewEncoder(&body).Encode(postData); err != nil {
+	if err := json.NewEncoder(&body).Encode(&postData); err != nil {
 		return fmt.Errorf("json.Marshal(trackFileIDs): %w", err)
 	}
 
