@@ -195,7 +195,7 @@ type PlayTime struct {
 	time.Duration
 }
 
-// FormatItem is part of a quality definition.
+// FormatItem is part of a quality profile.
 type FormatItem struct {
 	Format int64  `json:"format"`
 	Name   string `json:"name"`
