@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"path"
-	"strconv"
 
 	"golift.io/starr"
 )
@@ -50,7 +49,7 @@ func (r *Radarr) GetQualityDefinition(qualityDefinitionID int64) (*QualityDefini
 func (r *Radarr) GetQualityDefinitionContext(ctx context.Context, qdID int64) (*QualityDefinition, error) {
 	var output QualityDefinition
 
-	uri := path.Join(bpQualityDefinition, strconv.FormatInt(qdID, starr.Base10))
+	uri := path.Join(bpQualityDefinition, fmt.Sprint(qdID))
 	if err := r.GetInto(ctx, uri, nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", uri, err)
 	}
@@ -58,12 +57,37 @@ func (r *Radarr) GetQualityDefinitionContext(ctx context.Context, qdID int64) (*
 	return &output, nil
 }
 
-// UpdateQualityDefinitions updates the quality definition.
+// UpdateQualityDefinition updates a quality definition.
+func (r *Radarr) UpdateQualityDefinition(definition *QualityDefinition) (*QualityDefinition, error) {
+	return r.UpdateQualityDefinitionContext(context.Background(), definition)
+}
+
+// UpdateQualityDefinitionContext updates a quality definition.
+func (r *Radarr) UpdateQualityDefinitionContext(
+	ctx context.Context,
+	definition *QualityDefinition,
+) (*QualityDefinition, error) {
+	var output QualityDefinition
+
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(definition); err != nil {
+		return nil, fmt.Errorf("json.Marshal(qualityDefinition): %w", err)
+	}
+
+	uri := path.Join(bpQualityDefinition, fmt.Sprint(definition.ID))
+	if err := r.PutInto(ctx, uri, nil, &body, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", uri, err)
+	}
+
+	return &output, nil
+}
+
+// UpdateQualityDefinitions updates all quality definitions.
 func (r *Radarr) UpdateQualityDefinitions(definition []*QualityDefinition) ([]*QualityDefinition, error) {
 	return r.UpdateQualityDefinitionsContext(context.Background(), definition)
 }
 
-// UpdateQualityDefinitionsContext updates the quality definition.
+// UpdateQualityDefinitionsContext updates all quality definitions.
 func (r *Radarr) UpdateQualityDefinitionsContext(
 	ctx context.Context,
 	definition []*QualityDefinition,

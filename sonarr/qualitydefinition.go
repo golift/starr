@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"path"
-	"strconv"
 
 	"golift.io/starr"
 )
@@ -50,9 +49,34 @@ func (s *Sonarr) GetQualityDefinition(qualityDefinitionID int64) (*QualityDefini
 func (s *Sonarr) GetQualityDefinitionContext(ctx context.Context, qdID int64) (*QualityDefinition, error) {
 	var output QualityDefinition
 
-	uri := path.Join(bpQualityDefinition, strconv.FormatInt(qdID, starr.Base10))
+	uri := path.Join(bpQualityDefinition, fmt.Sprint(qdID))
 	if err := s.GetInto(ctx, uri, nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", uri, err)
+	}
+
+	return &output, nil
+}
+
+// UpdateQualityDefinition updates a quality definition.
+func (s *Sonarr) UpdateQualityDefinition(definition *QualityDefinition) (*QualityDefinition, error) {
+	return s.UpdateQualityDefinitionContext(context.Background(), definition)
+}
+
+// UpdateQualityDefinitionContext updates a quality definition.
+func (s *Sonarr) UpdateQualityDefinitionContext(
+	ctx context.Context,
+	definition *QualityDefinition,
+) (*QualityDefinition, error) {
+	var output QualityDefinition
+
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(definition); err != nil {
+		return nil, fmt.Errorf("json.Marshal(qualityDefinition): %w", err)
+	}
+
+	uri := path.Join(bpQualityDefinition, fmt.Sprint(definition.ID))
+	if err := s.PutInto(ctx, uri, nil, &body, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", uri, err)
 	}
 
 	return &output, nil
