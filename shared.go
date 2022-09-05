@@ -195,6 +195,13 @@ type PlayTime struct {
 	time.Duration
 }
 
+// FormatItem is part of a quality definition.
+type FormatItem struct {
+	Format int64  `json:"format"`
+	Name   string `json:"name"`
+	Score  int64  `json:"score"`
+}
+
 // UnmarshalJSON parses a run time duration in format hh:mm:ss.
 func (d *PlayTime) UnmarshalJSON(b []byte) error {
 	d.Original = strings.Trim(string(b), `"'`)
