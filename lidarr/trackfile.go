@@ -217,7 +217,7 @@ func (l *Lidarr) DeleteTrackFilesContext(ctx context.Context, trackFileIDs []int
 	}
 
 	uri := path.Join(bpTrackFile, "bulk")
-	if err := l.DeleteAny(ctx, uri, &starr.Params{Reader: &body}); err != nil {
+	if err := l.DeleteAny(ctx, uri, &starr.Params{Put: &body}); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", uri, err)
 	}
 

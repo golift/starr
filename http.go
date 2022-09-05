@@ -19,8 +19,8 @@ const API = "api"
 
 // Params are the GET and/or POST values for an HTTP request.
 type Params struct {
-	url.Values // GET parameters work for any request type.
-	io.Reader  // Used in PUT, POST, DELETE. Ignored for GET.
+	Get url.Values // GET parameters work for any request type.
+	Put io.Reader  // Used in PUT, POST, DELETE. Not for GET.
 }
 
 // Req makes an authenticated request to a starr application and returns the response.
@@ -44,15 +44,15 @@ func (c *Config) req(ctx context.Context, url string, method string, params *Par
 		params = &Params{}
 	}
 
-	req, err := http.NewRequestWithContext(ctx, method, url, params.Reader)
+	req, err := http.NewRequestWithContext(ctx, method, url, params.Put)
 	if err != nil {
 		return nil, fmt.Errorf("http.NewRequestWithContext(path): %w", err)
 	}
 
 	c.SetHeaders(req)
 
-	if params.Values != nil {
-		req.URL.RawQuery = params.Values.Encode()
+	if params.Get != nil {
+		req.URL.RawQuery = params.Get.Encode()
 	}
 
 	resp, err := c.Client.Do(req)
