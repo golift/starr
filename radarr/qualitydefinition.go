@@ -71,7 +71,7 @@ func (r *Radarr) UpdateQualityDefinitionContext(
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(definition); err != nil {
-		return nil, fmt.Errorf("json.Marshal(qualityDefinition): %w", err)
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpQualityDefinition, err)
 	}
 
 	uri := path.Join(bpQualityDefinition, fmt.Sprint(definition.ID))
@@ -96,7 +96,7 @@ func (r *Radarr) UpdateQualityDefinitionsContext(
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(definition); err != nil {
-		return nil, fmt.Errorf("json.Marshal(qualityDefinition): %w", err)
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpQualityDefinition, err)
 	}
 
 	uri := path.Join(bpQualityDefinition, "update")

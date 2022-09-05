@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"path"
-	"strconv"
 )
 
 const bpCustomFormat = APIver + "/customFormat"
@@ -100,9 +99,9 @@ func (r *Radarr) UpdateCustomFormatContext(ctx context.Context, format *CustomFo
 
 	var output CustomFormat
 
-	uri := path.Join(bpCustomFormat, strconv.Itoa(cfID))
+	uri := path.Join(bpCustomFormat, fmt.Sprint(cfID))
 	if err := r.PutInto(ctx, uri, nil, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", bpCustomFormat, err)
+		return nil, fmt.Errorf("api.Put(%s): %w", uri, err)
 	}
 
 	return &output, nil
@@ -115,9 +114,9 @@ func (r *Radarr) DeleteCustomFormat(cfID int) error {
 
 // DeleteCustomFormatContext deletes a custom format.
 func (r *Radarr) DeleteCustomFormatContext(ctx context.Context, cfID int) error {
-	uri := path.Join(bpCustomFormat, strconv.Itoa(cfID))
+	uri := path.Join(bpCustomFormat, fmt.Sprint(cfID))
 	if err := r.DeleteAny(ctx, uri, nil); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", bpCustomFormat, err)
+		return fmt.Errorf("api.Delete(%s): %w", uri, err)
 	}
 
 	return nil

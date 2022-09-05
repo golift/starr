@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"path"
-	"strconv"
 )
 
 /* Custom Formats do not exist in Sonarr v3; this is v4 only. */
@@ -109,9 +108,9 @@ func (s *Sonarr) UpdateCustomFormatContext(ctx context.Context, format *CustomFo
 
 	var output CustomFormat
 
-	uri := path.Join(bpCustomFormat, strconv.Itoa(cfID))
+	uri := path.Join(bpCustomFormat, fmt.Sprint(cfID))
 	if err := s.PutInto(ctx, uri, nil, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", bpCustomFormat, err)
+		return nil, fmt.Errorf("api.Put(%s): %w", uri, err)
 	}
 
 	return &output, nil
@@ -126,9 +125,9 @@ func (s *Sonarr) DeleteCustomFormat(cfID int) error {
 // DeleteCustomFormatContext deletes a custom format.
 // This data and these endpoints do not exist in Sonarr v3; this is v4 only.
 func (s *Sonarr) DeleteCustomFormatContext(ctx context.Context, cfID int) error {
-	uri := path.Join(bpCustomFormat, strconv.Itoa(cfID))
+	uri := path.Join(bpCustomFormat, fmt.Sprint(cfID))
 	if err := s.DeleteAny(ctx, uri, nil); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", bpCustomFormat, err)
+		return fmt.Errorf("api.Delete(%s): %w", uri, err)
 	}
 
 	return nil
