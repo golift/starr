@@ -252,7 +252,7 @@ func (s *Sonarr) DeleteSeriesContext(ctx context.Context, seriesID int, deleteFi
 	params.Add("addImportListExclusion", strconv.FormatBool(importExclude))
 
 	uri := path.Join(bpSeries, strconv.Itoa(seriesID))
-	if err := s.DeleteAny(ctx, uri, params); err != nil {
+	if err := s.DeleteAny(ctx, uri, &starr.Params{Values: params}); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", uri, err)
 	}
 

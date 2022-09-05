@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"path"
 	"strconv"
 	"time"
@@ -113,9 +114,9 @@ func (l *Lidarr) GetTrackFilesForArtist(artistID int64) ([]*TrackFile, error) {
 func (l *Lidarr) GetTrackFilesForArtistContext(ctx context.Context, artistID int64) ([]*TrackFile, error) {
 	var output []*TrackFile
 
-	uri := bpTrackFile + "?artistId=" + strconv.FormatInt(artistID, starr.Base10)
-	if err := l.GetInto(ctx, uri, nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", uri, err)
+	params := url.Values{"artistId": []string{fmt.Sprint(artistID)}}
+	if err := l.GetInto(ctx, bpTrackFile, params, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", bpTrackFile, err)
 	}
 
 	return output, nil
@@ -130,9 +131,9 @@ func (l *Lidarr) GetTrackFilesForAlbum(albumID int64) ([]*TrackFile, error) {
 func (l *Lidarr) GetTrackFilesForAlbumContext(ctx context.Context, albumID int64) ([]*TrackFile, error) {
 	var output []*TrackFile
 
-	uri := bpTrackFile + "?albumId=" + strconv.FormatInt(albumID, starr.Base10)
-	if err := l.GetInto(ctx, uri, nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", uri, err)
+	params := url.Values{"albumId": []string{fmt.Sprint(albumID)}}
+	if err := l.GetInto(ctx, bpTrackFile, params, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", bpTrackFile, err)
 	}
 
 	return output, nil
@@ -151,18 +152,13 @@ func (l *Lidarr) GetTrackFilesContext(ctx context.Context, trackFileIDs []int64)
 		return output, nil
 	}
 
-	uri := bpTrackFile + "?"
-
+	params := url.Values{"trackFileIds": make([]string, len(trackFileIDs))}
 	for idx, fileID := range trackFileIDs {
-		if idx != 0 {
-			uri += "&"
-		}
-
-		uri += "trackFileIds=" + strconv.FormatInt(fileID, starr.Base10)
+		params["trackFileIds"][idx] = fmt.Sprint(fileID)
 	}
 
-	if err := l.GetInto(ctx, uri, nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", uri, err)
+	if err := l.GetInto(ctx, bpTrackFile, params, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", bpTrackFile, err)
 	}
 
 	return output, nil
@@ -222,7 +218,7 @@ func (l *Lidarr) DeleteTrackFilesContext(ctx context.Context, trackFileIDs []int
 	}
 
 	uri := path.Join(bpTrackFile, "bulk")
-	if err := l.DeleteAny(ctx, uri, &body); err != nil {
+	if err := l.DeleteAny(ctx, uri, &starr.Params{Reader: &body}); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", uri, err)
 	}
 
