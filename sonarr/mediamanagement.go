@@ -5,8 +5,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
+	"golift.io/starr"
 )
 
+// Define Base Path for MediaManagement calls.
+const bpMediaManagement = APIver + "/config/mediaManagement"
+
+// MediaManagement represents the /config/mediamanagement endpoint.
 type MediaManagement struct {
 	AutoUnmonitorPreviouslyDownloadedEpisodes bool   `json:"autoUnmonitorPreviouslyDownloadedEpisodes,omitempty"`
 	CopyUsingHardlinks                        bool   `json:"copyUsingHardlinks,omitempty"`
@@ -29,39 +35,40 @@ type MediaManagement struct {
 	RescanAfterRefresh                        string `json:"rescanAfterRefresh,omitempty"`
 }
 
-// Define Base Path for MediaManagement calls.
-const bpMediaManagement = APIver + "/config/mediaManagement"
-
 // GetMediaManagement returns the mediaManagement.
 func (s *Sonarr) GetMediaManagement() (*MediaManagement, error) {
 	return s.GetMediaManagementContext(context.Background())
 }
 
+// GetMediaManagement returns the Media Management.
 func (s *Sonarr) GetMediaManagementContext(ctx context.Context) (*MediaManagement, error) {
-	var output *MediaManagement
+	var output MediaManagement
 
-	if err := s.GetInto(ctx, bpMediaManagement, nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(mediaManagement): %w", err)
+	req := starr.Request{URI: bpMediaManagement}
+	if err := s.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
 	}
 
-	return output, nil
+	return &output, nil
 }
 
-// UpdateMediaManagement updates the mediaManagement.
+// UpdateMediaManagement updates the Media Management.
 func (s *Sonarr) UpdateMediaManagement(mMgt *MediaManagement) (*MediaManagement, error) {
 	return s.UpdateMediaManagementContext(context.Background(), mMgt)
 }
 
+// UpdateMediaManagementContext updates the Media Management.
 func (s *Sonarr) UpdateMediaManagementContext(ctx context.Context, mMgt *MediaManagement) (*MediaManagement, error) {
 	var output MediaManagement
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(mMgt); err != nil {
-		return nil, fmt.Errorf("json.Marshal(mediaManagement): %w", err)
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpMediaManagement, err)
 	}
 
-	if err := s.PutInto(ctx, bpMediaManagement, nil, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(mediaManagement): %w", err)
+	req := starr.Request{URI: bpMediaManagement, Body: &body}
+	if err := s.PutInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
 	}
 
 	return &output, nil

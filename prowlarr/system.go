@@ -3,10 +3,13 @@ package prowlarr
 import (
 	"context"
 	"fmt"
+	"path"
 	"time"
 
 	"golift.io/starr"
 )
+
+const bpSystem = APIver + "/system"
 
 // SystemStatus is the /api/v1/system/status endpoint.
 type SystemStatus struct {
@@ -48,14 +51,14 @@ func (p *Prowlarr) GetSystemStatus() (*SystemStatus, error) {
 
 // GetSystemStatusContext returns system status.
 func (p *Prowlarr) GetSystemStatusContext(ctx context.Context) (*SystemStatus, error) {
-	var status SystemStatus
+	var output SystemStatus
 
-	err := p.GetInto(ctx, "v1/system/status", nil, &status)
-	if err != nil {
-		return nil, fmt.Errorf("api.Get(system/status): %w", err)
+	req := starr.Request{URI: path.Join(bpSystem, "status")}
+	if err := p.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
 	}
 
-	return &status, nil
+	return &output, nil
 }
 
 // GetBackupFiles returns all available Prowlarr backup files.
@@ -69,8 +72,9 @@ func (p *Prowlarr) GetBackupFiles() ([]*starr.BackupFile, error) {
 func (p *Prowlarr) GetBackupFilesContext(ctx context.Context) ([]*starr.BackupFile, error) {
 	var output []*starr.BackupFile
 
-	if err := p.GetInto(ctx, "v1/system/backup", nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(system/backup): %w", err)
+	req := starr.Request{URI: path.Join(bpSystem, "backup")}
+	if err := p.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
 	}
 
 	return output, nil

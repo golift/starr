@@ -6,11 +6,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
-	"strconv"
+	"path"
 	"time"
 
 	"golift.io/starr"
 )
+
+const bpAlbum = APIver + "/album"
 
 // Album is the /api/v1/album endpoint.
 type Album struct {
@@ -104,20 +106,18 @@ func (l *Lidarr) GetAlbum(mbID string) ([]*Album, error) {
 // GetAlbumContext returns an album or all albums if mbID is "" (empty).
 // mbID is the music brainz UUID for a "release-group".
 func (l *Lidarr) GetAlbumContext(ctx context.Context, mbID string) ([]*Album, error) {
-	params := make(url.Values)
-
+	req := starr.Request{Query: make(url.Values), URI: bpAlbum}
 	if mbID != "" {
-		params.Add("ForeignAlbumId", mbID)
+		req.Query.Add("ForeignAlbumId", mbID)
 	}
 
-	var albums []*Album
+	var output []*Album
 
-	err := l.GetInto(ctx, "v1/album", params, &albums)
-	if err != nil {
-		return nil, fmt.Errorf("api.Get(album): %w", err)
+	if err := l.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
 	}
 
-	return albums, nil
+	return output, nil
 }
 
 // GetAlbumByID returns an album by DB ID.
@@ -127,14 +127,14 @@ func (l *Lidarr) GetAlbumByID(albumID int64) (*Album, error) {
 
 // GetAlbumByIDContext returns an album by DB ID.
 func (l *Lidarr) GetAlbumByIDContext(ctx context.Context, albumID int64) (*Album, error) {
-	var album Album
+	var output Album
 
-	err := l.GetInto(ctx, "v1/album/"+strconv.FormatInt(albumID, starr.Base10), nil, &album)
-	if err != nil {
-		return nil, fmt.Errorf("api.Get(album): %w", err)
+	req := starr.Request{URI: path.Join(bpAlbum, fmt.Sprint(albumID))}
+	if err := l.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
 	}
 
-	return &album, nil
+	return &output, nil
 }
 
 // UpdateAlbum updates an album in place; the output of this is currently unknown!!!!
@@ -144,19 +144,22 @@ func (l *Lidarr) UpdateAlbum(albumID int64, album *Album) (*Album, error) {
 
 // UpdateAlbumContext updates an album in place; the output of this is currently unknown!!!!
 func (l *Lidarr) UpdateAlbumContext(ctx context.Context, albumID int64, album *Album) (*Album, error) {
-	params := make(url.Values)
-	params.Add("moveFiles", "true")
-
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(album); err != nil {
-		return nil, fmt.Errorf("json.Marshal(album): %w", err)
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpAlbum, err)
 	}
 
 	var output Album
 
-	err := l.PutInto(ctx, "v1/album/"+strconv.FormatInt(albumID, starr.Base10), params, &body, &output)
-	if err != nil {
-		return nil, fmt.Errorf("api.Put(album): %w", err)
+	req := starr.Request{
+		URI:   path.Join(bpAlbum, fmt.Sprint(albumID)),
+		Query: make(url.Values),
+		Body:  &body,
+	}
+	req.Query.Add("moveFiles", "true")
+
+	if err := l.PutInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
 	}
 
 	return &output, nil
@@ -173,17 +176,21 @@ func (l *Lidarr) AddAlbumContext(ctx context.Context, album *AddAlbumInput) (*Al
 		album.Releases = make([]*AddAlbumInputRelease, 0)
 	}
 
-	params := make(url.Values)
-	params.Add("moveFiles", "true")
-
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(album); err != nil {
-		return nil, fmt.Errorf("json.Marshal(album): %w", err)
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpAlbum, err)
 	}
 
+	req := starr.Request{
+		URI:   bpAlbum,
+		Query: make(url.Values),
+		Body:  &body,
+	}
+	req.Query.Add("moveFiles", "true")
+
 	var output Album
-	if err := l.PostInto(ctx, "v1/album", params, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(album): %w", err)
+	if err := l.PostInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Post(%s): %w", req, err)
 	}
 
 	return &output, nil
@@ -202,12 +209,15 @@ func (l *Lidarr) LookupContext(ctx context.Context, term string) ([]*Album, erro
 		return output, nil
 	}
 
-	params := make(url.Values)
-	params.Set("term", term)
+	req := starr.Request{
+		URI:   path.Join(bpAlbum, "lookup"),
+		Query: make(url.Values),
+	}
+	req.Query.Set("term", term)
 
-	err := l.GetInto(ctx, "v1/album/lookup", params, &output)
+	err := l.GetInto(ctx, req, &output)
 	if err != nil {
-		return nil, fmt.Errorf("api.Get(album/lookup): %w", err)
+		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
 	}
 
 	return output, nil

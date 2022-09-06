@@ -33,8 +33,9 @@ func (r *Radarr) GetQualityDefinitions() ([]*QualityDefinition, error) {
 func (r *Radarr) GetQualityDefinitionsContext(ctx context.Context) ([]*QualityDefinition, error) {
 	var output []*QualityDefinition
 
-	if err := r.GetInto(ctx, bpQualityDefinition, nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", bpQualityDefinition, err)
+	req := starr.Request{URI: bpQualityDefinition}
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
 	}
 
 	return output, nil
@@ -49,9 +50,9 @@ func (r *Radarr) GetQualityDefinition(qualityDefinitionID int64) (*QualityDefini
 func (r *Radarr) GetQualityDefinitionContext(ctx context.Context, qdID int64) (*QualityDefinition, error) {
 	var output QualityDefinition
 
-	uri := path.Join(bpQualityDefinition, fmt.Sprint(qdID))
-	if err := r.GetInto(ctx, uri, nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", uri, err)
+	req := starr.Request{URI: path.Join(bpQualityDefinition, fmt.Sprint(qdID))}
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
 	}
 
 	return &output, nil
@@ -74,9 +75,9 @@ func (r *Radarr) UpdateQualityDefinitionContext(
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpQualityDefinition, err)
 	}
 
-	uri := path.Join(bpQualityDefinition, fmt.Sprint(definition.ID))
-	if err := r.PutInto(ctx, uri, nil, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", uri, err)
+	req := starr.Request{URI: path.Join(bpQualityDefinition, fmt.Sprint(definition.ID)), Body: &body}
+	if err := r.PutInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
 	}
 
 	return &output, nil
@@ -99,9 +100,9 @@ func (r *Radarr) UpdateQualityDefinitionsContext(
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpQualityDefinition, err)
 	}
 
-	uri := path.Join(bpQualityDefinition, "update")
-	if err := r.PutInto(ctx, uri, nil, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", uri, err)
+	req := starr.Request{URI: path.Join(bpQualityDefinition, "update"), Body: &body}
+	if err := r.PutInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
 	}
 
 	return output, nil

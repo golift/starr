@@ -25,6 +25,11 @@ type Request struct {
 	Body  io.Reader  // Used in PUT, POST, DELETE. Not for GET.
 }
 
+// String turns a request into a string. Usually used in error messages.
+func (r *Request) String() string {
+	return r.URI
+}
+
 // Req makes an authenticated request to a starr application and returns the response.
 // Do not forget to read and close the response Body if there is no error.
 func (c *Config) Req(ctx context.Context, method string, req Request) (*http.Response, error) {
@@ -97,6 +102,7 @@ func parseNon200(req *http.Request, resp *http.Response) error {
 		req.RequestURI, resp.Status, ErrInvalidStatusCode, replyStr)
 }
 
+// closeResp should be used to close requests that don't require a response body.
 func closeResp(resp *http.Response) {
 	if resp != nil && resp.Body != nil {
 		_, _ = io.ReadAll(resp.Body)

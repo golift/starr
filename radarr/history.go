@@ -3,11 +3,13 @@ package radarr
 import (
 	"context"
 	"fmt"
-	"strconv"
+	"path"
 	"time"
 
 	"golift.io/starr"
 )
+
+const bpHistory = APIver + "history"
 
 // History is the /api/v3/history endpoint.
 type History struct {
@@ -76,7 +78,7 @@ func (r *Radarr) GetHistoryContext(ctx context.Context, records, perPage int) (*
 	perPage = starr.SetPerPage(records, perPage)
 
 	for page := 1; ; page++ {
-		curr, err := r.GetHistoryPageContext(ctx, &starr.Req{PageSize: perPage, Page: page})
+		curr, err := r.GetHistoryPageContext(ctx, &starr.PageReq{PageSize: perPage, Page: page})
 		if err != nil {
 			return nil, err
 		}
@@ -101,21 +103,21 @@ func (r *Radarr) GetHistoryContext(ctx context.Context, records, perPage int) (*
 
 // GetHistoryPage returns a single page from the Radarr History (grabs/failures/completed).
 // The page size and number is configurable with the input request parameters.
-func (r *Radarr) GetHistoryPage(params *starr.Req) (*History, error) {
+func (r *Radarr) GetHistoryPage(params *starr.PageReq) (*History, error) {
 	return r.GetHistoryPageContext(context.Background(), params)
 }
 
 // GetHistoryPageContext returns a single page from the Radarr History (grabs/failures/completed).
 // The page size and number is configurable with the input request parameters.
-func (r *Radarr) GetHistoryPageContext(ctx context.Context, params *starr.Req) (*History, error) {
-	var history History
+func (r *Radarr) GetHistoryPageContext(ctx context.Context, params *starr.PageReq) (*History, error) {
+	var output History
 
-	err := r.GetInto(ctx, "v3/history", params.Params(), &history)
-	if err != nil {
-		return nil, fmt.Errorf("api.Get(history): %w", err)
+	req := starr.Request{URI: bpHistory, Query: params.Params()}
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
 	}
 
-	return &history, nil
+	return &output, nil
 }
 
 // Fail marks the given history item as failed by id.
@@ -132,9 +134,9 @@ func (r *Radarr) FailContext(ctx context.Context, historyID int64) error {
 	var output interface{}
 
 	// Strangely uses a POST without a payload.
-	uri := "v3/history/failed/" + strconv.FormatInt(historyID, starr.Base10)
-	if err := r.PostInto(ctx, uri, nil, nil, &output); err != nil {
-		return fmt.Errorf("api.Post(history/failed): %w", err)
+	req := starr.Request{URI: path.Join(bpHistory, "failed", fmt.Sprint(historyID))}
+	if err := r.PostInto(ctx, req, &output); err != nil {
+		return fmt.Errorf("api.Post(%s): %w", req, err)
 	}
 
 	return nil

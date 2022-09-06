@@ -3,7 +3,11 @@ package readarr
 import (
 	"context"
 	"fmt"
+
+	"golift.io/starr"
 )
+
+const bpRootFolder = APIver + "/rootFolder"
 
 // RootFolder is the /api/v1/rootfolder endpoint.
 type RootFolder struct {
@@ -28,13 +32,14 @@ func (r *Readarr) GetRootFolders() ([]*RootFolder, error) {
 	return r.GetRootFoldersContext(context.Background())
 }
 
+// GetRootFoldersContext returns all configured root folders.
 func (r *Readarr) GetRootFoldersContext(ctx context.Context) ([]*RootFolder, error) {
-	var folders []*RootFolder
+	var output []*RootFolder
 
-	err := r.GetInto(ctx, "v1/rootFolder", nil, &folders)
-	if err != nil {
-		return nil, fmt.Errorf("api.Get(rootFolder): %w", err)
+	req := starr.Request{URI: bpRootFolder}
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
 	}
 
-	return folders, nil
+	return output, nil
 }

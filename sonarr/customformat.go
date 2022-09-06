@@ -54,8 +54,10 @@ func (s *Sonarr) GetCustomFormats() ([]*CustomFormat, error) {
 // This data and these endpoints do not exist in Sonarr v3; this is v4 only.
 func (s *Sonarr) GetCustomFormatsContext(ctx context.Context) ([]*CustomFormat, error) {
 	var output []*CustomFormat
-	if err := s.GetInto(ctx, bpCustomFormat, nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", bpCustomFormat, err)
+
+	req := starr.Request{URI: bpCustomFormat}
+	if err := s.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
 	}
 
 	return output, nil
@@ -83,8 +85,9 @@ func (s *Sonarr) AddCustomFormatContext(ctx context.Context, format *CustomForma
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpCustomFormat, err)
 	}
 
-	if err := s.PostInto(ctx, bpCustomFormat, nil, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(%s): %w", bpCustomFormat, err)
+	req := starr.Request{URI: bpCustomFormat, Body: &body}
+	if err := s.PostInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Post(%s): %w", req, err)
 	}
 
 	return &output, nil
@@ -110,9 +113,9 @@ func (s *Sonarr) UpdateCustomFormatContext(ctx context.Context, format *CustomFo
 
 	var output CustomFormat
 
-	uri := path.Join(bpCustomFormat, fmt.Sprint(cfID))
-	if err := s.PutInto(ctx, uri, nil, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", uri, err)
+	req := starr.Request{URI: path.Join(bpCustomFormat, fmt.Sprint(cfID)), Body: &body}
+	if err := s.PutInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
 	}
 
 	return &output, nil
@@ -129,7 +132,7 @@ func (s *Sonarr) DeleteCustomFormat(cfID int) error {
 func (s *Sonarr) DeleteCustomFormatContext(ctx context.Context, cfID int) error {
 	req := starr.Request{URI: path.Join(bpCustomFormat, fmt.Sprint(cfID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", req.URI, err)
+		return fmt.Errorf("api.Delete(%s): %w", req, err)
 	}
 
 	return nil

@@ -7,6 +7,8 @@ import (
 	"golift.io/starr"
 )
 
+const bpRootFolder = APIver + "/rootFolder"
+
 // RootFolder is the /api/v1/rootfolder endpoint.
 type RootFolder struct {
 	ID              int64         `json:"id"`
@@ -23,12 +25,12 @@ func (l *Lidarr) GetRootFolders() ([]*RootFolder, error) {
 
 // GetRootFoldersContext returns all configured root folders.
 func (l *Lidarr) GetRootFoldersContext(ctx context.Context) ([]*RootFolder, error) {
-	var folders []*RootFolder
+	var output []*RootFolder
 
-	err := l.GetInto(ctx, "v1/rootFolder", nil, &folders)
-	if err != nil {
-		return nil, fmt.Errorf("api.Get(rootFolder): %w", err)
+	req := starr.Request{URI: bpRootFolder}
+	if err := l.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
 	}
 
-	return folders, nil
+	return output, nil
 }

@@ -6,11 +6,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
-	"strconv"
+	"path"
 	"time"
 
 	"golift.io/starr"
 )
+
+const bpMovie = APIver + "/movie"
 
 // Movie is the /api/v3/movie endpoint.
 type Movie struct {
@@ -174,17 +176,17 @@ func (r *Radarr) GetMovie(tmdbID int64) ([]*Movie, error) {
 func (r *Radarr) GetMovieContext(ctx context.Context, tmdbID int64) ([]*Movie, error) {
 	params := make(url.Values)
 	if tmdbID != 0 {
-		params.Set("tmdbId", strconv.FormatInt(tmdbID, starr.Base10))
+		params.Set("tmdbId", fmt.Sprint(tmdbID))
 	}
 
-	var movie []*Movie
+	var output []*Movie
 
-	err := r.GetInto(ctx, "v3/movie", params, &movie)
-	if err != nil {
-		return nil, fmt.Errorf("api.Get(movie): %w", err)
+	req := starr.Request{URI: bpMovie, Query: params}
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
 	}
 
-	return movie, nil
+	return output, nil
 }
 
 // GetMovieByID grabs a movie from the database by DB [movie] ID.
@@ -194,14 +196,14 @@ func (r *Radarr) GetMovieByID(movieID int64) (*Movie, error) {
 
 // GetMovieByIDContext grabs a movie from the database by DB [movie] ID.
 func (r *Radarr) GetMovieByIDContext(ctx context.Context, movieID int64) (*Movie, error) {
-	var movie Movie
+	var output Movie
 
-	err := r.GetInto(ctx, "v3/movie/"+strconv.FormatInt(movieID, starr.Base10), nil, &movie)
-	if err != nil {
-		return nil, fmt.Errorf("api.Get(movie): %w", err)
+	req := starr.Request{URI: path.Join(bpMovie, fmt.Sprint(movieID))}
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
 	}
 
-	return &movie, nil
+	return &output, nil
 }
 
 // UpdateMovie sends a PUT request to update a movie in place.
@@ -211,19 +213,22 @@ func (r *Radarr) UpdateMovie(movieID int64, movie *Movie) error {
 
 // UpdateMovieContext sends a PUT request to update a movie in place.
 func (r *Radarr) UpdateMovieContext(ctx context.Context, movieID int64, movie *Movie) error {
-	params := make(url.Values)
-	params.Add("moveFiles", "true")
-
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(movie); err != nil {
-		return fmt.Errorf("json.Marshal(movie): %w", err)
+		return fmt.Errorf("json.Marshal(%s): %w", bpMovie, err)
 	}
 
-	var output interface{}
+	var output interface{} // not sure what this looks like.
 
-	uri := "v3/movie/" + strconv.FormatInt(movieID, starr.Base10)
-	if err := r.PutInto(ctx, uri, params, &body, &output); err != nil {
-		return fmt.Errorf("api.Put(movie): %w", err)
+	req := starr.Request{
+		URI:   path.Join(bpMovie, fmt.Sprint(movieID)),
+		Query: make(url.Values),
+		Body:  &body,
+	}
+	req.Query.Add("moveFiles", "true")
+
+	if err := r.PutInto(ctx, req, &output); err != nil {
+		return fmt.Errorf("api.Put(%s): %w", req, err)
 	}
 
 	return nil
@@ -236,17 +241,18 @@ func (r *Radarr) AddMovie(movie *AddMovieInput) (*AddMovieOutput, error) {
 
 // AddMovieContext adds a movie to the queue.
 func (r *Radarr) AddMovieContext(ctx context.Context, movie *AddMovieInput) (*AddMovieOutput, error) {
-	params := make(url.Values)
-	params.Add("moveFiles", "true")
-
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(movie); err != nil {
-		return nil, fmt.Errorf("json.Marshal(movie): %w", err)
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpMovie, err)
 	}
 
 	var output AddMovieOutput
-	if err := r.PostInto(ctx, "v3/movie", params, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(movie): %w", err)
+
+	req := starr.Request{URI: bpMovie, Query: make(url.Values), Body: &body}
+	req.Query.Add("moveFiles", "true")
+
+	if err := r.PostInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Post(%s): %w", req, err)
 	}
 
 	return &output, nil
@@ -265,12 +271,11 @@ func (r *Radarr) LookupContext(ctx context.Context, term string) ([]*Movie, erro
 		return output, nil
 	}
 
-	params := make(url.Values)
-	params.Set("term", term)
+	req := starr.Request{URI: path.Join(bpMovie, "lookup"), Query: make(url.Values)}
+	req.Query.Set("term", term)
 
-	err := r.GetInto(ctx, "v3/movie/lookup", params, &output)
-	if err != nil {
-		return nil, fmt.Errorf("api.Get(movie/lookup): %w", err)
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
 	}
 
 	return output, nil

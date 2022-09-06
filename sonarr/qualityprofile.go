@@ -6,10 +6,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"path"
-	"strconv"
 
 	"golift.io/starr"
 )
+
+// Define Base Path for Quality Profile calls.
+const bpQualityProfile = APIver + "/qualityProfile"
 
 // QualityProfile is the /api/v3/qualityprofile endpoint.
 type QualityProfile struct {
@@ -24,19 +26,18 @@ type QualityProfile struct {
 	Language          *starr.Value        `json:"language,omitempty"`    // v4 only.
 }
 
-// Define Base Path for Quality Profile calls.
-const bpQualityProfile = APIver + "/qualityProfile"
-
 // GetQualityProfiles returns all configured quality profiles.
 func (s *Sonarr) GetQualityProfiles() ([]*QualityProfile, error) {
 	return s.GetQualityProfilesContext(context.Background())
 }
 
+// GetQualityProfilesContext returns all configured quality profiles.
 func (s *Sonarr) GetQualityProfilesContext(ctx context.Context) ([]*QualityProfile, error) {
 	var output []*QualityProfile
 
-	if err := s.GetInto(ctx, bpQualityProfile, nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", bpQualityProfile, err)
+	req := starr.Request{URI: bpQualityProfile}
+	if err := s.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
 	}
 
 	return output, nil
@@ -47,15 +48,16 @@ func (s *Sonarr) GetQualityProfile(profileID int) (*QualityProfile, error) {
 	return s.GetQualityProfileContext(context.Background(), profileID)
 }
 
+// GetQualityProfileContext returns a single quality profile.
 func (s *Sonarr) GetQualityProfileContext(ctx context.Context, profileID int) (*QualityProfile, error) {
-	var output *QualityProfile
+	var output QualityProfile
 
-	uri := path.Join(bpQualityProfile, strconv.Itoa(profileID))
-	if err := s.GetInto(ctx, uri, nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", bpQualityProfile, err)
+	req := starr.Request{URI: path.Join(bpQualityProfile, fmt.Sprint(profileID))}
+	if err := s.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
 	}
 
-	return output, nil
+	return &output, nil
 }
 
 // AddQualityProfile creates a quality profile.
@@ -63,6 +65,7 @@ func (s *Sonarr) AddQualityProfile(profile *QualityProfile) (*QualityProfile, er
 	return s.AddQualityProfileContext(context.Background(), profile)
 }
 
+// AddQualityProfileContext creates a quality profile.
 func (s *Sonarr) AddQualityProfileContext(ctx context.Context, profile *QualityProfile) (*QualityProfile, error) {
 	var output QualityProfile
 
@@ -71,8 +74,9 @@ func (s *Sonarr) AddQualityProfileContext(ctx context.Context, profile *QualityP
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpQualityProfile, err)
 	}
 
-	if err := s.PostInto(ctx, bpQualityProfile, nil, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(%s): %w", bpQualityProfile, err)
+	req := starr.Request{URI: bpQualityProfile, Body: &body}
+	if err := s.PostInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Post(%s): %w", req, err)
 	}
 
 	return &output, nil
@@ -83,6 +87,7 @@ func (s *Sonarr) UpdateQualityProfile(profile *QualityProfile) (*QualityProfile,
 	return s.UpdateQualityProfileContext(context.Background(), profile)
 }
 
+// UpdateQualityProfileContext updates the quality profile.
 func (s *Sonarr) UpdateQualityProfileContext(ctx context.Context, profile *QualityProfile) (*QualityProfile, error) {
 	var output QualityProfile
 
@@ -91,9 +96,9 @@ func (s *Sonarr) UpdateQualityProfileContext(ctx context.Context, profile *Quali
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpQualityProfile, err)
 	}
 
-	uri := path.Join(bpQualityProfile, strconv.Itoa(int(profile.ID)))
-	if err := s.PutInto(ctx, uri, nil, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", bpQualityProfile, err)
+	req := starr.Request{URI: path.Join(bpQualityProfile, fmt.Sprint(profile.ID)), Body: &body}
+	if err := s.PutInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
 	}
 
 	return &output, nil
@@ -104,10 +109,11 @@ func (s *Sonarr) DeleteQualityProfile(profileID int) error {
 	return s.DeleteQualityProfileContext(context.Background(), profileID)
 }
 
+// DeleteQualityProfileContext removes a single quality profile.
 func (s *Sonarr) DeleteQualityProfileContext(ctx context.Context, profileID int) error {
 	req := starr.Request{URI: path.Join(bpQualityProfile, fmt.Sprint(profileID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", req.URI, err)
+		return fmt.Errorf("api.Delete(%s): %w", req, err)
 	}
 
 	return nil

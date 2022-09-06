@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
@@ -17,7 +16,7 @@ import (
 // APIer is used by the sub packages to allow mocking the http methods in tests.
 // It changes once in a while, so avoid making hard dependencies on it.
 type APIer interface {
-	Login(ctx context.Context) error
+	Login(ctx context.Context) error // Login is used for non-API paths, like downloading backups.
 	// Normal data, returns response. Do not use these in starr app methods.
 	// These methods are generally for non-api paths and will not ensure an /api uri prefix.
 	Get(ctx context.Context, req Request) (*http.Response, error)    // Get request; Params are optional.
@@ -25,10 +24,10 @@ type APIer interface {
 	Put(ctx context.Context, req Request) (*http.Response, error)    // Put request; Params should contain io.Reader.
 	Delete(ctx context.Context, req Request) (*http.Response, error) // Delete request; Params are optional.
 	// Normal data, unmarshals into provided interface. Use these because they close the response body.
-	GetInto(ctx context.Context, path string, params url.Values, output interface{}) error
-	PostInto(ctx context.Context, path string, params url.Values, postBody io.Reader, output interface{}) error
-	PutInto(ctx context.Context, path string, params url.Values, putBody io.Reader, output interface{}) error
-	DeleteAny(ctx context.Context, req Request) error // Delete request; Params are optional.
+	GetInto(ctx context.Context, req Request, output interface{}) error  // API GET Request.
+	PostInto(ctx context.Context, req Request, output interface{}) error // API POST Request.
+	PutInto(ctx context.Context, req Request, output interface{}) error  // API PUT Request.
+	DeleteAny(ctx context.Context, req Request) error                    // API Delete request.
 }
 
 // Config must satify the APIer struct.
@@ -46,8 +45,9 @@ func (c *Config) Login(ctx context.Context) error {
 	}
 
 	post := "username=" + c.Username + "&password=" + c.Password
+	req := Request{URI: "/login", Body: bytes.NewBufferString(post)}
 
-	resp, err := c.api(ctx, http.MethodPost, Request{URI: "/login", Body: bytes.NewBufferString(post)})
+	resp, err := c.api(ctx, http.MethodPost, req)
 	if err != nil {
 		return fmt.Errorf("authenticating as user '%s' failed: %w", c.Username, err)
 	}
@@ -86,34 +86,22 @@ func (c *Config) Delete(ctx context.Context, req Request) (*http.Response, error
 
 // GetInto performs an HTTP GET against an API path and
 // unmarshals the payload into the provided pointer interface.
-func (c *Config) GetInto(ctx context.Context, path string, params url.Values, output interface{}) error {
-	resp, err := c.api(ctx, http.MethodGet, Request{URI: path, Query: params})
+func (c *Config) GetInto(ctx context.Context, req Request, output interface{}) error {
+	resp, err := c.api(ctx, http.MethodGet, req)
 	return decode(output, resp, err)
 }
 
 // PostInto performs an HTTP POST against an API path and
 // unmarshals the payload into the provided pointer interface.
-func (c *Config) PostInto(
-	ctx context.Context,
-	path string,
-	params url.Values,
-	postBody io.Reader,
-	output interface{},
-) error {
-	resp, err := c.api(ctx, http.MethodPost, Request{URI: path, Query: params, Body: postBody})
+func (c *Config) PostInto(ctx context.Context, req Request, output interface{}) error {
+	resp, err := c.api(ctx, http.MethodPost, req)
 	return decode(output, resp, err)
 }
 
 // PutInto performs an HTTP PUT against an API path and
 // unmarshals the payload into the provided pointer interface.
-func (c *Config) PutInto(
-	ctx context.Context,
-	path string,
-	params url.Values,
-	putBody io.Reader,
-	output interface{},
-) error {
-	resp, err := c.api(ctx, http.MethodPut, Request{URI: path, Query: params, Body: putBody})
+func (c *Config) PutInto(ctx context.Context, req Request, output interface{}) error {
+	resp, err := c.api(ctx, http.MethodPut, req)
 	return decode(output, resp, err)
 }
 
@@ -131,13 +119,13 @@ func decode(output interface{}, resp *http.Response, err error) error {
 		return err
 	} else if output == nil {
 		closeResp(resp) // read the body and close it.
-		return fmt.Errorf("this is a code bug: %w", ErrNilInterface)
+		return fmt.Errorf("this is a Starr library bug: %w", ErrNilInterface)
 	}
 
 	defer resp.Body.Close()
 
 	if err = json.NewDecoder(resp.Body).Decode(output); err != nil {
-		return fmt.Errorf("decoding json response body: %w", err)
+		return fmt.Errorf("decoding Starr JSON response body: %w", err)
 	}
 
 	return nil

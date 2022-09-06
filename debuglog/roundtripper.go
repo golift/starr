@@ -95,6 +95,7 @@ func (rt *LoggingRoundTripper) newFakeCloser(resp *http.Response, sent *bytes.Bu
 	}
 }
 
+// Close closes the response Body, logs the request, and fires the call back.
 func (f *fakeCloser) Close() error {
 	sentBytes, rcvdBytes := f.logRequest()
 	if f.Caller != nil {

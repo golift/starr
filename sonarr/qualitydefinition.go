@@ -10,6 +10,9 @@ import (
 	"golift.io/starr"
 )
 
+// Define Base Path for Quality Definition calls.
+const bpQualityDefinition = APIver + "/qualityDefinition"
+
 // QualityDefinition is the /api/v3/qualitydefinition endpoint.
 type QualityDefinition struct {
 	ID       int64              `json:"id,omitempty"`
@@ -21,9 +24,6 @@ type QualityDefinition struct {
 	Quality  *starr.BaseQuality `json:"quality"`
 }
 
-// Define Base Path for Quality Definition calls.
-const bpQualityDefinition = APIver + "/qualityDefinition"
-
 // GetQualityDefinitions returns all configured quality definitions.
 func (s *Sonarr) GetQualityDefinitions() ([]*QualityDefinition, error) {
 	return s.GetQualityDefinitionsContext(context.Background())
@@ -33,8 +33,9 @@ func (s *Sonarr) GetQualityDefinitions() ([]*QualityDefinition, error) {
 func (s *Sonarr) GetQualityDefinitionsContext(ctx context.Context) ([]*QualityDefinition, error) {
 	var output []*QualityDefinition
 
-	if err := s.GetInto(ctx, bpQualityDefinition, nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", bpQualityDefinition, err)
+	req := starr.Request{URI: bpQualityDefinition}
+	if err := s.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
 	}
 
 	return output, nil
@@ -49,9 +50,9 @@ func (s *Sonarr) GetQualityDefinition(qualityDefinitionID int64) (*QualityDefini
 func (s *Sonarr) GetQualityDefinitionContext(ctx context.Context, qdID int64) (*QualityDefinition, error) {
 	var output QualityDefinition
 
-	uri := path.Join(bpQualityDefinition, fmt.Sprint(qdID))
-	if err := s.GetInto(ctx, uri, nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", uri, err)
+	req := starr.Request{URI: path.Join(bpQualityDefinition, fmt.Sprint(qdID))}
+	if err := s.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
 	}
 
 	return &output, nil
@@ -74,9 +75,9 @@ func (s *Sonarr) UpdateQualityDefinitionContext(
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpQualityDefinition, err)
 	}
 
-	uri := path.Join(bpQualityDefinition, fmt.Sprint(definition.ID))
-	if err := s.PutInto(ctx, uri, nil, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", uri, err)
+	req := starr.Request{URI: path.Join(bpQualityDefinition, fmt.Sprint(definition.ID)), Body: &body}
+	if err := s.PutInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
 	}
 
 	return &output, nil
@@ -99,9 +100,9 @@ func (s *Sonarr) UpdateQualityDefinitionsContext(
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpQualityDefinition, err)
 	}
 
-	uri := path.Join(bpQualityDefinition, "update")
-	if err := s.PutInto(ctx, uri, nil, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", uri, err)
+	req := starr.Request{URI: path.Join(bpQualityDefinition, "update"), Body: &body}
+	if err := s.PutInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
 	}
 
 	return output, nil

@@ -7,6 +7,8 @@ import (
 	"golift.io/starr"
 )
 
+const bpMetadataProfile = APIver + "/metadataprofile"
+
 // MetadataProfile is the /api/v1/metadataprofile endpoint.
 type MetadataProfile struct {
 	Name                string           `json:"name"`
@@ -35,12 +37,12 @@ func (l *Lidarr) GetMetadataProfiles() ([]*MetadataProfile, error) {
 
 // GetMetadataProfilesContext returns the metadata profiles.
 func (l *Lidarr) GetMetadataProfilesContext(ctx context.Context) ([]*MetadataProfile, error) {
-	var profiles []*MetadataProfile
+	var output []*MetadataProfile
 
-	err := l.GetInto(ctx, "v1/metadataprofile", nil, &profiles)
-	if err != nil {
-		return nil, fmt.Errorf("api.Get(metadataprofile): %w", err)
+	req := starr.Request{URI: bpMetadataProfile}
+	if err := l.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
 	}
 
-	return profiles, nil
+	return output, nil
 }

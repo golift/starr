@@ -7,6 +7,8 @@ import (
 	"golift.io/starr"
 )
 
+const bpQualityDefinition = APIver + "/qualitydefinition"
+
 // QualityDefinition is the /api/v1/qualitydefinition endpoint.
 type QualityDefinition struct {
 	ID      int64        `json:"id"`
@@ -24,12 +26,12 @@ func (l *Lidarr) GetQualityDefinition() ([]*QualityDefinition, error) {
 
 // GetQualityDefinitionContext returns the Quality Definitions.
 func (l *Lidarr) GetQualityDefinitionContext(ctx context.Context) ([]*QualityDefinition, error) {
-	var definition []*QualityDefinition
+	var output []*QualityDefinition
 
-	err := l.GetInto(ctx, "v1/qualitydefinition", nil, &definition)
-	if err != nil {
-		return nil, fmt.Errorf("api.Get(qualitydefinition): %w", err)
+	req := starr.Request{URI: bpQualityDefinition}
+	if err := l.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
 	}
 
-	return definition, nil
+	return output, nil
 }

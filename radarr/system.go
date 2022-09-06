@@ -3,10 +3,13 @@ package radarr
 import (
 	"context"
 	"fmt"
+	"path"
 	"time"
 
 	"golift.io/starr"
 )
+
+const bpSystem = APIver + "/system"
 
 // SystemStatus is the /api/v3/system/status endpoint.
 type SystemStatus struct {
@@ -41,14 +44,14 @@ func (r *Radarr) GetSystemStatus() (*SystemStatus, error) {
 
 // GetSystemStatusContext returns system status.
 func (r *Radarr) GetSystemStatusContext(ctx context.Context) (*SystemStatus, error) {
-	var status SystemStatus
+	var output SystemStatus
 
-	err := r.GetInto(ctx, "v3/system/status", nil, &status)
-	if err != nil {
-		return nil, fmt.Errorf("api.Get(system/status): %w", err)
+	req := starr.Request{URI: path.Join(bpSystem, "status")}
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
 	}
 
-	return &status, nil
+	return &output, nil
 }
 
 // GetBackupFiles returns all available Radarr backup files.
@@ -62,8 +65,9 @@ func (r *Radarr) GetBackupFiles() ([]*starr.BackupFile, error) {
 func (r *Radarr) GetBackupFilesContext(ctx context.Context) ([]*starr.BackupFile, error) {
 	var output []*starr.BackupFile
 
-	if err := r.GetInto(ctx, "v3/system/backup", nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(system/backup): %w", err)
+	req := starr.Request{URI: path.Join(bpSystem, "backup")}
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
 	}
 
 	return output, nil

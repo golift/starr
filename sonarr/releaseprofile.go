@@ -6,10 +6,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"path"
-	"strconv"
 
 	"golift.io/starr"
 )
+
+// Define Base Path for Release Profile calls.
+const bpReleaseProfile = APIver + "/releaseProfile"
 
 // ReleaseProfile defines a release profile's data from Sonarr.
 type ReleaseProfile struct {
@@ -24,19 +26,18 @@ type ReleaseProfile struct {
 	Preferred       []*starr.KeyValue `json:"preferred,omitempty"`                    // V3 only, removed from v4.
 }
 
-// Define Base Path for Release Profile calls.
-const bpReleaseProfile = APIver + "/releaseProfile"
-
 // GetReleaseProfiles returns all configured release profiles.
 func (s *Sonarr) GetReleaseProfiles() ([]*ReleaseProfile, error) {
 	return s.GetReleaseProfilesContext(context.Background())
 }
 
+// GetReleaseProfilesContext returns all configured release profiles.
 func (s *Sonarr) GetReleaseProfilesContext(ctx context.Context) ([]*ReleaseProfile, error) {
 	var output []*ReleaseProfile
 
-	if err := s.GetInto(ctx, bpReleaseProfile, nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", bpReleaseProfile, err)
+	req := starr.Request{URI: bpReleaseProfile}
+	if err := s.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
 	}
 
 	return output, nil
@@ -47,15 +48,16 @@ func (s *Sonarr) GetReleaseProfile(profileID int) (*ReleaseProfile, error) {
 	return s.GetReleaseProfileContext(context.Background(), profileID)
 }
 
+// GetReleaseProfileContext returns a single release profile.
 func (s *Sonarr) GetReleaseProfileContext(ctx context.Context, profileID int) (*ReleaseProfile, error) {
-	var output *ReleaseProfile
+	var output ReleaseProfile
 
-	uri := path.Join(bpReleaseProfile, strconv.Itoa(profileID))
-	if err := s.GetInto(ctx, uri, nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", bpReleaseProfile, err)
+	req := starr.Request{URI: path.Join(bpReleaseProfile, fmt.Sprint(profileID))}
+	if err := s.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
 	}
 
-	return output, nil
+	return &output, nil
 }
 
 // AddReleaseProfile creates a release profile.
@@ -63,6 +65,7 @@ func (s *Sonarr) AddReleaseProfile(profile *ReleaseProfile) (*ReleaseProfile, er
 	return s.AddReleaseProfileContext(context.Background(), profile)
 }
 
+// AddReleaseProfileContext creates a release profile.
 func (s *Sonarr) AddReleaseProfileContext(ctx context.Context, profile *ReleaseProfile) (*ReleaseProfile, error) {
 	var output ReleaseProfile
 
@@ -71,8 +74,9 @@ func (s *Sonarr) AddReleaseProfileContext(ctx context.Context, profile *ReleaseP
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpReleaseProfile, err)
 	}
 
-	if err := s.PostInto(ctx, bpReleaseProfile, nil, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(%s): %w", bpReleaseProfile, err)
+	req := starr.Request{URI: bpReleaseProfile, Body: &body}
+	if err := s.PostInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Post(%s): %w", req, err)
 	}
 
 	return &output, nil
@@ -83,6 +87,7 @@ func (s *Sonarr) UpdateReleaseProfile(profile *ReleaseProfile) (*ReleaseProfile,
 	return s.UpdateReleaseProfileContext(context.Background(), profile)
 }
 
+// UpdateReleaseProfileContext updates the release profile.
 func (s *Sonarr) UpdateReleaseProfileContext(ctx context.Context, profile *ReleaseProfile) (*ReleaseProfile, error) {
 	var output ReleaseProfile
 
@@ -91,9 +96,9 @@ func (s *Sonarr) UpdateReleaseProfileContext(ctx context.Context, profile *Relea
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpReleaseProfile, err)
 	}
 
-	uri := path.Join(bpReleaseProfile, strconv.Itoa(int(profile.ID)))
-	if err := s.PutInto(ctx, uri, nil, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", bpReleaseProfile, err)
+	req := starr.Request{URI: path.Join(bpReleaseProfile, fmt.Sprint(profile.ID)), Body: &body}
+	if err := s.PutInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
 	}
 
 	return &output, nil
@@ -104,10 +109,11 @@ func (s *Sonarr) DeleteReleaseProfile(profileID int) error {
 	return s.DeleteReleaseProfileContext(context.Background(), profileID)
 }
 
+// DeleteReleaseProfileContext removes a single release profile.
 func (s *Sonarr) DeleteReleaseProfileContext(ctx context.Context, profileID int) error {
 	req := starr.Request{URI: path.Join(bpReleaseProfile, fmt.Sprint(profileID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", req.URI, err)
+		return fmt.Errorf("api.Delete(%s): %w", req, err)
 	}
 
 	return nil

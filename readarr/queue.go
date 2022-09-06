@@ -8,6 +8,8 @@ import (
 	"golift.io/starr"
 )
 
+const bpQueue = APIver + "/queue"
+
 // Queue is the /api/v1/queue endpoint.
 type Queue struct {
 	Page          int            `json:"page"`
@@ -53,12 +55,14 @@ func (r *Readarr) GetQueue(records, perPage int) (*Queue, error) {
 	return r.GetQueueContext(context.Background(), records, perPage)
 }
 
+// GetQueueContext returns a single page from the Readarr Queue (processing, but not yet imported).
+// If you need control over the page, use readarr.GetQueuePageContext().
 func (r *Readarr) GetQueueContext(ctx context.Context, records, perPage int) (*Queue, error) {
 	queue := &Queue{Records: []*QueueRecord{}}
 	perPage = starr.SetPerPage(records, perPage)
 
 	for page := 1; ; page++ {
-		curr, err := r.GetQueuePageContext(ctx, &starr.Req{PageSize: perPage, Page: page})
+		curr, err := r.GetQueuePageContext(ctx, &starr.PageReq{PageSize: perPage, Page: page})
 		if err != nil {
 			return nil, err
 		}
@@ -84,20 +88,22 @@ func (r *Readarr) GetQueueContext(ctx context.Context, records, perPage int) (*Q
 
 // GetQueuePage returns a single page from the Readarr Queue.
 // The page size and number is configurable with the input request parameters.
-func (r *Readarr) GetQueuePage(params *starr.Req) (*Queue, error) {
+func (r *Readarr) GetQueuePage(params *starr.PageReq) (*Queue, error) {
 	return r.GetQueuePageContext(context.Background(), params)
 }
 
-func (r *Readarr) GetQueuePageContext(ctx context.Context, params *starr.Req) (*Queue, error) {
-	var queue Queue
+// GetQueuePageContext returns a single page from the Readarr Queue.
+// The page size and number is configurable with the input request parameters.
+func (r *Readarr) GetQueuePageContext(ctx context.Context, params *starr.PageReq) (*Queue, error) {
+	var output Queue
 
 	params.CheckSet("sortKey", "timeleft")
 	params.CheckSet("includeUnknownAuthorItems", "true")
 
-	err := r.GetInto(ctx, "v1/queue", params.Params(), &queue)
-	if err != nil {
-		return nil, fmt.Errorf("api.Get(queue): %w", err)
+	req := starr.Request{URI: bpQueue, Query: params.Params()}
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
 	}
 
-	return &queue, nil
+	return &output, nil
 }
