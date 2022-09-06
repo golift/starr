@@ -15,22 +15,15 @@ const bpQualityProfile = APIver + "/qualityProfile"
 
 // QualityProfile is applied to Movies.
 type QualityProfile struct {
-	ID                int64            `json:"id"`
-	Name              string           `json:"name"`
-	UpgradeAllowed    bool             `json:"upgradeAllowed"`
-	Cutoff            int64            `json:"cutoff"`
-	Qualities         []*starr.Quality `json:"items"`
-	MinFormatScore    int64            `json:"minFormatScore"`
-	CutoffFormatScore int64            `json:"cutoffFormatScore"`
-	FormatItems       []*FormatItem    `json:"formatItems,omitempty"`
-	Language          *starr.Value     `json:"language"`
-}
-
-// FormatItem is part of a QualityProfile.
-type FormatItem struct {
-	Format int    `json:"format"`
-	Name   string `json:"name"`
-	Score  int    `json:"score"`
+	ID                int64               `json:"id"`
+	Name              string              `json:"name"`
+	UpgradeAllowed    bool                `json:"upgradeAllowed"`
+	Cutoff            int64               `json:"cutoff"`
+	Qualities         []*starr.Quality    `json:"items"`
+	MinFormatScore    int64               `json:"minFormatScore"`
+	CutoffFormatScore int64               `json:"cutoffFormatScore"`
+	FormatItems       []*starr.FormatItem `json:"formatItems,omitempty"`
+	Language          *starr.Value        `json:"language"`
 }
 
 // GetQualityProfiles returns all configured quality profiles.

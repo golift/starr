@@ -1,4 +1,4 @@
-package radarr
+package sonarr
 
 import (
 	"bytes"
@@ -10,9 +10,12 @@ import (
 	"golift.io/starr"
 )
 
+/* Custom Formats do not exist in Sonarr v3; this is v4 only. */
+
 const bpCustomFormat = APIver + "/customFormat"
 
 // CustomFormat is the api/customformat endpoint payload.
+// This data and these endpoints do not exist in Sonarr v3; this is v4 only.
 type CustomFormat struct {
 	ID                    int                 `json:"id"`
 	Name                  string              `json:"name"`
@@ -42,14 +45,16 @@ type CustomFormatField struct {
 }
 
 // GetCustomFormats returns all configured Custom Formats.
-func (r *Radarr) GetCustomFormats() ([]*CustomFormat, error) {
-	return r.GetCustomFormatsContext(context.Background())
+// This data and these endpoints do not exist in Sonarr v3; this is v4 only.
+func (s *Sonarr) GetCustomFormats() ([]*CustomFormat, error) {
+	return s.GetCustomFormatsContext(context.Background())
 }
 
 // GetCustomFormatsContext returns all configured Custom Formats.
-func (r *Radarr) GetCustomFormatsContext(ctx context.Context) ([]*CustomFormat, error) {
+// This data and these endpoints do not exist in Sonarr v3; this is v4 only.
+func (s *Sonarr) GetCustomFormatsContext(ctx context.Context) ([]*CustomFormat, error) {
 	var output []*CustomFormat
-	if err := r.GetInto(ctx, bpCustomFormat, nil, &output); err != nil {
+	if err := s.GetInto(ctx, bpCustomFormat, nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", bpCustomFormat, err)
 	}
 
@@ -57,12 +62,14 @@ func (r *Radarr) GetCustomFormatsContext(ctx context.Context) ([]*CustomFormat, 
 }
 
 // AddCustomFormat creates a new custom format and returns the response (with ID).
-func (r *Radarr) AddCustomFormat(format *CustomFormat) (*CustomFormat, error) {
-	return r.AddCustomFormatContext(context.Background(), format)
+// This data and these endpoints do not exist in Sonarr v3; this is v4 only.
+func (s *Sonarr) AddCustomFormat(format *CustomFormat) (*CustomFormat, error) {
+	return s.AddCustomFormatContext(context.Background(), format)
 }
 
 // AddCustomFormatContext creates a new custom format and returns the response (with ID).
-func (r *Radarr) AddCustomFormatContext(ctx context.Context, format *CustomFormat) (*CustomFormat, error) {
+// This data and these endpoints do not exist in Sonarr v3; this is v4 only.
+func (s *Sonarr) AddCustomFormatContext(ctx context.Context, format *CustomFormat) (*CustomFormat, error) {
 	var output CustomFormat
 
 	if format == nil {
@@ -76,7 +83,7 @@ func (r *Radarr) AddCustomFormatContext(ctx context.Context, format *CustomForma
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpCustomFormat, err)
 	}
 
-	if err := r.PostInto(ctx, bpCustomFormat, nil, &body, &output); err != nil {
+	if err := s.PostInto(ctx, bpCustomFormat, nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(%s): %w", bpCustomFormat, err)
 	}
 
@@ -84,12 +91,14 @@ func (r *Radarr) AddCustomFormatContext(ctx context.Context, format *CustomForma
 }
 
 // UpdateCustomFormat updates an existing custom format and returns the response.
-func (r *Radarr) UpdateCustomFormat(cf *CustomFormat, cfID int) (*CustomFormat, error) {
-	return r.UpdateCustomFormatContext(context.Background(), cf, cfID)
+// This data and these endpoints do not exist in Sonarr v3; this is v4 only.
+func (s *Sonarr) UpdateCustomFormat(cf *CustomFormat, cfID int) (*CustomFormat, error) {
+	return s.UpdateCustomFormatContext(context.Background(), cf, cfID)
 }
 
 // UpdateCustomFormatContext updates an existing custom format and returns the response.
-func (r *Radarr) UpdateCustomFormatContext(ctx context.Context, format *CustomFormat, cfID int) (*CustomFormat, error) {
+// This data and these endpoints do not exist in Sonarr v3; this is v4 only.
+func (s *Sonarr) UpdateCustomFormatContext(ctx context.Context, format *CustomFormat, cfID int) (*CustomFormat, error) {
 	if cfID == 0 {
 		cfID = format.ID
 	}
@@ -102,7 +111,7 @@ func (r *Radarr) UpdateCustomFormatContext(ctx context.Context, format *CustomFo
 	var output CustomFormat
 
 	uri := path.Join(bpCustomFormat, fmt.Sprint(cfID))
-	if err := r.PutInto(ctx, uri, nil, &body, &output); err != nil {
+	if err := s.PutInto(ctx, uri, nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", uri, err)
 	}
 
@@ -110,14 +119,16 @@ func (r *Radarr) UpdateCustomFormatContext(ctx context.Context, format *CustomFo
 }
 
 // DeleteCustomFormat deletes a custom format.
-func (r *Radarr) DeleteCustomFormat(cfID int) error {
-	return r.DeleteCustomFormatContext(context.Background(), cfID)
+// This data and these endpoints do not exist in Sonarr v3; this is v4 only.
+func (s *Sonarr) DeleteCustomFormat(cfID int) error {
+	return s.DeleteCustomFormatContext(context.Background(), cfID)
 }
 
 // DeleteCustomFormatContext deletes a custom format.
-func (r *Radarr) DeleteCustomFormatContext(ctx context.Context, cfID int) error {
+// This data and these endpoints do not exist in Sonarr v3; this is v4 only.
+func (s *Sonarr) DeleteCustomFormatContext(ctx context.Context, cfID int) error {
 	req := starr.Request{URI: path.Join(bpCustomFormat, fmt.Sprint(cfID))}
-	if err := r.DeleteAny(ctx, req); err != nil {
+	if err := s.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", req.URI, err)
 	}
 
