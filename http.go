@@ -19,23 +19,27 @@ const API = "api"
 
 // Request contains the GET and/or POST values for an HTTP request.
 type Request struct {
+	URI   string     // path portion of the URL.
 	Query url.Values // GET parameters work for any request type.
 	Body  io.Reader  // Used in PUT, POST, DELETE. Not for GET.
+	url   string     // derived url.
 }
 
 // Req makes an authenticated request to a starr application and returns the response.
 // Do not forget to read and close the response Body if there is no error.
-func (c *Config) Req(ctx context.Context, uri string, method string, params *Request) (*http.Response, error) {
-	return c.req(ctx, c.URL+uri, method, params)
+func (c *Config) Req(ctx context.Context, method string, params *Request) (*http.Response, error) {
+	params.url = c.URL + params.URI
+	return c.req(ctx, method, params)
 }
 
 // api is an internal function to call an api path.
-func (c *Config) api(ctx context.Context, uri string, method string, params *Request) (*http.Response, error) {
-	return c.req(ctx, c.SetPath(uri), method, params)
+func (c *Config) api(ctx context.Context, method string, params *Request) (*http.Response, error) {
+	params.url = c.SetPath(params.URI)
+	return c.req(ctx, method, params)
 }
 
 // req is our abstraction method for calling a starr application.
-func (c *Config) req(ctx context.Context, url string, method string, params *Request) (*http.Response, error) {
+func (c *Config) req(ctx context.Context, method string, params *Request) (*http.Response, error) {
 	if c.Client == nil { // we must have an http client.
 		return nil, ErrNilClient
 	}
@@ -44,9 +48,9 @@ func (c *Config) req(ctx context.Context, url string, method string, params *Req
 		params = &Request{}
 	}
 
-	req, err := http.NewRequestWithContext(ctx, method, url, params.Body)
+	req, err := http.NewRequestWithContext(ctx, method, params.url, params.Body)
 	if err != nil {
-		return nil, fmt.Errorf("http.NewRequestWithContext(path): %w", err)
+		return nil, fmt.Errorf("http.NewRequestWithContext(%s): %w", params.url, err)
 	}
 
 	c.SetHeaders(req)

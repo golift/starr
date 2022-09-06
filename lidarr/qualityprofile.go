@@ -89,7 +89,8 @@ func (l *Lidarr) DeleteQualityProfile(profileID int64) error {
 // DeleteQualityProfileContext deletes a quality profile.
 func (l *Lidarr) DeleteQualityProfileContext(ctx context.Context, profileID int64) error {
 	uri := path.Join(bpQualityProfile, strconv.FormatInt(profileID, starr.Base10))
-	if err := l.DeleteAny(ctx, uri, nil); err != nil {
+
+	if err := l.DeleteAny(ctx, &starr.Request{URI: uri}); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", bpQualityProfile, err)
 	}
 

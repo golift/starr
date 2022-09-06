@@ -91,8 +91,8 @@ func (p *Prowlarr) DeleteTag(tagID int) error {
 }
 
 func (p *Prowlarr) DeleteTagContext(ctx context.Context, tagID int) error {
-	uri := path.Join(bpTag, strconv.Itoa(tagID))
-	if err := p.DeleteAny(ctx, uri, nil); err != nil {
+	req := &starr.Request{URI: path.Join(bpTag, strconv.Itoa(tagID))}
+	if err := p.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(tag): %w", err)
 	}
 

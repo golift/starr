@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"path"
 	"strconv"
+
+	"golift.io/starr"
 )
 
 // DelayProfile is the /api/v3/delayprofile endpoint.
@@ -103,9 +105,9 @@ func (s *Sonarr) DeleteDelayProfile(profileID int) error {
 }
 
 func (s *Sonarr) DeleteDelayProfileContext(ctx context.Context, profileID int) error {
-	uri := path.Join(bpDelayProfile, strconv.Itoa(profileID))
-	if err := s.DeleteAny(ctx, uri, nil); err != nil {
-		return fmt.Errorf("api.Delete(delayProfile): %w", err)
+	req := &starr.Request{URI: path.Join(bpDelayProfile, fmt.Sprint(profileID))}
+	if err := s.DeleteAny(ctx, req); err != nil {
+		return fmt.Errorf("api.Delete(%s): %w", req.URI, err)
 	}
 
 	return nil

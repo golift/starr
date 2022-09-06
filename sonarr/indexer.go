@@ -125,9 +125,9 @@ func (s *Sonarr) DeleteIndexer(indexerID int) error {
 }
 
 func (s *Sonarr) DeleteIndexerContext(ctx context.Context, indexerID int) error {
-	uri := path.Join(bpIndexer, strconv.Itoa(indexerID))
-	if err := s.DeleteAny(ctx, uri, nil); err != nil {
-		return fmt.Errorf("api.Delete(Indexer): %w", err)
+	req := &starr.Request{URI: path.Join(bpIndexer, fmt.Sprint(indexerID))}
+	if err := s.DeleteAny(ctx, req); err != nil {
+		return fmt.Errorf("api.Delete(%s): %w", req.URI, err)
 	}
 
 	return nil
