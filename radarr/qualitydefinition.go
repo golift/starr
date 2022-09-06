@@ -1,4 +1,4 @@
-package sonarr
+package radarr
 
 import (
 	"bytes"
@@ -16,7 +16,7 @@ type QualityDefinition struct {
 	Weight   int64              `json:"weight"` // This should not be changed.
 	MinSize  float64            `json:"minSize"`
 	MaxSize  float64            `json:"maxSize"`
-	PrefSize float64            `json:"preferredSize"` // v4 only.
+	PrefSize float64            `json:"preferredSize"`
 	Title    string             `json:"title"`
 	Quality  *starr.BaseQuality `json:"quality"`
 }
@@ -25,15 +25,15 @@ type QualityDefinition struct {
 const bpQualityDefinition = APIver + "/qualityDefinition"
 
 // GetQualityDefinitions returns all configured quality definitions.
-func (s *Sonarr) GetQualityDefinitions() ([]*QualityDefinition, error) {
-	return s.GetQualityDefinitionsContext(context.Background())
+func (r *Radarr) GetQualityDefinitions() ([]*QualityDefinition, error) {
+	return r.GetQualityDefinitionsContext(context.Background())
 }
 
 // GetQualityDefinitionsContext returns all configured quality definitions.
-func (s *Sonarr) GetQualityDefinitionsContext(ctx context.Context) ([]*QualityDefinition, error) {
+func (r *Radarr) GetQualityDefinitionsContext(ctx context.Context) ([]*QualityDefinition, error) {
 	var output []*QualityDefinition
 
-	if err := s.GetInto(ctx, bpQualityDefinition, nil, &output); err != nil {
+	if err := r.GetInto(ctx, bpQualityDefinition, nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", bpQualityDefinition, err)
 	}
 
@@ -41,16 +41,16 @@ func (s *Sonarr) GetQualityDefinitionsContext(ctx context.Context) ([]*QualityDe
 }
 
 // GetQualityDefinition returns a single quality definition.
-func (s *Sonarr) GetQualityDefinition(qualityDefinitionID int64) (*QualityDefinition, error) {
-	return s.GetQualityDefinitionContext(context.Background(), qualityDefinitionID)
+func (r *Radarr) GetQualityDefinition(qualityDefinitionID int64) (*QualityDefinition, error) {
+	return r.GetQualityDefinitionContext(context.Background(), qualityDefinitionID)
 }
 
 // GetQualityDefinitionContext returns a single quality definition.
-func (s *Sonarr) GetQualityDefinitionContext(ctx context.Context, qdID int64) (*QualityDefinition, error) {
+func (r *Radarr) GetQualityDefinitionContext(ctx context.Context, qdID int64) (*QualityDefinition, error) {
 	var output QualityDefinition
 
 	uri := path.Join(bpQualityDefinition, fmt.Sprint(qdID))
-	if err := s.GetInto(ctx, uri, nil, &output); err != nil {
+	if err := r.GetInto(ctx, uri, nil, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", uri, err)
 	}
 
@@ -58,12 +58,12 @@ func (s *Sonarr) GetQualityDefinitionContext(ctx context.Context, qdID int64) (*
 }
 
 // UpdateQualityDefinition updates a quality definition.
-func (s *Sonarr) UpdateQualityDefinition(definition *QualityDefinition) (*QualityDefinition, error) {
-	return s.UpdateQualityDefinitionContext(context.Background(), definition)
+func (r *Radarr) UpdateQualityDefinition(definition *QualityDefinition) (*QualityDefinition, error) {
+	return r.UpdateQualityDefinitionContext(context.Background(), definition)
 }
 
 // UpdateQualityDefinitionContext updates a quality definition.
-func (s *Sonarr) UpdateQualityDefinitionContext(
+func (r *Radarr) UpdateQualityDefinitionContext(
 	ctx context.Context,
 	definition *QualityDefinition,
 ) (*QualityDefinition, error) {
@@ -75,32 +75,32 @@ func (s *Sonarr) UpdateQualityDefinitionContext(
 	}
 
 	uri := path.Join(bpQualityDefinition, fmt.Sprint(definition.ID))
-	if err := s.PutInto(ctx, uri, nil, &body, &output); err != nil {
+	if err := r.PutInto(ctx, uri, nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", uri, err)
 	}
 
 	return &output, nil
 }
 
-// UpdateQualityDefinition updates all quality definitions.
-func (s *Sonarr) UpdateQualityDefinitions(definitions []*QualityDefinition) ([]*QualityDefinition, error) {
-	return s.UpdateQualityDefinitionsContext(context.Background(), definitions)
+// UpdateQualityDefinitions updates all quality definitions.
+func (r *Radarr) UpdateQualityDefinitions(definition []*QualityDefinition) ([]*QualityDefinition, error) {
+	return r.UpdateQualityDefinitionsContext(context.Background(), definition)
 }
 
 // UpdateQualityDefinitionsContext updates all quality definitions.
-func (s *Sonarr) UpdateQualityDefinitionsContext(
+func (r *Radarr) UpdateQualityDefinitionsContext(
 	ctx context.Context,
-	definitions []*QualityDefinition,
+	definition []*QualityDefinition,
 ) ([]*QualityDefinition, error) {
 	var output []*QualityDefinition
 
 	var body bytes.Buffer
-	if err := json.NewEncoder(&body).Encode(definitions); err != nil {
+	if err := json.NewEncoder(&body).Encode(definition); err != nil {
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpQualityDefinition, err)
 	}
 
 	uri := path.Join(bpQualityDefinition, "update")
-	if err := s.PutInto(ctx, uri, nil, &body, &output); err != nil {
+	if err := r.PutInto(ctx, uri, nil, &body, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", uri, err)
 	}
 
