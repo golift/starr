@@ -20,15 +20,15 @@ type APIer interface {
 	Login(ctx context.Context) error
 	// Normal data, returns response. Do not use these in starr app methods.
 	// These methods are generally for non-api paths and will not ensure an /api uri prefix.
-	Get(ctx context.Context, params Request) (*http.Response, error)    // Get request; Params are optional.
-	Post(ctx context.Context, params Request) (*http.Response, error)   // Post request; Params should contain io.Reader.
-	Put(ctx context.Context, params Request) (*http.Response, error)    // Put request; Params should contain io.Reader.
-	Delete(ctx context.Context, params Request) (*http.Response, error) // Delete request; Params are optional.
+	Get(ctx context.Context, req Request) (*http.Response, error)    // Get request; Params are optional.
+	Post(ctx context.Context, req Request) (*http.Response, error)   // Post request; Params should contain io.Reader.
+	Put(ctx context.Context, req Request) (*http.Response, error)    // Put request; Params should contain io.Reader.
+	Delete(ctx context.Context, req Request) (*http.Response, error) // Delete request; Params are optional.
 	// Normal data, unmarshals into provided interface. Use these because they close the response body.
 	GetInto(ctx context.Context, path string, params url.Values, output interface{}) error
 	PostInto(ctx context.Context, path string, params url.Values, postBody io.Reader, output interface{}) error
 	PutInto(ctx context.Context, path string, params url.Values, putBody io.Reader, output interface{}) error
-	DeleteAny(ctx context.Context, params Request) error // Delete request; Params are optional.
+	DeleteAny(ctx context.Context, req Request) error // Delete request; Params are optional.
 }
 
 // Config must satify the APIer struct.
