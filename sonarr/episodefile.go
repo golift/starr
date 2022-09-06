@@ -94,7 +94,7 @@ func (s *Sonarr) DeleteEpisodeFile(episodeFileID int64) error {
 
 // DeleteEpisodeFileContext deletes an episode file, and takes a context.
 func (s *Sonarr) DeleteEpisodeFileContext(ctx context.Context, episodeFileID int64) error {
-	req := &starr.Request{URI: "v3/episodeFile/" + fmt.Sprint(episodeFileID)}
+	req := starr.Request{URI: "v3/episodeFile/" + fmt.Sprint(episodeFileID)}
 	if err := s.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", req.URI, err)
 	}

@@ -251,7 +251,7 @@ func (s *Sonarr) DeleteSeriesContext(ctx context.Context, seriesID int, deleteFi
 	params.Add("deleteFiles", strconv.FormatBool(deleteFiles))
 	params.Add("addImportListExclusion", strconv.FormatBool(importExclude))
 
-	req := &starr.Request{URI: path.Join(bpSeries, strconv.Itoa(seriesID)), Query: params}
+	req := starr.Request{URI: path.Join(bpSeries, fmt.Sprint(seriesID)), Query: params}
 	if err := s.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", req.URI, err)
 	}

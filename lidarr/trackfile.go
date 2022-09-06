@@ -192,9 +192,9 @@ func (l *Lidarr) DeleteTrackFile(trackFileID int64) error {
 
 // DeleteTrackFileContext deletes a track file.
 func (l *Lidarr) DeleteTrackFileContext(ctx context.Context, trackFileID int64) error {
-	uri := path.Join(bpTrackFile, fmt.Sprint(trackFileID))
-	if err := l.DeleteAny(ctx, &starr.Request{URI: uri}); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", uri, err)
+	req := starr.Request{URI: path.Join(bpTrackFile, fmt.Sprint(trackFileID))}
+	if err := l.DeleteAny(ctx, req); err != nil {
+		return fmt.Errorf("api.Delete(%s): %w", req.URI, err)
 	}
 
 	return nil
@@ -216,9 +216,9 @@ func (l *Lidarr) DeleteTrackFilesContext(ctx context.Context, trackFileIDs []int
 		return fmt.Errorf("json.Marshal(trackFileIDs): %w", err)
 	}
 
-	uri := path.Join(bpTrackFile, "bulk")
-	if err := l.DeleteAny(ctx, &starr.Request{URI: uri, Body: &body}); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", uri, err)
+	req := starr.Request{URI: path.Join(bpTrackFile, "bulk"), Body: &body}
+	if err := l.DeleteAny(ctx, req); err != nil {
+		return fmt.Errorf("api.Delete(%s): %w", req.URI, err)
 	}
 
 	return nil

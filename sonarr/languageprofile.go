@@ -107,7 +107,7 @@ func (s *Sonarr) DeleteLanguageProfile(profileID int) error {
 }
 
 func (s *Sonarr) DeleteLanguageProfileContext(ctx context.Context, profileID int) error {
-	req := &starr.Request{URI: path.Join(bpLanguageProfile, fmt.Sprint(profileID))}
+	req := starr.Request{URI: path.Join(bpLanguageProfile, fmt.Sprint(profileID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", req.URI, err)
 	}

@@ -91,7 +91,7 @@ func (r *Readarr) DeleteTag(tagID int) error {
 }
 
 func (r *Readarr) DeleteTagContext(ctx context.Context, tagID int) error {
-	req := &starr.Request{URI: path.Join(bpTag, fmt.Sprint(tagID))}
+	req := starr.Request{URI: path.Join(bpTag, fmt.Sprint(tagID))}
 	if err := r.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(tag): %w", err)
 	}

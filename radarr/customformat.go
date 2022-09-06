@@ -117,7 +117,7 @@ func (r *Radarr) DeleteCustomFormat(cfID int) error {
 
 // DeleteCustomFormatContext deletes a custom format.
 func (r *Radarr) DeleteCustomFormatContext(ctx context.Context, cfID int) error {
-	req := &starr.Request{URI: path.Join(bpCustomFormat, fmt.Sprint(cfID))}
+	req := starr.Request{URI: path.Join(bpCustomFormat, fmt.Sprint(cfID))}
 	if err := r.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", bpCustomFormat, err)
 	}

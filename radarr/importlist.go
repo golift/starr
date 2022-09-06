@@ -99,7 +99,7 @@ func (r *Radarr) DeleteImportListContext(ctx context.Context, ids []int64) error
 	var errs string
 
 	for _, id := range ids {
-		req := &starr.Request{URI: path.Join("v3/importlist/", fmt.Sprint(id))}
+		req := starr.Request{URI: path.Join("v3/importlist/", fmt.Sprint(id))}
 		if err := r.DeleteAny(ctx, req); err != nil {
 			errs += fmt.Errorf("api.Delete(importlist): %w", err).Error() + " "
 		}

@@ -101,7 +101,7 @@ func (s *Sonarr) DeleteQualityProfile(profileID int) error {
 }
 
 func (s *Sonarr) DeleteQualityProfileContext(ctx context.Context, profileID int) error {
-	req := &starr.Request{URI: path.Join(bpQualityProfile, fmt.Sprint(profileID))}
+	req := starr.Request{URI: path.Join(bpQualityProfile, fmt.Sprint(profileID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", req.URI, err)
 	}

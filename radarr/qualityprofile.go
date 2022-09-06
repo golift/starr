@@ -99,7 +99,7 @@ func (r *Radarr) DeleteQualityProfile(profileID int64) error {
 
 // DeleteQualityProfileContext deletes a quality profile.
 func (r *Radarr) DeleteQualityProfileContext(ctx context.Context, profileID int64) error {
-	req := &starr.Request{URI: path.Join(bpQualityProfile, fmt.Sprint(profileID))}
+	req := starr.Request{URI: path.Join(bpQualityProfile, fmt.Sprint(profileID))}
 	if err := r.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", bpQualityProfile, err)
 	}

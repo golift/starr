@@ -44,7 +44,7 @@ func (r *Radarr) DeleteExclusionsContext(ctx context.Context, ids []int64) error
 	var errs string
 
 	for _, id := range ids {
-		req := &starr.Request{URI: "v3/exclusions/" + fmt.Sprint(id)}
+		req := starr.Request{URI: "v3/exclusions/" + fmt.Sprint(id)}
 		if err := r.DeleteAny(ctx, req); err != nil {
 			errs += err.Error() + " "
 		}

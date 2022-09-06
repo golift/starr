@@ -105,7 +105,7 @@ func (s *Sonarr) DeleteDelayProfile(profileID int) error {
 }
 
 func (s *Sonarr) DeleteDelayProfileContext(ctx context.Context, profileID int) error {
-	req := &starr.Request{URI: path.Join(bpDelayProfile, fmt.Sprint(profileID))}
+	req := starr.Request{URI: path.Join(bpDelayProfile, fmt.Sprint(profileID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", req.URI, err)
 	}
