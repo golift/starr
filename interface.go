@@ -22,15 +22,15 @@ type APIer interface {
 	Login(ctx context.Context) error
 	// Normal data, returns response. Do not use these in starr app methods.
 	// These methods are generally for non-api paths and will not ensure an /api uri prefix.
-	Get(ctx context.Context, path string, params *Params) (*http.Response, error)    // Get request; Params are optional.
-	Post(ctx context.Context, path string, params *Params) (*http.Response, error)   // Post request; Params should contain io.Reader.
-	Put(ctx context.Context, path string, params *Params) (*http.Response, error)    // Put request; Params should contain io.Reader.
-	Delete(ctx context.Context, path string, params *Params) (*http.Response, error) // Delete request; Params are optional.
+	Get(ctx context.Context, path string, params *Request) (*http.Response, error)    // Get request; Params are optional.
+	Post(ctx context.Context, path string, params *Request) (*http.Response, error)   // Post request; Params should contain io.Reader.
+	Put(ctx context.Context, path string, params *Request) (*http.Response, error)    // Put request; Params should contain io.Reader.
+	Delete(ctx context.Context, path string, params *Request) (*http.Response, error) // Delete request; Params are optional.
 	// Normal data, unmarshals into provided interface. Use these because they close the response body.
 	GetInto(ctx context.Context, path string, params url.Values, output interface{}) error
 	PostInto(ctx context.Context, path string, params url.Values, postBody io.Reader, output interface{}) error
 	PutInto(ctx context.Context, path string, params url.Values, putBody io.Reader, output interface{}) error
-	DeleteAny(ctx context.Context, path string, params *Params) error // Delete request; Params are optional.
+	DeleteAny(ctx context.Context, path string, params *Request) error // Delete request; Params are optional.
 }
 
 // Config must satify the APIer struct.
@@ -49,7 +49,7 @@ func (c *Config) Login(ctx context.Context) error {
 
 	post := "username=" + c.Username + "&password=" + c.Password
 
-	resp, err := c.api(ctx, "/login", http.MethodPost, &Params{nil, bytes.NewBufferString(post)})
+	resp, err := c.api(ctx, "/login", http.MethodPost, &Request{nil, bytes.NewBufferString(post)})
 	if err != nil {
 		return fmt.Errorf("authenticating as user '%s' failed: %w", c.Username, err)
 	}
@@ -67,29 +67,29 @@ func (c *Config) Login(ctx context.Context) error {
 }
 
 // Get makes a GET http request and returns the body.
-func (c *Config) Get(ctx context.Context, path string, params *Params) (*http.Response, error) {
-	return c.Req(ctx, path, http.MethodGet, params)
+func (c *Config) Get(ctx context.Context, path string, req *Request) (*http.Response, error) {
+	return c.Req(ctx, path, http.MethodGet, req)
 }
 
 // Post makes a POST http request and returns the body.
-func (c *Config) Post(ctx context.Context, path string, params *Params) (*http.Response, error) {
-	return c.Req(ctx, path, http.MethodPost, params)
+func (c *Config) Post(ctx context.Context, path string, req *Request) (*http.Response, error) {
+	return c.Req(ctx, path, http.MethodPost, req)
 }
 
 // Put makes a PUT http request and returns the body.
-func (c *Config) Put(ctx context.Context, path string, params *Params) (*http.Response, error) {
-	return c.Req(ctx, path, http.MethodPut, params)
+func (c *Config) Put(ctx context.Context, path string, req *Request) (*http.Response, error) {
+	return c.Req(ctx, path, http.MethodPut, req)
 }
 
 // Delete makes a DELETE http request and returns the body.
-func (c *Config) Delete(ctx context.Context, path string, params *Params) (*http.Response, error) {
-	return c.Req(ctx, path, http.MethodDelete, params)
+func (c *Config) Delete(ctx context.Context, path string, req *Request) (*http.Response, error) {
+	return c.Req(ctx, path, http.MethodDelete, req)
 }
 
 // GetInto performs an HTTP GET against an API path and
 // unmarshals the payload into the provided pointer interface.
 func (c *Config) GetInto(ctx context.Context, path string, params url.Values, output interface{}) error {
-	resp, err := c.api(ctx, path, http.MethodGet, &Params{params, nil})
+	resp, err := c.api(ctx, path, http.MethodGet, &Request{params, nil})
 	return decode(output, resp, err)
 }
 
@@ -102,7 +102,7 @@ func (c *Config) PostInto(
 	postBody io.Reader,
 	output interface{},
 ) error {
-	resp, err := c.api(ctx, path, http.MethodPost, &Params{params, postBody})
+	resp, err := c.api(ctx, path, http.MethodPost, &Request{params, postBody})
 	return decode(output, resp, err)
 }
 
@@ -115,13 +115,13 @@ func (c *Config) PutInto(
 	putBody io.Reader,
 	output interface{},
 ) error {
-	resp, err := c.api(ctx, path, http.MethodPut, &Params{params, putBody})
+	resp, err := c.api(ctx, path, http.MethodPut, &Request{params, putBody})
 	return decode(output, resp, err)
 }
 
 // DeleteAny performs an HTTP DELETE against an API path, output is ignored.
-func (c *Config) DeleteAny(ctx context.Context, path string, params *Params) error {
-	resp, err := c.api(ctx, path, http.MethodDelete, params)
+func (c *Config) DeleteAny(ctx context.Context, path string, req *Request) error {
+	resp, err := c.api(ctx, path, http.MethodDelete, req)
 	closeResp(resp)
 
 	return err

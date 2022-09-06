@@ -17,42 +17,42 @@ const API = "api"
 
 /* The methods in this file provide assumption-ridden HTTP calls for Starr apps. */
 
-// Params are the GET and/or POST values for an HTTP request.
-type Params struct {
-	Get url.Values // GET parameters work for any request type.
-	Put io.Reader  // Used in PUT, POST, DELETE. Not for GET.
+// Request contains the GET and/or POST values for an HTTP request.
+type Request struct {
+	Query url.Values // GET parameters work for any request type.
+	Body  io.Reader  // Used in PUT, POST, DELETE. Not for GET.
 }
 
 // Req makes an authenticated request to a starr application and returns the response.
 // Do not forget to read and close the response Body if there is no error.
-func (c *Config) Req(ctx context.Context, uri string, method string, params *Params) (*http.Response, error) {
+func (c *Config) Req(ctx context.Context, uri string, method string, params *Request) (*http.Response, error) {
 	return c.req(ctx, c.URL+uri, method, params)
 }
 
 // api is an internal function to call an api path.
-func (c *Config) api(ctx context.Context, uri string, method string, params *Params) (*http.Response, error) {
+func (c *Config) api(ctx context.Context, uri string, method string, params *Request) (*http.Response, error) {
 	return c.req(ctx, c.SetPath(uri), method, params)
 }
 
 // req is our abstraction method for calling a starr application.
-func (c *Config) req(ctx context.Context, url string, method string, params *Params) (*http.Response, error) {
+func (c *Config) req(ctx context.Context, url string, method string, params *Request) (*http.Response, error) {
 	if c.Client == nil { // we must have an http client.
 		return nil, ErrNilClient
 	}
 
 	if params == nil {
-		params = &Params{}
+		params = &Request{}
 	}
 
-	req, err := http.NewRequestWithContext(ctx, method, url, params.Put)
+	req, err := http.NewRequestWithContext(ctx, method, url, params.Body)
 	if err != nil {
 		return nil, fmt.Errorf("http.NewRequestWithContext(path): %w", err)
 	}
 
 	c.SetHeaders(req)
 
-	if params.Get != nil {
-		req.URL.RawQuery = params.Get.Encode()
+	if params.Query != nil {
+		req.URL.RawQuery = params.Query.Encode()
 	}
 
 	resp, err := c.Client.Do(req)
