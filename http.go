@@ -75,19 +75,28 @@ func (c *Config) req(ctx context.Context, method string, req Request) (*http.Res
 func parseNon200(req *http.Request, resp *http.Response) error {
 	defer resp.Body.Close()
 
-	var msg struct {
-		Msg string `json:"message"`
-	}
-
 	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return fmt.Errorf("failed: %v (status: %s): %w",
 			req.RequestURI, resp.Status, ErrInvalidStatusCode)
 	}
 
-	if err := json.Unmarshal(reply, &msg); err == nil {
+	var msg struct {
+		Msg string `json:"message"`
+	}
+
+	if err := json.Unmarshal(reply, &msg); err == nil && msg.Msg != "" {
 		return fmt.Errorf("failed: %v (status: %s): %w: %s",
 			req.RequestURI, resp.Status, ErrInvalidStatusCode, msg.Msg)
+	}
+
+	var errMsg struct {
+		Msg string `json:"errorMessage"`
+	}
+
+	if err := json.Unmarshal(reply, &errMsg); err == nil && errMsg.Msg != "" {
+		return fmt.Errorf("failed: %v (status: %s): %w: %s",
+			req.RequestURI, resp.Status, ErrInvalidStatusCode, errMsg.Msg)
 	}
 
 	const maxSize = 200 // arbitrary max size

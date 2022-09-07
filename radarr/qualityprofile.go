@@ -78,7 +78,7 @@ func (r *Radarr) UpdateQualityProfileContext(ctx context.Context, profile *Quali
 
 	var output interface{}
 
-	req := starr.Request{URI: path.Join(bpQualityProfile, fmt.Sprint(profile.ID))}
+	req := starr.Request{URI: path.Join(bpQualityProfile, fmt.Sprint(profile.ID)), Body: &body}
 	if err := r.PutInto(ctx, req, &output); err != nil {
 		return fmt.Errorf("api.Put(%s): %w", req, err)
 	}
