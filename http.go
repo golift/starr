@@ -65,20 +65,19 @@ func (c *Config) req(ctx context.Context, method string, req Request) (*http.Res
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		return nil, parseNon200(httpReq, resp)
+		return nil, parseNon200(resp)
 	}
 
 	return resp, nil
 }
 
 // parseNon200 attempts to extract an error message from a non-200 response.
-func parseNon200(req *http.Request, resp *http.Response) error {
+func parseNon200(resp *http.Response) error {
 	defer resp.Body.Close()
 
 	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return fmt.Errorf("failed: %v (status: %s): %w",
-			req.RequestURI, resp.Status, ErrInvalidStatusCode)
+		return fmt.Errorf("failed, status: %s: %w", resp.Status, ErrInvalidStatusCode)
 	}
 
 	var msg struct {
@@ -86,29 +85,26 @@ func parseNon200(req *http.Request, resp *http.Response) error {
 	}
 
 	if err := json.Unmarshal(reply, &msg); err == nil && msg.Msg != "" {
-		return fmt.Errorf("failed: %v (status: %s): %w: %s",
-			req.RequestURI, resp.Status, ErrInvalidStatusCode, msg.Msg)
+		return fmt.Errorf("failed, status: %s: %w: %s", resp.Status, ErrInvalidStatusCode, msg.Msg)
 	}
 
 	var errMsg struct {
-		Msg string `json:"errorMessage"`
+		Msg  string `json:"errorMessage"`
+		Name string `json:"propertyName"`
 	}
 
 	if err := json.Unmarshal(reply, &errMsg); err == nil && errMsg.Msg != "" {
-		return fmt.Errorf("failed: %v (status: %s): %w: %s",
-			req.RequestURI, resp.Status, ErrInvalidStatusCode, errMsg.Msg)
+		return fmt.Errorf("failed, status: %s: %w: %s (%s)", resp.Status, ErrInvalidStatusCode, errMsg.Msg, errMsg.Name)
 	}
 
-	const maxSize = 200 // arbitrary max size
+	const maxSize = 400 // arbitrary max size
 
 	replyStr := string(reply)
 	if len(replyStr) > maxSize {
-		return fmt.Errorf("failed: %v (status: %s): %w: %s",
-			req.RequestURI, resp.Status, ErrInvalidStatusCode, replyStr[:maxSize])
+		return fmt.Errorf("failed, status: %s: %w: %s", resp.Status, ErrInvalidStatusCode, replyStr[:maxSize])
 	}
 
-	return fmt.Errorf("failed: %v (status: %s): %w: %s",
-		req.RequestURI, resp.Status, ErrInvalidStatusCode, replyStr)
+	return fmt.Errorf("failed, status: %s: %w: %s", resp.Status, ErrInvalidStatusCode, replyStr)
 }
 
 // closeResp should be used to close requests that don't require a response body.
