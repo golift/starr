@@ -72,7 +72,7 @@ func (l *Lidarr) GetArtistContext(ctx context.Context, mbID string) ([]*Artist, 
 	var output []*Artist
 
 	if err := l.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -89,7 +89,7 @@ func (l *Lidarr) GetArtistByIDContext(ctx context.Context, artistID int64) (*Art
 
 	req := starr.Request{URI: path.Join(bpArtist, fmt.Sprint(artistID))}
 	if err := l.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -113,7 +113,7 @@ func (l *Lidarr) AddArtistContext(ctx context.Context, artist *Artist) (*Artist,
 	var output Artist
 
 	if err := l.PostInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -137,7 +137,7 @@ func (l *Lidarr) UpdateArtistContext(ctx context.Context, artist *Artist) (*Arti
 	var output Artist
 
 	if err := l.PutInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return &output, nil

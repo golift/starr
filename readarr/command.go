@@ -53,7 +53,7 @@ func (r *Readarr) GetCommandsContext(ctx context.Context) ([]*CommandResponse, e
 
 	req := starr.Request{URI: bpCommand}
 	if err := r.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -79,7 +79,7 @@ func (r *Readarr) SendCommandContext(ctx context.Context, cmd *CommandRequest) (
 
 	req := starr.Request{URI: bpCommand, Body: &body}
 	if err := r.PostInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return &output, nil

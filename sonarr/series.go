@@ -138,7 +138,7 @@ func (s *Sonarr) GetSeriesContext(ctx context.Context, tvdbID int64) ([]*Series,
 	}
 
 	if err := s.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -166,7 +166,7 @@ func (s *Sonarr) UpdateSeriesContext(ctx context.Context, series *AddSeriesInput
 	req.Query.Add("moveFiles", "true")
 
 	if err := s.PutInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -190,7 +190,7 @@ func (s *Sonarr) AddSeriesContext(ctx context.Context, series *AddSeriesInput) (
 	req.Query.Add("moveFiles", "true")
 
 	if err := s.PostInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -207,7 +207,7 @@ func (s *Sonarr) GetSeriesByIDContext(ctx context.Context, seriesID int64) (*Ser
 
 	req := starr.Request{URI: path.Join(bpSeries, fmt.Sprint(seriesID))}
 	if err := s.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -232,7 +232,7 @@ func (s *Sonarr) GetSeriesLookupContext(ctx context.Context, term string, tvdbID
 	}
 
 	if err := s.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -266,7 +266,7 @@ func (s *Sonarr) DeleteSeriesContext(ctx context.Context, seriesID int, deleteFi
 	req.Query.Add("addImportListExclusion", fmt.Sprint(importExclude))
 
 	if err := s.DeleteAny(ctx, req); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", req, err)
+		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}
 
 	return nil

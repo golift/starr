@@ -66,7 +66,7 @@ func (s *Sonarr) GetEpisodeFilesContext(ctx context.Context, episodeFileIDs ...i
 
 	var output []*EpisodeFile
 	if err := s.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -85,7 +85,7 @@ func (s *Sonarr) GetSeriesEpisodeFilesContext(ctx context.Context, seriesID int6
 	req.Query.Add("seriesId", fmt.Sprint(seriesID))
 
 	if err := s.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -116,7 +116,7 @@ func (s *Sonarr) UpdateEpisodeFileQualityContext(
 
 	req := starr.Request{URI: path.Join(bpEpisodeFile, fmt.Sprint(episodeFileID)), Body: &body}
 	if err := s.PutInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -131,7 +131,7 @@ func (s *Sonarr) DeleteEpisodeFile(episodeFileID int64) error {
 func (s *Sonarr) DeleteEpisodeFileContext(ctx context.Context, episodeFileID int64) error {
 	req := starr.Request{URI: path.Join(bpEpisodeFile, fmt.Sprint(episodeFileID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", req, err)
+		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}
 
 	return nil

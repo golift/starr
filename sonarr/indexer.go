@@ -59,7 +59,7 @@ func (s *Sonarr) GetIndexersContext(ctx context.Context) ([]*IndexerOutput, erro
 
 	req := starr.Request{URI: bpIndexer}
 	if err := s.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -76,7 +76,7 @@ func (s *Sonarr) GetIndexerContext(ctx context.Context, indexerID int) (*Indexer
 
 	req := starr.Request{URI: path.Join(bpIndexer, fmt.Sprint(indexerID))}
 	if err := s.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -98,7 +98,7 @@ func (s *Sonarr) AddIndexerContext(ctx context.Context, indexer *IndexerInput) (
 
 	req := starr.Request{URI: bpIndexer, Body: &body}
 	if err := s.PostInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -120,7 +120,7 @@ func (s *Sonarr) UpdateIndexerContext(ctx context.Context, indexer *IndexerInput
 
 	req := starr.Request{URI: path.Join(bpIndexer, fmt.Sprint(indexer.ID)), Body: &body}
 	if err := s.PutInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -135,7 +135,7 @@ func (s *Sonarr) DeleteIndexer(indexerID int) error {
 func (s *Sonarr) DeleteIndexerContext(ctx context.Context, indexerID int) error {
 	req := starr.Request{URI: path.Join(bpIndexer, fmt.Sprint(indexerID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", req, err)
+		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}
 
 	return nil

@@ -46,7 +46,7 @@ func (s *Sonarr) GetMediaManagementContext(ctx context.Context) (*MediaManagemen
 
 	req := starr.Request{URI: bpMediaManagement}
 	if err := s.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -68,7 +68,7 @@ func (s *Sonarr) UpdateMediaManagementContext(ctx context.Context, mMgt *MediaMa
 
 	req := starr.Request{URI: bpMediaManagement, Body: &body}
 	if err := s.PutInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return &output, nil

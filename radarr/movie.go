@@ -183,7 +183,7 @@ func (r *Radarr) GetMovieContext(ctx context.Context, tmdbID int64) ([]*Movie, e
 
 	req := starr.Request{URI: bpMovie, Query: params}
 	if err := r.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -200,7 +200,7 @@ func (r *Radarr) GetMovieByIDContext(ctx context.Context, movieID int64) (*Movie
 
 	req := starr.Request{URI: path.Join(bpMovie, fmt.Sprint(movieID))}
 	if err := r.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -228,7 +228,7 @@ func (r *Radarr) UpdateMovieContext(ctx context.Context, movieID int64, movie *M
 	req.Query.Add("moveFiles", "true")
 
 	if err := r.PutInto(ctx, req, &output); err != nil {
-		return fmt.Errorf("api.Put(%s): %w", req, err)
+		return fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return nil
@@ -252,7 +252,7 @@ func (r *Radarr) AddMovieContext(ctx context.Context, movie *AddMovieInput) (*Ad
 	req.Query.Add("moveFiles", "true")
 
 	if err := r.PostInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -275,7 +275,7 @@ func (r *Radarr) LookupContext(ctx context.Context, term string) ([]*Movie, erro
 	req.Query.Set("term", term)
 
 	if err := r.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil

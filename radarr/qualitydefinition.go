@@ -35,7 +35,7 @@ func (r *Radarr) GetQualityDefinitionsContext(ctx context.Context) ([]*QualityDe
 
 	req := starr.Request{URI: bpQualityDefinition}
 	if err := r.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -52,7 +52,7 @@ func (r *Radarr) GetQualityDefinitionContext(ctx context.Context, qdID int64) (*
 
 	req := starr.Request{URI: path.Join(bpQualityDefinition, fmt.Sprint(qdID))}
 	if err := r.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -77,7 +77,7 @@ func (r *Radarr) UpdateQualityDefinitionContext(
 
 	req := starr.Request{URI: path.Join(bpQualityDefinition, fmt.Sprint(definition.ID)), Body: &body}
 	if err := r.PutInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -102,7 +102,7 @@ func (r *Radarr) UpdateQualityDefinitionsContext(
 
 	req := starr.Request{URI: path.Join(bpQualityDefinition, "update"), Body: &body}
 	if err := r.PutInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return output, nil

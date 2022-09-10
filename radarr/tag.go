@@ -23,7 +23,7 @@ func (r *Radarr) GetTagsContext(ctx context.Context) ([]*starr.Tag, error) {
 
 	req := starr.Request{URI: bpTag}
 	if err := r.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -40,7 +40,7 @@ func (r *Radarr) GetTagContext(ctx context.Context, tagID int) (*starr.Tag, erro
 
 	req := starr.Request{URI: path.Join(bpTag, fmt.Sprint(tagID))}
 	if err := r.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -62,7 +62,7 @@ func (r *Radarr) AddTagContext(ctx context.Context, tag *starr.Tag) (*starr.Tag,
 
 	req := starr.Request{URI: bpTag, Body: &body}
 	if err := r.PostInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -84,7 +84,7 @@ func (r *Radarr) UpdateTagContext(ctx context.Context, tag *starr.Tag) (*starr.T
 
 	req := starr.Request{URI: path.Join(bpTag, fmt.Sprint(tag.ID)), Body: &body}
 	if err := r.PutInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -99,7 +99,7 @@ func (r *Radarr) DeleteTag(tagID int) error {
 func (r *Radarr) DeleteTagContext(ctx context.Context, tagID int) error {
 	req := starr.Request{URI: path.Join(bpTag, fmt.Sprint(tagID))}
 	if err := r.DeleteAny(ctx, req); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", req, err)
+		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}
 
 	return nil

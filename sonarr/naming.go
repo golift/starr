@@ -42,7 +42,7 @@ func (s *Sonarr) GetNamingContext(ctx context.Context) (*Naming, error) {
 
 	req := starr.Request{URI: bpNaming}
 	if err := s.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -64,7 +64,7 @@ func (s *Sonarr) UpdateNamingContext(ctx context.Context, naming *Naming) (*Nami
 
 	req := starr.Request{URI: bpNaming, Body: &body}
 	if err := s.PutInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return &output, nil

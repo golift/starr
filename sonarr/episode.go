@@ -46,7 +46,7 @@ func (s *Sonarr) GetSeriesEpisodesContext(ctx context.Context, seriesID int64) (
 	req.Query.Add("seriesId", fmt.Sprint(seriesID))
 
 	if err := s.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -73,7 +73,7 @@ func (s *Sonarr) MonitorEpisodeContext(ctx context.Context, episodeIDs []int64, 
 
 	req := starr.Request{URI: path.Join(bpEpisode, "monitor"), Body: &body}
 	if err := s.PutInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return output, nil

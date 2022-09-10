@@ -23,7 +23,7 @@ func (p *Prowlarr) GetTagsContext(ctx context.Context) ([]*starr.Tag, error) {
 
 	req := starr.Request{URI: bpTag}
 	if err := p.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -40,7 +40,7 @@ func (p *Prowlarr) GetTagContext(ctx context.Context, tagID int) (*starr.Tag, er
 
 	req := starr.Request{URI: path.Join(bpTag, fmt.Sprint(tagID))}
 	if err := p.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -62,7 +62,7 @@ func (p *Prowlarr) AddTagContext(ctx context.Context, tag *starr.Tag) (*starr.Ta
 
 	req := starr.Request{URI: bpTag, Body: &body}
 	if err := p.PostInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -84,7 +84,7 @@ func (p *Prowlarr) UpdateTagContext(ctx context.Context, tag *starr.Tag) (*starr
 
 	req := starr.Request{URI: path.Join(bpTag, fmt.Sprint(tag.ID)), Body: &body}
 	if err := p.PutInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -98,7 +98,7 @@ func (p *Prowlarr) DeleteTag(tagID int) error {
 func (p *Prowlarr) DeleteTagContext(ctx context.Context, tagID int) error {
 	req := starr.Request{URI: path.Join(bpTag, fmt.Sprint(tagID))}
 	if err := p.DeleteAny(ctx, req); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", req, err)
+		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}
 
 	return nil

@@ -102,7 +102,7 @@ func (s *Sonarr) GetQueuePageContext(ctx context.Context, params *starr.PageReq)
 
 	req := starr.Request{URI: bpQueue, Query: params.Params()}
 	if err := s.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return &output, nil

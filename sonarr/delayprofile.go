@@ -37,7 +37,7 @@ func (s *Sonarr) GetDelayProfilesContext(ctx context.Context) ([]*DelayProfile, 
 
 	req := starr.Request{URI: bpDelayProfile}
 	if err := s.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -54,7 +54,7 @@ func (s *Sonarr) GetDelayProfileContext(ctx context.Context, profileID int) (*De
 
 	req := starr.Request{URI: path.Join(bpDelayProfile, fmt.Sprint(profileID))}
 	if err := s.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -76,7 +76,7 @@ func (s *Sonarr) AddDelayProfileContext(ctx context.Context, profile *DelayProfi
 
 	req := starr.Request{URI: bpDelayProfile, Body: &body}
 	if err := s.PostInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -98,7 +98,7 @@ func (s *Sonarr) UpdateDelayProfileContext(ctx context.Context, profile *DelayPr
 
 	req := starr.Request{URI: path.Join(bpDelayProfile, fmt.Sprint(profile.ID)), Body: &body}
 	if err := s.PutInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -113,7 +113,7 @@ func (s *Sonarr) DeleteDelayProfile(profileID int) error {
 func (s *Sonarr) DeleteDelayProfileContext(ctx context.Context, profileID int) error {
 	req := starr.Request{URI: path.Join(bpDelayProfile, fmt.Sprint(profileID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", req, err)
+		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}
 
 	return nil

@@ -48,7 +48,7 @@ func (r *Radarr) GetSystemStatusContext(ctx context.Context) (*SystemStatus, err
 
 	req := starr.Request{URI: path.Join(bpSystem, "status")}
 	if err := r.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%v): %w", &req, err)
 	}
 
 	return &output, nil
@@ -67,7 +67,7 @@ func (r *Radarr) GetBackupFilesContext(ctx context.Context) ([]*starr.BackupFile
 
 	req := starr.Request{URI: path.Join(bpSystem, "backup")}
 	if err := r.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil

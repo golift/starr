@@ -32,7 +32,7 @@ func (l *Lidarr) GetQualityProfilesContext(ctx context.Context) ([]*QualityProfi
 
 	req := starr.Request{URI: bpQualityProfile}
 	if err := l.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -54,7 +54,7 @@ func (l *Lidarr) AddQualityProfileContext(ctx context.Context, profile *QualityP
 
 	req := starr.Request{URI: bpQualityProfile, Body: &body}
 	if err := l.PostInto(ctx, req, &output); err != nil {
-		return 0, fmt.Errorf("api.Post(%s): %w", req, err)
+		return 0, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return output.ID, nil
@@ -76,7 +76,7 @@ func (l *Lidarr) UpdateQualityProfileContext(ctx context.Context, profile *Quali
 
 	req := starr.Request{URI: path.Join(bpQualityProfile, fmt.Sprint(profile.ID)), Body: &body}
 	if err := l.PutInto(ctx, req, &output); err != nil {
-		return fmt.Errorf("api.Put(%s): %w", req, err)
+		return fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return nil
@@ -91,7 +91,7 @@ func (l *Lidarr) DeleteQualityProfile(profileID int64) error {
 func (l *Lidarr) DeleteQualityProfileContext(ctx context.Context, profileID int64) error {
 	req := starr.Request{URI: path.Join(bpQualityProfile, fmt.Sprint(profileID))}
 	if err := l.DeleteAny(ctx, req); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", req, err)
+		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}
 
 	return nil

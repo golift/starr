@@ -31,7 +31,7 @@ func (r *Radarr) GetExclusionsContext(ctx context.Context) ([]*Exclusion, error)
 
 	req := starr.Request{URI: bpExclusions}
 	if err := r.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -80,7 +80,7 @@ func (r *Radarr) AddExclusionsContext(ctx context.Context, exclusions []*Exclusi
 
 	req := starr.Request{URI: path.Join(bpExclusions, "bulk"), Body: &body}
 	if err := r.PostInto(ctx, req, &output); err != nil {
-		return fmt.Errorf("api.Post(%s): %w", req, err)
+		return fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return nil

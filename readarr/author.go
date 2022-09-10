@@ -85,7 +85,7 @@ func (r *Readarr) GetAuthorByIDContext(ctx context.Context, authorID int64) (*Au
 
 	req := starr.Request{URI: path.Join(bpAuthor, fmt.Sprint(authorID))}
 	if err := r.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -113,7 +113,7 @@ func (r *Readarr) UpdateAuthorContext(ctx context.Context, authorID int64, autho
 	req.Query.Add("moveFiles", "true")
 
 	if err := r.PutInto(ctx, req, &output); err != nil {
-		return fmt.Errorf("api.Put(%s): %w", req, err)
+		return fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return nil

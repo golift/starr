@@ -37,7 +37,7 @@ func (s *Sonarr) GetReleaseProfilesContext(ctx context.Context) ([]*ReleaseProfi
 
 	req := starr.Request{URI: bpReleaseProfile}
 	if err := s.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -54,7 +54,7 @@ func (s *Sonarr) GetReleaseProfileContext(ctx context.Context, profileID int) (*
 
 	req := starr.Request{URI: path.Join(bpReleaseProfile, fmt.Sprint(profileID))}
 	if err := s.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -76,7 +76,7 @@ func (s *Sonarr) AddReleaseProfileContext(ctx context.Context, profile *ReleaseP
 
 	req := starr.Request{URI: bpReleaseProfile, Body: &body}
 	if err := s.PostInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -98,7 +98,7 @@ func (s *Sonarr) UpdateReleaseProfileContext(ctx context.Context, profile *Relea
 
 	req := starr.Request{URI: path.Join(bpReleaseProfile, fmt.Sprint(profile.ID)), Body: &body}
 	if err := s.PutInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -113,7 +113,7 @@ func (s *Sonarr) DeleteReleaseProfile(profileID int) error {
 func (s *Sonarr) DeleteReleaseProfileContext(ctx context.Context, profileID int) error {
 	req := starr.Request{URI: path.Join(bpReleaseProfile, fmt.Sprint(profileID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", req, err)
+		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}
 
 	return nil

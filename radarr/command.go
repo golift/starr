@@ -50,7 +50,7 @@ func (r *Radarr) GetCommandsContext(ctx context.Context) ([]*CommandResponse, er
 
 	req := starr.Request{URI: bpCommand}
 	if err := r.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -76,7 +76,7 @@ func (r *Radarr) SendCommandContext(ctx context.Context, cmd *CommandRequest) (*
 
 	req := starr.Request{URI: bpCommand, Body: &body}
 	if err := r.PostInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return &output, nil

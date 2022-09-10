@@ -117,7 +117,7 @@ func (l *Lidarr) GetTrackFilesForArtistContext(ctx context.Context, artistID int
 	req.Query.Add("artistId", fmt.Sprint(artistID))
 
 	if err := l.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -136,7 +136,7 @@ func (l *Lidarr) GetTrackFilesForAlbumContext(ctx context.Context, albumID int64
 	req.Query.Add("albumId", fmt.Sprint(albumID))
 
 	if err := l.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -165,7 +165,7 @@ func (l *Lidarr) GetTrackFilesContext(ctx context.Context, trackFileIDs []int64)
 	}
 
 	if err := l.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -187,7 +187,7 @@ func (l *Lidarr) UpdateTrackFileContext(ctx context.Context, trackFile *TrackFil
 
 	req := starr.Request{URI: path.Join(bpTrackFile, fmt.Sprint(trackFile.ID)), Body: &body}
 	if err := l.PutInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -202,7 +202,7 @@ func (l *Lidarr) DeleteTrackFile(trackFileID int64) error {
 func (l *Lidarr) DeleteTrackFileContext(ctx context.Context, trackFileID int64) error {
 	req := starr.Request{URI: path.Join(bpTrackFile, fmt.Sprint(trackFileID))}
 	if err := l.DeleteAny(ctx, req); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", req, err)
+		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}
 
 	return nil
@@ -226,7 +226,7 @@ func (l *Lidarr) DeleteTrackFilesContext(ctx context.Context, trackFileIDs []int
 
 	req := starr.Request{URI: path.Join(bpTrackFile, "bulk"), Body: &body}
 	if err := l.DeleteAny(ctx, req); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", req, err)
+		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}
 
 	return nil

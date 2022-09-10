@@ -64,7 +64,7 @@ func (r *Radarr) GetImportListsContext(ctx context.Context) ([]*ImportList, erro
 
 	req := starr.Request{URI: bpImportList}
 	if err := r.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -88,7 +88,7 @@ func (r *Radarr) CreateImportListContext(ctx context.Context, list *ImportList) 
 
 	req := starr.Request{URI: bpImportList, Body: &body}
 	if err := r.PostInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -106,7 +106,7 @@ func (r *Radarr) DeleteImportListContext(ctx context.Context, ids []int64) error
 	for _, id := range ids {
 		req := starr.Request{URI: path.Join(bpImportList, fmt.Sprint(id))}
 		if err := r.DeleteAny(ctx, req); err != nil {
-			errs += fmt.Errorf("api.Delete(%s): %w", req, err).Error() + " "
+			errs += fmt.Errorf("api.Delete(%s): %w", &req, err).Error() + " "
 		}
 	}
 
@@ -133,7 +133,7 @@ func (r *Radarr) UpdateImportListContext(ctx context.Context, list *ImportList) 
 
 	req := starr.Request{URI: path.Join(bpImportList, fmt.Sprint(list.ID)), Body: &body}
 	if err := r.PutInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return &output, nil

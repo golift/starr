@@ -114,7 +114,7 @@ func (l *Lidarr) GetAlbumContext(ctx context.Context, mbID string) ([]*Album, er
 	var output []*Album
 
 	if err := l.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -131,7 +131,7 @@ func (l *Lidarr) GetAlbumByIDContext(ctx context.Context, albumID int64) (*Album
 
 	req := starr.Request{URI: path.Join(bpAlbum, fmt.Sprint(albumID))}
 	if err := l.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -159,7 +159,7 @@ func (l *Lidarr) UpdateAlbumContext(ctx context.Context, albumID int64, album *A
 	req.Query.Add("moveFiles", "true")
 
 	if err := l.PutInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -190,7 +190,7 @@ func (l *Lidarr) AddAlbumContext(ctx context.Context, album *AddAlbumInput) (*Al
 
 	var output Album
 	if err := l.PostInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -217,7 +217,7 @@ func (l *Lidarr) LookupContext(ctx context.Context, term string) ([]*Album, erro
 
 	err := l.GetInto(ctx, req, &output)
 	if err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil

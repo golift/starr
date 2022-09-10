@@ -112,7 +112,7 @@ func (r *Readarr) GetHistoryPageContext(ctx context.Context, params *starr.PageR
 
 	req := starr.Request{URI: bpHistory, Query: params.Params()}
 	if err := r.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -136,7 +136,7 @@ func (r *Readarr) FailContext(ctx context.Context, historyID int64) error {
 		Body: bytes.NewBufferString("id=" + fmt.Sprint(historyID)),
 	}
 	if err := r.PostInto(ctx, req, &output); err != nil {
-		return fmt.Errorf("api.Post(%s): %w", req, err)
+		return fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return nil

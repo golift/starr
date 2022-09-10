@@ -47,7 +47,7 @@ func (s *Sonarr) UpdateSeasonPassContext(ctx context.Context, seasonPass *Season
 
 	req := starr.Request{URI: bpSeasonPass, Body: &body}
 	if err := s.PostInto(ctx, req, &output); err != nil {
-		return fmt.Errorf("api.Post(%s): %w", req, err)
+		return fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return nil

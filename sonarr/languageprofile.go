@@ -39,7 +39,7 @@ func (s *Sonarr) GetLanguageProfilesContext(ctx context.Context) ([]*LanguagePro
 
 	req := starr.Request{URI: bpLanguageProfile}
 	if err := s.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -56,7 +56,7 @@ func (s *Sonarr) GetLanguageProfileContext(ctx context.Context, profileID int) (
 
 	req := starr.Request{URI: path.Join(bpLanguageProfile, fmt.Sprint(profileID))}
 	if err := s.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -78,7 +78,7 @@ func (s *Sonarr) AddLanguageProfileContext(ctx context.Context, profile *Languag
 
 	req := starr.Request{URI: bpLanguageProfile, Body: &body}
 	if err := s.PostInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -100,7 +100,7 @@ func (s *Sonarr) UpdateLanguageProfileContext(ctx context.Context, profile *Lang
 
 	req := starr.Request{URI: path.Join(bpLanguageProfile, fmt.Sprint(int(profile.ID))), Body: &body}
 	if err := s.PutInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -115,7 +115,7 @@ func (s *Sonarr) DeleteLanguageProfile(profileID int) error {
 func (s *Sonarr) DeleteLanguageProfileContext(ctx context.Context, profileID int) error {
 	req := starr.Request{URI: path.Join(bpLanguageProfile, fmt.Sprint(profileID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", req, err)
+		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}
 
 	return nil

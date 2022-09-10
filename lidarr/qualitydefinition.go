@@ -30,7 +30,7 @@ func (l *Lidarr) GetQualityDefinitionContext(ctx context.Context) ([]*QualityDef
 
 	req := starr.Request{URI: bpQualityDefinition}
 	if err := l.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil

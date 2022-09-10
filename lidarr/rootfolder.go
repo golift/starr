@@ -29,7 +29,7 @@ func (l *Lidarr) GetRootFoldersContext(ctx context.Context) ([]*RootFolder, erro
 
 	req := starr.Request{URI: bpRootFolder}
 	if err := l.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil

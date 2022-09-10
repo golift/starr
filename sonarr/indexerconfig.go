@@ -32,7 +32,7 @@ func (s *Sonarr) GetIndexerConfigContext(ctx context.Context) (*IndexerConfig, e
 
 	req := starr.Request{URI: bpIndexerConfig}
 	if err := s.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -54,7 +54,7 @@ func (s *Sonarr) UpdateIndexerConfigContext(ctx context.Context, indexerConfig *
 
 	req := starr.Request{URI: path.Join(bpIndexerConfig, fmt.Sprint(indexerConfig.ID)), Body: &body}
 	if err := s.PutInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return &output, nil

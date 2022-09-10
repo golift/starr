@@ -112,7 +112,7 @@ func (s *Sonarr) GetHistoryPageContext(ctx context.Context, params *starr.PageRe
 
 	req := starr.Request{URI: bpHistory, Query: params.Params()}
 	if err := s.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -134,7 +134,7 @@ func (s *Sonarr) FailContext(ctx context.Context, historyID int64) error {
 	// Strangely uses a POST without a payload.
 	req := starr.Request{URI: path.Join(bpHistory, "failed", fmt.Sprint(historyID))}
 	if err := s.PostInto(ctx, req, &output); err != nil {
-		return fmt.Errorf("api.Post(%s): %w", req, err)
+		return fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return nil

@@ -167,7 +167,7 @@ func (r *Readarr) GetBookContext(ctx context.Context, gridID string) ([]*Book, e
 	var output []*Book
 
 	if err := r.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -184,7 +184,7 @@ func (r *Readarr) GetBookByIDContext(ctx context.Context, bookID int64) (*Book, 
 
 	req := starr.Request{URI: path.Join(bpBook, fmt.Sprint(bookID))}
 	if err := r.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -212,7 +212,7 @@ func (r *Readarr) UpdateBookContext(ctx context.Context, bookID int64, book *Boo
 	var output interface{} // do not know what this looks like.
 
 	if err := r.PutInto(ctx, req, &output); err != nil {
-		return fmt.Errorf("api.Put(%s): %w", req, err)
+		return fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return nil
@@ -239,7 +239,7 @@ func (r *Readarr) AddBookContext(ctx context.Context, book *AddBookInput) (*AddB
 
 	var output AddBookOutput
 	if err := r.PostInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -262,7 +262,7 @@ func (r *Readarr) LookupContext(ctx context.Context, term string) ([]*Book, erro
 	req.Query.Set("term", term)
 
 	if err := r.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
