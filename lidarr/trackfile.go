@@ -14,6 +14,7 @@ import (
 
 const bpTrackFile = APIver + "/trackfile"
 
+// TrackFile represents the data sent to and returned from the trackfile endpoint.
 type TrackFile struct {
 	ID            int64          `json:"id"`
 	ArtistID      int64          `json:"artistId"`
