@@ -6,7 +6,7 @@
 [![travis](https://api.travis-ci.com/golift/starr.svg?branch=master "Travis Tests")](https://travis-ci.com/github/golift/starr)
 [![discord](https://badgen.net/badge/icon/Discord?color=0011ff&label&icon=https://simpleicons.now.sh/discord/eee "GoLift Discord")](https://golift.io/discord)
 
-### Another way to say `*arr`
+## The correct way to say `*arr`.
 
  **Go library to interact with APIs in all the Starr apps.**
 
