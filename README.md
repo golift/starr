@@ -10,15 +10,19 @@
 
  **Go library to interact with APIs in all the Starr apps.**
 
--   [Lidarr](http://lidarr.audio)
--   [Sonarr](http://sonarr.tv)
--   [Radarr](http://radarr.video)
--   [Readarr](http://readarr.com)
--   [Prowlarr](https://prowlarr.com)
+-   [Lidarr](http://lidarr.audio) ([over 35 methods](https://pkg.go.dev/golift.io/starr@master/lidarr)) 
+-   [Sonarr](http://sonarr.tv) ([over 70 methods](https://pkg.go.dev/golift.io/starr@master/sonarr)) 
+-   [Radarr](http://radarr.video) ([over 35 methods](https://pkg.go.dev/golift.io/starr@master/radarr)) 
+-   [Readarr](http://readarr.com) ([over 25 methods](https://pkg.go.dev/golift.io/starr@master/readarr)) 
+-   [Prowlarr](https://prowlarr.com) ([almost 10 methods!](https://pkg.go.dev/golift.io/starr@master/prowlarr)) 
+
+Custom Scripts support is also included. [Check out the types and methods](https://pkg.go.dev/golift.io/starr@master/starrcmd) to get that data.
+
+## One 🌟 To Rule Them All
 
 This library is slowly updated as new methods are needed or requested. If you have
 specific needs this library doesn't currently meet, but should or could, please
-[let me know](https://github.com/golift/starr/issues/new)!
+[let us know](https://github.com/golift/starr/issues/new)!
 
 This library is currently in use by:
 
