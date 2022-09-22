@@ -63,12 +63,12 @@ func (s *Sonarr) GetDownloadClientsContext(ctx context.Context) ([]*DownloadClie
 }
 
 // GetDownloadClient returns a single download client.
-func (s *Sonarr) GetDownloadClient(downloadclientID int) (*DownloadClientOutput, error) {
+func (s *Sonarr) GetDownloadClient(downloadclientID int64) (*DownloadClientOutput, error) {
 	return s.GetDownloadClientContext(context.Background(), downloadclientID)
 }
 
 // GetDownloadClientContext returns a single download client.
-func (s *Sonarr) GetDownloadClientContext(ctx context.Context, downloadclientID int) (*DownloadClientOutput, error) {
+func (s *Sonarr) GetDownloadClientContext(ctx context.Context, downloadclientID int64) (*DownloadClientOutput, error) {
 	var output DownloadClientOutput
 
 	req := starr.Request{URI: path.Join(bpDownloadClient, fmt.Sprint(downloadclientID))}
@@ -97,7 +97,7 @@ func (s *Sonarr) AddDownloadClientContext(ctx context.Context,
 
 	req := starr.Request{URI: bpDownloadClient, Body: &body}
 	if err := s.PostInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Post%s): %w", &req, err)
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -121,22 +121,22 @@ func (s *Sonarr) UpdateDownloadClientContext(ctx context.Context,
 
 	req := starr.Request{URI: path.Join(bpDownloadClient, fmt.Sprint(client.ID)), Body: &body}
 	if err := s.PutInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Put%s): %w", &req, err)
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return &output, nil
 }
 
 // DeleteDownloadClient removes a single download client.
-func (s *Sonarr) DeleteDownloadClient(downloadclientID int) error {
+func (s *Sonarr) DeleteDownloadClient(downloadclientID int64) error {
 	return s.DeleteDownloadClientContext(context.Background(), downloadclientID)
 }
 
 // DeleteDownloadClientContext removes a single download client.
-func (s *Sonarr) DeleteDownloadClientContext(ctx context.Context, downloadclientID int) error {
+func (s *Sonarr) DeleteDownloadClientContext(ctx context.Context, downloadclientID int64) error {
 	req := starr.Request{URI: path.Join(bpDownloadClient, fmt.Sprint(downloadclientID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
-		return fmt.Errorf("api.Delete%s): %w", &req, err)
+		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}
 
 	return nil

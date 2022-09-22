@@ -46,12 +46,12 @@ func (s *Sonarr) GetLanguageProfilesContext(ctx context.Context) ([]*LanguagePro
 }
 
 // GetLanguageProfile returns a single language profile.
-func (s *Sonarr) GetLanguageProfile(profileID int) (*LanguageProfile, error) {
+func (s *Sonarr) GetLanguageProfile(profileID int64) (*LanguageProfile, error) {
 	return s.GetLanguageProfileContext(context.Background(), profileID)
 }
 
 // GetLanguageProfileContext returns a single language profile.
-func (s *Sonarr) GetLanguageProfileContext(ctx context.Context, profileID int) (*LanguageProfile, error) {
+func (s *Sonarr) GetLanguageProfileContext(ctx context.Context, profileID int64) (*LanguageProfile, error) {
 	var output LanguageProfile
 
 	req := starr.Request{URI: path.Join(bpLanguageProfile, fmt.Sprint(profileID))}
@@ -107,12 +107,12 @@ func (s *Sonarr) UpdateLanguageProfileContext(ctx context.Context, profile *Lang
 }
 
 // DeleteLanguageProfile removes a single language profile.
-func (s *Sonarr) DeleteLanguageProfile(profileID int) error {
+func (s *Sonarr) DeleteLanguageProfile(profileID int64) error {
 	return s.DeleteLanguageProfileContext(context.Background(), profileID)
 }
 
 // DeleteLanguageProfileContext removes a single language profile.
-func (s *Sonarr) DeleteLanguageProfileContext(ctx context.Context, profileID int) error {
+func (s *Sonarr) DeleteLanguageProfileContext(ctx context.Context, profileID int64) error {
 	req := starr.Request{URI: path.Join(bpLanguageProfile, fmt.Sprint(profileID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)

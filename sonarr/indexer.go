@@ -66,12 +66,12 @@ func (s *Sonarr) GetIndexersContext(ctx context.Context) ([]*IndexerOutput, erro
 }
 
 // GetIndexer returns a single indexer.
-func (s *Sonarr) GetIndexer(indexerID int) (*IndexerOutput, error) {
+func (s *Sonarr) GetIndexer(indexerID int64) (*IndexerOutput, error) {
 	return s.GetIndexerContext(context.Background(), indexerID)
 }
 
 // GetIndGetIndexerContextexer returns a single indexer.
-func (s *Sonarr) GetIndexerContext(ctx context.Context, indexerID int) (*IndexerOutput, error) {
+func (s *Sonarr) GetIndexerContext(ctx context.Context, indexerID int64) (*IndexerOutput, error) {
 	var output IndexerOutput
 
 	req := starr.Request{URI: path.Join(bpIndexer, fmt.Sprint(indexerID))}
@@ -127,12 +127,12 @@ func (s *Sonarr) UpdateIndexerContext(ctx context.Context, indexer *IndexerInput
 }
 
 // DeleteIndexer removes a single indexer.
-func (s *Sonarr) DeleteIndexer(indexerID int) error {
+func (s *Sonarr) DeleteIndexer(indexerID int64) error {
 	return s.DeleteIndexerContext(context.Background(), indexerID)
 }
 
 // DeleteIndexerContext removes a single indexer.
-func (s *Sonarr) DeleteIndexerContext(ctx context.Context, indexerID int) error {
+func (s *Sonarr) DeleteIndexerContext(ctx context.Context, indexerID int64) error {
 	req := starr.Request{URI: path.Join(bpIndexer, fmt.Sprint(indexerID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)

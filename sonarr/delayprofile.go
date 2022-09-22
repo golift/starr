@@ -44,12 +44,12 @@ func (s *Sonarr) GetDelayProfilesContext(ctx context.Context) ([]*DelayProfile, 
 }
 
 // GetDelayProfile returns a single delay profile.
-func (s *Sonarr) GetDelayProfile(profileID int) (*DelayProfile, error) {
+func (s *Sonarr) GetDelayProfile(profileID int64) (*DelayProfile, error) {
 	return s.GetDelayProfileContext(context.Background(), profileID)
 }
 
 // GetDelayProfileContext returns a single delay profile.
-func (s *Sonarr) GetDelayProfileContext(ctx context.Context, profileID int) (*DelayProfile, error) {
+func (s *Sonarr) GetDelayProfileContext(ctx context.Context, profileID int64) (*DelayProfile, error) {
 	var output DelayProfile
 
 	req := starr.Request{URI: path.Join(bpDelayProfile, fmt.Sprint(profileID))}
@@ -105,12 +105,12 @@ func (s *Sonarr) UpdateDelayProfileContext(ctx context.Context, profile *DelayPr
 }
 
 // DeleteDelayProfile removes a single delay profile.
-func (s *Sonarr) DeleteDelayProfile(profileID int) error {
+func (s *Sonarr) DeleteDelayProfile(profileID int64) error {
 	return s.DeleteDelayProfileContext(context.Background(), profileID)
 }
 
 // DeleteDelayProfileContext removes a single delay profile.
-func (s *Sonarr) DeleteDelayProfileContext(ctx context.Context, profileID int) error {
+func (s *Sonarr) DeleteDelayProfileContext(ctx context.Context, profileID int64) error {
 	req := starr.Request{URI: path.Join(bpDelayProfile, fmt.Sprint(profileID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)

@@ -470,7 +470,7 @@ func TestDeleteIndexer(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := sonarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			err := client.DeleteIndexer(test.WithRequest.(int))
+			err := client.DeleteIndexer(test.WithRequest.(int64))
 			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 		})
 	}

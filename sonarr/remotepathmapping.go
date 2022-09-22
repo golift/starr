@@ -39,12 +39,12 @@ func (s *Sonarr) GetRemotePathMappingsContext(ctx context.Context) ([]*RemotePat
 }
 
 // GetRemotePathMapping returns a single remote path mapping.
-func (s *Sonarr) GetRemotePathMapping(mappingID int) (*RemotePathMapping, error) {
+func (s *Sonarr) GetRemotePathMapping(mappingID int64) (*RemotePathMapping, error) {
 	return s.GetRemotePathMappingContext(context.Background(), mappingID)
 }
 
 // GetRemotePathMappingContext returns a single remote path mapping.
-func (s *Sonarr) GetRemotePathMappingContext(ctx context.Context, mappingID int) (*RemotePathMapping, error) {
+func (s *Sonarr) GetRemotePathMappingContext(ctx context.Context, mappingID int64) (*RemotePathMapping, error) {
 	var output RemotePathMapping
 
 	req := starr.Request{URI: path.Join(bpRemotePathMapping, fmt.Sprint(mappingID))}
@@ -104,12 +104,12 @@ func (s *Sonarr) UpdateRemotePathMappingContext(ctx context.Context,
 }
 
 // DeleteRemotePathMapping removes a single remote path mapping.
-func (s *Sonarr) DeleteRemotePathMapping(mappingID int) error {
+func (s *Sonarr) DeleteRemotePathMapping(mappingID int64) error {
 	return s.DeleteRemotePathMappingContext(context.Background(), mappingID)
 }
 
 // DeleteRemotePathMappingContext removes a single remote path mapping.
-func (s *Sonarr) DeleteRemotePathMappingContext(ctx context.Context, mappingID int) error {
+func (s *Sonarr) DeleteRemotePathMappingContext(ctx context.Context, mappingID int64) error {
 	req := starr.Request{URI: path.Join(bpRemotePathMapping, fmt.Sprint(mappingID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)

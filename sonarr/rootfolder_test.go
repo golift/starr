@@ -126,7 +126,7 @@ func TestGetRootFolder(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := sonarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			output, err := client.GetRootFolder(test.WithRequest.(int))
+			output, err := client.GetRootFolder(test.WithRequest.(int64))
 			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
@@ -219,7 +219,7 @@ func TestDeleteRootFolder(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := sonarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			err := client.DeleteRootFolder(test.WithRequest.(int))
+			err := client.DeleteRootFolder(test.WithRequest.(int64))
 			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 		})
 	}

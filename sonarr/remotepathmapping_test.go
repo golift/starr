@@ -99,7 +99,7 @@ func TestGetRemotePathMapping(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := sonarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			output, err := client.GetRemotePathMapping(test.WithRequest.(int))
+			output, err := client.GetRemotePathMapping(test.WithRequest.(int64))
 			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
@@ -246,7 +246,7 @@ func TestDeleteRemotePathMapping(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := sonarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			err := client.DeleteRemotePathMapping(test.WithRequest.(int))
+			err := client.DeleteRemotePathMapping(test.WithRequest.(int64))
 			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 		})
 	}
