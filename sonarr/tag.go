@@ -91,9 +91,9 @@ func (s *Sonarr) DeleteTag(tagID int) error {
 }
 
 func (s *Sonarr) DeleteTagContext(ctx context.Context, tagID int) error {
-	uri := path.Join(bpTag, strconv.Itoa(tagID))
-	if err := s.DeleteAny(ctx, uri, nil); err != nil {
-		return fmt.Errorf("api.Delete(tag): %w", err)
+	req := starr.Request{URI: path.Join(bpTag, fmt.Sprint(tagID))}
+	if err := s.DeleteAny(ctx, req); err != nil {
+		return fmt.Errorf("api.Delete(%s): %w", req.URI, err)
 	}
 
 	return nil

@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"path"
+
+	"golift.io/starr"
 )
 
 const bpCustomFormat = APIver + "/customFormat"
@@ -114,9 +116,9 @@ func (r *Radarr) DeleteCustomFormat(cfID int) error {
 
 // DeleteCustomFormatContext deletes a custom format.
 func (r *Radarr) DeleteCustomFormatContext(ctx context.Context, cfID int) error {
-	uri := path.Join(bpCustomFormat, fmt.Sprint(cfID))
-	if err := r.DeleteAny(ctx, uri, nil); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", uri, err)
+	req := starr.Request{URI: path.Join(bpCustomFormat, fmt.Sprint(cfID))}
+	if err := r.DeleteAny(ctx, req); err != nil {
+		return fmt.Errorf("api.Delete(%s): %w", req.URI, err)
 	}
 
 	return nil

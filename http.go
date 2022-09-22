@@ -18,59 +18,49 @@ const API = "api"
 
 /* The methods in this file provide assumption-ridden HTTP calls for Starr apps. */
 
+// Request contains the GET and/or POST values for an HTTP request.
+type Request struct {
+	URI   string     // Required: path portion of the URL.
+	Query url.Values // GET parameters work for any request type.
+	Body  io.Reader  // Used in PUT, POST, DELETE. Not for GET.
+}
+
 // Req makes an authenticated request to a starr application and returns the response.
 // Do not forget to read and close the response Body if there is no error.
-func (c *Config) Req(
-	ctx context.Context,
-	uri string,
-	method string,
-	params url.Values,
-	body io.Reader,
-) (*http.Response, error) {
-	return c.req(ctx, c.URL+uri, method, params, body)
+func (c *Config) Req(ctx context.Context, method string, req Request) (*http.Response, error) {
+	return c.req(ctx, method, req)
 }
 
 // api is an internal function to call an api path.
-func (c *Config) api(
-	ctx context.Context,
-	uri string,
-	method string,
-	params url.Values,
-	body io.Reader,
-) (*http.Response, error) {
-	return c.req(ctx, c.SetPath(uri), method, params, body)
+func (c *Config) api(ctx context.Context, method string, req Request) (*http.Response, error) {
+	req.URI = SetAPIPath(req.URI)
+	return c.req(ctx, method, req)
 }
 
 // req is our abstraction method for calling a starr application.
-func (c *Config) req(
-	ctx context.Context,
-	url string,
-	method string,
-	params url.Values,
-	body io.Reader,
-) (*http.Response, error) {
+func (c *Config) req(ctx context.Context, method string, req Request) (*http.Response, error) {
 	if c.Client == nil { // we must have an http client.
 		return nil, ErrNilClient
 	}
 
-	req, err := http.NewRequestWithContext(ctx, method, url, body)
+	httpReq, err := http.NewRequestWithContext(ctx, method, strings.TrimSuffix(c.URL, "/")+req.URI, req.Body)
 	if err != nil {
-		return nil, fmt.Errorf("http.NewRequestWithContext(path): %w", err)
+		return nil, fmt.Errorf("http.NewRequestWithContext(%s): %w", req.URI, err)
 	}
 
-	c.SetHeaders(req)
+	c.SetHeaders(httpReq)
 
-	if params != nil {
-		req.URL.RawQuery = params.Encode()
+	if req.Query != nil {
+		httpReq.URL.RawQuery = req.Query.Encode()
 	}
 
-	resp, err := c.Client.Do(req)
+	resp, err := c.Client.Do(httpReq)
 	if err != nil {
 		return nil, fmt.Errorf("httpClient.Do(req): %w", err)
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		return nil, parseNon200(req, resp)
+		return nil, parseNon200(httpReq, resp)
 	}
 
 	return resp, nil
@@ -135,14 +125,12 @@ func (c *Config) SetHeaders(req *http.Request) {
 	req.Header.Set("X-API-Key", c.APIKey)
 }
 
-// SetPath makes sure the path starts with /api and returns the full URL.
-func (c *Config) SetPath(uriPath string) string {
+// SetAPIPath makes sure the path starts with /api.
+func SetAPIPath(uriPath string) string {
 	if strings.HasPrefix(uriPath, API+"/") ||
 		strings.HasPrefix(uriPath, path.Join("/", API)+"/") {
-		uriPath = path.Join("/", uriPath)
-	} else {
-		uriPath = path.Join("/", API, uriPath)
+		return path.Join("/", uriPath)
 	}
 
-	return strings.TrimSuffix(c.URL, "/") + uriPath
+	return path.Join("/", API, uriPath)
 }

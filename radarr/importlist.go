@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"path"
 	"strconv"
 
 	"golift.io/starr"
@@ -98,9 +99,9 @@ func (r *Radarr) DeleteImportListContext(ctx context.Context, ids []int64) error
 	var errs string
 
 	for _, id := range ids {
-		uri := "v3/importlist/" + strconv.FormatInt(id, starr.Base10)
-		if err := r.DeleteAny(ctx, uri, nil); err != nil {
-			errs += fmt.Errorf("api.Delete(importlist): %w", err).Error() + " "
+		req := starr.Request{URI: path.Join("v3/importlist/", fmt.Sprint(id))}
+		if err := r.DeleteAny(ctx, req); err != nil {
+			errs += fmt.Errorf("api.Delete(%s): %w", req.URI, err).Error() + " "
 		}
 	}
 

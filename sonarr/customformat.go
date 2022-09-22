@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"path"
+
+	"golift.io/starr"
 )
 
 /* Custom Formats do not exist in Sonarr v3; this is v4 only. */
@@ -125,9 +127,9 @@ func (s *Sonarr) DeleteCustomFormat(cfID int) error {
 // DeleteCustomFormatContext deletes a custom format.
 // This data and these endpoints do not exist in Sonarr v3; this is v4 only.
 func (s *Sonarr) DeleteCustomFormatContext(ctx context.Context, cfID int) error {
-	uri := path.Join(bpCustomFormat, fmt.Sprint(cfID))
-	if err := s.DeleteAny(ctx, uri, nil); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", uri, err)
+	req := starr.Request{URI: path.Join(bpCustomFormat, fmt.Sprint(cfID))}
+	if err := s.DeleteAny(ctx, req); err != nil {
+		return fmt.Errorf("api.Delete(%s): %w", req.URI, err)
 	}
 
 	return nil

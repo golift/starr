@@ -24,6 +24,7 @@ This library is currently in use by:
 
 -   [Unpackerr](https://github.com/davidnewhall/unpackerr/)
 -   [Notifiarr](https://github.com/Notifiarr/notifiarr/)
+-   [Checkrr](https://github.com/aetaric/checkrr/)
 
 # Usage
 
