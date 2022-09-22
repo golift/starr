@@ -29,11 +29,6 @@ const (
 	Sonarr   App = "Sonarr"
 )
 
-// Silly constants to avoid screwing up integer->string conversions.
-const (
-	Base10 = 10
-)
-
 // String turns an App name into a string.
 func (a App) String() string {
 	return string(a)

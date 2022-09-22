@@ -25,6 +25,11 @@ type Request struct {
 	Body  io.Reader  // Used in PUT, POST, DELETE. Not for GET.
 }
 
+// String turns a request into a string. Usually used in error messages.
+func (r *Request) String() string {
+	return r.URI
+}
+
 // Req makes an authenticated request to a starr application and returns the response.
 // Do not forget to read and close the response Body if there is no error.
 func (c *Config) Req(ctx context.Context, method string, req Request) (*http.Response, error) {
@@ -60,43 +65,49 @@ func (c *Config) req(ctx context.Context, method string, req Request) (*http.Res
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		return nil, parseNon200(httpReq, resp)
+		return nil, parseNon200(resp)
 	}
 
 	return resp, nil
 }
 
 // parseNon200 attempts to extract an error message from a non-200 response.
-func parseNon200(req *http.Request, resp *http.Response) error {
+func parseNon200(resp *http.Response) error {
 	defer resp.Body.Close()
+
+	reply, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("failed, status: %s: %w", resp.Status, ErrInvalidStatusCode)
+	}
 
 	var msg struct {
 		Msg string `json:"message"`
 	}
 
-	reply, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return fmt.Errorf("failed: %v (status: %s): %w",
-			req.RequestURI, resp.Status, ErrInvalidStatusCode)
+	if err := json.Unmarshal(reply, &msg); err == nil && msg.Msg != "" {
+		return fmt.Errorf("failed, status: %s: %w: %s", resp.Status, ErrInvalidStatusCode, msg.Msg)
 	}
 
-	if err := json.Unmarshal(reply, &msg); err == nil {
-		return fmt.Errorf("failed: %v (status: %s): %w: %s",
-			req.RequestURI, resp.Status, ErrInvalidStatusCode, msg.Msg)
+	var errMsg struct {
+		Msg  string `json:"errorMessage"`
+		Name string `json:"propertyName"`
 	}
 
-	const maxSize = 200 // arbitrary max size
+	if err := json.Unmarshal(reply, &errMsg); err == nil && errMsg.Msg != "" {
+		return fmt.Errorf("failed, status: %s: %w: %s (%s)", resp.Status, ErrInvalidStatusCode, errMsg.Msg, errMsg.Name)
+	}
+
+	const maxSize = 400 // arbitrary max size
 
 	replyStr := string(reply)
 	if len(replyStr) > maxSize {
-		return fmt.Errorf("failed: %v (status: %s): %w: %s",
-			req.RequestURI, resp.Status, ErrInvalidStatusCode, replyStr[:maxSize])
+		return fmt.Errorf("failed, status: %s: %w: %s", resp.Status, ErrInvalidStatusCode, replyStr[:maxSize])
 	}
 
-	return fmt.Errorf("failed: %v (status: %s): %w: %s",
-		req.RequestURI, resp.Status, ErrInvalidStatusCode, replyStr)
+	return fmt.Errorf("failed, status: %s: %w: %s", resp.Status, ErrInvalidStatusCode, replyStr)
 }
 
+// closeResp should be used to close requests that don't require a response body.
 func closeResp(resp *http.Response) {
 	if resp != nil && resp.Body != nil {
 		_, _ = io.ReadAll(resp.Body)

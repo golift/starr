@@ -5,11 +5,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"strconv"
+	"path"
 	"time"
 
 	"golift.io/starr"
 )
+
+const bpCommand = APIver + "/command"
 
 // CommandRequest goes into the /api/v3/command endpoint.
 // This was created from the search command and may not support other commands yet.
@@ -46,11 +48,14 @@ func (s *Sonarr) GetCommands() ([]*CommandResponse, error) {
 	return s.GetCommandsContext(context.Background())
 }
 
+// GetCommands returns all available Sonarr commands.
+// These can be used with SendCommand.
 func (s *Sonarr) GetCommandsContext(ctx context.Context) ([]*CommandResponse, error) {
 	var output []*CommandResponse
 
-	if err := s.GetInto(ctx, "v3/command", nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(command): %w", err)
+	req := starr.Request{URI: bpCommand}
+	if err := s.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -61,6 +66,7 @@ func (s *Sonarr) SendCommand(cmd *CommandRequest) (*CommandResponse, error) {
 	return s.SendCommandContext(context.Background(), cmd)
 }
 
+// SendCommandContext sends a command to Sonarr.
 func (s *Sonarr) SendCommandContext(ctx context.Context, cmd *CommandRequest) (*CommandResponse, error) {
 	var output CommandResponse
 
@@ -70,11 +76,12 @@ func (s *Sonarr) SendCommandContext(ctx context.Context, cmd *CommandRequest) (*
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(cmd); err != nil {
-		return nil, fmt.Errorf("json.Marshal(cmd): %w", err)
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpCommand, err)
 	}
 
-	if err := s.PostInto(ctx, "v3/command", nil, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(command): %w", err)
+	req := starr.Request{URI: bpCommand, Body: &body}
+	if err := s.PostInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -85,6 +92,7 @@ func (s *Sonarr) GetCommandStatus(commandID int64) (*CommandResponse, error) {
 	return s.GetCommandStatusContext(context.Background(), commandID)
 }
 
+// GetCommandStatusContext returns the status of an already started command.
 func (s *Sonarr) GetCommandStatusContext(ctx context.Context, commandID int64) (*CommandResponse, error) {
 	var output CommandResponse
 
@@ -92,9 +100,9 @@ func (s *Sonarr) GetCommandStatusContext(ctx context.Context, commandID int64) (
 		return &output, nil
 	}
 
-	err := s.GetInto(ctx, "v3/command/"+strconv.FormatInt(commandID, starr.Base10), nil, &output)
-	if err != nil {
-		return nil, fmt.Errorf("api.Post(command): %w", err)
+	req := starr.Request{URI: path.Join(bpCommand, fmt.Sprint(commandID))}
+	if err := s.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return &output, nil

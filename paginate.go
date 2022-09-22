@@ -1,6 +1,7 @@
 package starr
 
 import (
+	"fmt"
 	"net/url"
 	"strconv"
 	"strings"
@@ -10,9 +11,9 @@ import (
  * Like GetHistory() and GetQueue().
  */
 
-// Req is the input to search requests that have page-able responses.
+// PageReq is the input to search requests that have page-able responses.
 // These are turned into HTTP parameters.
-type Req struct {
+type PageReq struct {
 	PageSize   int       // 10 is default if not provided.
 	Page       int       // 1 is default if not provided.
 	SortKey    string    // date, timeleft, others?
@@ -49,11 +50,11 @@ func (s *Sorting) Set(val string) {
 
 // Param returns the string value of a Filter eventType.
 func (f Filtering) Param() string {
-	return strconv.Itoa(int(f))
+	return fmt.Sprint(f)
 }
 
 // Params returns a brand new url.Values with all request parameters combined.
-func (r *Req) Params() url.Values {
+func (r *PageReq) Params() url.Values {
 	params := make(url.Values)
 
 	if r.Filter > 0 {
@@ -61,13 +62,13 @@ func (r *Req) Params() url.Values {
 	}
 
 	if r.Page > 0 {
-		params.Set("page", strconv.Itoa(r.Page))
+		params.Set("page", fmt.Sprint(r.Page))
 	} else {
 		params.Set("page", "1")
 	}
 
 	if r.PageSize > 0 {
-		params.Set("pageSize", strconv.Itoa(r.PageSize))
+		params.Set("pageSize", fmt.Sprint(r.PageSize))
 	} else {
 		params.Set("pageSize", "10")
 	}
@@ -94,12 +95,12 @@ func (r *Req) Params() url.Values {
 }
 
 // Encode turns our request parameters into a URI string.
-func (r *Req) Encode() string {
+func (r *PageReq) Encode() string {
 	return r.Params().Encode()
 }
 
 // CheckSet sets a request parameter if it's not already set.
-func (r *Req) CheckSet(key, value string) { //nolint:cyclop
+func (r *PageReq) CheckSet(key, value string) { //nolint:cyclop
 	switch strings.ToLower(key) {
 	case "page":
 		if r.Page == 0 {
@@ -129,7 +130,7 @@ func (r *Req) CheckSet(key, value string) { //nolint:cyclop
 }
 
 // Set sets a request parameter.
-func (r *Req) Set(key, value string) {
+func (r *PageReq) Set(key, value string) {
 	switch strings.ToLower(key) {
 	case "page":
 		r.Page, _ = strconv.Atoi(value)

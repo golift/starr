@@ -6,9 +6,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"path"
-	"strconv"
+
+	"golift.io/starr"
 )
 
+const bpIndexerConfig = APIver + "/config/indexer"
+
+// IndexerConfig represents the /config/indexer endpoint.
 type IndexerConfig struct {
 	ID              int64 `json:"id"`
 	MaximumSize     int64 `json:"maximumSize"`
@@ -17,21 +21,21 @@ type IndexerConfig struct {
 	RssSyncInterval int64 `json:"rssSyncInterval"`
 }
 
-const bpIndexerConfig = APIver + "/config/indexer"
-
-// GetIndexerConfig returns the indexerConfig.
+// GetIndexerConfig returns an Indexer Config.
 func (s *Sonarr) GetIndexerConfig() (*IndexerConfig, error) {
 	return s.GetIndexerConfigContext(context.Background())
 }
 
+// GetIndexerConfigContext returns the indexer Config.
 func (s *Sonarr) GetIndexerConfigContext(ctx context.Context) (*IndexerConfig, error) {
-	var output *IndexerConfig
+	var output IndexerConfig
 
-	if err := s.GetInto(ctx, bpIndexerConfig, nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(indexerConfig): %w", err)
+	req := starr.Request{URI: bpIndexerConfig}
+	if err := s.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
-	return output, nil
+	return &output, nil
 }
 
 // UpdateIndexerConfig update the single indexerConfig.
@@ -39,17 +43,18 @@ func (s *Sonarr) UpdateIndexerConfig(indexerConfig *IndexerConfig) (*IndexerConf
 	return s.UpdateIndexerConfigContext(context.Background(), indexerConfig)
 }
 
+// UpdateIndexerConfigContext update the single indexerConfig.
 func (s *Sonarr) UpdateIndexerConfigContext(ctx context.Context, indexerConfig *IndexerConfig) (*IndexerConfig, error) {
-	var output IndexerConfig
-
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(indexerConfig); err != nil {
-		return nil, fmt.Errorf("json.Marshal(indexerConfig): %w", err)
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpIndexerConfig, err)
 	}
 
-	uri := path.Join(bpIndexerConfig, strconv.Itoa(int(indexerConfig.ID)))
-	if err := s.PutInto(ctx, uri, nil, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(indexerConfig): %w", err)
+	var output IndexerConfig
+
+	req := starr.Request{URI: path.Join(bpIndexerConfig, fmt.Sprint(indexerConfig.ID)), Body: &body}
+	if err := s.PutInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return &output, nil

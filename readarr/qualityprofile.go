@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"path"
-	"strconv"
 
 	"golift.io/starr"
 )
@@ -27,15 +26,16 @@ func (r *Readarr) GetQualityProfiles() ([]*QualityProfile, error) {
 	return r.GetQualityProfilesContext(context.Background())
 }
 
+// GetQualityProfilesContext returns the quality profiles.
 func (r *Readarr) GetQualityProfilesContext(ctx context.Context) ([]*QualityProfile, error) {
-	var profiles []*QualityProfile
+	var output []*QualityProfile
 
-	err := r.GetInto(ctx, bpQualityProfile, nil, &profiles)
-	if err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", bpQualityProfile, err)
+	req := starr.Request{URI: bpQualityProfile}
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
-	return profiles, nil
+	return output, nil
 }
 
 // AddQualityProfile updates a quality profile in place.
@@ -43,6 +43,7 @@ func (r *Readarr) AddQualityProfile(profile *QualityProfile) (int64, error) {
 	return r.AddQualityProfileContext(context.Background(), profile)
 }
 
+// AddQualityProfileContext updates a quality profile in place.
 func (r *Readarr) AddQualityProfileContext(ctx context.Context, profile *QualityProfile) (int64, error) {
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(profile); err != nil {
@@ -50,8 +51,10 @@ func (r *Readarr) AddQualityProfileContext(ctx context.Context, profile *Quality
 	}
 
 	var output QualityProfile
-	if err := r.PostInto(ctx, bpQualityProfile, nil, &body, &output); err != nil {
-		return 0, fmt.Errorf("api.Post(%s): %w", bpQualityProfile, err)
+
+	req := starr.Request{URI: bpQualityProfile, Body: &body}
+	if err := r.PostInto(ctx, req, &output); err != nil {
+		return 0, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return output.ID, nil
@@ -62,6 +65,7 @@ func (r *Readarr) UpdateQualityProfile(profile *QualityProfile) error {
 	return r.UpdateQualityProfileContext(context.Background(), profile)
 }
 
+// UpdateQualityProfileContext updates a quality profile in place.
 func (r *Readarr) UpdateQualityProfileContext(ctx context.Context, profile *QualityProfile) error {
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(profile); err != nil {
@@ -70,9 +74,9 @@ func (r *Readarr) UpdateQualityProfileContext(ctx context.Context, profile *Qual
 
 	var output interface{}
 
-	uri := path.Join(bpQualityProfile, strconv.FormatInt(profile.ID, starr.Base10))
-	if err := r.PutInto(ctx, uri, nil, &body, &output); err != nil {
-		return fmt.Errorf("api.Put(%s): %w", bpQualityProfile, err)
+	req := starr.Request{URI: path.Join(bpQualityProfile, fmt.Sprint(profile.ID)), Body: &body}
+	if err := r.PutInto(ctx, req, &output); err != nil {
+		return fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return nil
@@ -87,7 +91,7 @@ func (r *Readarr) DeleteQualityProfile(profileID int64) error {
 func (r *Readarr) DeleteQualityProfileContext(ctx context.Context, profileID int64) error {
 	req := starr.Request{URI: path.Join(bpQualityProfile, fmt.Sprint(profileID))}
 	if err := r.DeleteAny(ctx, req); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", req.URI, err)
+		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}
 
 	return nil

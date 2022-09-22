@@ -5,9 +5,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
+	"golift.io/starr"
 )
 
 /* seasonPass only seems to handle POSTs. */
+
+const bpSeasonPass = APIver + "/seasonPass"
 
 // SeasonPass is the input payload for a seasonPass update.
 type SeasonPass struct {
@@ -36,14 +40,14 @@ func (s *Sonarr) UpdateSeasonPass(seasonPass *SeasonPass) error {
 func (s *Sonarr) UpdateSeasonPassContext(ctx context.Context, seasonPass *SeasonPass) error {
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(seasonPass); err != nil {
-		return fmt.Errorf("json.Marshal(seasonPass): %w", err)
+		return fmt.Errorf("json.Marshal(%s): %w", bpSeasonPass, err)
 	}
 
-	var output interface{}
+	var output interface{} // not sure what this looks like
 
-	uri := "v3/seasonPass"
-	if err := s.PostInto(ctx, uri, nil, &body, &output); err != nil {
-		return fmt.Errorf("api.Post(seasonPass): %w", err)
+	req := starr.Request{URI: bpSeasonPass, Body: &body}
+	if err := s.PostInto(ctx, req, &output); err != nil {
+		return fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return nil

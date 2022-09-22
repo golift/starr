@@ -6,11 +6,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
-	"strconv"
+	"path"
 	"time"
 
 	"golift.io/starr"
 )
+
+const bpArtist = APIver + "/artist"
 
 // Artist represents the /api/v1/artist endpoint, and it's part of an Album.
 type Artist struct {
@@ -62,20 +64,18 @@ func (l *Lidarr) GetArtist(mbID string) ([]*Artist, error) {
 
 // GetArtistContext returns an artist or all artists.
 func (l *Lidarr) GetArtistContext(ctx context.Context, mbID string) ([]*Artist, error) {
-	params := make(url.Values)
-
+	req := starr.Request{URI: bpArtist, Query: make(url.Values)}
 	if mbID != "" {
-		params.Add("mbId", mbID)
+		req.Query.Add("mbId", mbID)
 	}
 
-	var artist []*Artist
+	var output []*Artist
 
-	err := l.GetInto(ctx, "v1/artist", params, &artist)
-	if err != nil {
-		return artist, fmt.Errorf("api.Get(artist): %w", err)
+	if err := l.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
-	return artist, nil
+	return output, nil
 }
 
 // GetArtistByID returns an artist from an ID.
@@ -85,14 +85,14 @@ func (l *Lidarr) GetArtistByID(artistID int64) (*Artist, error) {
 
 // GetArtistByIDContext returns an artist from an ID.
 func (l *Lidarr) GetArtistByIDContext(ctx context.Context, artistID int64) (*Artist, error) {
-	var artist Artist
+	var output Artist
 
-	err := l.GetInto(ctx, "v1/artist/"+strconv.FormatInt(artistID, starr.Base10), nil, &artist)
-	if err != nil {
-		return &artist, fmt.Errorf("api.Get(artist): %w", err)
+	req := starr.Request{URI: path.Join(bpArtist, fmt.Sprint(artistID))}
+	if err := l.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
-	return &artist, nil
+	return &output, nil
 }
 
 // AddArtist adds a new artist to Lidarr, and probably does not yet work.
@@ -104,17 +104,16 @@ func (l *Lidarr) AddArtist(artist *Artist) (*Artist, error) {
 func (l *Lidarr) AddArtistContext(ctx context.Context, artist *Artist) (*Artist, error) {
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(artist); err != nil {
-		return nil, fmt.Errorf("json.Marshal(artist): %w", err)
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpArtist, err)
 	}
 
-	params := make(url.Values)
-	params.Add("moveFiles", "true")
+	req := starr.Request{URI: bpArtist, Query: make(url.Values), Body: &body}
+	req.Query.Add("moveFiles", "true")
 
 	var output Artist
 
-	err := l.PostInto(ctx, "v1/artist", params, &body, &output)
-	if err != nil {
-		return nil, fmt.Errorf("api.Post(artist): %w", err)
+	if err := l.PostInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -129,17 +128,16 @@ func (l *Lidarr) UpdateArtist(artist *Artist) (*Artist, error) {
 func (l *Lidarr) UpdateArtistContext(ctx context.Context, artist *Artist) (*Artist, error) {
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(artist); err != nil {
-		return nil, fmt.Errorf("json.Marshal(artist): %w", err)
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpArtist, err)
 	}
 
-	params := make(url.Values)
-	params.Add("moveFiles", "true")
+	req := starr.Request{URI: path.Join(bpArtist, fmt.Sprint(artist.ID)), Query: make(url.Values), Body: &body}
+	req.Query.Add("moveFiles", "true")
 
 	var output Artist
 
-	err := l.PutInto(ctx, "v1/artist/"+strconv.FormatInt(artist.ID, starr.Base10), params, &body, &output)
-	if err != nil {
-		return nil, fmt.Errorf("api.Put(artist): %w", err)
+	if err := l.PutInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return &output, nil

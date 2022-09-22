@@ -6,10 +6,48 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
-	"strconv"
+	"path"
+	"time"
 
 	"golift.io/starr"
 )
+
+const bpEpisodeFile = APIver + "/episodeFile"
+
+// EpisodeFile is the output from the /api/v3/episodeFile endpoint.
+type EpisodeFile struct {
+	ID                   int64          `json:"id"`
+	SeriesID             int64          `json:"seriesId"`
+	SeasonNumber         int            `json:"seasonNumber"`
+	RelativePath         string         `json:"relativePath"`
+	Path                 string         `json:"path"`
+	Size                 int64          `json:"size"`
+	DateAdded            time.Time      `json:"dateAdded"`
+	SceneName            string         `json:"sceneName"`
+	ReleaseGroup         string         `json:"releaseGroup"`
+	Language             *starr.Value   `json:"language"`
+	Quality              *starr.Quality `json:"quality"`
+	MediaInfo            *MediaInfo     `json:"mediaInfo"`
+	QualityCutoffNotMet  bool           `json:"qualityCutoffNotMet"`
+	LanguageCutoffNotMet bool           `json:"languageCutoffNotMet"`
+}
+
+// MediaInfo is part of an EpisodeFile.
+type MediaInfo struct {
+	AudioBitrate     int            `json:"audioBitrate"`
+	AudioChannels    float64        `json:"audioChannels"`
+	AudioCodec       string         `json:"audioCodec"`
+	AudioLanguages   string         `json:"audioLanguages"`
+	AudioStreamCount int            `json:"audioStreamCount"`
+	VideoBitDepth    int            `json:"videoBitDepth"`
+	VideoBitrate     int            `json:"videoBitrate"`
+	VideoCodec       string         `json:"videoCodec"`
+	VideoFPS         float64        `json:"videoFps"`
+	Resolution       string         `json:"resolution"`
+	RunTime          starr.PlayTime `json:"runTime"`
+	ScanType         string         `json:"scanType"`
+	Subtitles        string         `json:"subtitles"`
+}
 
 // GetEpisodeFiles returns information about episode files by episode file IDs.
 func (s *Sonarr) GetEpisodeFiles(episodeFileIDs ...int64) ([]*EpisodeFile, error) {
@@ -18,21 +56,17 @@ func (s *Sonarr) GetEpisodeFiles(episodeFileIDs ...int64) ([]*EpisodeFile, error
 
 // GetEpisodeFilesContext returns information about episode files by episode file IDs.
 func (s *Sonarr) GetEpisodeFilesContext(ctx context.Context, episodeFileIDs ...int64) ([]*EpisodeFile, error) {
-	var (
-		output []*EpisodeFile
-		ids    string
-	)
-
+	var ids string
 	for _, efID := range episodeFileIDs {
-		ids += strconv.FormatInt(efID, starr.Base10) + "," // the extra comma is ok.
+		ids += fmt.Sprintf("%d,", efID) // the extra comma is ok.
 	}
 
-	params := make(url.Values)
-	params.Add("episodeFileIds", ids)
+	req := starr.Request{URI: bpEpisodeFile, Query: make(url.Values)}
+	req.Query.Add("episodeFileIds", ids)
 
-	err := s.GetInto(ctx, "v3/episodeFile", params, &output)
-	if err != nil {
-		return nil, fmt.Errorf("api.Get(episodeFile): %w", err)
+	var output []*EpisodeFile
+	if err := s.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -47,12 +81,11 @@ func (s *Sonarr) GetSeriesEpisodeFiles(seriesID int64) ([]*EpisodeFile, error) {
 func (s *Sonarr) GetSeriesEpisodeFilesContext(ctx context.Context, seriesID int64) ([]*EpisodeFile, error) {
 	var output []*EpisodeFile
 
-	params := make(url.Values)
-	params.Add("seriesId", strconv.FormatInt(seriesID, starr.Base10))
+	req := starr.Request{URI: bpEpisodeFile, Query: make(url.Values)}
+	req.Query.Add("seriesId", fmt.Sprint(seriesID))
 
-	err := s.GetInto(ctx, "v3/episodeFile", params, &output)
-	if err != nil {
-		return nil, fmt.Errorf("api.Get(episodeFile): %w", err)
+	if err := s.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -70,18 +103,20 @@ func (s *Sonarr) UpdateEpisodeFileQualityContext(
 	qualityID int64,
 ) (*EpisodeFile, error) {
 	var body bytes.Buffer
-	if err := json.NewEncoder(&body).Encode(&EpisodeFile{
+
+	err := json.NewEncoder(&body).Encode(&EpisodeFile{
 		ID:      episodeFileID,
 		Quality: &starr.Quality{Quality: &starr.BaseQuality{ID: qualityID}},
-	}); err != nil {
-		return nil, fmt.Errorf("json.Marshal(episodeFileID): %w", err)
+	})
+	if err != nil {
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpEpisodeFile, err)
 	}
 
 	var output EpisodeFile
 
-	err := s.PutInto(ctx, "v3/episodeFile/"+strconv.FormatInt(episodeFileID, starr.Base10), nil, &body, &output)
-	if err != nil {
-		return nil, fmt.Errorf("api.Put(episodeFile): %w", err)
+	req := starr.Request{URI: path.Join(bpEpisodeFile, fmt.Sprint(episodeFileID)), Body: &body}
+	if err := s.PutInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -94,9 +129,9 @@ func (s *Sonarr) DeleteEpisodeFile(episodeFileID int64) error {
 
 // DeleteEpisodeFileContext deletes an episode file, and takes a context.
 func (s *Sonarr) DeleteEpisodeFileContext(ctx context.Context, episodeFileID int64) error {
-	req := starr.Request{URI: "v3/episodeFile/" + fmt.Sprint(episodeFileID)}
+	req := starr.Request{URI: path.Join(bpEpisodeFile, fmt.Sprint(episodeFileID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", req.URI, err)
+		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}
 
 	return nil

@@ -6,11 +6,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
-	"strconv"
+	"path"
 	"time"
 
 	"golift.io/starr"
 )
+
+const bpBook = APIver + "/book"
 
 // Book is the /api/v1/book endpoint.
 type Book struct {
@@ -150,26 +152,25 @@ type AddBookOutput struct {
 	AnyEditionOk  bool           `json:"anyEditionOk"`
 }
 
-// GetBook returns books. All if gridID is empty.
+// GetBook returns books. All books are returned if gridID is empty.
 func (r *Readarr) GetBook(gridID string) ([]*Book, error) {
 	return r.GetBookContext(context.Background(), gridID)
 }
 
+// GetBookContext returns books. All books are returned if gridID is empty.
 func (r *Readarr) GetBookContext(ctx context.Context, gridID string) ([]*Book, error) {
-	params := make(url.Values)
-
+	req := starr.Request{URI: bpBook, Query: make(url.Values)}
 	if gridID != "" {
-		params.Add("titleSlug", gridID) // this may change, but works for now.
+		req.Query.Add("titleSlug", gridID) // this may change, but works for now.
 	}
 
-	var books []*Book
+	var output []*Book
 
-	err := r.GetInto(ctx, "v1/book", params, &books)
-	if err != nil {
-		return nil, fmt.Errorf("api.Get(book): %w", err)
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
-	return books, nil
+	return output, nil
 }
 
 // GetBookByID returns a book.
@@ -177,15 +178,16 @@ func (r *Readarr) GetBookByID(bookID int64) (*Book, error) {
 	return r.GetBookByIDContext(context.Background(), bookID)
 }
 
+// GetBookByIDContext returns a book.
 func (r *Readarr) GetBookByIDContext(ctx context.Context, bookID int64) (*Book, error) {
-	var book Book
+	var output Book
 
-	err := r.GetInto(ctx, "v1/book/"+strconv.FormatInt(bookID, starr.Base10), nil, &book)
-	if err != nil {
-		return nil, fmt.Errorf("api.Get(book): %w", err)
+	req := starr.Request{URI: path.Join(bpBook, fmt.Sprint(bookID))}
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
-	return &book, nil
+	return &output, nil
 }
 
 // UpdateBook updates a book in place.
@@ -193,20 +195,24 @@ func (r *Readarr) UpdateBook(bookID int64, book *Book) error {
 	return r.UpdateBookContext(context.Background(), bookID, book)
 }
 
+// UpdateBookContext updates a book in place.
 func (r *Readarr) UpdateBookContext(ctx context.Context, bookID int64, book *Book) error {
-	params := make(url.Values)
-	params.Add("moveFiles", "true")
-
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(book); err != nil {
-		return fmt.Errorf("json.Marshal(book): %w", err)
+		return fmt.Errorf("json.Marshal(%s): %w", bpBook, err)
 	}
 
-	var unknown interface{}
+	req := starr.Request{
+		URI:   path.Join(bpBook, fmt.Sprint(bookID)),
+		Query: make(url.Values),
+		Body:  &body,
+	}
+	req.Query.Add("moveFiles", "true")
 
-	err := r.PutInto(ctx, "v1/book/"+strconv.FormatInt(bookID, starr.Base10), params, &body, &unknown)
-	if err != nil {
-		return fmt.Errorf("api.Put(book): %w", err)
+	var output interface{} // do not know what this looks like.
+
+	if err := r.PutInto(ctx, req, &output); err != nil {
+		return fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return nil
@@ -217,18 +223,23 @@ func (r *Readarr) AddBook(book *AddBookInput) (*AddBookOutput, error) {
 	return r.AddBookContext(context.Background(), book)
 }
 
+// AddBookContext adds a new book to the library.
 func (r *Readarr) AddBookContext(ctx context.Context, book *AddBookInput) (*AddBookOutput, error) {
-	params := make(url.Values)
-	params.Add("moveFiles", "true")
-
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(book); err != nil {
-		return nil, fmt.Errorf("json.Marshal(book): %w", err)
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpBook, err)
 	}
 
+	req := starr.Request{
+		URI:   bpBook,
+		Query: make(url.Values),
+		Body:  &body,
+	}
+	req.Query.Add("moveFiles", "true")
+
 	var output AddBookOutput
-	if err := r.PostInto(ctx, "v1/book", params, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(book): %w", err)
+	if err := r.PostInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -239,6 +250,7 @@ func (r *Readarr) Lookup(term string) ([]*Book, error) {
 	return r.LookupContext(context.Background(), term)
 }
 
+// LookupContext will search for books matching the specified search term.
 func (r *Readarr) LookupContext(ctx context.Context, term string) ([]*Book, error) {
 	var output []*Book
 
@@ -246,12 +258,11 @@ func (r *Readarr) LookupContext(ctx context.Context, term string) ([]*Book, erro
 		return output, nil
 	}
 
-	params := make(url.Values)
-	params.Set("term", term)
+	req := starr.Request{URI: path.Join(bpBook, "lookup"), Query: make(url.Values)}
+	req.Query.Set("term", term)
 
-	err := r.GetInto(ctx, "v1/book/lookup", params, &output)
-	if err != nil {
-		return nil, fmt.Errorf("api.Get(book/lookup): %w", err)
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil

@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"path"
-	"strconv"
 
 	"golift.io/starr"
 )
@@ -33,14 +32,14 @@ func (r *Radarr) GetQualityProfiles() ([]*QualityProfile, error) {
 
 // GetQualityProfilesContext returns all configured quality profiles.
 func (r *Radarr) GetQualityProfilesContext(ctx context.Context) ([]*QualityProfile, error) {
-	var profiles []*QualityProfile
+	var output []*QualityProfile
 
-	err := r.GetInto(ctx, bpQualityProfile, nil, &profiles)
-	if err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", bpQualityProfile, err)
+	req := starr.Request{URI: bpQualityProfile}
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
-	return profiles, nil
+	return output, nil
 }
 
 // AddQualityProfile updates a quality profile in place.
@@ -56,8 +55,10 @@ func (r *Radarr) AddQualityProfileContext(ctx context.Context, profile *QualityP
 	}
 
 	var output QualityProfile
-	if err := r.PostInto(ctx, bpQualityProfile, nil, &body, &output); err != nil {
-		return 0, fmt.Errorf("api.Post(%s): %w", bpQualityProfile, err)
+
+	req := starr.Request{URI: bpQualityProfile, Body: &body}
+	if err := r.PostInto(ctx, req, &output); err != nil {
+		return 0, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return output.ID, nil
@@ -77,9 +78,9 @@ func (r *Radarr) UpdateQualityProfileContext(ctx context.Context, profile *Quali
 
 	var output interface{}
 
-	uri := path.Join(bpQualityProfile, strconv.FormatInt(profile.ID, starr.Base10))
-	if err := r.PutInto(ctx, uri, nil, &body, &output); err != nil {
-		return fmt.Errorf("api.Put(%s): %w", bpQualityProfile, err)
+	req := starr.Request{URI: path.Join(bpQualityProfile, fmt.Sprint(profile.ID)), Body: &body}
+	if err := r.PutInto(ctx, req, &output); err != nil {
+		return fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return nil
@@ -94,7 +95,7 @@ func (r *Radarr) DeleteQualityProfile(profileID int64) error {
 func (r *Radarr) DeleteQualityProfileContext(ctx context.Context, profileID int64) error {
 	req := starr.Request{URI: path.Join(bpQualityProfile, fmt.Sprint(profileID))}
 	if err := r.DeleteAny(ctx, req); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", bpQualityProfile, err)
+		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}
 
 	return nil

@@ -6,10 +6,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"path"
-	"strconv"
 
 	"golift.io/starr"
 )
+
+// Define Base Path for MediaManagement calls.
+const bpRootFolder = APIver + "/rootFolder"
 
 // RootFolder is the /api/v3/rootfolder endpoint.
 type RootFolder struct {
@@ -20,19 +22,18 @@ type RootFolder struct {
 	UnmappedFolders []*starr.Path `json:"unmappedFolders,omitempty"`
 }
 
-// Define Base Path for MediaManagement calls.
-const bpRootFolder = APIver + "/rootFolder"
-
 // GetRootFolders returns all configured root folders.
 func (s *Sonarr) GetRootFolders() ([]*RootFolder, error) {
 	return s.GetRootFoldersContext(context.Background())
 }
 
+// GetRootFoldersContext returns all configured root folders.
 func (s *Sonarr) GetRootFoldersContext(ctx context.Context) ([]*RootFolder, error) {
 	var output []*RootFolder
 
-	if err := s.GetInto(ctx, bpRootFolder, nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(rootFolder): %w", err)
+	req := starr.Request{URI: bpRootFolder}
+	if err := s.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -43,15 +44,16 @@ func (s *Sonarr) GetRootFolder(folderID int) (*RootFolder, error) {
 	return s.GetRootFolderContext(context.Background(), folderID)
 }
 
+// GetRootFolderContext returns a single root folder.
 func (s *Sonarr) GetRootFolderContext(ctx context.Context, folderID int) (*RootFolder, error) {
-	var output *RootFolder
+	var output RootFolder
 
-	uri := path.Join(bpRootFolder, strconv.Itoa(folderID))
-	if err := s.GetInto(ctx, uri, nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(rootFolder): %w", err)
+	req := starr.Request{URI: path.Join(bpRootFolder, fmt.Sprint(folderID))}
+	if err := s.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
-	return output, nil
+	return &output, nil
 }
 
 // AddRootFolder creates a root folder.
@@ -59,16 +61,18 @@ func (s *Sonarr) AddRootFolder(folder *RootFolder) (*RootFolder, error) {
 	return s.AddRootFolderContext(context.Background(), folder)
 }
 
+// AddRootFolderContext creates a root folder.
 func (s *Sonarr) AddRootFolderContext(ctx context.Context, folder *RootFolder) (*RootFolder, error) {
 	var output RootFolder
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(folder); err != nil {
-		return nil, fmt.Errorf("json.Marshal(rootFolder): %w", err)
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpRootFolder, err)
 	}
 
-	if err := s.PostInto(ctx, bpRootFolder, nil, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(rootFolder): %w", err)
+	req := starr.Request{URI: bpRootFolder, Body: &body}
+	if err := s.PostInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -79,10 +83,11 @@ func (s *Sonarr) DeleteRootFolder(folderID int) error {
 	return s.DeleteRootFolderContext(context.Background(), folderID)
 }
 
+// DeleteRootFolderContext removes a single root folder.
 func (s *Sonarr) DeleteRootFolderContext(ctx context.Context, folderID int) error {
 	req := starr.Request{URI: path.Join(bpRootFolder, fmt.Sprint(folderID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", req.URI, err)
+		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}
 
 	return nil

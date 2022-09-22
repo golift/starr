@@ -3,7 +3,11 @@ package readarr
 import (
 	"context"
 	"fmt"
+
+	"golift.io/starr"
 )
+
+const bpMetadataProfile = APIver + "/metadataprofile"
 
 // MetadataProfile is the /api/v1/metadataProfile endpoint.
 type MetadataProfile struct {
@@ -22,13 +26,14 @@ func (r *Readarr) GetMetadataProfiles() ([]*MetadataProfile, error) {
 	return r.GetMetadataProfilesContext(context.Background())
 }
 
+// GetMetadataProfilesContext returns the metadata profiles.
 func (r *Readarr) GetMetadataProfilesContext(ctx context.Context) ([]*MetadataProfile, error) {
-	var profiles []*MetadataProfile
+	var output []*MetadataProfile
 
-	err := r.GetInto(ctx, "v1/metadataprofile", nil, &profiles)
-	if err != nil {
-		return nil, fmt.Errorf("api.Get(metadataprofile): %w", err)
+	req := starr.Request{URI: bpMetadataProfile}
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
-	return profiles, nil
+	return output, nil
 }

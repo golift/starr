@@ -6,11 +6,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
-	"strconv"
+	"path"
 	"time"
 
 	"golift.io/starr"
 )
+
+const bpAuthor = APIver + "/author"
 
 // Author is the /api/v1/author endpoint.
 type Author struct {
@@ -79,14 +81,14 @@ func (r *Readarr) GetAuthorByID(authorID int64) (*Author, error) {
 
 // GetAuthorByIDContext returns an author.
 func (r *Readarr) GetAuthorByIDContext(ctx context.Context, authorID int64) (*Author, error) {
-	var author Author
+	var output Author
 
-	err := r.GetInto(ctx, "v1/author/"+strconv.FormatInt(authorID, starr.Base10), nil, &author)
-	if err != nil {
-		return nil, fmt.Errorf("api.Get(author): %w", err)
+	req := starr.Request{URI: path.Join(bpAuthor, fmt.Sprint(authorID))}
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
-	return &author, nil
+	return &output, nil
 }
 
 // UpdateAuthor updates an author in place.
@@ -96,19 +98,22 @@ func (r *Readarr) UpdateAuthor(authorID int64, author *Author) error {
 
 // UpdateAuthorContext updates an author in place.
 func (r *Readarr) UpdateAuthorContext(ctx context.Context, authorID int64, author *Author) error {
-	params := make(url.Values)
-	params.Add("moveFiles", "true")
-
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(author); err != nil {
-		return fmt.Errorf("json.Marshal(author): %w", err)
+		return fmt.Errorf("json.Marshal(%s): %w", bpAuthor, err)
 	}
 
-	var output interface{}
+	var output interface{} // not sure what this looks like.
 
-	uri := "v1/author/" + strconv.FormatInt(authorID, starr.Base10)
-	if err := r.PutInto(ctx, uri, params, &body, &output); err != nil {
-		return fmt.Errorf("api.Put(author): %w", err)
+	req := starr.Request{
+		URI:   path.Join(bpAuthor, fmt.Sprint(authorID)),
+		Query: make(url.Values),
+		Body:  &body,
+	}
+	req.Query.Add("moveFiles", "true")
+
+	if err := r.PutInto(ctx, req, &output); err != nil {
+		return fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return nil

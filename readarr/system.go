@@ -3,10 +3,13 @@ package readarr
 import (
 	"context"
 	"fmt"
+	"path"
 	"time"
 
 	"golift.io/starr"
 )
+
+const bpSystem = APIver + "/system"
 
 // SystemStatus is the /api/v1/system/status endpoint.
 type SystemStatus struct {
@@ -45,28 +48,32 @@ func (r *Readarr) GetSystemStatus() (*SystemStatus, error) {
 	return r.GetSystemStatusContext(context.Background())
 }
 
+// GetSystemStatusContext returns system status.
 func (r *Readarr) GetSystemStatusContext(ctx context.Context) (*SystemStatus, error) {
-	var status SystemStatus
+	var output SystemStatus
 
-	err := r.GetInto(ctx, "v1/system/status", nil, &status)
-	if err != nil {
-		return &status, fmt.Errorf("api.Get(system/status): %w", err)
+	req := starr.Request{URI: path.Join(bpSystem, "status")}
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
-	return &status, nil
+	return &output, nil
 }
 
 // GetBackupFiles returns all available Readarr backup files.
-// Use GetBody to download a file using BackupFile.Path.
+// Use Get() to download a file using BackupFile.Path.
 func (r *Readarr) GetBackupFiles() ([]*starr.BackupFile, error) {
 	return r.GetBackupFilesContext(context.Background())
 }
 
+// GetBackupFilesContext returns all available Readarr backup files.
+// Use Get() to download a file using BackupFile.Path.
 func (r *Readarr) GetBackupFilesContext(ctx context.Context) ([]*starr.BackupFile, error) {
 	var output []*starr.BackupFile
 
-	if err := r.GetInto(ctx, "v1/system/backup", nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(system/backup): %w", err)
+	req := starr.Request{URI: path.Join(bpSystem, "backup")}
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil

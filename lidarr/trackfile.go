@@ -113,9 +113,11 @@ func (l *Lidarr) GetTrackFilesForArtist(artistID int64) ([]*TrackFile, error) {
 func (l *Lidarr) GetTrackFilesForArtistContext(ctx context.Context, artistID int64) ([]*TrackFile, error) {
 	var output []*TrackFile
 
-	params := url.Values{"artistId": []string{fmt.Sprint(artistID)}}
-	if err := l.GetInto(ctx, bpTrackFile, params, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", bpTrackFile, err)
+	req := starr.Request{URI: bpTrackFile, Query: make(url.Values)}
+	req.Query.Add("artistId", fmt.Sprint(artistID))
+
+	if err := l.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -130,9 +132,11 @@ func (l *Lidarr) GetTrackFilesForAlbum(albumID int64) ([]*TrackFile, error) {
 func (l *Lidarr) GetTrackFilesForAlbumContext(ctx context.Context, albumID int64) ([]*TrackFile, error) {
 	var output []*TrackFile
 
-	params := url.Values{"albumId": []string{fmt.Sprint(albumID)}}
-	if err := l.GetInto(ctx, bpTrackFile, params, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", bpTrackFile, err)
+	req := starr.Request{URI: bpTrackFile, Query: make(url.Values)}
+	req.Query.Add("albumId", fmt.Sprint(albumID))
+
+	if err := l.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -151,13 +155,17 @@ func (l *Lidarr) GetTrackFilesContext(ctx context.Context, trackFileIDs []int64)
 		return output, nil
 	}
 
-	params := url.Values{"trackFileIds": make([]string, len(trackFileIDs))}
-	for idx, fileID := range trackFileIDs {
-		params["trackFileIds"][idx] = fmt.Sprint(fileID)
+	req := starr.Request{
+		URI:   bpTrackFile,
+		Query: url.Values{"trackFileIds": make([]string, len(trackFileIDs))},
 	}
 
-	if err := l.GetInto(ctx, bpTrackFile, params, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", bpTrackFile, err)
+	for idx, fileID := range trackFileIDs {
+		req.Query["trackFileIds"][idx] = fmt.Sprint(fileID)
+	}
+
+	if err := l.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -174,12 +182,12 @@ func (l *Lidarr) UpdateTrackFileContext(ctx context.Context, trackFile *TrackFil
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(trackFile); err != nil {
-		return nil, fmt.Errorf("json.Marshal(trackFile): %w", err)
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpTrackFile, err)
 	}
 
-	uri := path.Join(bpTrackFile, fmt.Sprint(trackFile.ID))
-	if err := l.PutInto(ctx, uri, nil, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", uri, err)
+	req := starr.Request{URI: path.Join(bpTrackFile, fmt.Sprint(trackFile.ID)), Body: &body}
+	if err := l.PutInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -194,7 +202,7 @@ func (l *Lidarr) DeleteTrackFile(trackFileID int64) error {
 func (l *Lidarr) DeleteTrackFileContext(ctx context.Context, trackFileID int64) error {
 	req := starr.Request{URI: path.Join(bpTrackFile, fmt.Sprint(trackFileID))}
 	if err := l.DeleteAny(ctx, req); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", req.URI, err)
+		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}
 
 	return nil
@@ -213,12 +221,12 @@ func (l *Lidarr) DeleteTrackFilesContext(ctx context.Context, trackFileIDs []int
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(&postData); err != nil {
-		return fmt.Errorf("json.Marshal(trackFileIDs): %w", err)
+		return fmt.Errorf("json.Marshal(%s): %w", bpTrackFile, err)
 	}
 
 	req := starr.Request{URI: path.Join(bpTrackFile, "bulk"), Body: &body}
 	if err := l.DeleteAny(ctx, req); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", req.URI, err)
+		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}
 
 	return nil

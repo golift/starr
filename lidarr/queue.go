@@ -8,6 +8,8 @@ import (
 	"golift.io/starr"
 )
 
+const bpQueue = APIver + "/queue"
+
 // Queue is the /api/v1/queue endpoint.
 type Queue struct {
 	Page          int            `json:"page"`
@@ -58,7 +60,7 @@ func (l *Lidarr) GetQueueContext(ctx context.Context, records, perPage int) (*Qu
 	perPage = starr.SetPerPage(records, perPage)
 
 	for page := 1; ; page++ {
-		curr, err := l.GetQueuePageContext(ctx, &starr.Req{PageSize: perPage, Page: page})
+		curr, err := l.GetQueuePageContext(ctx, &starr.PageReq{PageSize: perPage, Page: page})
 		if err != nil {
 			return nil, err
 		}
@@ -84,22 +86,22 @@ func (l *Lidarr) GetQueueContext(ctx context.Context, records, perPage int) (*Qu
 
 // GetQueuePage returns a single page from the Lidarr Queue.
 // The page size and number is configurable with the input request parameters.
-func (l *Lidarr) GetQueuePage(params *starr.Req) (*Queue, error) {
+func (l *Lidarr) GetQueuePage(params *starr.PageReq) (*Queue, error) {
 	return l.GetQueuePageContext(context.Background(), params)
 }
 
 // GetQueuePageContext returns a single page from the Lidarr Queue.
 // The page size and number is configurable with the input request parameters.
-func (l *Lidarr) GetQueuePageContext(ctx context.Context, params *starr.Req) (*Queue, error) {
-	var queue Queue
+func (l *Lidarr) GetQueuePageContext(ctx context.Context, params *starr.PageReq) (*Queue, error) {
+	var output Queue
 
 	params.CheckSet("sortKey", "timeleft")
 	params.CheckSet("includeUnknownArtistItems", "true")
 
-	err := l.GetInto(ctx, "v1/queue", params.Params(), &queue)
-	if err != nil {
-		return nil, fmt.Errorf("api.Get(queue): %w", err)
+	req := starr.Request{URI: bpQueue, Query: params.Params()}
+	if err := l.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
-	return &queue, nil
+	return &output, nil
 }

@@ -7,11 +7,13 @@ import (
 	"fmt"
 	"net/url"
 	"path"
-	"strconv"
 	"time"
 
 	"golift.io/starr"
 )
+
+// Define Base Path for Series calls.
+const bpSeries = APIver + "/series"
 
 // AddSeriesInput is the input for /api/v3/series endpoint.
 type AddSeriesInput struct {
@@ -109,15 +111,14 @@ type Statistics struct {
 	PreviousAiring    time.Time `json:"previousAiring"`
 }
 
-// Define Base Path for Series calls.
-const bpSeries = APIver + "/series"
-
 // GetAllSeries returns all configured series.
-// This may not deal well with pagination atm.
+// This may not deal well with pagination atm, let us know?
 func (s *Sonarr) GetAllSeries() ([]*Series, error) {
 	return s.GetAllSeriesContext(context.Background())
 }
 
+// GetAllSeriesContext returns all configured series.
+// This may not deal well with pagination atm, let us know?
 func (s *Sonarr) GetAllSeriesContext(ctx context.Context) ([]*Series, error) {
 	return s.GetSeriesContext(ctx, 0)
 }
@@ -127,16 +128,17 @@ func (s *Sonarr) GetSeries(tvdbID int64) ([]*Series, error) {
 	return s.GetSeriesContext(context.Background(), tvdbID)
 }
 
+// GetSeriesContext locates and returns a series by tvdbID. If tvdbID is 0, returns all series.
 func (s *Sonarr) GetSeriesContext(ctx context.Context, tvdbID int64) ([]*Series, error) {
 	var output []*Series
 
-	params := make(url.Values)
+	req := starr.Request{URI: bpSeries, Query: make(url.Values)}
 	if tvdbID != 0 {
-		params.Add("tvdbId", strconv.FormatInt(tvdbID, starr.Base10))
+		req.Query.Add("tvdbId", fmt.Sprint(tvdbID))
 	}
 
-	if err := s.GetInto(ctx, bpSeries, params, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", bpSeries, err)
+	if err := s.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -147,23 +149,27 @@ func (s *Sonarr) UpdateSeries(series *AddSeriesInput) (*Series, error) {
 	return s.UpdateSeriesContext(context.Background(), series)
 }
 
+// UpdateSeriesContext updates a series in place.
 func (s *Sonarr) UpdateSeriesContext(ctx context.Context, series *AddSeriesInput) (*Series, error) {
-	var output *Series
-
-	params := make(url.Values)
-	params.Add("moveFiles", "true")
-
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(series); err != nil {
-		return nil, fmt.Errorf("json.Marshal(series): %w", err)
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpSeries, err)
 	}
 
-	uri := path.Join(bpSeries, strconv.Itoa(int(series.ID)))
-	if err := s.PutInto(ctx, uri, params, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", uri, err)
+	var output Series
+
+	req := starr.Request{
+		URI:   path.Join(bpSeries, fmt.Sprint(series.ID)),
+		Query: make(url.Values),
+		Body:  &body,
+	}
+	req.Query.Add("moveFiles", "true")
+
+	if err := s.PutInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
-	return output, nil
+	return &output, nil
 }
 
 // AddSeries adds a new series to Sonarr.
@@ -171,19 +177,20 @@ func (s *Sonarr) AddSeries(series *AddSeriesInput) (*Series, error) {
 	return s.AddSeriesContext(context.Background(), series)
 }
 
+// AddSeriesContext adds a new series to Sonarr.
 func (s *Sonarr) AddSeriesContext(ctx context.Context, series *AddSeriesInput) (*Series, error) {
-	var output Series
-
-	params := make(url.Values)
-	params.Add("moveFiles", "true")
-
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(series); err != nil {
-		return nil, fmt.Errorf("json.Marshal(series): %w", err)
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpSeries, err)
 	}
 
-	if err := s.PostInto(ctx, bpSeries, params, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(%s): %w", bpSeries, err)
+	var output Series
+
+	req := starr.Request{URI: bpSeries, Query: make(url.Values), Body: &body}
+	req.Query.Add("moveFiles", "true")
+
+	if err := s.PostInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -194,12 +201,13 @@ func (s *Sonarr) GetSeriesByID(seriesID int64) (*Series, error) {
 	return s.GetSeriesByIDContext(context.Background(), seriesID)
 }
 
+// GetSeriesByIDContext locates and returns a series by DB [series] ID.
 func (s *Sonarr) GetSeriesByIDContext(ctx context.Context, seriesID int64) (*Series, error) {
 	var output Series
 
-	uri := path.Join(bpSeries, strconv.Itoa(int(seriesID)))
-	if err := s.GetInto(ctx, uri, nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", uri, err)
+	req := starr.Request{URI: path.Join(bpSeries, fmt.Sprint(seriesID))}
+	if err := s.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -211,19 +219,20 @@ func (s *Sonarr) GetSeriesLookup(term string, tvdbID int64) ([]*Series, error) {
 	return s.GetSeriesLookupContext(context.Background(), term, tvdbID)
 }
 
+// GetSeriesLookupContext searches for a series [in Servarr] using a search term or a tvdbid.
+// Provide a search term or a tvdbid. If you provide both, tvdbID is used.
 func (s *Sonarr) GetSeriesLookupContext(ctx context.Context, term string, tvdbID int64) ([]*Series, error) {
 	var output []*Series
 
-	params := make(url.Values)
+	req := starr.Request{URI: path.Join(bpSeries, "lookup"), Query: make(url.Values)}
 	if tvdbID > 0 {
-		params.Add("term", "tvdbid:"+strconv.FormatInt(tvdbID, starr.Base10))
+		req.Query.Add("term", "tvdbid:"+fmt.Sprint(tvdbID))
 	} else {
-		params.Add("term", term)
+		req.Query.Add("term", term)
 	}
 
-	uri := path.Join(bpSeries, "lookup")
-	if err := s.GetInto(ctx, uri, params, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", uri, err)
+	if err := s.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -235,6 +244,8 @@ func (s *Sonarr) Lookup(term string) ([]*Series, error) {
 	return s.LookupContext(context.Background(), term)
 }
 
+// Lookup will search for series matching the specified search term.
+// Searches for new shows on TheTVDB.com utilizing sonarr.tv's caching and augmentation proxy.
 func (s *Sonarr) LookupContext(ctx context.Context, term string) ([]*Series, error) {
 	return s.GetSeriesLookupContext(ctx, term, 0)
 }
@@ -246,14 +257,16 @@ func (s *Sonarr) DeleteSeries(seriesID int, deleteFiles bool, importExclude bool
 	return s.DeleteSeriesContext(context.Background(), seriesID, deleteFiles, importExclude)
 }
 
+// DeleteSeries removes a single Series.
+// deleteFiles flag defines the deleteFiles query paramenter.
+// importExclude defines the addImportListExclusion query paramenter.
 func (s *Sonarr) DeleteSeriesContext(ctx context.Context, seriesID int, deleteFiles bool, importExclude bool) error {
-	params := make(url.Values)
-	params.Add("deleteFiles", strconv.FormatBool(deleteFiles))
-	params.Add("addImportListExclusion", strconv.FormatBool(importExclude))
+	req := starr.Request{URI: path.Join(bpSeries, fmt.Sprint(seriesID)), Query: make(url.Values)}
+	req.Query.Add("deleteFiles", fmt.Sprint(deleteFiles))
+	req.Query.Add("addImportListExclusion", fmt.Sprint(importExclude))
 
-	req := starr.Request{URI: path.Join(bpSeries, fmt.Sprint(seriesID)), Query: params}
 	if err := s.DeleteAny(ctx, req); err != nil {
-		return fmt.Errorf("api.Delete(%s): %w", req.URI, err)
+		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}
 
 	return nil

@@ -6,10 +6,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"path"
-	"strconv"
 
 	"golift.io/starr"
 )
+
+const bpImportList = APIver + "/importlist"
 
 // ImportList represents the api/v3/importlist endpoint.
 type ImportList struct {
@@ -60,8 +61,10 @@ func (r *Radarr) GetImportLists() ([]*ImportList, error) {
 // GetImportListsContext returns all import lists.
 func (r *Radarr) GetImportListsContext(ctx context.Context) ([]*ImportList, error) {
 	var output []*ImportList
-	if err := r.GetInto(ctx, "v3/importlist", nil, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(importlist): %w", err)
+
+	req := starr.Request{URI: bpImportList}
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -78,12 +81,14 @@ func (r *Radarr) CreateImportListContext(ctx context.Context, list *ImportList) 
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(list); err != nil {
-		return nil, fmt.Errorf("json.Marshal(list): %w", err)
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpImportList, err)
 	}
 
 	var output ImportList
-	if err := r.PostInto(ctx, "v3/importlist", nil, &body, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(importlist): %w", err)
+
+	req := starr.Request{URI: bpImportList, Body: &body}
+	if err := r.PostInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -99,9 +104,9 @@ func (r *Radarr) DeleteImportListContext(ctx context.Context, ids []int64) error
 	var errs string
 
 	for _, id := range ids {
-		req := starr.Request{URI: path.Join("v3/importlist/", fmt.Sprint(id))}
+		req := starr.Request{URI: path.Join(bpImportList, fmt.Sprint(id))}
 		if err := r.DeleteAny(ctx, req); err != nil {
-			errs += fmt.Errorf("api.Delete(%s): %w", req.URI, err).Error() + " "
+			errs += fmt.Errorf("api.Delete(%s): %w", &req, err).Error() + " "
 		}
 	}
 
@@ -121,14 +126,14 @@ func (r *Radarr) UpdateImportList(list *ImportList) (*ImportList, error) {
 func (r *Radarr) UpdateImportListContext(ctx context.Context, list *ImportList) (*ImportList, error) {
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(list); err != nil {
-		return nil, fmt.Errorf("json.Marshal(list): %w", err)
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpImportList, err)
 	}
 
 	var output ImportList
 
-	err := r.PutInto(ctx, "v3/importlist/"+strconv.FormatInt(list.ID, starr.Base10), nil, &body, &output)
-	if err != nil {
-		return nil, fmt.Errorf("api.Put(importlist): %w", err)
+	req := starr.Request{URI: path.Join(bpImportList, fmt.Sprint(list.ID)), Body: &body}
+	if err := r.PutInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return &output, nil

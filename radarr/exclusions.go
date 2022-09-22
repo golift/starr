@@ -5,9 +5,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"path"
 
 	"golift.io/starr"
 )
+
+const bpExclusions = APIver + "/exclusions"
 
 // Exclusion is a Radarr excluded item.
 type Exclusion struct {
@@ -24,14 +27,14 @@ func (r *Radarr) GetExclusions() ([]*Exclusion, error) {
 
 // GetExclusionsContext returns all configured exclusions from Radarr.
 func (r *Radarr) GetExclusionsContext(ctx context.Context) ([]*Exclusion, error) {
-	var exclusions []*Exclusion
+	var output []*Exclusion
 
-	err := r.GetInto(ctx, "v3/exclusions", nil, &exclusions)
-	if err != nil {
-		return nil, fmt.Errorf("api.Get(exclusions): %w", err)
+	req := starr.Request{URI: bpExclusions}
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
-	return exclusions, nil
+	return output, nil
 }
 
 // DeleteExclusions removes exclusions from Radarr.
@@ -44,9 +47,9 @@ func (r *Radarr) DeleteExclusionsContext(ctx context.Context, ids []int64) error
 	var errs string
 
 	for _, id := range ids {
-		req := starr.Request{URI: "v3/exclusions/" + fmt.Sprint(id)}
+		req := starr.Request{URI: path.Join(bpExclusions, fmt.Sprint(id))}
 		if err := r.DeleteAny(ctx, req); err != nil {
-			errs += err.Error() + " "
+			errs += fmt.Sprintf("api.Post(%s): %v ", &req, err)
 		}
 	}
 
@@ -70,14 +73,14 @@ func (r *Radarr) AddExclusionsContext(ctx context.Context, exclusions []*Exclusi
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(exclusions); err != nil {
-		return fmt.Errorf("json.Marshal(exclusions): %w", err)
+		return fmt.Errorf("json.Marshal(%s): %w", bpExclusions, err)
 	}
 
 	var output interface{}
 
-	uri := "v3/exclusions/bulk"
-	if err := r.PostInto(ctx, uri, nil, &body, &output); err != nil {
-		return fmt.Errorf("api.Post(exclusions): %w", err)
+	req := starr.Request{URI: path.Join(bpExclusions, "bulk"), Body: &body}
+	if err := r.PostInto(ctx, req, &output); err != nil {
+		return fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return nil
