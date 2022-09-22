@@ -44,12 +44,12 @@ func (s *Sonarr) GetReleaseProfilesContext(ctx context.Context) ([]*ReleaseProfi
 }
 
 // GetReleaseProfile returns a single release profile.
-func (s *Sonarr) GetReleaseProfile(profileID int) (*ReleaseProfile, error) {
+func (s *Sonarr) GetReleaseProfile(profileID int64) (*ReleaseProfile, error) {
 	return s.GetReleaseProfileContext(context.Background(), profileID)
 }
 
 // GetReleaseProfileContext returns a single release profile.
-func (s *Sonarr) GetReleaseProfileContext(ctx context.Context, profileID int) (*ReleaseProfile, error) {
+func (s *Sonarr) GetReleaseProfileContext(ctx context.Context, profileID int64) (*ReleaseProfile, error) {
 	var output ReleaseProfile
 
 	req := starr.Request{URI: path.Join(bpReleaseProfile, fmt.Sprint(profileID))}
@@ -105,12 +105,12 @@ func (s *Sonarr) UpdateReleaseProfileContext(ctx context.Context, profile *Relea
 }
 
 // DeleteReleaseProfile removes a single release profile.
-func (s *Sonarr) DeleteReleaseProfile(profileID int) error {
+func (s *Sonarr) DeleteReleaseProfile(profileID int64) error {
 	return s.DeleteReleaseProfileContext(context.Background(), profileID)
 }
 
 // DeleteReleaseProfileContext removes a single release profile.
-func (s *Sonarr) DeleteReleaseProfileContext(ctx context.Context, profileID int) error {
+func (s *Sonarr) DeleteReleaseProfileContext(ctx context.Context, profileID int64) error {
 	req := starr.Request{URI: path.Join(bpReleaseProfile, fmt.Sprint(profileID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)

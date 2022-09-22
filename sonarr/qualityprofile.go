@@ -44,12 +44,12 @@ func (s *Sonarr) GetQualityProfilesContext(ctx context.Context) ([]*QualityProfi
 }
 
 // GetQualityProfile returns a single quality profile.
-func (s *Sonarr) GetQualityProfile(profileID int) (*QualityProfile, error) {
+func (s *Sonarr) GetQualityProfile(profileID int64) (*QualityProfile, error) {
 	return s.GetQualityProfileContext(context.Background(), profileID)
 }
 
 // GetQualityProfileContext returns a single quality profile.
-func (s *Sonarr) GetQualityProfileContext(ctx context.Context, profileID int) (*QualityProfile, error) {
+func (s *Sonarr) GetQualityProfileContext(ctx context.Context, profileID int64) (*QualityProfile, error) {
 	var output QualityProfile
 
 	req := starr.Request{URI: path.Join(bpQualityProfile, fmt.Sprint(profileID))}
@@ -105,12 +105,12 @@ func (s *Sonarr) UpdateQualityProfileContext(ctx context.Context, profile *Quali
 }
 
 // DeleteQualityProfile removes a single quality profile.
-func (s *Sonarr) DeleteQualityProfile(profileID int) error {
+func (s *Sonarr) DeleteQualityProfile(profileID int64) error {
 	return s.DeleteQualityProfileContext(context.Background(), profileID)
 }
 
 // DeleteQualityProfileContext removes a single quality profile.
-func (s *Sonarr) DeleteQualityProfileContext(ctx context.Context, profileID int) error {
+func (s *Sonarr) DeleteQualityProfileContext(ctx context.Context, profileID int64) error {
 	req := starr.Request{URI: path.Join(bpQualityProfile, fmt.Sprint(profileID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)

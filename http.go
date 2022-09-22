@@ -26,7 +26,7 @@ type Request struct {
 }
 
 // String turns a request into a string. Usually used in error messages.
-func (r Request) String() string {
+func (r *Request) String() string {
 	return r.URI
 }
 
