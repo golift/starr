@@ -98,7 +98,7 @@ func (s *Sonarr) UpdateLanguageProfileContext(ctx context.Context, profile *Lang
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpLanguageProfile, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpLanguageProfile, fmt.Sprint(int(profile.ID))), Body: &body}
+	req := starr.Request{URI: path.Join(bpLanguageProfile, fmt.Sprint(profile.ID)), Body: &body}
 	if err := s.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}

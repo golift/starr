@@ -38,7 +38,7 @@ func TestGetDownloadClientConfig(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config/downloadClient"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config", "downloadClient"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
@@ -66,7 +66,7 @@ func TestUpdateDownloadClientConfig(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:           "202",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config/downloadClient/1"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config", "downloadClient", "1"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 202,
 			WithRequest: &sonarr.DownloadClientConfig{
@@ -88,7 +88,7 @@ func TestUpdateDownloadClientConfig(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config/downloadClient/1"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config", "downloadClient", "1"),
 			ExpectedMethod: "PUT",
 			WithRequest: &sonarr.DownloadClientConfig{
 				EnableCompletedDownloadHandling: true,

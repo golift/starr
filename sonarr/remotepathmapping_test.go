@@ -68,7 +68,7 @@ func TestGetRemotePathMapping(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "remotePathMapping/1"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "remotePathMapping", "1"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 200,
 			WithRequest:    1,
@@ -83,7 +83,7 @@ func TestGetRemotePathMapping(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "remotePathMapping/1"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "remotePathMapping", "1"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			WithRequest:    1,
@@ -222,7 +222,7 @@ func TestDeleteRemotePathMapping(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "remotePathMapping/2"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "remotePathMapping", "2"),
 			ExpectedMethod: "DELETE",
 			WithRequest:    2,
 			ResponseStatus: 200,
@@ -231,7 +231,7 @@ func TestDeleteRemotePathMapping(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "remotePathMapping/2"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "remotePathMapping", "2"),
 			ExpectedMethod: "DELETE",
 			WithRequest:    2,
 			ResponseStatus: 404,

@@ -10,7 +10,7 @@ import (
 	"golift.io/starr"
 )
 
-// Define Base Path for downloadClientConfig calls.
+// Define Base Path for download client config calls.
 const bpDownloadClientConfig = APIver + "/config/downloadClient"
 
 // DownloadClientConfig is the /api/v3/config/downloadClientConfig endpoint.
@@ -21,12 +21,12 @@ type DownloadClientConfig struct {
 	DownloadClientWorkingFolders    string `json:"downloadClientWorkingFolders"`
 }
 
-// GetDownloadClientConfig returns the downloadClientConfig.
+// GetDownloadClientConfig returns the download client config.
 func (s *Sonarr) GetDownloadClientConfig() (*DownloadClientConfig, error) {
 	return s.GetDownloadClientConfigContext(context.Background())
 }
 
-// GetDownloadClientConfig returns the downloadClientConfig.
+// GetDownloadClientConfig returns the download client config.
 func (s *Sonarr) GetDownloadClientConfigContext(ctx context.Context) (*DownloadClientConfig, error) {
 	var output DownloadClientConfig
 
@@ -38,12 +38,12 @@ func (s *Sonarr) GetDownloadClientConfigContext(ctx context.Context) (*DownloadC
 	return &output, nil
 }
 
-// UpdateDownloadClientConfig update the single downloadClientConfig.
+// UpdateDownloadClientConfig update the single download client config.
 func (s *Sonarr) UpdateDownloadClientConfig(downloadClientConfig *DownloadClientConfig) (*DownloadClientConfig, error) {
 	return s.UpdateDownloadClientConfigContext(context.Background(), downloadClientConfig)
 }
 
-// UpdateDownloadClientConfig update the single downloadClientConfig.
+// UpdateDownloadClientConfig update the single download client config.
 func (s *Sonarr) UpdateDownloadClientConfigContext(ctx context.Context,
 	config *DownloadClientConfig,
 ) (*DownloadClientConfig, error) {
@@ -54,7 +54,7 @@ func (s *Sonarr) UpdateDownloadClientConfigContext(ctx context.Context,
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpDownloadClientConfig, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpDownloadClientConfig, fmt.Sprint(int(config.ID))), Body: &body}
+	req := starr.Request{URI: path.Join(bpDownloadClientConfig, fmt.Sprint(config.ID)), Body: &body}
 	if err := s.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}

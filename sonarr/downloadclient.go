@@ -10,10 +10,10 @@ import (
 	"golift.io/starr"
 )
 
-// Define Base Path for downloadClient calls.
+// Define Base Path for download client calls.
 const bpDownloadClient = APIver + "/downloadClient"
 
-// DownloadClientInput is the input for a new or updated downladClient.
+// DownloadClientInput is the input for a new or updated download client.
 type DownloadClientInput struct {
 	Enable                   bool                `json:"enable"`
 	RemoveCompletedDownloads bool                `json:"removeCompletedDownloads"`
@@ -28,7 +28,7 @@ type DownloadClientInput struct {
 	Fields                   []*starr.FieldInput `json:"fields"`
 }
 
-// DownloadClientOutput is the output from the downladClient methods.
+// DownloadClientOutput is the output from the download client methods.
 type DownloadClientOutput struct {
 	Enable                   bool                 `json:"enable"`
 	RemoveCompletedDownloads bool                 `json:"removeCompletedDownloads"`
@@ -45,46 +45,46 @@ type DownloadClientOutput struct {
 	Fields                   []*starr.FieldOutput `json:"fields"`
 }
 
-// GetDownloadClients returns all configured downloadclients.
+// GetDownloadClients returns all configured download clients.
 func (s *Sonarr) GetDownloadClients() ([]*DownloadClientOutput, error) {
 	return s.GetDownloadClientsContext(context.Background())
 }
 
-// GetDownloadClientsContext returns all configured downloadclients.
+// GetDownloadClientsContext returns all configured download clients.
 func (s *Sonarr) GetDownloadClientsContext(ctx context.Context) ([]*DownloadClientOutput, error) {
 	var output []*DownloadClientOutput
 
 	req := starr.Request{URI: bpDownloadClient}
 	if err := s.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get%s): %w", &req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
 }
 
-// GetDownloadClient returns a single downloadclient.
+// GetDownloadClient returns a single download client.
 func (s *Sonarr) GetDownloadClient(downloadclientID int) (*DownloadClientOutput, error) {
 	return s.GetDownloadClientContext(context.Background(), downloadclientID)
 }
 
-// GetDownloadClientContext returns a single downloadclient.
+// GetDownloadClientContext returns a single download client.
 func (s *Sonarr) GetDownloadClientContext(ctx context.Context, downloadclientID int) (*DownloadClientOutput, error) {
 	var output DownloadClientOutput
 
 	req := starr.Request{URI: path.Join(bpDownloadClient, fmt.Sprint(downloadclientID))}
 	if err := s.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get%s): %w", &req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return &output, nil
 }
 
-// AddDownloadClient creates a downloadclient.
+// AddDownloadClient creates a download client.
 func (s *Sonarr) AddDownloadClient(downloadclient *DownloadClientInput) (*DownloadClientOutput, error) {
 	return s.AddDownloadClientContext(context.Background(), downloadclient)
 }
 
-// AddDownloadClientContext creates a downloadclient.
+// AddDownloadClientContext creates a download client.
 func (s *Sonarr) AddDownloadClientContext(ctx context.Context,
 	client *DownloadClientInput,
 ) (*DownloadClientOutput, error) {
@@ -103,12 +103,12 @@ func (s *Sonarr) AddDownloadClientContext(ctx context.Context,
 	return &output, nil
 }
 
-// UpdateDownloadClient updates the downloadclient.
+// UpdateDownloadClient updates the download client.
 func (s *Sonarr) UpdateDownloadClient(downloadclient *DownloadClientInput) (*DownloadClientOutput, error) {
 	return s.UpdateDownloadClientContext(context.Background(), downloadclient)
 }
 
-// UpdateDownloadClientContext updates the downloadclient.
+// UpdateDownloadClientContext updates the download client.
 func (s *Sonarr) UpdateDownloadClientContext(ctx context.Context,
 	client *DownloadClientInput,
 ) (*DownloadClientOutput, error) {
@@ -119,7 +119,7 @@ func (s *Sonarr) UpdateDownloadClientContext(ctx context.Context,
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpDownloadClient, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpDownloadClient, fmt.Sprint(int(client.ID))), Body: &body}
+	req := starr.Request{URI: path.Join(bpDownloadClient, fmt.Sprint(client.ID)), Body: &body}
 	if err := s.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put%s): %w", &req, err)
 	}
@@ -127,12 +127,12 @@ func (s *Sonarr) UpdateDownloadClientContext(ctx context.Context,
 	return &output, nil
 }
 
-// DeleteDownloadClient removes a single downloadclient.
+// DeleteDownloadClient removes a single download client.
 func (s *Sonarr) DeleteDownloadClient(downloadclientID int) error {
 	return s.DeleteDownloadClientContext(context.Background(), downloadclientID)
 }
 
-// DeleteDownloadClientContext removes a single downloadclient.
+// DeleteDownloadClientContext removes a single download client.
 func (s *Sonarr) DeleteDownloadClientContext(ctx context.Context, downloadclientID int) error {
 	req := starr.Request{URI: path.Join(bpDownloadClient, fmt.Sprint(downloadclientID))}
 	if err := s.DeleteAny(ctx, req); err != nil {

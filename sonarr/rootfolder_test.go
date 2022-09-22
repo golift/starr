@@ -94,7 +94,7 @@ func TestGetRootFolder(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "rootFolder/1"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "rootFolder", "1"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 200,
 			WithRequest:    1,
@@ -110,7 +110,7 @@ func TestGetRootFolder(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "rootFolder/1"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "rootFolder", "1"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			WithRequest:    1,
@@ -195,7 +195,7 @@ func TestDeleteRootFolder(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "rootFolder/2"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "rootFolder", "2"),
 			ExpectedMethod: "DELETE",
 			WithRequest:    2,
 			ResponseStatus: 200,
@@ -204,7 +204,7 @@ func TestDeleteRootFolder(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "rootFolder/2"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "rootFolder", "2"),
 			ExpectedMethod: "DELETE",
 			WithRequest:    2,
 			ResponseStatus: 404,

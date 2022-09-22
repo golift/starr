@@ -61,7 +61,7 @@ func TestGetTag(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "tag/1"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "tag", "1"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 200,
 			WithRequest:    1,
@@ -74,7 +74,7 @@ func TestGetTag(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "tag/1"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "tag", "1"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			WithRequest:    1,
@@ -151,7 +151,7 @@ func TestUpdateTag(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "tag/1"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "tag", "1"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 200,
 			WithRequest: &starr.Tag{
@@ -168,7 +168,7 @@ func TestUpdateTag(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "tag/1"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "tag", "1"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 404,
 			WithRequest: &starr.Tag{
@@ -201,7 +201,7 @@ func TestDeleteTag(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "tag/1"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "tag", "1"),
 			ExpectedMethod: "DELETE",
 			WithRequest:    1,
 			ResponseStatus: 200,
@@ -210,7 +210,7 @@ func TestDeleteTag(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "tag/1"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "tag", "1"),
 			ExpectedMethod: "DELETE",
 			WithRequest:    1,
 			ResponseStatus: 404,

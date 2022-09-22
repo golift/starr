@@ -146,7 +146,7 @@ func TestGetDownloadClient(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:            "200",
-			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "downloadClient/1"),
+			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "downloadClient", "1"),
 			ExpectedRequest: "",
 			ExpectedMethod:  "GET",
 			ResponseStatus:  200,
@@ -195,7 +195,7 @@ func TestGetDownloadClient(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "downloadClient/1"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "downloadClient", "1"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
@@ -348,7 +348,7 @@ func TestUpdateDownloadClient(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "downloadClient/3"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "downloadClient", "3"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 200,
 			WithRequest: &sonarr.DownloadClientInput{
@@ -421,7 +421,7 @@ func TestUpdateDownloadClient(t *testing.T) {
 		},
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "downloadClient/3"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "downloadClient", "3"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 404,
 			WithRequest: &sonarr.DownloadClientInput{
@@ -475,7 +475,7 @@ func TestDeleteDownloadClient(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "downloadClient/2"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "downloadClient", "2"),
 			ExpectedMethod: "DELETE",
 			WithRequest:    2,
 			ResponseStatus: 200,
@@ -484,7 +484,7 @@ func TestDeleteDownloadClient(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "downloadClient/2"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "downloadClient", "2"),
 			ExpectedMethod: "DELETE",
 			WithRequest:    2,
 			ResponseStatus: 404,

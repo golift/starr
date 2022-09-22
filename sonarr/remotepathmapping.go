@@ -10,7 +10,7 @@ import (
 	"golift.io/starr"
 )
 
-// Define Base Path for remotePathMapping calls.
+// Define Base Path for remote path mapping calls.
 const bpRemotePathMapping = APIver + "/remotePathMapping"
 
 // RemotePathMapping is the /api/v3/remotePathMapping endpoint.
@@ -21,12 +21,12 @@ type RemotePathMapping struct {
 	LocalPath  string `json:"localPath"`
 }
 
-// GetRemotePathMappings returns all configured remotePathMappings.
+// GetRemotePathMappings returns all configured remote path mappings.
 func (s *Sonarr) GetRemotePathMappings() ([]*RemotePathMapping, error) {
 	return s.GetRemotePathMappingsContext(context.Background())
 }
 
-// GetRemotePathMappingsContext returns all configured remotePathMappings.
+// GetRemotePathMappingsContext returns all configured remote path mappings.
 func (s *Sonarr) GetRemotePathMappingsContext(ctx context.Context) ([]*RemotePathMapping, error) {
 	var output []*RemotePathMapping
 
@@ -38,12 +38,12 @@ func (s *Sonarr) GetRemotePathMappingsContext(ctx context.Context) ([]*RemotePat
 	return output, nil
 }
 
-// GetRemotePathMapping returns a single remotePathMapping.
+// GetRemotePathMapping returns a single remote path mapping.
 func (s *Sonarr) GetRemotePathMapping(mappingID int) (*RemotePathMapping, error) {
 	return s.GetRemotePathMappingContext(context.Background(), mappingID)
 }
 
-// GetRemotePathMappingContext returns a single remotePathMapping.
+// GetRemotePathMappingContext returns a single remote path mapping.
 func (s *Sonarr) GetRemotePathMappingContext(ctx context.Context, mappingID int) (*RemotePathMapping, error) {
 	var output RemotePathMapping
 
@@ -55,12 +55,12 @@ func (s *Sonarr) GetRemotePathMappingContext(ctx context.Context, mappingID int)
 	return &output, nil
 }
 
-// AddRemotePathMapping creates a remotePathMapping.
+// AddRemotePathMapping creates a remote path mapping.
 func (s *Sonarr) AddRemotePathMapping(mapping *RemotePathMapping) (*RemotePathMapping, error) {
 	return s.AddRemotePathMappingContext(context.Background(), mapping)
 }
 
-// AddRemotePathMappingContext creates a remotePathMapping.
+// AddRemotePathMappingContext creates a remote path mapping.
 func (s *Sonarr) AddRemotePathMappingContext(ctx context.Context,
 	mapping *RemotePathMapping,
 ) (*RemotePathMapping, error) {
@@ -79,12 +79,12 @@ func (s *Sonarr) AddRemotePathMappingContext(ctx context.Context,
 	return &output, nil
 }
 
-// UpdateRemotePathMapping updates the remotePathMapping.
+// UpdateRemotePathMapping updates the remote path mapping.
 func (s *Sonarr) UpdateRemotePathMapping(mapping *RemotePathMapping) (*RemotePathMapping, error) {
 	return s.UpdateRemotePathMappingContext(context.Background(), mapping)
 }
 
-// UpdateRemotePathMappingContext updates the remotePathMapping.
+// UpdateRemotePathMappingContext updates the remote path mapping.
 func (s *Sonarr) UpdateRemotePathMappingContext(ctx context.Context,
 	mapping *RemotePathMapping,
 ) (*RemotePathMapping, error) {
@@ -95,7 +95,7 @@ func (s *Sonarr) UpdateRemotePathMappingContext(ctx context.Context,
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpRemotePathMapping, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpRemotePathMapping, fmt.Sprint(int(mapping.ID))), Body: &body}
+	req := starr.Request{URI: path.Join(bpRemotePathMapping, fmt.Sprint(mapping.ID)), Body: &body}
 	if err := s.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
@@ -103,12 +103,12 @@ func (s *Sonarr) UpdateRemotePathMappingContext(ctx context.Context,
 	return &output, nil
 }
 
-// DeleteRemotePathMapping removes a single remotePathMapping.
+// DeleteRemotePathMapping removes a single remote path mapping.
 func (s *Sonarr) DeleteRemotePathMapping(mappingID int) error {
 	return s.DeleteRemotePathMappingContext(context.Background(), mappingID)
 }
 
-// DeleteRemotePathMappingContext removes a single remotePathMapping.
+// DeleteRemotePathMappingContext removes a single remote path mapping.
 func (s *Sonarr) DeleteRemotePathMappingContext(ctx context.Context, mappingID int) error {
 	req := starr.Request{URI: path.Join(bpRemotePathMapping, fmt.Sprint(mappingID))}
 	if err := s.DeleteAny(ctx, req); err != nil {

@@ -23,7 +23,7 @@ func TestGetIndexerConfig(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config/indexer"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config", "indexer"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 200,
 			ResponseBody:   indexerConfigBody,
@@ -38,7 +38,7 @@ func TestGetIndexerConfig(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config/indexer"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config", "indexer"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
@@ -66,7 +66,7 @@ func TestUpdateIndexerConfig(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:           "202",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config/indexer/1"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config", "indexer", "1"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 202,
 			WithRequest: &sonarr.IndexerConfig{
@@ -89,7 +89,7 @@ func TestUpdateIndexerConfig(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config/indexer/1"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config", "indexer", "1"),
 			ExpectedMethod: "PUT",
 			WithRequest: &sonarr.IndexerConfig{
 				ID:              1,

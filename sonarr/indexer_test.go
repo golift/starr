@@ -137,7 +137,7 @@ func TestGetIndexer(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:            "200",
-			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "indexer/1"),
+			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "indexer", "1"),
 			ExpectedRequest: "",
 			ExpectedMethod:  "GET",
 			ResponseStatus:  200,
@@ -182,7 +182,7 @@ func TestGetIndexer(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "indexer/1"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "indexer", "1"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
@@ -327,7 +327,7 @@ func TestUpdateIndexer(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "indexer/1"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "indexer", "1"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 200,
 			WithRequest: &sonarr.IndexerInput{
@@ -394,7 +394,7 @@ func TestUpdateIndexer(t *testing.T) {
 		},
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "indexer/1"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "indexer", "1"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 404,
 			WithRequest: &sonarr.IndexerInput{
@@ -446,7 +446,7 @@ func TestDeleteIndexer(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "indexer/2"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "indexer", "2"),
 			ExpectedMethod: "DELETE",
 			WithRequest:    2,
 			ResponseStatus: 200,
@@ -455,7 +455,7 @@ func TestDeleteIndexer(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "indexer/2"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "indexer", "2"),
 			ExpectedMethod: "DELETE",
 			WithRequest:    2,
 			ResponseStatus: 404,
