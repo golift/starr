@@ -22,7 +22,7 @@ func TestGetDownloadClientConfig(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:            "200",
-			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "config/downloadClient"),
+			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "config", "downloadClient"),
 			ExpectedRequest: "",
 			ExpectedMethod:  "GET",
 			ResponseStatus:  200,
