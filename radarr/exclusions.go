@@ -49,7 +49,7 @@ func (r *Radarr) DeleteExclusionsContext(ctx context.Context, ids []int64) error
 	for _, id := range ids {
 		req := starr.Request{URI: path.Join(bpExclusions, fmt.Sprint(id))}
 		if err := r.DeleteAny(ctx, req); err != nil {
-			errs += fmt.Sprintf("api.Post(%s): %v ", req, err)
+			errs += fmt.Sprintf("api.Post(%s): %v ", &req, err)
 		}
 	}
 
