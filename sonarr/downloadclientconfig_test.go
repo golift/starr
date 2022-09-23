@@ -1,0 +1,119 @@
+package sonarr_test
+
+import (
+	"path"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"golift.io/starr"
+	"golift.io/starr/sonarr"
+)
+
+const downloadClientConfigBody = `{
+    "downloadClientWorkingFolders": "_UNPACK_|_FAILED_",
+    "enableCompletedDownloadHandling": true,
+    "autoRedownloadFailed": false,
+    "id": 1
+}`
+
+func TestGetDownloadClientConfig(t *testing.T) {
+	t.Parallel()
+
+	tests := []*starr.TestMockData{
+		{
+			Name:            "200",
+			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "config", "downloadClient"),
+			ExpectedRequest: "",
+			ExpectedMethod:  "GET",
+			ResponseStatus:  200,
+			ResponseBody:    downloadClientConfigBody,
+			WithRequest:     nil,
+			WithResponse: &sonarr.DownloadClientConfig{
+				EnableCompletedDownloadHandling: true,
+				AutoRedownloadFailed:            false,
+				ID:                              1,
+				DownloadClientWorkingFolders:    "_UNPACK_|_FAILED_",
+			},
+			WithError: nil,
+		},
+		{
+			Name:           "404",
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config", "downloadClient"),
+			ExpectedMethod: "GET",
+			ResponseStatus: 404,
+			ResponseBody:   `{"message": "NotFound"}`,
+			WithError:      starr.ErrInvalidStatusCode,
+			WithResponse:   (*sonarr.DownloadClientConfig)(nil),
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.Name, func(t *testing.T) {
+			t.Parallel()
+			mockServer := test.GetMockServer(t)
+			client := sonarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
+			output, err := client.GetDownloadClientConfig()
+			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
+		})
+	}
+}
+
+func TestUpdateDownloadClientConfig(t *testing.T) {
+	t.Parallel()
+
+	tests := []*starr.TestMockData{
+		{
+			Name:           "202",
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config", "downloadClient", "1"),
+			ExpectedMethod: "PUT",
+			ResponseStatus: 202,
+			WithRequest: &sonarr.DownloadClientConfig{
+				EnableCompletedDownloadHandling: true,
+				AutoRedownloadFailed:            false,
+				ID:                              1,
+				DownloadClientWorkingFolders:    "_UNPACK_|_FAILED_",
+			},
+			ExpectedRequest: `{"enableCompletedDownloadHandling":true,"autoRedownloadFailed":false,` +
+				`"id":1,"downloadClientWorkingFolders":"_UNPACK_|_FAILED_"}` + "\n",
+			ResponseBody: downloadClientConfigBody,
+			WithResponse: &sonarr.DownloadClientConfig{
+				EnableCompletedDownloadHandling: true,
+				AutoRedownloadFailed:            false,
+				ID:                              1,
+				DownloadClientWorkingFolders:    "_UNPACK_|_FAILED_",
+			},
+			WithError: nil,
+		},
+		{
+			Name:           "404",
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config", "downloadClient", "1"),
+			ExpectedMethod: "PUT",
+			WithRequest: &sonarr.DownloadClientConfig{
+				EnableCompletedDownloadHandling: true,
+				AutoRedownloadFailed:            false,
+				ID:                              1,
+				DownloadClientWorkingFolders:    "_UNPACK_|_FAILED_",
+			},
+			ExpectedRequest: `{"enableCompletedDownloadHandling":true,"autoRedownloadFailed":false,` +
+				`"id":1,"downloadClientWorkingFolders":"_UNPACK_|_FAILED_"}` + "\n",
+			ResponseStatus: 404,
+			ResponseBody:   `{"message": "NotFound"}`,
+			WithError:      starr.ErrInvalidStatusCode,
+			WithResponse:   (*sonarr.DownloadClientConfig)(nil),
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.Name, func(t *testing.T) {
+			t.Parallel()
+			mockServer := test.GetMockServer(t)
+			client := sonarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
+			output, err := client.UpdateDownloadClientConfig(test.WithRequest.(*sonarr.DownloadClientConfig))
+			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			assert.EqualValues(t, output, test.WithResponse, "response is not the same as expected")
+		})
+	}
+}

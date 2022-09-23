@@ -686,7 +686,7 @@ func TestGetSeriesByID(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series/2"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series", "2"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 200,
 			ResponseBody:   secondSeries,
@@ -789,7 +789,7 @@ func TestGetSeriesByID(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series/2"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series", "2"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   starr.BodyNotFound,

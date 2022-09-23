@@ -34,7 +34,7 @@ func TestGetNaming(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config/naming"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config", "naming"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 200,
 			ResponseBody:   namingBody,
@@ -60,7 +60,7 @@ func TestGetNaming(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config/naming"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config", "naming"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
@@ -88,7 +88,7 @@ func TestUpdateNaming(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:           "202",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config/naming"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config", "naming"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 202,
 			WithRequest: &sonarr.Naming{
@@ -118,7 +118,7 @@ func TestUpdateNaming(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config/naming"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config", "naming"),
 			ExpectedMethod: "PUT",
 			WithRequest: &sonarr.Naming{
 				ReplaceIllegalCharacters: true,

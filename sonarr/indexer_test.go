@@ -137,7 +137,7 @@ func TestGetIndexer(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:            "200",
-			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "indexer/1"),
+			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "indexer", "1"),
 			ExpectedRequest: "",
 			ExpectedMethod:  "GET",
 			ResponseStatus:  200,
@@ -182,7 +182,7 @@ func TestGetIndexer(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "indexer/1"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "indexer", "1"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
@@ -327,7 +327,7 @@ func TestUpdateIndexer(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "indexer/1"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "indexer", "1"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 200,
 			WithRequest: &sonarr.IndexerInput{
@@ -394,7 +394,7 @@ func TestUpdateIndexer(t *testing.T) {
 		},
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "indexer/1"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "indexer", "1"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 404,
 			WithRequest: &sonarr.IndexerInput{
@@ -446,18 +446,18 @@ func TestDeleteIndexer(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "indexer/2"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "indexer", "2"),
 			ExpectedMethod: "DELETE",
-			WithRequest:    2,
+			WithRequest:    int64(2),
 			ResponseStatus: 200,
 			ResponseBody:   "{}",
 			WithError:      nil,
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "indexer/2"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "indexer", "2"),
 			ExpectedMethod: "DELETE",
-			WithRequest:    2,
+			WithRequest:    int64(2),
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
 			WithError:      starr.ErrInvalidStatusCode,
@@ -470,7 +470,7 @@ func TestDeleteIndexer(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := sonarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			err := client.DeleteIndexer(test.WithRequest.(int))
+			err := client.DeleteIndexer(test.WithRequest.(int64))
 			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 		})
 	}
