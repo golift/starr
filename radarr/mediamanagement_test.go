@@ -38,7 +38,7 @@ func TestGetMediaManagement(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "config/mediaManagement"),
+			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "config", "mediaManagement"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 200,
 			ResponseBody:   mediaManagementBody,
@@ -68,7 +68,7 @@ func TestGetMediaManagement(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "config/mediaManagement"),
+			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "config", "mediaManagement"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
@@ -96,7 +96,7 @@ func TestUpdateMediaManagement(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:           "202",
-			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "config/mediaManagement"),
+			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "config", "mediaManagement"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 202,
 			WithRequest: &radarr.MediaManagement{
@@ -130,7 +130,7 @@ func TestUpdateMediaManagement(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "config/mediaManagement"),
+			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "config", "mediaManagement"),
 			ExpectedMethod: "PUT",
 			WithRequest: &radarr.MediaManagement{
 				EnableMediaInfo: true,

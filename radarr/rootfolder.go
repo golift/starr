@@ -10,7 +10,7 @@ import (
 	"golift.io/starr"
 )
 
-// Define Base Path for rootFolder calls.
+// Define Base Path for root folder calls.
 const bpRootFolder = APIver + "/rootFolder"
 
 // RootFolder is the /api/v3/rootfolder endpoint.
@@ -22,12 +22,12 @@ type RootFolder struct {
 	UnmappedFolders []*starr.Path `json:"unmappedFolders,omitempty"`
 }
 
-// GetRootFolders returns all configured rootFolders.
+// GetRootFolders returns all configured root folders.
 func (r *Radarr) GetRootFolders() ([]*RootFolder, error) {
 	return r.GetRootFoldersContext(context.Background())
 }
 
-// GetRootFoldersContext returns all configured rootFolders.
+// GetRootFoldersContext returns all configured root folders.
 func (r *Radarr) GetRootFoldersContext(ctx context.Context) ([]*RootFolder, error) {
 	var output []*RootFolder
 
@@ -39,12 +39,12 @@ func (r *Radarr) GetRootFoldersContext(ctx context.Context) ([]*RootFolder, erro
 	return output, nil
 }
 
-// GetRootFolder returns a single rootFolder.
+// GetRootFolder returns a single root folder.
 func (r *Radarr) GetRootFolder(folderID int) (*RootFolder, error) {
 	return r.GetRootFolderContext(context.Background(), folderID)
 }
 
-// GetRootFolderContext returns a single rootFolder.
+// GetRootFolderContext returns a single root folder.
 func (r *Radarr) GetRootFolderContext(ctx context.Context, folderID int) (*RootFolder, error) {
 	var output RootFolder
 
@@ -56,12 +56,12 @@ func (r *Radarr) GetRootFolderContext(ctx context.Context, folderID int) (*RootF
 	return &output, nil
 }
 
-// AddRootFolder creates a rootFolder.
+// AddRootFolder creates a root folder.
 func (r *Radarr) AddRootFolder(folder *RootFolder) (*RootFolder, error) {
 	return r.AddRootFolderContext(context.Background(), folder)
 }
 
-// AddRootFolderContext creates a rootFolder.
+// AddRootFolderContext creates a root folder.
 func (r *Radarr) AddRootFolderContext(ctx context.Context, folder *RootFolder) (*RootFolder, error) {
 	var output RootFolder
 
@@ -78,13 +78,13 @@ func (r *Radarr) AddRootFolderContext(ctx context.Context, folder *RootFolder) (
 	return &output, nil
 }
 
-// DeleteRootFolder removes a single rootFolder.
-func (r *Radarr) DeleteRootFolder(folderID int) error {
+// DeleteRootFolder removes a single root folder.
+func (r *Radarr) DeleteRootFolder(folderID int64) error {
 	return r.DeleteRootFolderContext(context.Background(), folderID)
 }
 
-// DeleteRootFolderContext removes a single rootFolder.
-func (r *Radarr) DeleteRootFolderContext(ctx context.Context, folderID int) error {
+// DeleteRootFolderContext removes a single root folder.
+func (r *Radarr) DeleteRootFolderContext(ctx context.Context, folderID int64) error {
 	req := starr.Request{URI: path.Join(bpRootFolder, fmt.Sprint(folderID))}
 	if err := r.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)

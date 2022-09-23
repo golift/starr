@@ -9,7 +9,7 @@ import (
 	"golift.io/starr"
 )
 
-// Define Base Path for mediaManagement calls.
+// Define Base Path for media management calls.
 const bpMediaManagement = APIver + "/config/mediaManagement"
 
 // MediaManagement represents the /config/mediaManagement endpoint.
@@ -36,12 +36,12 @@ type MediaManagement struct {
 	RescanAfterRefresh                      string `json:"rescanAfterRefresh,omitempty"`
 }
 
-// GetMediaManagement returns the mediaManagement.
+// GetMediaManagement returns the media management.
 func (r *Radarr) GetMediaManagement() (*MediaManagement, error) {
 	return r.GetMediaManagementContext(context.Background())
 }
 
-// GetMediaManagement returns the mediaManagement.
+// GetMediaManagement returns the media management.
 func (r *Radarr) GetMediaManagementContext(ctx context.Context) (*MediaManagement, error) {
 	var output MediaManagement
 
@@ -53,12 +53,12 @@ func (r *Radarr) GetMediaManagementContext(ctx context.Context) (*MediaManagemen
 	return &output, nil
 }
 
-// UpdateMediaManagement updates the mediaManagement.
+// UpdateMediaManagement updates the media management.
 func (r *Radarr) UpdateMediaManagement(mMgt *MediaManagement) (*MediaManagement, error) {
 	return r.UpdateMediaManagementContext(context.Background(), mMgt)
 }
 
-// UpdateMediaManagementContext updates the mediaManagement.
+// UpdateMediaManagementContext updates the media management.
 func (r *Radarr) UpdateMediaManagementContext(ctx context.Context, mMgt *MediaManagement) (*MediaManagement, error) {
 	var output MediaManagement
 

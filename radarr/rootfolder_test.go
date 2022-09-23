@@ -94,7 +94,7 @@ func TestGetRootFolder(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "rootFolder/1"),
+			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "rootFolder", "1"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 200,
 			WithRequest:    1,
@@ -110,7 +110,7 @@ func TestGetRootFolder(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "rootFolder/1"),
+			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "rootFolder", "1"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			WithRequest:    1,
@@ -195,18 +195,18 @@ func TestDeleteRootFolder(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "rootFolder/2"),
+			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "rootFolder", "2"),
 			ExpectedMethod: "DELETE",
-			WithRequest:    2,
+			WithRequest:    int64(2),
 			ResponseStatus: 200,
 			ResponseBody:   "{}",
 			WithError:      nil,
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "rootFolder/2"),
+			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "rootFolder", "2"),
 			ExpectedMethod: "DELETE",
-			WithRequest:    2,
+			WithRequest:    int64(2),
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
 			WithError:      starr.ErrInvalidStatusCode,
@@ -219,7 +219,7 @@ func TestDeleteRootFolder(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := radarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			err := client.DeleteRootFolder(test.WithRequest.(int))
+			err := client.DeleteRootFolder(test.WithRequest.(int64))
 			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 		})
 	}
