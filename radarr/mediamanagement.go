@@ -24,15 +24,15 @@ type MediaManagement struct {
 	PathsDefaultStatic                      bool   `json:"pathsDefaultStatic,omitempty"`
 	SetPermissionsLinux                     bool   `json:"setPermissionsLinux,omitempty"`
 	SkipFreeSpaceCheckWhenImporting         bool   `json:"skipFreeSpaceCheckWhenImporting,omitempty"`
-	ID                                      int64  `json:"id,omitempty"`
-	MinimumFreeSpaceWhenImporting           int64  `json:"minimumFreeSpaceWhenImporting,omitempty"`
+	ID                                      int64  `json:"id"`
+	MinimumFreeSpaceWhenImporting           int64  `json:"minimumFreeSpaceWhenImporting"` // 0 or empty not allowed
 	RecycleBinCleanupDays                   int64  `json:"recycleBinCleanupDays,omitempty"`
 	ChmodFolder                             string `json:"chmodFolder,omitempty"`
-	ChownGroup                              string `json:"chownGroup,omitempty"`
+	ChownGroup                              string `json:"chownGroup"` // empty string is valid
 	DownloadPropersAndRepacks               string `json:"downloadPropersAndRepacks,omitempty"`
 	ExtraFileExtensions                     string `json:"extraFileExtensions,omitempty"`
 	FileDate                                string `json:"fileDate,omitempty"`
-	RecycleBin                              string `json:"recycleBin,omitempty"`
+	RecycleBin                              string `json:"recycleBin"` // empty string is valid
 	RescanAfterRefresh                      string `json:"rescanAfterRefresh,omitempty"`
 }
 

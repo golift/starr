@@ -32,6 +32,9 @@ const mediaManagementBody = `{
   "id": 1
 }`
 
+const mediaManagementRequest = `{"enableMediaInfo":true,"id":0,` +
+	`"minimumFreeSpaceWhenImporting":100,"chownGroup":"","recycleBin":""}`
+
 func TestGetMediaManagement(t *testing.T) {
 	t.Parallel()
 
@@ -100,9 +103,10 @@ func TestUpdateMediaManagement(t *testing.T) {
 			ExpectedMethod: "PUT",
 			ResponseStatus: 202,
 			WithRequest: &radarr.MediaManagement{
-				EnableMediaInfo: true,
+				EnableMediaInfo:               true,
+				MinimumFreeSpaceWhenImporting: 100,
 			},
-			ExpectedRequest: `{"enableMediaInfo":true}` + "\n",
+			ExpectedRequest: mediaManagementRequest + "\n",
 			ResponseBody:    mediaManagementBody,
 			WithResponse: &radarr.MediaManagement{
 				AutoRenameFolders:                       false,
@@ -133,9 +137,10 @@ func TestUpdateMediaManagement(t *testing.T) {
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "config", "mediaManagement"),
 			ExpectedMethod: "PUT",
 			WithRequest: &radarr.MediaManagement{
-				EnableMediaInfo: true,
+				EnableMediaInfo:               true,
+				MinimumFreeSpaceWhenImporting: 100,
 			},
-			ExpectedRequest: `{"enableMediaInfo":true}` + "\n",
+			ExpectedRequest: mediaManagementRequest + "\n",
 			ResponseStatus:  404,
 			ResponseBody:    `{"message": "NotFound"}`,
 			WithError:       starr.ErrInvalidStatusCode,

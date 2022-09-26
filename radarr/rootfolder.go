@@ -40,12 +40,12 @@ func (r *Radarr) GetRootFoldersContext(ctx context.Context) ([]*RootFolder, erro
 }
 
 // GetRootFolder returns a single root folder.
-func (r *Radarr) GetRootFolder(folderID int) (*RootFolder, error) {
+func (r *Radarr) GetRootFolder(folderID int64) (*RootFolder, error) {
 	return r.GetRootFolderContext(context.Background(), folderID)
 }
 
 // GetRootFolderContext returns a single root folder.
-func (r *Radarr) GetRootFolderContext(ctx context.Context, folderID int) (*RootFolder, error) {
+func (r *Radarr) GetRootFolderContext(ctx context.Context, folderID int64) (*RootFolder, error) {
 	var output RootFolder
 
 	req := starr.Request{URI: path.Join(bpRootFolder, fmt.Sprint(folderID))}

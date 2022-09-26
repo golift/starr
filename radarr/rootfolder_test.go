@@ -97,7 +97,7 @@ func TestGetRootFolder(t *testing.T) {
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "rootFolder", "1"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 200,
-			WithRequest:    1,
+			WithRequest:    int64(1),
 			ResponseBody:   firstRootFolder,
 			WithResponse: &radarr.RootFolder{
 				Path:            "/movies",
@@ -113,7 +113,7 @@ func TestGetRootFolder(t *testing.T) {
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "rootFolder", "1"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
-			WithRequest:    1,
+			WithRequest:    int64(1),
 			ResponseBody:   `{"message": "NotFound"}`,
 			WithResponse:   (*radarr.RootFolder)(nil),
 			WithError:      starr.ErrInvalidStatusCode,
@@ -126,7 +126,7 @@ func TestGetRootFolder(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := radarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			output, err := client.GetRootFolder(test.WithRequest.(int))
+			output, err := client.GetRootFolder(test.WithRequest.(int64))
 			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
