@@ -75,7 +75,7 @@ func (s *Sonarr) GetNotificationsContext(ctx context.Context) ([]*NotificationOu
 
 	req := starr.Request{URI: bpNotification}
 	if err := s.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get%s): %w", &req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
@@ -92,7 +92,7 @@ func (s *Sonarr) GetNotificationContext(ctx context.Context, notificationID int)
 
 	req := starr.Request{URI: path.Join(bpNotification, fmt.Sprint(notificationID))}
 	if err := s.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get%s): %w", &req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -114,7 +114,7 @@ func (s *Sonarr) AddNotificationContext(ctx context.Context, client *Notificatio
 
 	req := starr.Request{URI: bpNotification, Body: &body}
 	if err := s.PostInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Post%s): %w", &req, err)
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return &output, nil
@@ -136,23 +136,23 @@ func (s *Sonarr) UpdateNotificationContext(ctx context.Context,
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpNotification, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpNotification, fmt.Sprint(int(client.ID))), Body: &body}
+	req := starr.Request{URI: path.Join(bpNotification, fmt.Sprint(client.ID)), Body: &body}
 	if err := s.PutInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Put%s): %w", &req, err)
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
 	return &output, nil
 }
 
 // DeleteNotification removes a single notification.
-func (s *Sonarr) DeleteNotification(notificationID int) error {
+func (s *Sonarr) DeleteNotification(notificationID int64) error {
 	return s.DeleteNotificationContext(context.Background(), notificationID)
 }
 
-func (s *Sonarr) DeleteNotificationContext(ctx context.Context, notificationID int) error {
+func (s *Sonarr) DeleteNotificationContext(ctx context.Context, notificationID int64) error {
 	req := starr.Request{URI: path.Join(bpNotification, fmt.Sprint(notificationID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
-		return fmt.Errorf("api.Delete%s): %w", &req, err)
+		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}
 
 	return nil
