@@ -281,12 +281,15 @@ func (r *Radarr) LookupContext(ctx context.Context, term string) ([]*Movie, erro
 	return output, nil
 }
 
-func (r *Radarr) DeleteMovie(movieID int64) error {
-	return r.DeleteMovieContext(context.Background(), movieID)
+func (r *Radarr) DeleteMovie(movieID int64, deleteFiles, addImportExclusion bool) error {
+	return r.DeleteMovieContext(context.Background(), movieID, deleteFiles, addImportExclusion)
 }
 
-func (r *Radarr) DeleteMovieContext(ctx context.Context, movieID int64) error {
-	req := starr.Request{URI: path.Join(bpMovie, fmt.Sprint(movieID))}
+func (r *Radarr) DeleteMovieContext(ctx context.Context, movieID int64, deleteFiles, addImportExclusion bool) error {
+	req := starr.Request{URI: path.Join(bpMovie, fmt.Sprint(movieID)), Query: make(url.Values)}
+	req.Query.Set("deleteFiles", fmt.Sprint(deleteFiles))
+	req.Query.Set("addImportExclusion", fmt.Sprint(addImportExclusion))
+
 	if err := r.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}
