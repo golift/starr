@@ -13,35 +13,37 @@ const bpSystem = APIver + "/system"
 
 // SystemStatus is the /api/v1/system/status endpoint.
 type SystemStatus struct {
-	Version                string    `json:"version"`
-	BuildTime              time.Time `json:"buildTime"`
-	IsDebug                bool      `json:"isDebug"`
-	IsProduction           bool      `json:"isProduction"`
-	IsAdmin                bool      `json:"isAdmin"`
-	IsUserInteractive      bool      `json:"isUserInteractive"`
-	StartupPath            string    `json:"startupPath"`
 	AppData                string    `json:"appData"`
-	OsName                 string    `json:"osName"`
-	OsVersion              string    `json:"osVersion"`
-	IsNetCore              bool      `json:"isNetCore"`
-	IsMono                 bool      `json:"isMono"`
-	IsLinux                bool      `json:"isLinux"`
-	IsOsx                  bool      `json:"isOsx"`
-	IsWindows              bool      `json:"isWindows"`
-	IsDocker               bool      `json:"isDocker"`
-	Mode                   string    `json:"mode"`
-	Branch                 string    `json:"branch"`
+	AppName                string    `json:"appName"`
 	Authentication         string    `json:"authentication"`
+	Branch                 string    `json:"branch"`
+	BuildTime              time.Time `json:"buildTime"`
 	DatabaseType           string    `json:"databaseType"`
 	DatabaseVersion        string    `json:"databaseVersion"`
-	MigrationVersion       int       `json:"migrationVersion"`
-	URLBase                string    `json:"urlBase"`
-	RuntimeVersion         string    `json:"runtimeVersion"`
-	RuntimeName            string    `json:"runtimeName"`
-	StartTime              time.Time `json:"startTime"`
-	PackageVersion         string    `json:"packageVersion"`
+	InstanceName           string    `json:"instanceName"`
+	IsAdmin                bool      `json:"isAdmin"`
+	IsDebug                bool      `json:"isDebug"`
+	IsDocker               bool      `json:"isDocker"`
+	IsLinux                bool      `json:"isLinux"`
+	IsMono                 bool      `json:"isMono"`
+	IsNetCore              bool      `json:"isNetCore"`
+	IsOsx                  bool      `json:"isOsx"`
+	IsProduction           bool      `json:"isProduction"`
+	IsUserInteractive      bool      `json:"isUserInteractive"`
+	IsWindows              bool      `json:"isWindows"`
+	MigrationVersion       int64     `json:"migrationVersion"`
+	Mode                   string    `json:"mode"`
+	OsName                 string    `json:"osName"`
+	OsVersion              string    `json:"osVersion"`
 	PackageAuthor          string    `json:"packageAuthor"`
 	PackageUpdateMechanism string    `json:"packageUpdateMechanism"`
+	PackageVersion         string    `json:"packageVersion"`
+	RuntimeName            string    `json:"runtimeName"`
+	RuntimeVersion         string    `json:"runtimeVersion"`
+	StartTime              time.Time `json:"startTime"`
+	StartupPath            string    `json:"startupPath"`
+	URLBase                string    `json:"urlBase"`
+	Version                string    `json:"version"`
 }
 
 // GetSystemStatus returns system status.
