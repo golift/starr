@@ -20,7 +20,7 @@ func TestEditMovies(t *testing.T) {
 			ResponseStatus: http.StatusOK,
 			ResponseBody:   `[{"id": 7, "monitored": true},{"id": 3, "monitored": true}]`,
 			WithError:      nil,
-			WithRequest: &radarr.EditMovies{
+			WithRequest: &radarr.BulkEdit{
 				MovieIDs:    []int64{7, 3},
 				Monitored:   starr.True(),
 				DeleteFiles: starr.False(),
@@ -37,7 +37,7 @@ func TestEditMovies(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := radarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			output, err := client.EditMovies(test.WithRequest.(*radarr.EditMovies))
+			output, err := client.EditMovies(test.WithRequest.(*radarr.BulkEdit))
 			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
