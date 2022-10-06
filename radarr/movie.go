@@ -281,10 +281,12 @@ func (r *Radarr) LookupContext(ctx context.Context, term string) ([]*Movie, erro
 	return output, nil
 }
 
+// DeleteMovie removes a movie from the database. Setting deleteFiles true will delete all content for the movie.
 func (r *Radarr) DeleteMovie(movieID int64, deleteFiles, addImportExclusion bool) error {
 	return r.DeleteMovieContext(context.Background(), movieID, deleteFiles, addImportExclusion)
 }
 
+// DeleteMovieContext removes a movie from the database. Setting deleteFiles true will delete all content for the movie.
 func (r *Radarr) DeleteMovieContext(ctx context.Context, movieID int64, deleteFiles, addImportExclusion bool) error {
 	req := starr.Request{URI: path.Join(bpMovie, fmt.Sprint(movieID)), Query: make(url.Values)}
 	req.Query.Set("deleteFiles", fmt.Sprint(deleteFiles))
