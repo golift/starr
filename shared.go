@@ -224,3 +224,19 @@ func (d *PlayTime) MarshalJSON() ([]byte, error) {
 }
 
 var _ json.Unmarshaler = (*PlayTime)(nil)
+
+// ApplyTags is an enum used as an input for Bulk editors, and perhaps other places.
+type ApplyTags string
+
+// ApplyTags enum constants. Use these as inputs for "ApplyTags" member values.
+// Schema doc'd here: https://radarr.video/docs/api/#/MovieEditor/put_api_v3_movie_editor
+const (
+	TagsAdd     ApplyTags = "add"
+	TagsRemove  ApplyTags = "remove"
+	TagsReplace ApplyTags = "replace"
+)
+
+// Ptr returns a pointer to an apply tags value. Useful for a BulkEdit struct.
+func (a ApplyTags) Ptr() *ApplyTags {
+	return &a
+}

@@ -19,7 +19,7 @@ type Movie struct {
 	ID                    int64               `json:"id"`
 	Title                 string              `json:"title,omitempty"`
 	Path                  string              `json:"path,omitempty"`
-	MinimumAvailability   string              `json:"minimumAvailability,omitempty"`
+	MinimumAvailability   Availability        `json:"minimumAvailability,omitempty"`
 	QualityProfileID      int64               `json:"qualityProfileId,omitempty"`
 	TmdbID                int64               `json:"tmdbId,omitempty"`
 	OriginalTitle         string              `json:"originalTitle,omitempty"`
@@ -101,7 +101,7 @@ type MediaInfo struct {
 type AddMovieInput struct {
 	Title               string           `json:"title,omitempty"`
 	TitleSlug           string           `json:"titleSlug,omitempty"`
-	MinimumAvailability string           `json:"minimumAvailability,omitempty"`
+	MinimumAvailability Availability     `json:"minimumAvailability,omitempty"`
 	RootFolderPath      string           `json:"rootFolderPath"`
 	TmdbID              int64            `json:"tmdbId"`
 	QualityProfileID    int64            `json:"qualityProfileId"`
@@ -138,7 +138,7 @@ type AddMovieOutput struct {
 	Studio                string              `json:"studio"`
 	Path                  string              `json:"path"`
 	QualityProfileID      int64               `json:"qualityProfileId"`
-	MinimumAvailability   string              `json:"minimumAvailability"`
+	MinimumAvailability   Availability        `json:"minimumAvailability"`
 	FolderName            string              `json:"folderName"`
 	Runtime               int                 `json:"runtime"`
 	CleanTitle            string              `json:"cleanTitle"`

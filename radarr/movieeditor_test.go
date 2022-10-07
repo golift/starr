@@ -29,6 +29,26 @@ func TestEditMovies(t *testing.T) {
 			ExpectedMethod:  http.MethodPut,
 			WithResponse:    []*radarr.Movie{{ID: 7, Monitored: true}, {ID: 3, Monitored: true}},
 		},
+		{
+			Name:           "200",
+			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "movie", "editor"),
+			ResponseStatus: http.StatusOK,
+			ResponseBody: `[{"id":17,"minimumAvailability":"tba","tags":[44,55,66]},` +
+				`{"id":13,"minimumAvailability":"tba","tags":[44,55,66]}]`,
+			WithError: nil,
+			WithRequest: &radarr.BulkEdit{
+				MovieIDs:            []int64{17, 13},
+				Tags:                []int{44, 55, 66},
+				ApplyTags:           starr.TagsAdd.Ptr(),
+				MinimumAvailability: radarr.AvailabilityToBeAnnounced.Ptr(),
+			},
+			ExpectedRequest: `{"movieIds":[17,13],"minimumAvailability":"tba","tags":[44,55,66],"applyTags":"add"}` + "\n",
+			ExpectedMethod:  http.MethodPut,
+			WithResponse: []*radarr.Movie{
+				{ID: 17, MinimumAvailability: radarr.AvailabilityToBeAnnounced, Tags: []int{44, 55, 66}},
+				{ID: 13, MinimumAvailability: radarr.AvailabilityToBeAnnounced, Tags: []int{44, 55, 66}},
+			},
+		},
 	}
 
 	for _, test := range tests {
@@ -38,8 +58,8 @@ func TestEditMovies(t *testing.T) {
 			mockServer := test.GetMockServer(t)
 			client := radarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.EditMovies(test.WithRequest.(*radarr.BulkEdit))
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
-			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
+			assert.ErrorIs(t, err, test.WithError, "the wrong error was returned")
+			assert.EqualValues(t, test.WithResponse, output, "make sure ResponseBody and WithResponse are a match")
 		})
 	}
 }

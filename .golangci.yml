@@ -30,5 +30,10 @@ linters:
     - dupl
     - nlreturn
 
+#linters-settings:
+#  govet:
+#    enable:
+#      - fieldalignment
+
 run:
   timeout: 35m
