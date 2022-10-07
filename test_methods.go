@@ -40,7 +40,7 @@ func (test *TestMockData) GetMockServer(t *testing.T) *httptest.Server {
 		assert.EqualValues(t, test.ExpectedPath, req.URL.String())
 		writer.WriteHeader(test.ResponseStatus)
 
-		assert.EqualValues(t, req.Method, test.ExpectedMethod)
+		assert.EqualValues(t, test.ExpectedMethod, req.Method)
 
 		body, err := io.ReadAll(req.Body)
 		assert.NoError(t, err)
