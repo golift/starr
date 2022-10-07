@@ -13,32 +13,34 @@ const bpSystem = APIver + "/system"
 
 // SystemStatus is the /api/v3/system/status endpoint.
 type SystemStatus struct {
-	Version                string    `json:"version"`
-	BuildTime              time.Time `json:"buildTime"`
-	IsDebug                bool      `json:"isDebug"`
-	IsProduction           bool      `json:"isProduction"`
-	IsAdmin                bool      `json:"isAdmin"`
-	IsUserInteractive      bool      `json:"isUserInteractive"`
-	StartupPath            string    `json:"startupPath"`
 	AppData                string    `json:"appData"`
-	OsName                 string    `json:"osName"`
-	OsVersion              string    `json:"osVersion"`
-	IsMonoRuntime          bool      `json:"isMonoRuntime"`
-	IsMono                 bool      `json:"isMono"`
+	AppName                string    `json:"appName"`
+	Authentication         string    `json:"authentication"`
+	Branch                 string    `json:"branch"`
+	BuildTime              time.Time `json:"buildTime"`
+	InstanceName           string    `json:"instanceName"`
+	IsAdmin                bool      `json:"isAdmin"`
+	IsDebug                bool      `json:"isDebug"`
 	IsLinux                bool      `json:"isLinux"`
+	IsMono                 bool      `json:"isMono"`
+	IsMonoRuntime          bool      `json:"isMonoRuntime"`
 	IsOsx                  bool      `json:"isOsx"`
+	IsProduction           bool      `json:"isProduction"`
+	IsUserInteractive      bool      `json:"isUserInteractive"`
 	IsWindows              bool      `json:"isWindows"`
 	Mode                   string    `json:"mode"`
-	Branch                 string    `json:"branch"`
-	Authentication         string    `json:"authentication"`
-	SqliteVersion          string    `json:"sqliteVersion"`
-	URLBase                string    `json:"urlBase"`
-	RuntimeVersion         string    `json:"runtimeVersion"`
-	RuntimeName            string    `json:"runtimeName"`
-	StartTime              time.Time `json:"startTime"`
-	PackageVersion         string    `json:"packageVersion"`
+	OsName                 string    `json:"osName"`
+	OsVersion              string    `json:"osVersion"`
 	PackageAuthor          string    `json:"packageAuthor"`
 	PackageUpdateMechanism string    `json:"packageUpdateMechanism"`
+	PackageVersion         string    `json:"packageVersion"`
+	RuntimeName            string    `json:"runtimeName"`
+	RuntimeVersion         string    `json:"runtimeVersion"`
+	SqliteVersion          string    `json:"sqliteVersion"`
+	StartTime              time.Time `json:"startTime"`
+	StartupPath            string    `json:"startupPath"`
+	URLBase                string    `json:"urlBase"`
+	Version                string    `json:"version"`
 }
 
 // GetSystemStatus returns system status.

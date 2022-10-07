@@ -18,8 +18,8 @@ lint:
 # If these catch legitimate uses, just remove the piece that caught it.
 nopollution:
 	# Avoid cross pollution.
-	grep -riE 'readar|radar|sonar|prowl|series|episode|author|book|edition|movie|v3' lidarr   || exit 0 && exit 1
-	grep -riE 'readar|sonar|lidar|prowl|series|episode|author|book|artist|album|v1' radarr   || exit 0 && exit 1
+	grep -riE 'readar|radar|sonar|prowl|series|episode|book|edition|movie|v3' lidarr   || exit 0 && exit 1
+	grep -riE 'readar|sonar|lidar|prowl|series|episode|book|artist|album|v1' radarr   || exit 0 && exit 1
 	grep -riE 'radar|sonar|lidar|prowl|episode|movie|artist|album|v3'  readarr  || exit 0 && exit 1
 	grep -riE 'readar|radar|lidar|prowl|book|edition|movie|artist|album|v1' sonarr   || exit 0 && exit 1
 	grep -riE 'readar|radar|lidar|sonar|series|episode|book|edition|movie|artist|album|track|v3' prowlarr || exit 0 && exit 1
