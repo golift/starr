@@ -63,3 +63,34 @@ func TestEditMovies(t *testing.T) {
 		})
 	}
 }
+
+func TestDeleteMovies(t *testing.T) {
+	t.Parallel()
+
+	tests := []*starr.TestMockData{
+		{
+			Name:           "200",
+			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "movie", "editor"),
+			ResponseStatus: http.StatusOK,
+			WithError:      nil,
+			WithRequest: &radarr.BulkEdit{
+				MovieIDs:    []int64{7, 3},
+				Monitored:   starr.False(),
+				DeleteFiles: starr.True(),
+			},
+			ExpectedRequest: `{"movieIds":[7,3],"monitored":false,"deleteFiles":true}` + "\n",
+			ExpectedMethod:  http.MethodDelete,
+		},
+	}
+
+	for _, test := range tests {
+		test := test
+		t.Run(test.Name, func(t *testing.T) {
+			t.Parallel()
+			mockServer := test.GetMockServer(t)
+			client := radarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
+			err := client.DeleteMovies(test.WithRequest.(*radarr.BulkEdit))
+			assert.ErrorIs(t, err, test.WithError, "the wrong error was returned")
+		})
+	}
+}
