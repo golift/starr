@@ -99,7 +99,11 @@ type Ratings struct {
 	Votes      int64   `json:"votes"`
 	Value      float64 `json:"value"`
 	Popularity float64 `json:"popularity,omitempty"`
+	Type       string  `json:"type,omitempty"`
 }
+
+// OpenRatings is a ratings type that has a source and type.
+type OpenRatings map[string]Ratings
 
 // IsLoaded is a generic struct used in a few places.
 type IsLoaded struct {
