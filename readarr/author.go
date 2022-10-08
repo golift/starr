@@ -27,7 +27,7 @@ type Author struct {
 	Path                string         `json:"path,omitempty"`
 	QualityProfileID    int            `json:"qualityProfileId,omitempty"`
 	MetadataProfileID   int            `json:"metadataProfileId,omitempty"`
-	Genres              []interface{}  `json:"genres,omitempty"`
+	Genres              []string       `json:"genres,omitempty"`
 	CleanName           string         `json:"cleanName,omitempty"`
 	SortName            string         `json:"sortName,omitempty"`
 	Tags                []int          `json:"tags,omitempty"`
