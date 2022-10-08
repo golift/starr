@@ -54,7 +54,7 @@ type Movie struct {
 	Monitored             bool                `json:"monitored"`
 	Popularity            float64             `json:"popularity"`
 	OriginalLanguage      *starr.Value        `json:"originalLanguage,omitempty"`
-	AddOptions            *AddMovieOptions    `json:"addOptions,omitempty"` // only available upon adding a book.
+	AddOptions            *AddMovieOptions    `json:"addOptions,omitempty"` // only available upon adding a movie.
 }
 
 // Collection belongs to a Movie.
