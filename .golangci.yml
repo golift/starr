@@ -5,6 +5,7 @@ issues:
         - nonamedreturns
       path: 'starrcmd/'
     - linters:
+        - gochecknoglobals
         - forcetypeassert
         - funlen
         - maintidx # uhg.
