@@ -13,35 +13,32 @@ import (
 // Define Base Path for Calendar queries.
 const bpCalendar = APIver + "/calendar"
 
-// CalendarTimeFilterFormat is the Go  time format the calendar expects the filter to be in.
-const CalendarTimeFilterFormat = "2006-01-02T03:04:05.000Z"
-
 // Calendar represents the data that may be returned from the calendar endpoint.
 type Calendar struct {
-	ID                         int64          `json:"id"`
-	SeriesID                   int64          `json:"seriesId"`
-	TvdbID                     int64          `json:"tvdbId"`
-	EpisodeFileID              int64          `json:"episodeFileId"`
-	SeasonNumber               int            `json:"seasonNumber"`
-	EpisodeNumber              int            `json:"episodeNumber"`
-	Title                      string         `json:"title"`
+	AbsoluteEpisodeNumber      int            `json:"absoluteEpisodeNumber"`
 	AirDate                    string         `json:"airDate"`
 	AirDateUtc                 time.Time      `json:"airDateUtc"`
-	Overview                   string         `json:"overview"`
+	EndTime                    time.Time      `json:"endTime"`
 	EpisodeFile                *EpisodeFile   `json:"episodeFile"`
+	EpisodeFileID              int64          `json:"episodeFileId"`
+	EpisodeNumber              int            `json:"episodeNumber"`
+	GrabDate                   time.Time      `json:"grabDate"`
+	Grabbed                    bool           `json:"grabbed"`
 	HasFile                    bool           `json:"hasFile"`
+	ID                         int64          `json:"id"`
+	Images                     []*starr.Image `json:"images,omitempty"`
 	Monitored                  bool           `json:"monitored"`
-	AbsoluteEpisodeNumber      int            `json:"absoluteEpisodeNumber"`
+	Overview                   string         `json:"overview"`
 	SceneAbsoluteEpisodeNumber int            `json:"sceneAbsoluteEpisodeNumber"`
 	SceneEpisodeNumber         int            `json:"sceneEpisodeNumber"`
 	SceneSeasonNumber          int            `json:"sceneSeasonNumber"`
-	UnverifiedSceneNumbering   bool           `json:"unverifiedSceneNumbering"`
-	EndTime                    time.Time      `json:"endTime"`
-	GrabDate                   time.Time      `json:"grabDate"`
-	SeriesTitle                string         `json:"seriesTitle"`
+	SeasonNumber               int            `json:"seasonNumber"`
 	Series                     *Series        `json:"series"`
-	Images                     []*starr.Image `json:"images,omitempty"`
-	Grabbed                    bool           `json:"grabbed"`
+	SeriesID                   int64          `json:"seriesId"`
+	SeriesTitle                string         `json:"seriesTitle"`
+	Title                      string         `json:"title"`
+	TvdbID                     int64          `json:"tvdbId"`
+	UnverifiedSceneNumbering   bool           `json:"unverifiedSceneNumbering"`
 }
 
 // CalendarInput defines the filters for fetching calendar items.
@@ -67,11 +64,11 @@ func (s *Sonarr) GetCalendarContext(ctx context.Context, filter CalendarInput) (
 	req := starr.Request{URI: bpCalendar, Query: make(url.Values)}
 
 	if !filter.Start.IsZero() {
-		req.Query.Add("start", filter.Start.UTC().Format(CalendarTimeFilterFormat))
+		req.Query.Add("start", filter.Start.UTC().Format(starr.CalendarTimeFilterFormat))
 	}
 
 	if !filter.End.IsZero() {
-		req.Query.Add("end", filter.End.UTC().Format(CalendarTimeFilterFormat))
+		req.Query.Add("end", filter.End.UTC().Format(starr.CalendarTimeFilterFormat))
 	}
 
 	if filter.Unmonitored != nil {
