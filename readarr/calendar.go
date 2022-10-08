@@ -46,13 +46,13 @@ type CalendarInput struct {
 }
 
 // GetCalendar returns calendars based on filters.
-func (r *Readarr) GetCalendar(filter CalendarInput) ([]*Calendar, error) {
+func (r *Readarr) GetCalendar(filter CalendarInput) ([]*Book, error) {
 	return r.GetCalendarContext(context.Background(), filter)
 }
 
 // GetCalendarContext returns calendars based on filters.
-func (r *Readarr) GetCalendarContext(ctx context.Context, filter CalendarInput) ([]*Calendar, error) {
-	var output []*Calendar
+func (r *Readarr) GetCalendarContext(ctx context.Context, filter CalendarInput) ([]*Book, error) {
+	var output []*Book
 
 	req := starr.Request{URI: bpCalendar, Query: make(url.Values)}
 
@@ -80,13 +80,13 @@ func (r *Readarr) GetCalendarContext(ctx context.Context, filter CalendarInput) 
 }
 
 // GetCalendarID returns a single calendar by ID.
-func (r *Readarr) GetCalendarID(calendarID int64) (*Calendar, error) {
+func (r *Readarr) GetCalendarID(calendarID int64) (*Book, error) {
 	return r.GetCalendarIDContext(context.Background(), calendarID)
 }
 
 // GetCalendarIDContext returns a single calendar by ID.
-func (r *Readarr) GetCalendarIDContext(ctx context.Context, calendarID int64) (*Calendar, error) {
-	var output *Calendar
+func (r *Readarr) GetCalendarIDContext(ctx context.Context, calendarID int64) (*Book, error) {
+	var output *Book
 
 	req := starr.Request{URI: path.Join(bpCalendar, fmt.Sprint(calendarID))}
 	if err := r.GetInto(ctx, req, &output); err != nil {

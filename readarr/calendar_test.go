@@ -63,7 +63,7 @@ var testCalendarJSON = `{
   }`
 
 // This matches the json above.
-var testCalendarStruct = readarr.Calendar{
+var testCalendarStruct = readarr.Book{
 	Added:          time.Date(2020, time.September, 29, 4, 47, 5, 0, time.UTC),
 	AnyEditionOk:   true,
 	Author:         nil,
@@ -128,7 +128,7 @@ func TestGetCalendar(t *testing.T) {
 			},
 			WithError:      nil,
 			ExpectedMethod: http.MethodGet,
-			WithResponse:   []*readarr.Calendar{&testCalendarStruct},
+			WithResponse:   []*readarr.Book{&testCalendarStruct},
 		},
 		{
 			Name: "404",
@@ -145,7 +145,7 @@ func TestGetCalendar(t *testing.T) {
 				End:         time.Unix(1582172420, 0),
 				Unmonitored: starr.True(),
 			},
-			WithResponse: []*readarr.Calendar(nil),
+			WithResponse: []*readarr.Book(nil),
 		},
 	}
 
@@ -184,7 +184,7 @@ func TestGetCalendarID(t *testing.T) {
 			WithError:      starr.ErrInvalidStatusCode,
 			ExpectedMethod: http.MethodGet,
 			WithRequest:    int64(1),
-			WithResponse:   (*readarr.Calendar)(nil),
+			WithResponse:   (*readarr.Book)(nil),
 		},
 	}
 

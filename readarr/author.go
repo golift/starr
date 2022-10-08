@@ -16,31 +16,35 @@ const bpAuthor = APIver + "/author"
 
 // Author is the /api/v1/author endpoint.
 type Author struct {
-	ID                int64          `json:"id"`
-	Status            string         `json:"status,omitempty"`
-	AuthorName        string         `json:"authorName,omitempty"`
-	ForeignAuthorID   string         `json:"foreignAuthorId,omitempty"`
-	TitleSlug         string         `json:"titleSlug,omitempty"`
-	Overview          string         `json:"overview,omitempty"`
-	Links             []*starr.Link  `json:"links,omitempty"`
-	Images            []*starr.Image `json:"images,omitempty"`
-	Path              string         `json:"path,omitempty"`
-	QualityProfileID  int            `json:"qualityProfileId,omitempty"`
-	MetadataProfileID int            `json:"metadataProfileId,omitempty"`
-	Genres            []interface{}  `json:"genres,omitempty"`
-	CleanName         string         `json:"cleanName,omitempty"`
-	SortName          string         `json:"sortName,omitempty"`
-	Tags              []int          `json:"tags,omitempty"`
-	Added             time.Time      `json:"added,omitempty"`
-	Ratings           *starr.Ratings `json:"ratings,omitempty"`
-	Statistics        *Statistics    `json:"statistics,omitempty"`
-	LastBook          *AuthorBook    `json:"lastBook,omitempty"`
-	NextBook          *AuthorBook    `json:"nextBook,omitempty"`
-	Ended             bool           `json:"ended,omitempty"`
-	Monitored         bool           `json:"monitored"`
+	ID                  int64          `json:"id"`
+	Status              string         `json:"status,omitempty"`
+	AuthorName          string         `json:"authorName,omitempty"`
+	ForeignAuthorID     string         `json:"foreignAuthorId,omitempty"`
+	TitleSlug           string         `json:"titleSlug,omitempty"`
+	Overview            string         `json:"overview,omitempty"`
+	Links               []*starr.Link  `json:"links,omitempty"`
+	Images              []*starr.Image `json:"images,omitempty"`
+	Path                string         `json:"path,omitempty"`
+	QualityProfileID    int            `json:"qualityProfileId,omitempty"`
+	MetadataProfileID   int            `json:"metadataProfileId,omitempty"`
+	Genres              []interface{}  `json:"genres,omitempty"`
+	CleanName           string         `json:"cleanName,omitempty"`
+	SortName            string         `json:"sortName,omitempty"`
+	Tags                []int          `json:"tags,omitempty"`
+	Added               time.Time      `json:"added,omitempty"`
+	Ratings             *starr.Ratings `json:"ratings,omitempty"`
+	Statistics          *Statistics    `json:"statistics,omitempty"`
+	LastBook            *AuthorBook    `json:"lastBook,omitempty"`
+	NextBook            *AuthorBook    `json:"nextBook,omitempty"`
+	Ended               bool           `json:"ended,omitempty"`
+	Monitored           bool           `json:"monitored"`
+	AuthorMetadataID    int64          `json:"authorMetadataId"`
+	AuthorNameLastFirst string         `json:"authorNameLastFirst"`
+	MonitorNewItems     string         `json:"monitorNewItems"`
+	SortNameLastFirst   string         `json:"sortNameLastFirst"`
 }
 
-// AuthorBook is part of an Author.
+// AuthorBook is part of an Author, and is very different from a normal Book type.
 type AuthorBook struct {
 	ID               int64           `json:"id"`
 	AuthorMetadataID int             `json:"authorMetadataId"`
@@ -49,7 +53,7 @@ type AuthorBook struct {
 	Title            string          `json:"title"`
 	ReleaseDate      time.Time       `json:"releaseDate"`
 	Links            []*starr.Link   `json:"links"`
-	Genres           []interface{}   `json:"genres"`
+	Genres           []string        `json:"genres"`
 	Ratings          *starr.Ratings  `json:"ratings"`
 	CleanTitle       string          `json:"cleanTitle"`
 	Monitored        bool            `json:"monitored"`
