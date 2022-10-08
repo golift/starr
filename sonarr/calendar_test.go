@@ -82,7 +82,7 @@ var testCalendarJSON = `{
   `
 
 // This matches the json above.
-var testCalendarStruct = sonarr.Calendar{
+var testCalendarStruct = sonarr.Episode{
 	ID:                       1,
 	SeriesID:                 1,
 	TvdbID:                   8484175,
@@ -93,7 +93,6 @@ var testCalendarStruct = sonarr.Calendar{
 	AirDate:                  "1989-07-15",
 	AirDateUtc:               time.Date(1989, 7, 14, 15, 0, 0, 0, time.UTC),
 	Overview:                 "...",
-	EpisodeFile:              nil, // this isn't checked...
 	HasFile:                  false,
 	Monitored:                false,
 	UnverifiedSceneNumbering: false,
@@ -154,7 +153,7 @@ func TestGetCalendar(t *testing.T) {
 				"&unmonitored=true",
 			ResponseStatus: http.StatusOK,
 			ResponseBody:   `[` + testCalendarJSON + `]`,
-			WithRequest: sonarr.CalendarInput{
+			WithRequest: sonarr.Calendar{
 				Start:                time.Unix(1582172420, 0),
 				End:                  time.Unix(1582172420, 0),
 				Unmonitored:          starr.True(),
@@ -164,7 +163,7 @@ func TestGetCalendar(t *testing.T) {
 			},
 			WithError:      nil,
 			ExpectedMethod: http.MethodGet,
-			WithResponse:   []*sonarr.Calendar{&testCalendarStruct},
+			WithResponse:   []*sonarr.Episode{&testCalendarStruct},
 		},
 		{
 			Name: "404",
@@ -176,12 +175,12 @@ func TestGetCalendar(t *testing.T) {
 			ResponseBody:   `{"message": "NotFound"}`,
 			WithError:      starr.ErrInvalidStatusCode,
 			ExpectedMethod: http.MethodGet,
-			WithRequest: sonarr.CalendarInput{
+			WithRequest: sonarr.Calendar{
 				Start:       time.Unix(1582172420, 0),
 				End:         time.Unix(1582172420, 0),
 				Unmonitored: starr.True(),
 			},
-			WithResponse: []*sonarr.Calendar(nil),
+			WithResponse: []*sonarr.Episode(nil),
 		},
 	}
 
@@ -191,7 +190,7 @@ func TestGetCalendar(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := sonarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			output, err := client.GetCalendar(test.WithRequest.(sonarr.CalendarInput))
+			output, err := client.GetCalendar(test.WithRequest.(sonarr.Calendar))
 			assert.ErrorIs(t, err, test.WithError, "the wrong error was returned")
 			assert.EqualValues(t, test.WithResponse, output, "make sure ResponseBody and WithResponse are a match")
 		})
@@ -220,7 +219,7 @@ func TestGetCalendarID(t *testing.T) {
 			WithError:      starr.ErrInvalidStatusCode,
 			ExpectedMethod: http.MethodGet,
 			WithRequest:    int64(1),
-			WithResponse:   (*sonarr.Calendar)(nil),
+			WithResponse:   (*sonarr.Episode)(nil),
 		},
 	}
 

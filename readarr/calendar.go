@@ -13,32 +13,9 @@ import (
 // Define Base Path for Calendar queries.
 const bpCalendar = APIver + "/calendar"
 
-type Calendar struct {
-	Added          time.Time      `json:"added"`
-	AnyEditionOk   bool           `json:"anyEditionOk"`
-	Author         *Author        `json:"author"`
-	AuthorID       int64          `json:"authorId"`
-	AuthorTitle    string         `json:"authorTitle"`
-	Disambiguation string         `json:"disambiguation"`
-	ForeignBookID  string         `json:"foreignBookId"`
-	Genres         []string       `json:"genres"`
-	Grabbed        bool           `json:"grabbed"`
-	ID             int64          `json:"id"`
-	Images         []*starr.Image `json:"images"`
-	Links          []*starr.Link  `json:"links"`
-	Monitored      bool           `json:"monitored"`
-	PageCount      int            `json:"pageCount"`
-	Ratings        *starr.Ratings `json:"ratings"`
-	ReleaseDate    time.Time      `json:"releaseDate"`
-	SeriesTitle    string         `json:"seriesTitle"`
-	Statistics     *Statistics    `json:"statistics"`
-	Title          string         `json:"title"`
-	TitleSlug      string         `json:"titleSlug"`
-}
-
-// CalendarInput defines the filters for fetching calendar items.
+// Calendar defines the filters for fetching calendar items.
 // Start and End are required. Use starr.True() and starr.False() to fill in the booleans.
-type CalendarInput struct {
+type Calendar struct {
 	Start         time.Time
 	End           time.Time
 	Unmonitored   *bool
@@ -46,12 +23,12 @@ type CalendarInput struct {
 }
 
 // GetCalendar returns calendars based on filters.
-func (r *Readarr) GetCalendar(filter CalendarInput) ([]*Book, error) {
+func (r *Readarr) GetCalendar(filter Calendar) ([]*Book, error) {
 	return r.GetCalendarContext(context.Background(), filter)
 }
 
 // GetCalendarContext returns calendars based on filters.
-func (r *Readarr) GetCalendarContext(ctx context.Context, filter CalendarInput) ([]*Book, error) {
+func (r *Readarr) GetCalendarContext(ctx context.Context, filter Calendar) ([]*Book, error) {
 	var output []*Book
 
 	req := starr.Request{URI: bpCalendar, Query: make(url.Values)}

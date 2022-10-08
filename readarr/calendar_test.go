@@ -120,7 +120,7 @@ func TestGetCalendar(t *testing.T) {
 				"&unmonitored=true",
 			ResponseStatus: http.StatusOK,
 			ResponseBody:   `[` + testCalendarJSON + `]`,
-			WithRequest: readarr.CalendarInput{
+			WithRequest: readarr.Calendar{
 				Start:         time.Unix(1582172420, 0),
 				End:           time.Unix(1582172420, 0),
 				Unmonitored:   starr.True(),
@@ -140,7 +140,7 @@ func TestGetCalendar(t *testing.T) {
 			ResponseBody:   `{"message": "NotFound"}`,
 			WithError:      starr.ErrInvalidStatusCode,
 			ExpectedMethod: http.MethodGet,
-			WithRequest: readarr.CalendarInput{
+			WithRequest: readarr.Calendar{
 				Start:       time.Unix(1582172420, 0),
 				End:         time.Unix(1582172420, 0),
 				Unmonitored: starr.True(),
@@ -155,7 +155,7 @@ func TestGetCalendar(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := readarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			output, err := client.GetCalendar(test.WithRequest.(readarr.CalendarInput))
+			output, err := client.GetCalendar(test.WithRequest.(readarr.Calendar))
 			assert.ErrorIs(t, err, test.WithError, "the wrong error was returned")
 			assert.EqualValues(t, test.WithResponse, output, "make sure ResponseBody and WithResponse are a match")
 		})

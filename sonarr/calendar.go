@@ -13,37 +13,9 @@ import (
 // Define Base Path for Calendar queries.
 const bpCalendar = APIver + "/calendar"
 
-// Calendar represents the data that may be returned from the calendar endpoint.
-type Calendar struct {
-	AbsoluteEpisodeNumber      int            `json:"absoluteEpisodeNumber"`
-	AirDate                    string         `json:"airDate"`
-	AirDateUtc                 time.Time      `json:"airDateUtc"`
-	EndTime                    time.Time      `json:"endTime"`
-	EpisodeFile                *EpisodeFile   `json:"episodeFile"`
-	EpisodeFileID              int64          `json:"episodeFileId"`
-	EpisodeNumber              int            `json:"episodeNumber"`
-	GrabDate                   time.Time      `json:"grabDate"`
-	Grabbed                    bool           `json:"grabbed"`
-	HasFile                    bool           `json:"hasFile"`
-	ID                         int64          `json:"id"`
-	Images                     []*starr.Image `json:"images,omitempty"`
-	Monitored                  bool           `json:"monitored"`
-	Overview                   string         `json:"overview"`
-	SceneAbsoluteEpisodeNumber int            `json:"sceneAbsoluteEpisodeNumber"`
-	SceneEpisodeNumber         int            `json:"sceneEpisodeNumber"`
-	SceneSeasonNumber          int            `json:"sceneSeasonNumber"`
-	SeasonNumber               int            `json:"seasonNumber"`
-	Series                     *Series        `json:"series"`
-	SeriesID                   int64          `json:"seriesId"`
-	SeriesTitle                string         `json:"seriesTitle"`
-	Title                      string         `json:"title"`
-	TvdbID                     int64          `json:"tvdbId"`
-	UnverifiedSceneNumbering   bool           `json:"unverifiedSceneNumbering"`
-}
-
-// CalendarInput defines the filters for fetching calendar items.
+// Calendar defines the filters for fetching calendar items.
 // Start and End are required. Use starr.True() and starr.False() to fill in the booleans.
-type CalendarInput struct {
+type Calendar struct {
 	Start                time.Time
 	End                  time.Time
 	Unmonitored          *bool
@@ -53,13 +25,13 @@ type CalendarInput struct {
 }
 
 // GetCalendar returns calendars based on filters.
-func (s *Sonarr) GetCalendar(filter CalendarInput) ([]*Calendar, error) {
+func (s *Sonarr) GetCalendar(filter Calendar) ([]*Episode, error) {
 	return s.GetCalendarContext(context.Background(), filter)
 }
 
 // GetCalendarContext returns calendars based on filters.
-func (s *Sonarr) GetCalendarContext(ctx context.Context, filter CalendarInput) ([]*Calendar, error) {
-	var output []*Calendar
+func (s *Sonarr) GetCalendarContext(ctx context.Context, filter Calendar) ([]*Episode, error) {
+	var output []*Episode
 
 	req := starr.Request{URI: bpCalendar, Query: make(url.Values)}
 
@@ -95,13 +67,13 @@ func (s *Sonarr) GetCalendarContext(ctx context.Context, filter CalendarInput) (
 }
 
 // GetCalendarID returns a single calendar by ID.
-func (s *Sonarr) GetCalendarID(calendarID int64) (*Calendar, error) {
+func (s *Sonarr) GetCalendarID(calendarID int64) (*Episode, error) {
 	return s.GetCalendarIDContext(context.Background(), calendarID)
 }
 
 // GetCalendarIDContext returns a single calendar by ID.
-func (s *Sonarr) GetCalendarIDContext(ctx context.Context, calendarID int64) (*Calendar, error) {
-	var output *Calendar
+func (s *Sonarr) GetCalendarIDContext(ctx context.Context, calendarID int64) (*Episode, error) {
+	var output *Episode
 
 	req := starr.Request{URI: path.Join(bpCalendar, fmt.Sprint(calendarID))}
 	if err := s.GetInto(ctx, req, &output); err != nil {
