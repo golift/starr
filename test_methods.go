@@ -33,6 +33,8 @@ const (
 )
 
 // GetMockServer is used in all the http tests.
+//
+//nolint:lll
 func (test *TestMockData) GetMockServer(t *testing.T) *httptest.Server {
 	t.Helper()
 
