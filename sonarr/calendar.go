@@ -14,14 +14,13 @@ import (
 const bpCalendar = APIver + "/calendar"
 
 // Calendar defines the filters for fetching calendar items.
-// Start and End are required. Use starr.True() and starr.False() to fill in the booleans.
 type Calendar struct {
 	Start                time.Time
 	End                  time.Time
-	Unmonitored          *bool
-	IncludeSeries        *bool
-	IncludeEpisodeFile   *bool
-	IncludeEpisodeImages *bool
+	Unmonitored          bool
+	IncludeSeries        bool
+	IncludeEpisodeFile   bool
+	IncludeEpisodeImages bool
 }
 
 // GetCalendar returns calendars based on filters.
@@ -34,6 +33,10 @@ func (s *Sonarr) GetCalendarContext(ctx context.Context, filter Calendar) ([]*Ep
 	var output []*Episode
 
 	req := starr.Request{URI: bpCalendar, Query: make(url.Values)}
+	req.Query.Add("unmonitored", fmt.Sprint(filter.Unmonitored))
+	req.Query.Add("includeSeries", fmt.Sprint(filter.IncludeSeries))
+	req.Query.Add("includeEpisodeFile", fmt.Sprint(filter.IncludeEpisodeFile))
+	req.Query.Add("includeEpisodeImages", fmt.Sprint(filter.IncludeEpisodeImages))
 
 	if !filter.Start.IsZero() {
 		req.Query.Add("start", filter.Start.UTC().Format(starr.CalendarTimeFilterFormat))
@@ -41,22 +44,6 @@ func (s *Sonarr) GetCalendarContext(ctx context.Context, filter Calendar) ([]*Ep
 
 	if !filter.End.IsZero() {
 		req.Query.Add("end", filter.End.UTC().Format(starr.CalendarTimeFilterFormat))
-	}
-
-	if filter.Unmonitored != nil {
-		req.Query.Add("unmonitored", fmt.Sprint(*filter.Unmonitored))
-	}
-
-	if filter.IncludeSeries != nil {
-		req.Query.Add("includeSeries", fmt.Sprint(*filter.IncludeSeries))
-	}
-
-	if filter.IncludeEpisodeFile != nil {
-		req.Query.Add("includeEpisodeFile", fmt.Sprint(*filter.IncludeEpisodeFile))
-	}
-
-	if filter.IncludeEpisodeImages != nil {
-		req.Query.Add("includeEpisodeImages", fmt.Sprint(*filter.IncludeEpisodeImages))
 	}
 
 	if err := s.GetInto(ctx, req, &output); err != nil {

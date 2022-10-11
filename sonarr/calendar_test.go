@@ -156,10 +156,10 @@ func TestGetCalendar(t *testing.T) {
 			WithRequest: sonarr.Calendar{
 				Start:                time.Unix(1582172420, 0),
 				End:                  time.Unix(1582172420, 0),
-				Unmonitored:          starr.True(),
-				IncludeSeries:        starr.True(),
-				IncludeEpisodeFile:   starr.False(),
-				IncludeEpisodeImages: starr.False(),
+				Unmonitored:          true,
+				IncludeSeries:        true,
+				IncludeEpisodeFile:   false,
+				IncludeEpisodeImages: false,
 			},
 			WithError:      nil,
 			ExpectedMethod: http.MethodGet,
@@ -169,6 +169,9 @@ func TestGetCalendar(t *testing.T) {
 			Name: "404",
 			ExpectedPath: "/api/v3/calendar" +
 				"?end=2020-02-20T04%3A20%3A20.000Z" +
+				"&includeEpisodeFile=false" +
+				"&includeEpisodeImages=false" +
+				"&includeSeries=false" +
 				"&start=2020-02-20T04%3A20%3A20.000Z" +
 				"&unmonitored=true",
 			ResponseStatus: http.StatusNotFound,
@@ -178,7 +181,7 @@ func TestGetCalendar(t *testing.T) {
 			WithRequest: sonarr.Calendar{
 				Start:       time.Unix(1582172420, 0),
 				End:         time.Unix(1582172420, 0),
-				Unmonitored: starr.True(),
+				Unmonitored: true,
 			},
 			WithResponse: []*sonarr.Episode(nil),
 		},

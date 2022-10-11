@@ -14,12 +14,11 @@ import (
 const bpCalendar = APIver + "/calendar"
 
 // Calendar defines the filters for fetching calendar items.
-// Start and End are required. Use starr.True() and starr.False() to fill in the booleans.
 type Calendar struct {
 	Start         time.Time
 	End           time.Time
-	Unmonitored   *bool
-	IncludeAuthor *bool
+	Unmonitored   bool
+	IncludeAuthor bool
 }
 
 // GetCalendar returns calendars based on filters.
@@ -32,6 +31,8 @@ func (r *Readarr) GetCalendarContext(ctx context.Context, filter Calendar) ([]*B
 	var output []*Book
 
 	req := starr.Request{URI: bpCalendar, Query: make(url.Values)}
+	req.Query.Add("unmonitored", fmt.Sprint(filter.Unmonitored))
+	req.Query.Add("includeAuthor", fmt.Sprint(filter.IncludeAuthor))
 
 	if !filter.Start.IsZero() {
 		req.Query.Add("start", filter.Start.UTC().Format(starr.CalendarTimeFilterFormat))
@@ -39,14 +40,6 @@ func (r *Readarr) GetCalendarContext(ctx context.Context, filter Calendar) ([]*B
 
 	if !filter.End.IsZero() {
 		req.Query.Add("end", filter.End.UTC().Format(starr.CalendarTimeFilterFormat))
-	}
-
-	if filter.Unmonitored != nil {
-		req.Query.Add("unmonitored", fmt.Sprint(*filter.Unmonitored))
-	}
-
-	if filter.IncludeAuthor != nil {
-		req.Query.Add("includeAuthor", fmt.Sprint(*filter.IncludeAuthor))
 	}
 
 	if err := r.GetInto(ctx, req, &output); err != nil {

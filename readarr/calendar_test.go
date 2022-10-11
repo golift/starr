@@ -123,8 +123,8 @@ func TestGetCalendar(t *testing.T) {
 			WithRequest: readarr.Calendar{
 				Start:         time.Unix(1582172420, 0),
 				End:           time.Unix(1582172420, 0),
-				Unmonitored:   starr.True(),
-				IncludeAuthor: starr.False(),
+				Unmonitored:   true,
+				IncludeAuthor: false,
 			},
 			WithError:      nil,
 			ExpectedMethod: http.MethodGet,
@@ -134,6 +134,7 @@ func TestGetCalendar(t *testing.T) {
 			Name: "404",
 			ExpectedPath: "/api/v1/calendar" +
 				"?end=2020-02-20T04%3A20%3A20.000Z" +
+				"&includeAuthor=false" +
 				"&start=2020-02-20T04%3A20%3A20.000Z" +
 				"&unmonitored=true",
 			ResponseStatus: http.StatusNotFound,
@@ -143,7 +144,7 @@ func TestGetCalendar(t *testing.T) {
 			WithRequest: readarr.Calendar{
 				Start:       time.Unix(1582172420, 0),
 				End:         time.Unix(1582172420, 0),
-				Unmonitored: starr.True(),
+				Unmonitored: true,
 			},
 			WithResponse: []*readarr.Book(nil),
 		},
