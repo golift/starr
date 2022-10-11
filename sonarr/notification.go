@@ -15,21 +15,21 @@ const bpNotification = APIver + "/notification"
 
 // NotificationInput is the input for a new or updated notification.
 type NotificationInput struct {
-	OnGrab                        bool                `json:"onGrab"`
-	OnDownload                    bool                `json:"onDownload"`
-	OnUpgrade                     bool                `json:"onUpgrade"`
-	OnRename                      bool                `json:"onRename"`
-	OnSeriesDelete                bool                `json:"onSeriesDelete"`
-	OnEpisodeFileDelete           bool                `json:"onEpisodeFileDelete"`
-	OnEpisodeFileDeleteForUpgrade bool                `json:"onEpisodeFileDeleteForUpgrade"`
-	OnHealthIssue                 bool                `json:"onHealthIssue"`
-	OnApplicationUpdate           bool                `json:"onApplicationUpdate"`
-	IncludeHealthWarnings         bool                `json:"includeHealthWarnings"`
+	OnGrab                        bool                `json:"onGrab,omitempty"`
+	OnDownload                    bool                `json:"onDownload,omitempty"`
+	OnUpgrade                     bool                `json:"onUpgrade,omitempty"`
+	OnRename                      bool                `json:"onRename,omitempty"`
+	OnSeriesDelete                bool                `json:"onSeriesDelete,omitempty"`
+	OnEpisodeFileDelete           bool                `json:"onEpisodeFileDelete,omitempty"`
+	OnEpisodeFileDeleteForUpgrade bool                `json:"onEpisodeFileDeleteForUpgrade,omitempty"`
+	OnHealthIssue                 bool                `json:"onHealthIssue,omitempty"`
+	OnApplicationUpdate           bool                `json:"onApplicationUpdate,omitempty"`
+	IncludeHealthWarnings         bool                `json:"includeHealthWarnings,omitempty"`
 	ID                            int64               `json:"id,omitempty"`
 	Name                          string              `json:"name"`
 	Implementation                string              `json:"implementation"`
 	ConfigContract                string              `json:"configContract"`
-	Tags                          []int               `json:"tags"`
+	Tags                          []int               `json:"tags,omitempty"`
 	Fields                        []*starr.FieldInput `json:"fields"`
 }
 

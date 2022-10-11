@@ -12,11 +12,11 @@ import (
 const notificationResponseBody = `{
 	"onGrab": false,
 	"onDownload": true,
-	"onUpgrade": true,
+	"onUpgrade": false,
 	"onRename": false,
 	"onSeriesDelete": false,
 	"onEpisodeFileDelete": false,
-	"onEpisodeFileDeleteForUpgrade": true,
+	"onEpisodeFileDeleteForUpgrade": false,
 	"onHealthIssue": false,
 	"onApplicationUpdate": false,
 	"supportsOnGrab": true,
@@ -61,17 +61,11 @@ const notificationResponseBody = `{
 	"id": 3
   }`
 
-const addNotification = `{"onGrab":false,"onDownload":true,"onUpgrade":true,"onRename":false,` +
-	`"onSeriesDelete":false,"onEpisodeFileDelete":true,"onEpisodeFileDeleteForUpgrade":false,` +
-	`"onHealthIssue":false,"onApplicationUpdate":false,"includeHealthWarnings":false,"name":"Test",` +
-	`"implementation":"CustomScript","configContract":"CustomScriptSettings","tags":null,` +
-	`"fields":[{"name":"path","value":"/scripts/sonarr.sh"},{"name":"apiPath","value":"/api"}]}`
+const addNotification = `{"onDownload":true,"name":"Test","implementation":"CustomScript","configContract":` +
+	`"CustomScriptSettings","fields":[{"name":"path","value":"/scripts/sonarr.sh"},{"name":"apiPath","value":"/api"}]}`
 
-const updateNotification = `{"onGrab":false,"onDownload":true,"onUpgrade":true,"onRename":false,` +
-	`"onSeriesDelete":false,"onEpisodeFileDelete":true,"onEpisodeFileDeleteForUpgrade":false,` +
-	`"onHealthIssue":false,"onApplicationUpdate":false,"includeHealthWarnings":false,"id":3,"name":"Test",` +
-	`"implementation":"CustomScript","configContract":"CustomScriptSettings","tags":null,` +
-	`"fields":[{"name":"path","value":"/scripts/sonarr.sh"},{"name":"apiPath","value":"/api"}]}`
+const updateNotification = `{"onDownload":true,"id":3,"name":"Test","implementation":"CustomScript","configContract":` +
+	`"CustomScriptSettings","fields":[{"name":"path","value":"/scripts/sonarr.sh"},{"name":"apiPath","value":"/api"}]}`
 
 func TestGetNotifications(t *testing.T) {
 	t.Parallel()
@@ -87,15 +81,7 @@ func TestGetNotifications(t *testing.T) {
 			WithRequest:     nil,
 			WithResponse: []*sonarr.NotificationOutput{
 				{
-					OnGrab:                                false,
 					OnDownload:                            true,
-					OnUpgrade:                             true,
-					OnRename:                              false,
-					OnSeriesDelete:                        false,
-					OnEpisodeFileDelete:                   false,
-					OnEpisodeFileDeleteForUpgrade:         true,
-					OnHealthIssue:                         false,
-					OnApplicationUpdate:                   false,
 					SupportsOnGrab:                        true,
 					SupportsOnDownload:                    true,
 					SupportsOnUpgrade:                     true,
@@ -105,7 +91,6 @@ func TestGetNotifications(t *testing.T) {
 					SupportsOnEpisodeFileDeleteForUpgrade: true,
 					SupportsOnHealthIssue:                 true,
 					SupportsOnApplicationUpdate:           true,
-					IncludeHealthWarnings:                 false,
 					ID:                                    3,
 					Name:                                  "Test",
 					ImplementationName:                    "Custom Script",
@@ -173,15 +158,7 @@ func TestGetNotification(t *testing.T) {
 			ResponseBody:    notificationResponseBody,
 			WithRequest:     nil,
 			WithResponse: &sonarr.NotificationOutput{
-				OnGrab:                                false,
 				OnDownload:                            true,
-				OnUpgrade:                             true,
-				OnRename:                              false,
-				OnSeriesDelete:                        false,
-				OnEpisodeFileDelete:                   false,
-				OnEpisodeFileDeleteForUpgrade:         true,
-				OnHealthIssue:                         false,
-				OnApplicationUpdate:                   false,
 				SupportsOnGrab:                        true,
 				SupportsOnDownload:                    true,
 				SupportsOnUpgrade:                     true,
@@ -191,7 +168,6 @@ func TestGetNotification(t *testing.T) {
 				SupportsOnEpisodeFileDeleteForUpgrade: true,
 				SupportsOnHealthIssue:                 true,
 				SupportsOnApplicationUpdate:           true,
-				IncludeHealthWarnings:                 false,
 				ID:                                    3,
 				Name:                                  "Test",
 				ImplementationName:                    "Custom Script",
@@ -255,19 +231,10 @@ func TestAddNotification(t *testing.T) {
 			ExpectedMethod: "POST",
 			ResponseStatus: 200,
 			WithRequest: &sonarr.NotificationInput{
-				OnGrab:                        false,
-				OnDownload:                    true,
-				OnUpgrade:                     true,
-				OnRename:                      false,
-				OnSeriesDelete:                false,
-				OnEpisodeFileDelete:           true,
-				OnEpisodeFileDeleteForUpgrade: false,
-				OnHealthIssue:                 false,
-				OnApplicationUpdate:           false,
-				IncludeHealthWarnings:         false,
-				Name:                          "Test",
-				Implementation:                "CustomScript",
-				ConfigContract:                "CustomScriptSettings",
+				OnDownload:     true,
+				Name:           "Test",
+				Implementation: "CustomScript",
+				ConfigContract: "CustomScriptSettings",
 				Fields: []*starr.FieldInput{
 					{
 						Name:  "path",
@@ -282,15 +249,7 @@ func TestAddNotification(t *testing.T) {
 			ExpectedRequest: addNotification + "\n",
 			ResponseBody:    notificationResponseBody,
 			WithResponse: &sonarr.NotificationOutput{
-				OnGrab:                                false,
 				OnDownload:                            true,
-				OnUpgrade:                             true,
-				OnRename:                              false,
-				OnSeriesDelete:                        false,
-				OnEpisodeFileDelete:                   false,
-				OnEpisodeFileDeleteForUpgrade:         true,
-				OnHealthIssue:                         false,
-				OnApplicationUpdate:                   false,
 				SupportsOnGrab:                        true,
 				SupportsOnDownload:                    true,
 				SupportsOnUpgrade:                     true,
@@ -300,7 +259,6 @@ func TestAddNotification(t *testing.T) {
 				SupportsOnEpisodeFileDeleteForUpgrade: true,
 				SupportsOnHealthIssue:                 true,
 				SupportsOnApplicationUpdate:           true,
-				IncludeHealthWarnings:                 false,
 				ID:                                    3,
 				Name:                                  "Test",
 				ImplementationName:                    "Custom Script",
@@ -336,19 +294,10 @@ func TestAddNotification(t *testing.T) {
 			ExpectedMethod: "POST",
 			ResponseStatus: 404,
 			WithRequest: &sonarr.NotificationInput{
-				OnGrab:                        false,
-				OnDownload:                    true,
-				OnUpgrade:                     true,
-				OnRename:                      false,
-				OnSeriesDelete:                false,
-				OnEpisodeFileDelete:           true,
-				OnEpisodeFileDeleteForUpgrade: false,
-				OnHealthIssue:                 false,
-				OnApplicationUpdate:           false,
-				IncludeHealthWarnings:         false,
-				Name:                          "Test",
-				Implementation:                "CustomScript",
-				ConfigContract:                "CustomScriptSettings",
+				OnDownload:     true,
+				Name:           "Test",
+				Implementation: "CustomScript",
+				ConfigContract: "CustomScriptSettings",
 				Fields: []*starr.FieldInput{
 					{
 						Name:  "path",
@@ -390,20 +339,11 @@ func TestUpdateNotification(t *testing.T) {
 			ExpectedMethod: "PUT",
 			ResponseStatus: 200,
 			WithRequest: &sonarr.NotificationInput{
-				OnGrab:                        false,
-				OnDownload:                    true,
-				OnUpgrade:                     true,
-				OnRename:                      false,
-				OnSeriesDelete:                false,
-				OnEpisodeFileDelete:           true,
-				OnEpisodeFileDeleteForUpgrade: false,
-				OnHealthIssue:                 false,
-				OnApplicationUpdate:           false,
-				IncludeHealthWarnings:         false,
-				ID:                            3,
-				Name:                          "Test",
-				Implementation:                "CustomScript",
-				ConfigContract:                "CustomScriptSettings",
+				OnDownload:     true,
+				ID:             3,
+				Name:           "Test",
+				Implementation: "CustomScript",
+				ConfigContract: "CustomScriptSettings",
 				Fields: []*starr.FieldInput{
 					{
 						Name:  "path",
@@ -418,15 +358,7 @@ func TestUpdateNotification(t *testing.T) {
 			ExpectedRequest: updateNotification + "\n",
 			ResponseBody:    notificationResponseBody,
 			WithResponse: &sonarr.NotificationOutput{
-				OnGrab:                                false,
 				OnDownload:                            true,
-				OnUpgrade:                             true,
-				OnRename:                              false,
-				OnSeriesDelete:                        false,
-				OnEpisodeFileDelete:                   false,
-				OnEpisodeFileDeleteForUpgrade:         true,
-				OnHealthIssue:                         false,
-				OnApplicationUpdate:                   false,
 				SupportsOnGrab:                        true,
 				SupportsOnDownload:                    true,
 				SupportsOnUpgrade:                     true,
@@ -436,7 +368,6 @@ func TestUpdateNotification(t *testing.T) {
 				SupportsOnEpisodeFileDeleteForUpgrade: true,
 				SupportsOnHealthIssue:                 true,
 				SupportsOnApplicationUpdate:           true,
-				IncludeHealthWarnings:                 false,
 				ID:                                    3,
 				Name:                                  "Test",
 				ImplementationName:                    "Custom Script",
@@ -472,20 +403,11 @@ func TestUpdateNotification(t *testing.T) {
 			ExpectedMethod: "PUT",
 			ResponseStatus: 404,
 			WithRequest: &sonarr.NotificationInput{
-				OnGrab:                        false,
-				OnDownload:                    true,
-				OnUpgrade:                     true,
-				OnRename:                      false,
-				OnSeriesDelete:                false,
-				OnEpisodeFileDelete:           true,
-				OnEpisodeFileDeleteForUpgrade: false,
-				OnHealthIssue:                 false,
-				OnApplicationUpdate:           false,
-				IncludeHealthWarnings:         false,
-				ID:                            3,
-				Name:                          "Test",
-				Implementation:                "CustomScript",
-				ConfigContract:                "CustomScriptSettings",
+				OnDownload:     true,
+				ID:             3,
+				Name:           "Test",
+				Implementation: "CustomScript",
+				ConfigContract: "CustomScriptSettings",
 				Fields: []*starr.FieldInput{
 					{
 						Name:  "path",
