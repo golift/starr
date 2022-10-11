@@ -46,12 +46,15 @@ type Movie struct {
 	Genres                []string            `json:"genres,omitempty"`
 	Tags                  []int               `json:"tags,omitempty"`
 	Added                 time.Time           `json:"added,omitempty"`
-	Ratings               *starr.Ratings      `json:"ratings,omitempty"`
+	Ratings               starr.OpenRatings   `json:"ratings,omitempty"`
 	MovieFile             *MovieFile          `json:"movieFile,omitempty"`
 	Collection            *Collection         `json:"collection,omitempty"`
 	HasFile               bool                `json:"hasFile,omitempty"`
 	IsAvailable           bool                `json:"isAvailable,omitempty"`
 	Monitored             bool                `json:"monitored"`
+	Popularity            float64             `json:"popularity"`
+	OriginalLanguage      *starr.Value        `json:"originalLanguage,omitempty"`
+	AddOptions            *AddMovieOptions    `json:"addOptions,omitempty"` // only available upon adding a movie.
 }
 
 // Collection belongs to a Movie.
@@ -77,6 +80,7 @@ type MovieFile struct {
 	Languages           []*starr.Value `json:"languages"`
 	ReleaseGroup        string         `json:"releaseGroup"`
 	Edition             string         `json:"edition"`
+	OriginalFilePath    string         `json:"originalFilePath"`
 }
 
 // MediaInfo is part of a MovieFile.
@@ -91,6 +95,7 @@ type MediaInfo struct {
 	VideoBitrate            int     `json:"videoBitrate"`
 	VideoCodec              string  `json:"videoCodec"`
 	VideoFps                float64 `json:"videoFps"`
+	VideoDynamicRangeType   string  `json:"videoDynamicRangeType"`
 	Resolution              string  `json:"resolution"`
 	RunTime                 string  `json:"runTime"`
 	ScanType                string  `json:"scanType"`
@@ -118,53 +123,17 @@ type AddMovieOptions struct {
 	SearchForMovie bool `json:"searchForMovie"`
 }
 
-// AddMovieOutput is the data returned when adding a movier.
-type AddMovieOutput struct {
-	ID                    int64               `json:"id"`
-	Title                 string              `json:"title"`
-	OriginalTitle         string              `json:"originalTitle"`
-	AlternateTitles       []*AlternativeTitle `json:"alternateTitles"`
-	SecondaryYearSourceID int64               `json:"secondaryYearSourceId"`
-	SortTitle             string              `json:"sortTitle"`
-	SizeOnDisk            int                 `json:"sizeOnDisk"`
-	Status                string              `json:"status"`
-	Overview              string              `json:"overview"`
-	InCinemas             time.Time           `json:"inCinemas"`
-	DigitalRelease        time.Time           `json:"digitalRelease"`
-	Images                []*starr.Image      `json:"images"`
-	Website               string              `json:"website"`
-	Year                  int                 `json:"year"`
-	YouTubeTrailerID      string              `json:"youTubeTrailerId"`
-	Studio                string              `json:"studio"`
-	Path                  string              `json:"path"`
-	QualityProfileID      int64               `json:"qualityProfileId"`
-	MinimumAvailability   Availability        `json:"minimumAvailability"`
-	FolderName            string              `json:"folderName"`
-	Runtime               int                 `json:"runtime"`
-	CleanTitle            string              `json:"cleanTitle"`
-	ImdbID                string              `json:"imdbId"`
-	TmdbID                int64               `json:"tmdbId"`
-	TitleSlug             string              `json:"titleSlug"`
-	Genres                []string            `json:"genres"`
-	Tags                  []int               `json:"tags"`
-	Added                 time.Time           `json:"added"`
-	AddOptions            *AddMovieOptions    `json:"addOptions"`
-	Ratings               *starr.Ratings      `json:"ratings"`
-	HasFile               bool                `json:"hasFile"`
-	Monitored             bool                `json:"monitored"`
-	IsAvailable           bool                `json:"isAvailable"`
-}
-
 // AlternativeTitle is part of a Movie.
 type AlternativeTitle struct {
-	MovieID    int          `json:"movieId"`
-	Title      string       `json:"title"`
-	SourceType string       `json:"sourceType"`
-	SourceID   int          `json:"sourceId"`
-	Votes      int          `json:"votes"`
-	VoteCount  int          `json:"voteCount"`
-	Language   *starr.Value `json:"language"`
-	ID         int          `json:"id"`
+	MovieMetadataID int64        `json:"movieMetadataId"`
+	MovieID         int64        `json:"movieId"`
+	Title           string       `json:"title"`
+	SourceType      string       `json:"sourceType"`
+	SourceID        int64        `json:"sourceId"`
+	Votes           int          `json:"votes"`
+	VoteCount       int          `json:"voteCount"`
+	Language        *starr.Value `json:"language"`
+	ID              int64        `json:"id"`
 }
 
 // GetMovie grabs a movie from the queue, or all movies if tmdbId is 0.
@@ -207,18 +176,18 @@ func (r *Radarr) GetMovieByIDContext(ctx context.Context, movieID int64) (*Movie
 }
 
 // UpdateMovie sends a PUT request to update a movie in place.
-func (r *Radarr) UpdateMovie(movieID int64, movie *Movie) error {
+func (r *Radarr) UpdateMovie(movieID int64, movie *Movie) (*Movie, error) {
 	return r.UpdateMovieContext(context.Background(), movieID, movie)
 }
 
 // UpdateMovieContext sends a PUT request to update a movie in place.
-func (r *Radarr) UpdateMovieContext(ctx context.Context, movieID int64, movie *Movie) error {
+func (r *Radarr) UpdateMovieContext(ctx context.Context, movieID int64, movie *Movie) (*Movie, error) {
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(movie); err != nil {
-		return fmt.Errorf("json.Marshal(%s): %w", bpMovie, err)
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpMovie, err)
 	}
 
-	var output interface{} // not sure what this looks like.
+	var output Movie
 
 	req := starr.Request{
 		URI:   path.Join(bpMovie, fmt.Sprint(movieID)),
@@ -228,25 +197,25 @@ func (r *Radarr) UpdateMovieContext(ctx context.Context, movieID int64, movie *M
 	req.Query.Add("moveFiles", "true")
 
 	if err := r.PutInto(ctx, req, &output); err != nil {
-		return fmt.Errorf("api.Put(%s): %w", &req, err)
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
-	return nil
+	return &output, nil
 }
 
 // AddMovie adds a movie to the queue.
-func (r *Radarr) AddMovie(movie *AddMovieInput) (*AddMovieOutput, error) {
+func (r *Radarr) AddMovie(movie *AddMovieInput) (*Movie, error) {
 	return r.AddMovieContext(context.Background(), movie)
 }
 
 // AddMovieContext adds a movie to the queue.
-func (r *Radarr) AddMovieContext(ctx context.Context, movie *AddMovieInput) (*AddMovieOutput, error) {
+func (r *Radarr) AddMovieContext(ctx context.Context, movie *AddMovieInput) (*Movie, error) {
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(movie); err != nil {
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpMovie, err)
 	}
 
-	var output AddMovieOutput
+	var output Movie
 
 	req := starr.Request{URI: bpMovie, Query: make(url.Values), Body: &body}
 	req.Query.Add("moveFiles", "true")
