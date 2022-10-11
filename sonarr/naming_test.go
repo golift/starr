@@ -139,7 +139,7 @@ func TestUpdateNaming(t *testing.T) {
 			client := sonarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.UpdateNaming(test.WithRequest.(*sonarr.Naming))
 			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
-			assert.EqualValues(t, output, test.WithResponse, "response is not the same as expected")
+			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
 }
