@@ -16,19 +16,22 @@ const bpEpisode = APIver + "/episode"
 
 // Episode is the /api/v3/episode endpoint.
 type Episode struct {
-	ID                       int64     `json:"id"`
-	SeriesID                 int64     `json:"seriesId"`
-	AbsoluteEpisodeNumber    int64     `json:"absoluteEpisodeNumber"`
-	EpisodeFileID            int64     `json:"episodeFileId"`
-	SeasonNumber             int64     `json:"seasonNumber"`
-	EpisodeNumber            int64     `json:"episodeNumber"`
-	AirDateUtc               time.Time `json:"airDateUtc"`
-	AirDate                  string    `json:"airDate"`
-	Title                    string    `json:"title"`
-	Overview                 string    `json:"overview"`
-	UnverifiedSceneNumbering bool      `json:"unverifiedSceneNumbering"`
-	HasFile                  bool      `json:"hasFile"`
-	Monitored                bool      `json:"monitored"`
+	ID                       int64          `json:"id"`
+	SeriesID                 int64          `json:"seriesId"`
+	TvdbID                   int64          `json:"tvdbId"`
+	AbsoluteEpisodeNumber    int64          `json:"absoluteEpisodeNumber"`
+	EpisodeFileID            int64          `json:"episodeFileId"`
+	SeasonNumber             int64          `json:"seasonNumber"`
+	EpisodeNumber            int64          `json:"episodeNumber"`
+	AirDateUtc               time.Time      `json:"airDateUtc"`
+	AirDate                  string         `json:"airDate"`
+	Title                    string         `json:"title"`
+	Overview                 string         `json:"overview"`
+	UnverifiedSceneNumbering bool           `json:"unverifiedSceneNumbering"`
+	HasFile                  bool           `json:"hasFile"`
+	Monitored                bool           `json:"monitored"`
+	Images                   []*starr.Image `json:"images"`
+	Series                   *Series        `json:"series"`
 }
 
 // GetSeriesEpisodes returns all episodes for a series by series ID.

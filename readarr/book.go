@@ -14,53 +14,31 @@ import (
 
 const bpBook = APIver + "/book"
 
-// Book is the /api/v1/book endpoint.
+// Book is the /api/v1/book endpoint among others, and gets used across this package.
 type Book struct {
-	Title          string         `json:"title"`
-	SeriesTitle    string         `json:"seriesTitle"`
-	AuthorTitle    string         `json:"authorTitle"`
-	Overview       string         `json:"overview"`
-	AuthorID       int64          `json:"authorId"`
-	ForeignBookID  string         `json:"foreignBookId"`
-	TitleSlug      string         `json:"titleSlug"`
-	Monitored      bool           `json:"monitored"`
-	AnyEditionOk   bool           `json:"anyEditionOk"`
-	Ratings        *starr.Ratings `json:"ratings"`
-	ReleaseDate    time.Time      `json:"releaseDate"`
 	Added          time.Time      `json:"added"`
-	PageCount      int            `json:"pageCount"`
+	AnyEditionOk   bool           `json:"anyEditionOk"`
+	AuthorID       int64          `json:"authorId"`
+	AuthorTitle    string         `json:"authorTitle"`
+	Disambiguation string         `json:"disambiguation,omitempty"`
+	Editions       []*Edition     `json:"editions"`
+	ForeignBookID  string         `json:"foreignBookId"`
 	Genres         []string       `json:"genres"`
+	ID             int64          `json:"id"`
 	Images         []*starr.Image `json:"images"`
 	Links          []*starr.Link  `json:"links"`
-	Statistics     *Statistics    `json:"statistics,omitempty"`
-	Editions       []*Edition     `json:"editions"`
-	ID             int64          `json:"id"`
-	Disambiguation string         `json:"disambiguation,omitempty"`
+	Monitored      bool           `json:"monitored"`
+	Grabbed        bool           `json:"grabbed"`
+	Overview       string         `json:"overview"`
+	PageCount      int            `json:"pageCount"`
+	Ratings        *starr.Ratings `json:"ratings"`
+	ReleaseDate    time.Time      `json:"releaseDate"`
 	RemoteCover    string         `json:"remoteCover,omitempty"`
-}
-
-// BookAuthor of a Book.
-type BookAuthor struct {
-	ID                int64          `json:"id"`
-	Status            string         `json:"status"`
-	AuthorName        string         `json:"authorName"`
-	ForeignAuthorID   string         `json:"foreignAuthorId"`
-	TitleSlug         string         `json:"titleSlug"`
-	Overview          string         `json:"overview"`
-	Links             []*starr.Link  `json:"links"`
-	Images            []*starr.Image `json:"images"`
-	Path              string         `json:"path"`
-	QualityProfileID  int64          `json:"qualityProfileId"`
-	MetadataProfileID int64          `json:"metadataProfileId"`
-	Genres            []interface{}  `json:"genres"`
-	CleanName         string         `json:"cleanName"`
-	SortName          string         `json:"sortName"`
-	Tags              []int          `json:"tags"`
-	Added             time.Time      `json:"added"`
-	Ratings           *starr.Ratings `json:"ratings"`
-	Statistics        *Statistics    `json:"statistics"`
-	Monitored         bool           `json:"monitored"`
-	Ended             bool           `json:"ended"`
+	SeriesTitle    string         `json:"seriesTitle"`
+	Statistics     *Statistics    `json:"statistics,omitempty"`
+	Title          string         `json:"title"`
+	TitleSlug      string         `json:"titleSlug"`
+	Author         *Author        `json:"author"`
 }
 
 // Edition is more Book meta data.
@@ -123,33 +101,11 @@ type AddAuthorOptions struct {
 // AddBookEdition is part of AddBookInput.
 type AddBookEdition struct {
 	Title            string         `json:"title"`            // Edition Title
-	TitleSlug        interface{}    `json:"titleSlug"`        // Slugs are dumb
+	TitleSlug        string         `json:"titleSlug"`        // Slugs are dumb
 	Images           []*starr.Image `json:"images"`           // this is dumb too
 	ForeignEditionID string         `json:"foreignEditionId"` // GRID ID
 	Monitored        bool           `json:"monitored"`        // true
 	ManualAdd        bool           `json:"manualAdd"`        // true
-}
-
-// AddBookOutput is returned when a book is added.
-type AddBookOutput struct {
-	ID            int64          `json:"id"`
-	AuthorID      int64          `json:"authorId"`
-	PageCount     int            `json:"pageCount"`
-	Title         string         `json:"title"`
-	SeriesTitle   string         `json:"seriesTitle"`
-	Overview      string         `json:"overview"`
-	ForeignBookID string         `json:"foreignBookId"`
-	TitleSlug     string         `json:"titleSlug"`
-	Ratings       *starr.Ratings `json:"ratings"`
-	ReleaseDate   time.Time      `json:"releaseDate"`
-	Genres        []interface{}  `json:"genres"`
-	Author        *BookAuthor    `json:"author"`
-	Images        []*starr.Image `json:"images"`
-	Links         []*starr.Link  `json:"links"`
-	Statistics    *Statistics    `json:"statistics"`
-	Editions      []*Edition     `json:"editions"`
-	Monitored     bool           `json:"monitored"`
-	AnyEditionOk  bool           `json:"anyEditionOk"`
 }
 
 // GetBook returns books. All books are returned if gridID is empty.
@@ -219,12 +175,12 @@ func (r *Readarr) UpdateBookContext(ctx context.Context, bookID int64, book *Boo
 }
 
 // AddBook adds a new book to the library.
-func (r *Readarr) AddBook(book *AddBookInput) (*AddBookOutput, error) {
+func (r *Readarr) AddBook(book *AddBookInput) (*Book, error) {
 	return r.AddBookContext(context.Background(), book)
 }
 
 // AddBookContext adds a new book to the library.
-func (r *Readarr) AddBookContext(ctx context.Context, book *AddBookInput) (*AddBookOutput, error) {
+func (r *Readarr) AddBookContext(ctx context.Context, book *AddBookInput) (*Book, error) {
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(book); err != nil {
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpBook, err)
@@ -237,7 +193,7 @@ func (r *Readarr) AddBookContext(ctx context.Context, book *AddBookInput) (*AddB
 	}
 	req.Query.Add("moveFiles", "true")
 
-	var output AddBookOutput
+	var output Book
 	if err := r.PostInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}

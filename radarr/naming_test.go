@@ -79,7 +79,7 @@ func TestUpdateNaming(t *testing.T) {
 				ID:                       1,
 				ReplaceIllegalCharacters: true,
 			},
-			ExpectedRequest: `{"replaceIllegalCharacters":true,"id":1}` + "\n",
+			ExpectedRequest: `{"replaceIllegalCharacters":true,"id":1,"standardMovieFormat":"","movieFolderFormat":""}` + "\n",
 			ResponseBody:    namingBody,
 			WithResponse: &radarr.Naming{
 				ID:                       1,
@@ -101,7 +101,7 @@ func TestUpdateNaming(t *testing.T) {
 				ID:                       1,
 				ReplaceIllegalCharacters: true,
 			},
-			ExpectedRequest: `{"replaceIllegalCharacters":true,"id":1}` + "\n",
+			ExpectedRequest: `{"replaceIllegalCharacters":true,"id":1,"standardMovieFormat":"","movieFolderFormat":""}` + "\n",
 			ResponseStatus:  404,
 			ResponseBody:    `{"message": "NotFound"}`,
 			WithError:       starr.ErrInvalidStatusCode,

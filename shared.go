@@ -60,6 +60,9 @@ func ClientWithDebug(timeout time.Duration, verifySSL bool, logConfig debuglog.C
 	return client
 }
 
+// CalendarTimeFilterFormat is the Go time format the calendar expects the filter to be in.
+const CalendarTimeFilterFormat = "2006-01-02T03:04:05.000Z"
+
 // StatusMessage represents the status of the item. All apps use this.
 type StatusMessage struct {
 	Title    string   `json:"title"`
