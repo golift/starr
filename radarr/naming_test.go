@@ -78,6 +78,7 @@ func TestUpdateNaming(t *testing.T) {
 			WithRequest: &radarr.Naming{
 				ID:                       1,
 				ReplaceIllegalCharacters: true,
+				RenameMovies:             false,
 			},
 			ExpectedRequest: `{"replaceIllegalCharacters":true,"id":1,"standardMovieFormat":"","movieFolderFormat":""}` + "\n",
 			ResponseBody:    namingBody,
@@ -100,6 +101,7 @@ func TestUpdateNaming(t *testing.T) {
 			WithRequest: &radarr.Naming{
 				ID:                       1,
 				ReplaceIllegalCharacters: true,
+				RenameMovies:             false,
 			},
 			ExpectedRequest: `{"replaceIllegalCharacters":true,"id":1,"standardMovieFormat":"","movieFolderFormat":""}` + "\n",
 			ResponseStatus:  404,
