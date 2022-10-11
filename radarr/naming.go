@@ -20,8 +20,8 @@ type Naming struct {
 	ReplaceSpaces            bool   `json:"replaceSpaces,omitempty"`
 	ID                       int64  `json:"id"` // ID must always be 1 (Oct 10, 2022)
 	ColonReplacementFormat   string `json:"colonReplacementFormat,omitempty"`
-	StandardMovieFormat      string `json:"standardMovieFormat,omitempty"`
-	MovieFolderFormat        string `json:"movieFolderFormat,omitempty"`
+	StandardMovieFormat      string `json:"standardMovieFormat"` // required
+	MovieFolderFormat        string `json:"movieFolderFormat"`   // required
 	Separator                string `json:"separatort,omitempty"`
 	NumberStyle              string `json:"numberStylet,omitempty"`
 }
