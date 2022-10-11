@@ -12,6 +12,7 @@ import (
 // Define Base Path for Naming calls.
 const bpNaming = APIver + "/config/naming"
 
+// Naming represents the config/naming endpoint in Sonarr.
 type Naming struct {
 	RenameEpisodes           bool   `json:"renameEpisodes,omitempty"`
 	ReplaceIllegalCharacters bool   `json:"replaceIllegalCharacters,omitempty"`
