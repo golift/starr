@@ -5,8 +5,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"time"
 	"path"
+	"time"
 
 	"golift.io/starr"
 )
@@ -87,12 +87,12 @@ func (l *Lidarr) SendCommandContext(ctx context.Context, cmd *CommandRequest) (*
 }
 
 // GetCommandStatus returns the status of an already started command.
-func (s *Lidarr) GetCommandStatus(commandID int64) (*CommandResponse, error) {
-	return s.GetCommandStatusContext(context.Background(), commandID)
+func (l *Lidarr) GetCommandStatus(commandID int64) (*CommandResponse, error) {
+	return l.GetCommandStatusContext(context.Background(), commandID)
 }
 
 // GetCommandStatusContext returns the status of an already started command.
-func (s *Lidarr) GetCommandStatusContext(ctx context.Context, commandID int64) (*CommandResponse, error) {
+func (l *Lidarr) GetCommandStatusContext(ctx context.Context, commandID int64) (*CommandResponse, error) {
 	var output CommandResponse
 
 	if commandID == 0 {
@@ -100,7 +100,7 @@ func (s *Lidarr) GetCommandStatusContext(ctx context.Context, commandID int64) (
 	}
 
 	req := starr.Request{URI: path.Join(bpCommand, fmt.Sprint(commandID))}
-	if err := s.GetInto(ctx, req, &output); err != nil {
+	if err := l.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
