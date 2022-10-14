@@ -15,9 +15,11 @@ const bpCommand = APIver + "/command"
 // CommandRequest goes into the /api/v1/command endpoint.
 // This was created from the search command and may not support other commands yet.
 type CommandRequest struct {
-	Name     string  `json:"name"`
-	AlbumIDs []int64 `json:"albumIds,omitempty"`
-	AlbumID  int64   `json:"albumId,omitempty"`
+	Name     string   `json:"name"`
+	AlbumIDs []int64  `json:"albumIds,omitempty"`
+	AlbumID  int64    `json:"albumId,omitempty"`
+	Folders  []string `json:"folders,omitempty"`
+	ArtistID int64    `json:"artistId,omitempty"`
 }
 
 // CommandResponse comes from the /api/v1/command endpoint.
