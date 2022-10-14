@@ -84,3 +84,24 @@ func (l *Lidarr) SendCommandContext(ctx context.Context, cmd *CommandRequest) (*
 
 	return &output, nil
 }
+
+// GetCommandStatus returns the status of an already started command.
+func (s *Sonarr) GetCommandStatus(commandID int64) (*CommandResponse, error) {
+	return s.GetCommandStatusContext(context.Background(), commandID)
+}
+
+// GetCommandStatusContext returns the status of an already started command.
+func (s *Sonarr) GetCommandStatusContext(ctx context.Context, commandID int64) (*CommandResponse, error) {
+	var output CommandResponse
+
+	if commandID == 0 {
+		return &output, nil
+	}
+
+	req := starr.Request{URI: path.Join(bpCommand, fmt.Sprint(commandID))}
+	if err := s.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
+	}
+
+	return &output, nil
+}
