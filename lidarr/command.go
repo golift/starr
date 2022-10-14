@@ -86,12 +86,12 @@ func (l *Lidarr) SendCommandContext(ctx context.Context, cmd *CommandRequest) (*
 }
 
 // GetCommandStatus returns the status of an already started command.
-func (s *Sonarr) GetCommandStatus(commandID int64) (*CommandResponse, error) {
+func (s *Lidarr) GetCommandStatus(commandID int64) (*CommandResponse, error) {
 	return s.GetCommandStatusContext(context.Background(), commandID)
 }
 
 // GetCommandStatusContext returns the status of an already started command.
-func (s *Sonarr) GetCommandStatusContext(ctx context.Context, commandID int64) (*CommandResponse, error) {
+func (s *Lidarr) GetCommandStatusContext(ctx context.Context, commandID int64) (*CommandResponse, error) {
 	var output CommandResponse
 
 	if commandID == 0 {
