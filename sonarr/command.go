@@ -102,7 +102,7 @@ func (s *Sonarr) GetCommandStatusContext(ctx context.Context, commandID int64) (
 
 	req := starr.Request{URI: path.Join(bpCommand, fmt.Sprint(commandID))}
 	if err := s.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return &output, nil
