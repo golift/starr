@@ -15,15 +15,15 @@ const bpDelayProfile = APIver + "/delayProfile"
 
 // DelayProfile is the /api/v3/delayprofile endpoint.
 type DelayProfile struct {
-	EnableUsenet           bool   `json:"enableUsenet"`
-	EnableTorrent          bool   `json:"enableTorrent"`
-	BypassIfHighestQuality bool   `json:"bypassIfHighestQuality"`
-	UsenetDelay            int64  `json:"usenetDelay"`
-	TorrentDelay           int64  `json:"torrentDelay"`
+	EnableUsenet           bool   `json:"enableUsenet,omitempty"`
+	EnableTorrent          bool   `json:"enableTorrent,omitempty"`
+	BypassIfHighestQuality bool   `json:"bypassIfHighestQuality,omitempty"`
+	UsenetDelay            int64  `json:"usenetDelay,omitempty"`
+	TorrentDelay           int64  `json:"torrentDelay,omitempty"`
 	ID                     int64  `json:"id,omitempty"`
-	Order                  int64  `json:"order"`
+	Order                  int64  `json:"order,omitempty"`
 	Tags                   []int  `json:"tags"`
-	PreferredProtocol      string `json:"preferredProtocol"`
+	PreferredProtocol      string `json:"preferredProtocol,omitempty"`
 }
 
 // GetDelayProfiles returns all configured delay profiles.
