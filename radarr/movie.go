@@ -176,12 +176,12 @@ func (r *Radarr) GetMovieByIDContext(ctx context.Context, movieID int64) (*Movie
 }
 
 // UpdateMovie sends a PUT request to update a movie in place.
-func (r *Radarr) UpdateMovie(movieID int64, movie *Movie) (*Movie, error) {
-	return r.UpdateMovieContext(context.Background(), movieID, movie)
+func (r *Radarr) UpdateMovie(movieID int64, movie *Movie, moveFiles bool) (*Movie, error) {
+	return r.UpdateMovieContext(context.Background(), movieID, movie, moveFiles)
 }
 
 // UpdateMovieContext sends a PUT request to update a movie in place.
-func (r *Radarr) UpdateMovieContext(ctx context.Context, movieID int64, movie *Movie) (*Movie, error) {
+func (r *Radarr) UpdateMovieContext(ctx context.Context, movieID int64, movie *Movie, moveFiles bool) (*Movie, error) {
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(movie); err != nil {
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpMovie, err)
@@ -194,7 +194,7 @@ func (r *Radarr) UpdateMovieContext(ctx context.Context, movieID int64, movie *M
 		Query: make(url.Values),
 		Body:  &body,
 	}
-	req.Query.Add("moveFiles", "true")
+	req.Query.Add("moveFiles", fmt.Sprint(moveFiles))
 
 	if err := r.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
@@ -218,8 +218,6 @@ func (r *Radarr) AddMovieContext(ctx context.Context, movie *AddMovieInput) (*Mo
 	var output Movie
 
 	req := starr.Request{URI: bpMovie, Query: make(url.Values), Body: &body}
-	req.Query.Add("moveFiles", "true")
-
 	if err := r.PostInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
