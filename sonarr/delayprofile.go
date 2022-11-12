@@ -61,6 +61,8 @@ func (s *Sonarr) GetDelayProfileContext(ctx context.Context, profileID int64) (*
 }
 
 // AddDelayProfile creates a delay profile.
+// AddDelayProfile doesn't take into account the "order" field sent on creation.
+// Order will be set to first available. This can only be edited via UpdateDelayProfile later on.
 func (s *Sonarr) AddDelayProfile(profile *DelayProfile) (*DelayProfile, error) {
 	return s.AddDelayProfileContext(context.Background(), profile)
 }
