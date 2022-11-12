@@ -1,4 +1,4 @@
-package sonarr_test
+package lidarr_test
 
 import (
 	"path"
@@ -6,36 +6,36 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"golift.io/starr"
-	"golift.io/starr/sonarr"
+	"golift.io/starr/lidarr"
 )
 
 const notificationResponseBody = `{
-	"onGrab": false,
-	"onDownload": true,
-	"onUpgrade": false,
-	"onRename": false,
-	"onSeriesDelete": false,
-	"onEpisodeFileDelete": false,
-	"onEpisodeFileDeleteForUpgrade": false,
-	"onHealthIssue": false,
-	"onApplicationUpdate": false,
-	"supportsOnGrab": true,
-	"supportsOnDownload": true,
-	"supportsOnUpgrade": true,
-	"supportsOnRename": true,
-	"supportsOnSeriesDelete": true,
-	"supportsOnEpisodeFileDelete": true,
-	"supportsOnEpisodeFileDeleteForUpgrade": true,
-	"supportsOnHealthIssue": true,
-	"supportsOnApplicationUpdate": true,
-	"includeHealthWarnings": false,
+    "onGrab": false,
+    "onReleaseImport": false,
+    "onUpgrade": true,
+    "onRename": false,
+    "onHealthIssue": false,
+    "onDownloadFailure": false,
+    "onImportFailure": false,
+    "onTrackRetag": false,
+    "onApplicationUpdate": false,
+    "supportsOnGrab": true,
+    "supportsOnReleaseImport": true,
+    "supportsOnUpgrade": true,
+    "supportsOnRename": true,
+    "supportsOnHealthIssue": true,
+    "includeHealthWarnings": false,
+    "supportsOnDownloadFailure": false,
+    "supportsOnImportFailure": false,
+    "supportsOnTrackRetag": true,
+    "supportsOnApplicationUpdate": true,
 	"name": "Test",
 	"fields": [
 	  {
 		"order": 0,
 		"name": "path",
 		"label": "Path",
-		"value": "/scripts/sonarr.sh",
+		"value": "/scripts/lidarr.sh",
 		"type": "filePath",
 		"advanced": false
 	  },
@@ -52,7 +52,7 @@ const notificationResponseBody = `{
 	"implementationName": "Custom Script",
 	"implementation": "CustomScript",
 	"configContract": "CustomScriptSettings",
-	"infoLink": "https://wiki.servarr.com/sonarr/supported#customscript",
+	"infoLink": "https://wiki.servarr.com/lidarr/supported#customscript",
 	"message": {
 	  "message": "Testing will execute the script with the EventType set to Test",
 	  "type": "warning"
@@ -61,11 +61,11 @@ const notificationResponseBody = `{
 	"id": 3
   }`
 
-const addNotification = `{"onDownload":true,"name":"Test","implementation":"CustomScript","configContract":` +
-	`"CustomScriptSettings","fields":[{"name":"path","value":"/scripts/sonarr.sh"}]}`
+const addNotification = `{"onUpgrade":true,"name":"Test","implementation":"CustomScript","configContract":` +
+	`"CustomScriptSettings","fields":[{"name":"path","value":"/scripts/lidarr.sh"}]}`
 
-const updateNotification = `{"onDownload":true,"id":3,"name":"Test","implementation":"CustomScript","configContract":` +
-	`"CustomScriptSettings","fields":[{"name":"path","value":"/scripts/sonarr.sh"}]}`
+const updateNotification = `{"onUpgrade":true,"id":3,"name":"Test","implementation":"CustomScript","configContract":` +
+	`"CustomScriptSettings","fields":[{"name":"path","value":"/scripts/lidarr.sh"}]}`
 
 func TestGetNotifications(t *testing.T) {
 	t.Parallel()
@@ -73,37 +73,37 @@ func TestGetNotifications(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:            "200",
-			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "notification"),
+			ExpectedPath:    path.Join("/", starr.API, lidarr.APIver, "notification"),
 			ExpectedRequest: "",
 			ExpectedMethod:  "GET",
 			ResponseStatus:  200,
 			ResponseBody:    "[" + notificationResponseBody + "]",
 			WithRequest:     nil,
-			WithResponse: []*sonarr.NotificationOutput{
+			WithResponse: []*lidarr.NotificationOutput{
 				{
-					OnDownload:                            true,
-					SupportsOnGrab:                        true,
-					SupportsOnDownload:                    true,
-					SupportsOnUpgrade:                     true,
-					SupportsOnRename:                      true,
-					SupportsOnSeriesDelete:                true,
-					SupportsOnEpisodeFileDelete:           true,
-					SupportsOnEpisodeFileDeleteForUpgrade: true,
-					SupportsOnHealthIssue:                 true,
-					SupportsOnApplicationUpdate:           true,
-					ID:                                    3,
-					Name:                                  "Test",
-					ImplementationName:                    "Custom Script",
-					Implementation:                        "CustomScript",
-					ConfigContract:                        "CustomScriptSettings",
-					InfoLink:                              "https://wiki.servarr.com/sonarr/supported#customscript",
-					Tags:                                  []int{},
+					OnUpgrade:                   true,
+					SupportsOnGrab:              true,
+					SupportsOnReleaseImport:     true,
+					SupportsOnUpgrade:           true,
+					SupportsOnRename:            true,
+					SupportsOnApplicationUpdate: true,
+					SupportsOnTrackRetag:        true,
+					SupportsOnDownloadFailure:   false,
+					SupportsOnImportFailure:     false,
+					SupportsOnHealthIssue:       true,
+					ID:                          3,
+					Name:                        "Test",
+					ImplementationName:          "Custom Script",
+					Implementation:              "CustomScript",
+					ConfigContract:              "CustomScriptSettings",
+					InfoLink:                    "https://wiki.servarr.com/lidarr/supported#customscript",
+					Tags:                        []int{},
 					Fields: []*starr.FieldOutput{
 						{
 							Order:    0,
 							Name:     "path",
 							Label:    "Path",
-							Value:    "/scripts/sonarr.sh",
+							Value:    "/scripts/lidarr.sh",
 							Type:     "filePath",
 							Advanced: false,
 						},
@@ -123,12 +123,12 @@ func TestGetNotifications(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "notification"),
+			ExpectedPath:   path.Join("/", starr.API, lidarr.APIver, "notification"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
 			WithError:      starr.ErrInvalidStatusCode,
-			WithResponse:   ([]*sonarr.NotificationOutput)(nil),
+			WithResponse:   ([]*lidarr.NotificationOutput)(nil),
 		},
 	}
 
@@ -137,7 +137,7 @@ func TestGetNotifications(t *testing.T) {
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
-			client := sonarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
+			client := lidarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.GetNotifications()
 			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
@@ -151,36 +151,36 @@ func TestGetNotification(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:            "200",
-			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "notification", "1"),
+			ExpectedPath:    path.Join("/", starr.API, lidarr.APIver, "notification", "1"),
 			ExpectedRequest: "",
 			ExpectedMethod:  "GET",
 			ResponseStatus:  200,
 			ResponseBody:    notificationResponseBody,
 			WithRequest:     nil,
-			WithResponse: &sonarr.NotificationOutput{
-				OnDownload:                            true,
-				SupportsOnGrab:                        true,
-				SupportsOnDownload:                    true,
-				SupportsOnUpgrade:                     true,
-				SupportsOnRename:                      true,
-				SupportsOnSeriesDelete:                true,
-				SupportsOnEpisodeFileDelete:           true,
-				SupportsOnEpisodeFileDeleteForUpgrade: true,
-				SupportsOnHealthIssue:                 true,
-				SupportsOnApplicationUpdate:           true,
-				ID:                                    3,
-				Name:                                  "Test",
-				ImplementationName:                    "Custom Script",
-				Implementation:                        "CustomScript",
-				ConfigContract:                        "CustomScriptSettings",
-				InfoLink:                              "https://wiki.servarr.com/sonarr/supported#customscript",
-				Tags:                                  []int{},
+			WithResponse: &lidarr.NotificationOutput{
+				OnUpgrade:                   true,
+				SupportsOnGrab:              true,
+				SupportsOnReleaseImport:     true,
+				SupportsOnUpgrade:           true,
+				SupportsOnRename:            true,
+				SupportsOnApplicationUpdate: true,
+				SupportsOnTrackRetag:        true,
+				SupportsOnDownloadFailure:   false,
+				SupportsOnImportFailure:     false,
+				SupportsOnHealthIssue:       true,
+				ID:                          3,
+				Name:                        "Test",
+				ImplementationName:          "Custom Script",
+				Implementation:              "CustomScript",
+				ConfigContract:              "CustomScriptSettings",
+				InfoLink:                    "https://wiki.servarr.com/lidarr/supported#customscript",
+				Tags:                        []int{},
 				Fields: []*starr.FieldOutput{
 					{
 						Order:    0,
 						Name:     "path",
 						Label:    "Path",
-						Value:    "/scripts/sonarr.sh",
+						Value:    "/scripts/lidarr.sh",
 						Type:     "filePath",
 						Advanced: false,
 					},
@@ -199,12 +199,12 @@ func TestGetNotification(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "notification", "1"),
+			ExpectedPath:   path.Join("/", starr.API, lidarr.APIver, "notification", "1"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
 			WithError:      starr.ErrInvalidStatusCode,
-			WithResponse:   (*sonarr.NotificationOutput)(nil),
+			WithResponse:   (*lidarr.NotificationOutput)(nil),
 		},
 	}
 
@@ -213,7 +213,7 @@ func TestGetNotification(t *testing.T) {
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
-			client := sonarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
+			client := lidarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.GetNotification(1)
 			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
@@ -227,47 +227,47 @@ func TestAddNotification(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "notification"),
+			ExpectedPath:   path.Join("/", starr.API, lidarr.APIver, "notification"),
 			ExpectedMethod: "POST",
 			ResponseStatus: 200,
-			WithRequest: &sonarr.NotificationInput{
-				OnDownload:     true,
+			WithRequest: &lidarr.NotificationInput{
+				OnUpgrade:      true,
 				Name:           "Test",
 				Implementation: "CustomScript",
 				ConfigContract: "CustomScriptSettings",
 				Fields: []*starr.FieldInput{
 					{
 						Name:  "path",
-						Value: "/scripts/sonarr.sh",
+						Value: "/scripts/lidarr.sh",
 					},
 				},
 			},
 			ExpectedRequest: addNotification + "\n",
 			ResponseBody:    notificationResponseBody,
-			WithResponse: &sonarr.NotificationOutput{
-				OnDownload:                            true,
-				SupportsOnGrab:                        true,
-				SupportsOnDownload:                    true,
-				SupportsOnUpgrade:                     true,
-				SupportsOnRename:                      true,
-				SupportsOnSeriesDelete:                true,
-				SupportsOnEpisodeFileDelete:           true,
-				SupportsOnEpisodeFileDeleteForUpgrade: true,
-				SupportsOnHealthIssue:                 true,
-				SupportsOnApplicationUpdate:           true,
-				ID:                                    3,
-				Name:                                  "Test",
-				ImplementationName:                    "Custom Script",
-				Implementation:                        "CustomScript",
-				ConfigContract:                        "CustomScriptSettings",
-				InfoLink:                              "https://wiki.servarr.com/sonarr/supported#customscript",
-				Tags:                                  []int{},
+			WithResponse: &lidarr.NotificationOutput{
+				OnUpgrade:                   true,
+				SupportsOnGrab:              true,
+				SupportsOnReleaseImport:     true,
+				SupportsOnUpgrade:           true,
+				SupportsOnRename:            true,
+				SupportsOnApplicationUpdate: true,
+				SupportsOnTrackRetag:        true,
+				SupportsOnDownloadFailure:   false,
+				SupportsOnImportFailure:     false,
+				SupportsOnHealthIssue:       true,
+				ID:                          3,
+				Name:                        "Test",
+				ImplementationName:          "Custom Script",
+				Implementation:              "CustomScript",
+				ConfigContract:              "CustomScriptSettings",
+				InfoLink:                    "https://wiki.servarr.com/lidarr/supported#customscript",
+				Tags:                        []int{},
 				Fields: []*starr.FieldOutput{
 					{
 						Order:    0,
 						Name:     "path",
 						Label:    "Path",
-						Value:    "/scripts/sonarr.sh",
+						Value:    "/scripts/lidarr.sh",
 						Type:     "filePath",
 						Advanced: false,
 					},
@@ -286,25 +286,25 @@ func TestAddNotification(t *testing.T) {
 		},
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "notification"),
+			ExpectedPath:   path.Join("/", starr.API, lidarr.APIver, "notification"),
 			ExpectedMethod: "POST",
 			ResponseStatus: 404,
-			WithRequest: &sonarr.NotificationInput{
-				OnDownload:     true,
+			WithRequest: &lidarr.NotificationInput{
+				OnUpgrade:      true,
 				Name:           "Test",
 				Implementation: "CustomScript",
 				ConfigContract: "CustomScriptSettings",
 				Fields: []*starr.FieldInput{
 					{
 						Name:  "path",
-						Value: "/scripts/sonarr.sh",
+						Value: "/scripts/lidarr.sh",
 					},
 				},
 			},
 			ExpectedRequest: addNotification + "\n",
 			ResponseBody:    `{"message": "NotFound"}`,
 			WithError:       starr.ErrInvalidStatusCode,
-			WithResponse:    (*sonarr.NotificationOutput)(nil),
+			WithResponse:    (*lidarr.NotificationOutput)(nil),
 		},
 	}
 
@@ -313,8 +313,8 @@ func TestAddNotification(t *testing.T) {
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
-			client := sonarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			output, err := client.AddNotification(test.WithRequest.(*sonarr.NotificationInput))
+			client := lidarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
+			output, err := client.AddNotification(test.WithRequest.(*lidarr.NotificationInput))
 			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
@@ -327,11 +327,11 @@ func TestUpdateNotification(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "notification", "3"),
+			ExpectedPath:   path.Join("/", starr.API, lidarr.APIver, "notification", "3"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 200,
-			WithRequest: &sonarr.NotificationInput{
-				OnDownload:     true,
+			WithRequest: &lidarr.NotificationInput{
+				OnUpgrade:      true,
 				ID:             3,
 				Name:           "Test",
 				Implementation: "CustomScript",
@@ -339,36 +339,36 @@ func TestUpdateNotification(t *testing.T) {
 				Fields: []*starr.FieldInput{
 					{
 						Name:  "path",
-						Value: "/scripts/sonarr.sh",
+						Value: "/scripts/lidarr.sh",
 					},
 				},
 			},
 			ExpectedRequest: updateNotification + "\n",
 			ResponseBody:    notificationResponseBody,
-			WithResponse: &sonarr.NotificationOutput{
-				OnDownload:                            true,
-				SupportsOnGrab:                        true,
-				SupportsOnDownload:                    true,
-				SupportsOnUpgrade:                     true,
-				SupportsOnRename:                      true,
-				SupportsOnSeriesDelete:                true,
-				SupportsOnEpisodeFileDelete:           true,
-				SupportsOnEpisodeFileDeleteForUpgrade: true,
-				SupportsOnHealthIssue:                 true,
-				SupportsOnApplicationUpdate:           true,
-				ID:                                    3,
-				Name:                                  "Test",
-				ImplementationName:                    "Custom Script",
-				Implementation:                        "CustomScript",
-				ConfigContract:                        "CustomScriptSettings",
-				InfoLink:                              "https://wiki.servarr.com/sonarr/supported#customscript",
-				Tags:                                  []int{},
+			WithResponse: &lidarr.NotificationOutput{
+				OnUpgrade:                   true,
+				SupportsOnGrab:              true,
+				SupportsOnReleaseImport:     true,
+				SupportsOnUpgrade:           true,
+				SupportsOnRename:            true,
+				SupportsOnApplicationUpdate: true,
+				SupportsOnTrackRetag:        true,
+				SupportsOnDownloadFailure:   false,
+				SupportsOnImportFailure:     false,
+				SupportsOnHealthIssue:       true,
+				ID:                          3,
+				Name:                        "Test",
+				ImplementationName:          "Custom Script",
+				Implementation:              "CustomScript",
+				ConfigContract:              "CustomScriptSettings",
+				InfoLink:                    "https://wiki.servarr.com/lidarr/supported#customscript",
+				Tags:                        []int{},
 				Fields: []*starr.FieldOutput{
 					{
 						Order:    0,
 						Name:     "path",
 						Label:    "Path",
-						Value:    "/scripts/sonarr.sh",
+						Value:    "/scripts/lidarr.sh",
 						Type:     "filePath",
 						Advanced: false,
 					},
@@ -387,11 +387,11 @@ func TestUpdateNotification(t *testing.T) {
 		},
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "notification", "3"),
+			ExpectedPath:   path.Join("/", starr.API, lidarr.APIver, "notification", "3"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 404,
-			WithRequest: &sonarr.NotificationInput{
-				OnDownload:     true,
+			WithRequest: &lidarr.NotificationInput{
+				OnUpgrade:      true,
 				ID:             3,
 				Name:           "Test",
 				Implementation: "CustomScript",
@@ -399,14 +399,14 @@ func TestUpdateNotification(t *testing.T) {
 				Fields: []*starr.FieldInput{
 					{
 						Name:  "path",
-						Value: "/scripts/sonarr.sh",
+						Value: "/scripts/lidarr.sh",
 					},
 				},
 			},
 			ExpectedRequest: updateNotification + "\n",
 			ResponseBody:    `{"message": "NotFound"}`,
 			WithError:       starr.ErrInvalidStatusCode,
-			WithResponse:    (*sonarr.NotificationOutput)(nil),
+			WithResponse:    (*lidarr.NotificationOutput)(nil),
 		},
 	}
 
@@ -415,8 +415,8 @@ func TestUpdateNotification(t *testing.T) {
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
-			client := sonarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			output, err := client.UpdateNotification(test.WithRequest.(*sonarr.NotificationInput))
+			client := lidarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
+			output, err := client.UpdateNotification(test.WithRequest.(*lidarr.NotificationInput))
 			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
@@ -429,7 +429,7 @@ func TestDeleteNotification(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "notification", "2"),
+			ExpectedPath:   path.Join("/", starr.API, lidarr.APIver, "notification", "2"),
 			ExpectedMethod: "DELETE",
 			WithRequest:    int64(2),
 			ResponseStatus: 200,
@@ -438,7 +438,7 @@ func TestDeleteNotification(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "notification", "2"),
+			ExpectedPath:   path.Join("/", starr.API, lidarr.APIver, "notification", "2"),
 			ExpectedMethod: "DELETE",
 			WithRequest:    int64(2),
 			ResponseStatus: 404,
@@ -452,7 +452,7 @@ func TestDeleteNotification(t *testing.T) {
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
-			client := sonarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
+			client := lidarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			err := client.DeleteNotification(test.WithRequest.(int64))
 			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 		})
