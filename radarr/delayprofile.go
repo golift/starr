@@ -1,4 +1,4 @@
-package sonarr
+package radarr
 
 import (
 	"bytes"
@@ -27,16 +27,16 @@ type DelayProfile struct {
 }
 
 // GetDelayProfiles returns all configured delay profiles.
-func (s *Sonarr) GetDelayProfiles() ([]*DelayProfile, error) {
-	return s.GetDelayProfilesContext(context.Background())
+func (r *Radarr) GetDelayProfiles() ([]*DelayProfile, error) {
+	return r.GetDelayProfilesContext(context.Background())
 }
 
 // GetDelayProfilesContext returns all configured delay profiles.
-func (s *Sonarr) GetDelayProfilesContext(ctx context.Context) ([]*DelayProfile, error) {
+func (r *Radarr) GetDelayProfilesContext(ctx context.Context) ([]*DelayProfile, error) {
 	var output []*DelayProfile
 
 	req := starr.Request{URI: bpDelayProfile}
-	if err := s.GetInto(ctx, req, &output); err != nil {
+	if err := r.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
@@ -44,16 +44,16 @@ func (s *Sonarr) GetDelayProfilesContext(ctx context.Context) ([]*DelayProfile, 
 }
 
 // GetDelayProfile returns a single delay profile.
-func (s *Sonarr) GetDelayProfile(profileID int64) (*DelayProfile, error) {
-	return s.GetDelayProfileContext(context.Background(), profileID)
+func (r *Radarr) GetDelayProfile(profileID int64) (*DelayProfile, error) {
+	return r.GetDelayProfileContext(context.Background(), profileID)
 }
 
 // GetDelayProfileContext returns a single delay profile.
-func (s *Sonarr) GetDelayProfileContext(ctx context.Context, profileID int64) (*DelayProfile, error) {
+func (r *Radarr) GetDelayProfileContext(ctx context.Context, profileID int64) (*DelayProfile, error) {
 	var output DelayProfile
 
 	req := starr.Request{URI: path.Join(bpDelayProfile, fmt.Sprint(profileID))}
-	if err := s.GetInto(ctx, req, &output); err != nil {
+	if err := r.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
@@ -63,12 +63,12 @@ func (s *Sonarr) GetDelayProfileContext(ctx context.Context, profileID int64) (*
 // AddDelayProfile creates a delay profile.
 // AddDelayProfile doesn't take into account the "order" field sent on creation.
 // Order will be set to first available. This can only be edited via UpdateDelayProfile later on.
-func (s *Sonarr) AddDelayProfile(profile *DelayProfile) (*DelayProfile, error) {
-	return s.AddDelayProfileContext(context.Background(), profile)
+func (r *Radarr) AddDelayProfile(profile *DelayProfile) (*DelayProfile, error) {
+	return r.AddDelayProfileContext(context.Background(), profile)
 }
 
 // AddDelayProfileContext creates a delay profile.
-func (s *Sonarr) AddDelayProfileContext(ctx context.Context, profile *DelayProfile) (*DelayProfile, error) {
+func (r *Radarr) AddDelayProfileContext(ctx context.Context, profile *DelayProfile) (*DelayProfile, error) {
 	var output DelayProfile
 
 	var body bytes.Buffer
@@ -77,7 +77,7 @@ func (s *Sonarr) AddDelayProfileContext(ctx context.Context, profile *DelayProfi
 	}
 
 	req := starr.Request{URI: bpDelayProfile, Body: &body}
-	if err := s.PostInto(ctx, req, &output); err != nil {
+	if err := r.PostInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
@@ -85,12 +85,12 @@ func (s *Sonarr) AddDelayProfileContext(ctx context.Context, profile *DelayProfi
 }
 
 // UpdateDelayProfile updates the delay profile.
-func (s *Sonarr) UpdateDelayProfile(profile *DelayProfile) (*DelayProfile, error) {
-	return s.UpdateDelayProfileContext(context.Background(), profile)
+func (r *Radarr) UpdateDelayProfile(profile *DelayProfile) (*DelayProfile, error) {
+	return r.UpdateDelayProfileContext(context.Background(), profile)
 }
 
 // UpdateDelayProfileContext updates the delay profile.
-func (s *Sonarr) UpdateDelayProfileContext(ctx context.Context, profile *DelayProfile) (*DelayProfile, error) {
+func (r *Radarr) UpdateDelayProfileContext(ctx context.Context, profile *DelayProfile) (*DelayProfile, error) {
 	var output DelayProfile
 
 	var body bytes.Buffer
@@ -99,7 +99,7 @@ func (s *Sonarr) UpdateDelayProfileContext(ctx context.Context, profile *DelayPr
 	}
 
 	req := starr.Request{URI: path.Join(bpDelayProfile, fmt.Sprint(profile.ID)), Body: &body}
-	if err := s.PutInto(ctx, req, &output); err != nil {
+	if err := r.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
@@ -107,14 +107,14 @@ func (s *Sonarr) UpdateDelayProfileContext(ctx context.Context, profile *DelayPr
 }
 
 // DeleteDelayProfile removes a single delay profile.
-func (s *Sonarr) DeleteDelayProfile(profileID int64) error {
-	return s.DeleteDelayProfileContext(context.Background(), profileID)
+func (r *Radarr) DeleteDelayProfile(profileID int64) error {
+	return r.DeleteDelayProfileContext(context.Background(), profileID)
 }
 
 // DeleteDelayProfileContext removes a single delay profile.
-func (s *Sonarr) DeleteDelayProfileContext(ctx context.Context, profileID int64) error {
+func (r *Radarr) DeleteDelayProfileContext(ctx context.Context, profileID int64) error {
 	req := starr.Request{URI: path.Join(bpDelayProfile, fmt.Sprint(profileID))}
-	if err := s.DeleteAny(ctx, req); err != nil {
+	if err := r.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}
 
