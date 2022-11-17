@@ -139,6 +139,14 @@ type Path struct {
 	Path string `json:"path"`
 }
 
+// RemotePathMapping is the remotePathMapping endpoint.
+type RemotePathMapping struct {
+	ID         int64  `json:"id,omitempty"`
+	Host       string `json:"host"`
+	RemotePath string `json:"remotePath"`
+	LocalPath  string `json:"localPath"`
+}
+
 // Value is generic ID/Name struct applied to a few places.
 type Value struct {
 	ID   int64  `json:"id"`

@@ -13,22 +13,14 @@ import (
 // Define Base Path for remote path mapping calls.
 const bpRemotePathMapping = APIver + "/remotePathMapping"
 
-// RemotePathMapping is the /api/v3/remotePathMapping endpoint.
-type RemotePathMapping struct {
-	ID         int64  `json:"id,omitempty"`
-	Host       string `json:"host"`
-	RemotePath string `json:"remotePath"`
-	LocalPath  string `json:"localPath"`
-}
-
 // GetRemotePathMappings returns all configured remote path mappings.
-func (s *Sonarr) GetRemotePathMappings() ([]*RemotePathMapping, error) {
+func (s *Sonarr) GetRemotePathMappings() ([]*starr.RemotePathMapping, error) {
 	return s.GetRemotePathMappingsContext(context.Background())
 }
 
 // GetRemotePathMappingsContext returns all configured remote path mappings.
-func (s *Sonarr) GetRemotePathMappingsContext(ctx context.Context) ([]*RemotePathMapping, error) {
-	var output []*RemotePathMapping
+func (s *Sonarr) GetRemotePathMappingsContext(ctx context.Context) ([]*starr.RemotePathMapping, error) {
+	var output []*starr.RemotePathMapping
 
 	req := starr.Request{URI: bpRemotePathMapping}
 	if err := s.GetInto(ctx, req, &output); err != nil {
@@ -39,13 +31,13 @@ func (s *Sonarr) GetRemotePathMappingsContext(ctx context.Context) ([]*RemotePat
 }
 
 // GetRemotePathMapping returns a single remote path mapping.
-func (s *Sonarr) GetRemotePathMapping(mappingID int64) (*RemotePathMapping, error) {
+func (s *Sonarr) GetRemotePathMapping(mappingID int64) (*starr.RemotePathMapping, error) {
 	return s.GetRemotePathMappingContext(context.Background(), mappingID)
 }
 
 // GetRemotePathMappingContext returns a single remote path mapping.
-func (s *Sonarr) GetRemotePathMappingContext(ctx context.Context, mappingID int64) (*RemotePathMapping, error) {
-	var output RemotePathMapping
+func (s *Sonarr) GetRemotePathMappingContext(ctx context.Context, mappingID int64) (*starr.RemotePathMapping, error) {
+	var output starr.RemotePathMapping
 
 	req := starr.Request{URI: path.Join(bpRemotePathMapping, fmt.Sprint(mappingID))}
 	if err := s.GetInto(ctx, req, &output); err != nil {
@@ -56,15 +48,15 @@ func (s *Sonarr) GetRemotePathMappingContext(ctx context.Context, mappingID int6
 }
 
 // AddRemotePathMapping creates a remote path mapping.
-func (s *Sonarr) AddRemotePathMapping(mapping *RemotePathMapping) (*RemotePathMapping, error) {
+func (s *Sonarr) AddRemotePathMapping(mapping *starr.RemotePathMapping) (*starr.RemotePathMapping, error) {
 	return s.AddRemotePathMappingContext(context.Background(), mapping)
 }
 
 // AddRemotePathMappingContext creates a remote path mapping.
 func (s *Sonarr) AddRemotePathMappingContext(ctx context.Context,
-	mapping *RemotePathMapping,
-) (*RemotePathMapping, error) {
-	var output RemotePathMapping
+	mapping *starr.RemotePathMapping,
+) (*starr.RemotePathMapping, error) {
+	var output starr.RemotePathMapping
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(mapping); err != nil {
@@ -80,15 +72,15 @@ func (s *Sonarr) AddRemotePathMappingContext(ctx context.Context,
 }
 
 // UpdateRemotePathMapping updates the remote path mapping.
-func (s *Sonarr) UpdateRemotePathMapping(mapping *RemotePathMapping) (*RemotePathMapping, error) {
+func (s *Sonarr) UpdateRemotePathMapping(mapping *starr.RemotePathMapping) (*starr.RemotePathMapping, error) {
 	return s.UpdateRemotePathMappingContext(context.Background(), mapping)
 }
 
 // UpdateRemotePathMappingContext updates the remote path mapping.
 func (s *Sonarr) UpdateRemotePathMappingContext(ctx context.Context,
-	mapping *RemotePathMapping,
-) (*RemotePathMapping, error) {
-	var output RemotePathMapping
+	mapping *starr.RemotePathMapping,
+) (*starr.RemotePathMapping, error) {
+	var output starr.RemotePathMapping
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(mapping); err != nil {

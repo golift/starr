@@ -28,7 +28,7 @@ func TestGetRemotePathMappings(t *testing.T) {
 			ExpectedMethod: "GET",
 			ResponseStatus: 200,
 			ResponseBody:   `[` + remotePathMapping + `]`,
-			WithResponse: []*readarr.RemotePathMapping{
+			WithResponse: []*starr.RemotePathMapping{
 				{
 					Host:       "transmission",
 					RemotePath: "/remote/",
@@ -45,7 +45,7 @@ func TestGetRemotePathMappings(t *testing.T) {
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
 			WithError:      starr.ErrInvalidStatusCode,
-			WithResponse:   []*readarr.RemotePathMapping(nil),
+			WithResponse:   []*starr.RemotePathMapping(nil),
 		},
 	}
 
@@ -73,7 +73,7 @@ func TestGetRemotePathMapping(t *testing.T) {
 			ResponseStatus: 200,
 			WithRequest:    int64(1),
 			ResponseBody:   remotePathMapping,
-			WithResponse: &readarr.RemotePathMapping{
+			WithResponse: &starr.RemotePathMapping{
 				Host:       "transmission",
 				RemotePath: "/remote/",
 				LocalPath:  "/local/",
@@ -88,7 +88,7 @@ func TestGetRemotePathMapping(t *testing.T) {
 			ResponseStatus: 404,
 			WithRequest:    int64(1),
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithResponse:   (*readarr.RemotePathMapping)(nil),
+			WithResponse:   (*starr.RemotePathMapping)(nil),
 			WithError:      starr.ErrInvalidStatusCode,
 		},
 	}
@@ -115,14 +115,14 @@ func TestAddRemotePathMapping(t *testing.T) {
 			ExpectedPath:   path.Join("/", starr.API, readarr.APIver, "remotePathMapping"),
 			ExpectedMethod: "POST",
 			ResponseStatus: 201,
-			WithRequest: &readarr.RemotePathMapping{
+			WithRequest: &starr.RemotePathMapping{
 				Host:       "transmission",
 				RemotePath: "/remote/",
 				LocalPath:  "/local/",
 			},
 			ExpectedRequest: `{"host":"transmission","remotePath":"/remote/","localPath":"/local/"}` + "\n",
 			ResponseBody:    remotePathMapping,
-			WithResponse: &readarr.RemotePathMapping{
+			WithResponse: &starr.RemotePathMapping{
 				Host:       "transmission",
 				RemotePath: "/remote/",
 				LocalPath:  "/local/",
@@ -135,7 +135,7 @@ func TestAddRemotePathMapping(t *testing.T) {
 			ExpectedPath:   path.Join("/", starr.API, readarr.APIver, "remotePathMapping"),
 			ExpectedMethod: "POST",
 			ResponseStatus: 404,
-			WithRequest: &readarr.RemotePathMapping{
+			WithRequest: &starr.RemotePathMapping{
 				Host:       "transmission",
 				RemotePath: "/remote/",
 				LocalPath:  "/local/",
@@ -143,7 +143,7 @@ func TestAddRemotePathMapping(t *testing.T) {
 			ExpectedRequest: `{"host":"transmission","remotePath":"/remote/","localPath":"/local/"}` + "\n",
 			ResponseBody:    `{"message": "NotFound"}`,
 			WithError:       starr.ErrInvalidStatusCode,
-			WithResponse:    (*readarr.RemotePathMapping)(nil),
+			WithResponse:    (*starr.RemotePathMapping)(nil),
 		},
 	}
 
@@ -153,7 +153,7 @@ func TestAddRemotePathMapping(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := readarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			output, err := client.AddRemotePathMapping(test.WithRequest.(*readarr.RemotePathMapping))
+			output, err := client.AddRemotePathMapping(test.WithRequest.(*starr.RemotePathMapping))
 			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
@@ -169,7 +169,7 @@ func TestUpdateRemotePathMapping(t *testing.T) {
 			ExpectedPath:   path.Join("/", starr.API, readarr.APIver, "remotePathMapping", "2"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 201,
-			WithRequest: &readarr.RemotePathMapping{
+			WithRequest: &starr.RemotePathMapping{
 				Host:       "transmission",
 				RemotePath: "/remote/",
 				LocalPath:  "/local/",
@@ -177,7 +177,7 @@ func TestUpdateRemotePathMapping(t *testing.T) {
 			},
 			ExpectedRequest: `{"id":2,"host":"transmission","remotePath":"/remote/","localPath":"/local/"}` + "\n",
 			ResponseBody:    remotePathMapping,
-			WithResponse: &readarr.RemotePathMapping{
+			WithResponse: &starr.RemotePathMapping{
 				Host:       "transmission",
 				RemotePath: "/remote/",
 				LocalPath:  "/local/",
@@ -190,7 +190,7 @@ func TestUpdateRemotePathMapping(t *testing.T) {
 			ExpectedPath:   path.Join("/", starr.API, readarr.APIver, "remotePathMapping", "2"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 404,
-			WithRequest: &readarr.RemotePathMapping{
+			WithRequest: &starr.RemotePathMapping{
 				Host:       "transmission",
 				RemotePath: "/remote/",
 				LocalPath:  "/local/",
@@ -199,7 +199,7 @@ func TestUpdateRemotePathMapping(t *testing.T) {
 			ExpectedRequest: `{"id":2,"host":"transmission","remotePath":"/remote/","localPath":"/local/"}` + "\n",
 			ResponseBody:    `{"message": "NotFound"}`,
 			WithError:       starr.ErrInvalidStatusCode,
-			WithResponse:    (*readarr.RemotePathMapping)(nil),
+			WithResponse:    (*starr.RemotePathMapping)(nil),
 		},
 	}
 
@@ -209,7 +209,7 @@ func TestUpdateRemotePathMapping(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := readarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			output, err := client.UpdateRemotePathMapping(test.WithRequest.(*readarr.RemotePathMapping))
+			output, err := client.UpdateRemotePathMapping(test.WithRequest.(*starr.RemotePathMapping))
 			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
