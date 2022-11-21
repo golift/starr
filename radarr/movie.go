@@ -121,8 +121,8 @@ type AddMovieInput struct {
 // AddMovieOptions are the options for finding a new movie.
 type AddMovieOptions struct {
 	SearchForMovie bool `json:"searchForMovie"`
-	// https://github.com/Radarr/Radarr/blob/f80272a65987b635b07448e6b959df0ad8c105d2/frontend/src/Utilities/Movie/monitorOptions.js
-	Monitored      string `json:"monitored"` // "movieOnly" || "movieAndCollection" || "none"
+	// Allowed values: "movieOnly", "movieAndCollection", "none"
+	Monitored string `json:"monitored,omitempty"`
 }
 
 // AlternativeTitle is part of a Movie.
