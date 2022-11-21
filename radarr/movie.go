@@ -122,7 +122,7 @@ type AddMovieInput struct {
 type AddMovieOptions struct {
 	SearchForMovie bool `json:"searchForMovie"`
 	// Allowed values: "movieOnly", "movieAndCollection", "none"
-	Monitored string `json:"monitored,omitempty"`
+	Monitor string `json:"monitor,omitempty"`
 }
 
 // AlternativeTitle is part of a Movie.
