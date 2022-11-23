@@ -176,10 +176,11 @@ type FieldInput struct {
 
 // SelectOption is part of Field.
 type SelectOption struct {
-	Order int64  `json:"order"`
-	Value int64  `json:"value"`
-	Hint  string `json:"hint"`
-	Name  string `json:"name"`
+	DividerAfter bool   `json:"dividerAfter,omitempty"`
+	Order        int64  `json:"order"`
+	Value        int64  `json:"value"`
+	Hint         string `json:"hint"`
+	Name         string `json:"name"`
 }
 
 // KeyValue is yet another reusable generic type.
