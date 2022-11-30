@@ -156,7 +156,6 @@ func (l *Lidarr) UpdateAlbumContext(ctx context.Context, albumID int64, album *A
 		Query: make(url.Values),
 		Body:  &body,
 	}
-	req.Query.Add("moveFiles", "true")
 
 	if err := l.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
@@ -166,12 +165,12 @@ func (l *Lidarr) UpdateAlbumContext(ctx context.Context, albumID int64, album *A
 }
 
 // AddAlbum adds a new album to Lidarr, and probably does not yet work.
-func (l *Lidarr) AddAlbum(album *AddAlbumInput) (*Album, error) {
-	return l.AddAlbumContext(context.Background(), album)
+func (l *Lidarr) AddAlbum(album *AddAlbumInput, moveFiles bool) (*Album, error) {
+	return l.AddAlbumContext(context.Background(), album, moveFiles)
 }
 
 // AddAlbumContext adds a new album to Lidarr, and probably does not yet work.
-func (l *Lidarr) AddAlbumContext(ctx context.Context, album *AddAlbumInput) (*Album, error) {
+func (l *Lidarr) AddAlbumContext(ctx context.Context, album *AddAlbumInput, moveFiles bool) (*Album, error) {
 	if album.Releases == nil {
 		album.Releases = make([]*AddAlbumInputRelease, 0)
 	}
@@ -186,7 +185,7 @@ func (l *Lidarr) AddAlbumContext(ctx context.Context, album *AddAlbumInput) (*Al
 		Query: make(url.Values),
 		Body:  &body,
 	}
-	req.Query.Add("moveFiles", "true")
+	req.Query.Add("moveFiles", fmt.Sprint(moveFiles))
 
 	var output Album
 	if err := l.PostInto(ctx, req, &output); err != nil {
