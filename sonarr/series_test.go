@@ -821,7 +821,7 @@ func TestAddSeries(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:            "200",
-			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "series?moveFiles=true"),
+			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "series"),
 			ExpectedMethod:  "POST",
 			ExpectedRequest: addSeries,
 			ResponseStatus:  200,
@@ -965,7 +965,7 @@ func TestAddSeries(t *testing.T) {
 		},
 		{
 			Name:            "404",
-			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "series?moveFiles=true"),
+			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "series"),
 			ExpectedMethod:  "POST",
 			ExpectedRequest: addSeries,
 			ResponseStatus:  404,
@@ -1038,7 +1038,7 @@ func TestUpdateSeries(t *testing.T) {
 	tests := []*starr.TestMockData{
 		{
 			Name:            "200",
-			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "series/1?moveFiles=true"),
+			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "series/1?moveFiles=false"),
 			ExpectedMethod:  "PUT",
 			ExpectedRequest: updateSeries,
 			ResponseStatus:  200,
@@ -1165,7 +1165,7 @@ func TestUpdateSeries(t *testing.T) {
 		},
 		{
 			Name:            "404",
-			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "series/1?moveFiles=true"),
+			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "series/1?moveFiles=false"),
 			ExpectedMethod:  "PUT",
 			ExpectedRequest: updateSeries,
 			ResponseStatus:  404,
@@ -1205,7 +1205,7 @@ func TestUpdateSeries(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := sonarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			output, err := client.UpdateSeries(test.WithRequest.(*sonarr.AddSeriesInput))
+			output, err := client.UpdateSeries(test.WithRequest.(*sonarr.AddSeriesInput), false)
 			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, output, test.WithResponse, "response is not the same as expected")
 		})

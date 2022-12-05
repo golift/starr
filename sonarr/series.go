@@ -145,12 +145,12 @@ func (s *Sonarr) GetSeriesContext(ctx context.Context, tvdbID int64) ([]*Series,
 }
 
 // UpdateSeries updates a series in place.
-func (s *Sonarr) UpdateSeries(series *AddSeriesInput) (*Series, error) {
-	return s.UpdateSeriesContext(context.Background(), series)
+func (s *Sonarr) UpdateSeries(series *AddSeriesInput, moveFiles bool) (*Series, error) {
+	return s.UpdateSeriesContext(context.Background(), series, moveFiles)
 }
 
 // UpdateSeriesContext updates a series in place.
-func (s *Sonarr) UpdateSeriesContext(ctx context.Context, series *AddSeriesInput) (*Series, error) {
+func (s *Sonarr) UpdateSeriesContext(ctx context.Context, series *AddSeriesInput, moveFiles bool) (*Series, error) {
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(series); err != nil {
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpSeries, err)
@@ -163,7 +163,7 @@ func (s *Sonarr) UpdateSeriesContext(ctx context.Context, series *AddSeriesInput
 		Query: make(url.Values),
 		Body:  &body,
 	}
-	req.Query.Add("moveFiles", "true")
+	req.Query.Add("moveFiles", fmt.Sprint(moveFiles))
 
 	if err := s.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
@@ -187,8 +187,6 @@ func (s *Sonarr) AddSeriesContext(ctx context.Context, series *AddSeriesInput) (
 	var output Series
 
 	req := starr.Request{URI: bpSeries, Query: make(url.Values), Body: &body}
-	req.Query.Add("moveFiles", "true")
-
 	if err := s.PostInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
