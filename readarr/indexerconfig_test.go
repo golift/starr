@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"golift.io/starr"
 	"golift.io/starr/readarr"
+	"golift.io/starr/starrtest"
 )
 
 const indexerConfigBody = `{
@@ -20,7 +21,7 @@ const indexerConfigBody = `{
 func TestGetIndexerConfig(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, readarr.APIver, "config", "indexer"),
@@ -63,7 +64,7 @@ func TestGetIndexerConfig(t *testing.T) {
 func TestUpdateIndexerConfig(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "202",
 			ExpectedPath:   path.Join("/", starr.API, readarr.APIver, "config", "indexer", "1"),

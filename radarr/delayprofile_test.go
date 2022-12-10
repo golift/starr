@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"golift.io/starr"
 	"golift.io/starr/radarr"
+	"golift.io/starr/starrtest"
 )
 
 const (
@@ -38,7 +39,7 @@ const (
 func TestGetDelayProfiles(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "delayProfile"),
@@ -98,7 +99,7 @@ func TestGetDelayProfiles(t *testing.T) {
 func TestGetDelayProfile(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "delayProfile/1"),
@@ -147,7 +148,7 @@ func TestGetDelayProfile(t *testing.T) {
 func TestAddDelayProfile(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "delayProfile"),
@@ -216,7 +217,7 @@ func TestAddDelayProfile(t *testing.T) {
 func TestUpdateDelayProfile(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "delayProfile", "10"),
@@ -275,7 +276,7 @@ func TestUpdateDelayProfile(t *testing.T) {
 func TestDeleteDelayProfile(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "delayProfile", "10"),

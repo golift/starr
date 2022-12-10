@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"golift.io/starr"
 	"golift.io/starr/lidarr"
+	"golift.io/starr/starrtest"
 )
 
 const downloadClientResponseBody = `{
@@ -64,7 +65,7 @@ const updateDownloadClient = `{"enable":true,"removeCompletedDownloads":false,"r
 func TestGetDownloadClients(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:            "200",
 			ExpectedPath:    path.Join("/", starr.API, lidarr.APIver, "downloadClient"),
@@ -143,7 +144,7 @@ func TestGetDownloadClients(t *testing.T) {
 func TestGetDownloadClient(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:            "200",
 			ExpectedPath:    path.Join("/", starr.API, lidarr.APIver, "downloadClient", "1"),
@@ -220,7 +221,7 @@ func TestGetDownloadClient(t *testing.T) {
 func TestAddDownloadClient(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, lidarr.APIver, "downloadClient"),
@@ -345,7 +346,7 @@ func TestAddDownloadClient(t *testing.T) {
 func TestUpdateDownloadClient(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, lidarr.APIver, "downloadClient", "3"),
@@ -472,7 +473,7 @@ func TestUpdateDownloadClient(t *testing.T) {
 func TestDeleteDownloadClient(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, lidarr.APIver, "downloadClient", "2"),

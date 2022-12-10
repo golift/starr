@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"golift.io/starr"
 	"golift.io/starr/radarr"
+	"golift.io/starr/starrtest"
 )
 
 const (
@@ -34,7 +35,7 @@ const (
 func TestGetRootFolders(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "rootFolder"),
@@ -91,7 +92,7 @@ func TestGetRootFolders(t *testing.T) {
 func TestGetRootFolder(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "rootFolder", "1"),
@@ -136,7 +137,7 @@ func TestGetRootFolder(t *testing.T) {
 func TestAddRootFolder(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "201",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "rootFolder"),
@@ -192,7 +193,7 @@ func TestAddRootFolder(t *testing.T) {
 func TestDeleteRootFolder(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "rootFolder", "2"),

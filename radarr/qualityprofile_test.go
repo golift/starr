@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"golift.io/starr"
 	"golift.io/starr/radarr"
+	"golift.io/starr/starrtest"
 )
 
 const (
@@ -68,7 +69,7 @@ const (
 func TestGetQualityProfiles(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "qualityProfile"),
@@ -148,7 +149,7 @@ func TestGetQualityProfiles(t *testing.T) {
 func TestGetQualityProfile(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "qualityProfile", "7"),
@@ -228,7 +229,7 @@ func TestGetQualityProfile(t *testing.T) {
 func TestAddQualityProfile(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "qualityProfile"),
@@ -386,7 +387,7 @@ func TestAddQualityProfile(t *testing.T) {
 func TestUpdateQualityProfile(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "qualityProfile", "7"),
@@ -546,7 +547,7 @@ func TestUpdateQualityProfile(t *testing.T) {
 func TestDeleteQualityProfile(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "qualityProfile", "10"),

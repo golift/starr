@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"golift.io/starr"
 	"golift.io/starr/sonarr"
+	"golift.io/starr/starrtest"
 )
 
 const mediaManagementBody = `{
@@ -37,7 +38,7 @@ const mediaManagementRequest = `{"enableMediaInfo":true,"id":0,` +
 func TestGetMediaManagement(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config", "mediaManagement"),
@@ -94,7 +95,7 @@ func TestGetMediaManagement(t *testing.T) {
 func TestUpdateMediaManagement(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "202",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config", "mediaManagement"),
