@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"golift.io/starr"
 	"golift.io/starr/sonarr"
+	"golift.io/starr/starrtest"
 )
 
 const importListResponseBody = `{
@@ -60,7 +61,7 @@ const updateImportList = `{"enableAutomaticAdd":false,"seasonFolder":true,"langu
 func TestGetImportLists(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:            "200",
 			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "importList"),
@@ -137,7 +138,7 @@ func TestGetImportLists(t *testing.T) {
 func TestGetImportList(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:            "200",
 			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "importList", "1"),
@@ -212,7 +213,7 @@ func TestGetImportList(t *testing.T) {
 func TestAddImportList(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "importList"),
@@ -325,7 +326,7 @@ func TestAddImportList(t *testing.T) {
 func TestUpdateImportList(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "importList", "4"),
@@ -440,7 +441,7 @@ func TestUpdateImportList(t *testing.T) {
 func TestDeleteImportList(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "importList", "2"),

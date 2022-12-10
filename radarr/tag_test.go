@@ -7,12 +7,13 @@ import (
 	"github.com/stretchr/testify/assert"
 	"golift.io/starr"
 	"golift.io/starr/radarr"
+	"golift.io/starr/starrtest"
 )
 
 func TestGetTags(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "tag"),
@@ -58,7 +59,7 @@ func TestGetTags(t *testing.T) {
 func TestGetTag(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "tag", "1"),
@@ -100,7 +101,7 @@ func TestGetTag(t *testing.T) {
 func TestAddTag(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "tag"),
@@ -148,7 +149,7 @@ func TestAddTag(t *testing.T) {
 func TestUpdateTag(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "tag", "1"),
@@ -198,7 +199,7 @@ func TestUpdateTag(t *testing.T) {
 func TestDeleteTag(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "tag", "1"),

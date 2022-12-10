@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"golift.io/starr"
 	"golift.io/starr/radarr"
+	"golift.io/starr/starrtest"
 )
 
 const restrictionBody = `{
@@ -19,7 +20,7 @@ const restrictionBody = `{
 func TestGetRestrictions(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "restriction"),
@@ -63,7 +64,7 @@ func TestGetRestrictions(t *testing.T) {
 func TestGetRestriction(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "restriction", "2"),
@@ -107,7 +108,7 @@ func TestGetRestriction(t *testing.T) {
 func TestAddRestriction(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "restriction"),
@@ -159,7 +160,7 @@ func TestAddRestriction(t *testing.T) {
 func TestUpdateRestriction(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "restriction", "2"),
@@ -213,7 +214,7 @@ func TestUpdateRestriction(t *testing.T) {
 func TestDeleteRestriction(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "restriction", "1"),

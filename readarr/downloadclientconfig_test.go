@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"golift.io/starr"
 	"golift.io/starr/readarr"
+	"golift.io/starr/starrtest"
 )
 
 const downloadClientConfigBody = `{
@@ -24,7 +25,7 @@ const updateDownloadClientConfig = `{"enableCompletedDownloadHandling":true,"aut
 func TestGetDownloadClientConfig(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:            "200",
 			ExpectedPath:    path.Join("/", starr.API, readarr.APIver, "config", "downloadClient"),
@@ -70,7 +71,7 @@ func TestGetDownloadClientConfig(t *testing.T) {
 func TestUpdateDownloadClientConfig(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "202",
 			ExpectedPath:   path.Join("/", starr.API, readarr.APIver, "config", "downloadClient", "1"),

@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"golift.io/starr"
 	"golift.io/starr/sonarr"
+	"golift.io/starr/starrtest"
 )
 
 const notificationResponseBody = `{
@@ -70,7 +71,7 @@ const updateNotification = `{"onDownload":true,"id":3,"name":"Test","implementat
 func TestGetNotifications(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:            "200",
 			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "notification"),
@@ -148,7 +149,7 @@ func TestGetNotifications(t *testing.T) {
 func TestGetNotification(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:            "200",
 			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "notification", "1"),
@@ -224,7 +225,7 @@ func TestGetNotification(t *testing.T) {
 func TestAddNotification(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "notification"),
@@ -324,7 +325,7 @@ func TestAddNotification(t *testing.T) {
 func TestUpdateNotification(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "notification", "3"),
@@ -426,7 +427,7 @@ func TestUpdateNotification(t *testing.T) {
 func TestDeleteNotification(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "notification", "2"),

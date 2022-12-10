@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"golift.io/starr"
 	"golift.io/starr/sonarr"
+	"golift.io/starr/starrtest"
 )
 
 const (
@@ -21,7 +22,7 @@ const (
 func TestGetRemotePathMappings(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "remotePathMapping"),
@@ -65,7 +66,7 @@ func TestGetRemotePathMappings(t *testing.T) {
 func TestGetRemotePathMapping(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "remotePathMapping", "1"),
@@ -109,7 +110,7 @@ func TestGetRemotePathMapping(t *testing.T) {
 func TestAddRemotePathMapping(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "201",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "remotePathMapping"),
@@ -163,7 +164,7 @@ func TestAddRemotePathMapping(t *testing.T) {
 func TestUpdateRemotePathMapping(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "201",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "remotePathMapping", "2"),
@@ -219,7 +220,7 @@ func TestUpdateRemotePathMapping(t *testing.T) {
 func TestDeleteRemotePathMapping(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "remotePathMapping", "2"),

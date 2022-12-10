@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"golift.io/starr"
 	"golift.io/starr/radarr"
+	"golift.io/starr/starrtest"
 )
 
 func TestGetCommands(t *testing.T) {
@@ -16,7 +17,7 @@ func TestGetCommands(t *testing.T) {
 
 	somedate := time.Now().Add(-36 * time.Hour).Round(time.Millisecond).UTC()
 	datejson, _ := somedate.MarshalJSON()
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "command"),
@@ -78,7 +79,7 @@ func TestSendCommand(t *testing.T) {
 
 	somedate := time.Now().Add(-36 * time.Hour).Round(time.Millisecond).UTC()
 	datejson, _ := somedate.MarshalJSON()
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "command"),

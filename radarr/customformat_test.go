@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"golift.io/starr"
 	"golift.io/starr/radarr"
+	"golift.io/starr/starrtest"
 )
 
 const customFormatResponseBody = `{
@@ -81,7 +82,7 @@ const updateCustomFormat = `{"id":1,"name":"test","includeCustomFormatWhenRenami
 func TestGetCustomFormats(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:            "200",
 			ExpectedPath:    path.Join("/", starr.API, radarr.APIver, "customFormat"),
@@ -180,7 +181,7 @@ func TestGetCustomFormats(t *testing.T) {
 func TestGetCustomFormat(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:            "200",
 			ExpectedPath:    path.Join("/", starr.API, radarr.APIver, "customFormat", "1"),
@@ -277,7 +278,7 @@ func TestGetCustomFormat(t *testing.T) {
 func TestAddCustomFormat(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "customFormat"),
@@ -434,7 +435,7 @@ func TestAddCustomFormat(t *testing.T) {
 func TestUpdateCustomFormat(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "customFormat", "1"),
@@ -593,7 +594,7 @@ func TestUpdateCustomFormat(t *testing.T) {
 func TestDeleteCustomFormat(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "customFormat", "2"),

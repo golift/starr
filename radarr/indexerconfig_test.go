@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"golift.io/starr"
 	"golift.io/starr/radarr"
+	"golift.io/starr/starrtest"
 )
 
 const indexerConfigBody = `{
@@ -27,7 +28,7 @@ const indexerRequest = `{"whitelistedHardcodedSubs":"","id":1,"maximumSize":0,"m
 func TestGetIndexerConfig(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "config", "indexer"),
@@ -74,7 +75,7 @@ func TestGetIndexerConfig(t *testing.T) {
 func TestUpdateIndexerConfig(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "202",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "config", "indexer", "1"),
