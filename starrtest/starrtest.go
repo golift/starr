@@ -32,7 +32,7 @@ const (
 	BodyMethodNotAllowed = `{"message": "MethodNotAllowed"}`
 )
 
-// GetMockServer is used in all the http tests.
+// GetMockServer is used in all the submodule http tests.
 func (test *MockData) GetMockServer(t *testing.T) *httptest.Server {
 	t.Helper()
 
