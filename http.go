@@ -23,6 +23,7 @@ type Request struct {
 	URI   string     // Required: path portion of the URL.
 	Query url.Values // GET parameters work for any request type.
 	Body  io.Reader  // Used in PUT, POST, DELETE. Not for GET.
+	InvOK bool       // Do not return ErrInvalidStatusCode error.
 }
 
 // String turns a request into a string. Usually used in error messages.
@@ -64,7 +65,7 @@ func (c *Config) req(ctx context.Context, method string, req Request) (*http.Res
 		return nil, fmt.Errorf("httpClient.Do(req): %w", err)
 	}
 
-	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+	if !req.InvOK && (resp.StatusCode < 200 || resp.StatusCode > 299) {
 		return nil, parseNon200(resp)
 	}
 

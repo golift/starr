@@ -45,7 +45,7 @@ func (c *Config) Login(ctx context.Context) error {
 	}
 
 	post := "username=" + c.Username + "&password=" + c.Password
-	req := Request{URI: "/login", Body: bytes.NewBufferString(post)}
+	req := Request{URI: "/login", Body: bytes.NewBufferString(post), InvOK: true}
 
 	resp, err := c.req(ctx, http.MethodPost, req)
 	if err != nil {
