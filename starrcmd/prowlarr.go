@@ -16,7 +16,7 @@ type ProwlarrApplicationUpdate struct {
 type ProwlarrHealthIssue struct {
 	Message   string `env:"prowlarr_health_issue_message"` // some message about sme problem
 	IssueType string `env:"prowlarr_health_issue_type"`    // NeverSeenOne
-	Wiki      string `env:"prowlarr_health_issue_wiki"`    // something something something
+	Wiki      string `env:"prowlarr_health_issue_wiki"`    // something
 	Level     string `env:"prowlarr_health_issue_level"`   // Warning
 }
 

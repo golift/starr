@@ -1,4 +1,4 @@
-//nolint:exhaustive
+//nolint:exhaustive,testableexamples
 package starrcmd_test
 
 import (
