@@ -188,18 +188,23 @@ func parseSlices(field reflect.Value, value, splitVal string) (bool, error) { //
 
 // parseInt parses an integer from a string as specific size.
 // If you need int8, 16 or 32, add them...
-func parseInt(intType, envval string) (i int64, err error) {
-	//nolint:gomnd
+func parseInt(intType, envval string) (int64, error) {
+	var (
+		val int64
+		err error
+	)
+
+	//nolint:gomnd,nolintlint
 	switch intType {
 	default:
-		i, err = strconv.ParseInt(envval, 10, 0)
+		val, err = strconv.ParseInt(envval, 10, 0)
 	case "int64":
-		i, err = strconv.ParseInt(envval, 10, 64)
+		val, err = strconv.ParseInt(envval, 10, 64)
 	}
 
 	if err != nil { // this error may prove to suck...
-		return i, fmt.Errorf("parsing integer: %w", err)
+		return val, fmt.Errorf("parsing integer: %w", err)
 	}
 
-	return i, nil
+	return val, nil
 }
