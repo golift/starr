@@ -71,36 +71,3 @@ func New(apiKey, appURL string, timeout time.Duration) *Config {
 		Client: Client(timeout, false),
 	}
 }
-
-// ReqError is returned when a Starr app returns an invalid status code.
-type ReqError struct {
-	Code int
-	Body []byte
-	Msg  string
-	Name string
-	http.Header
-}
-
-// Error returns the formatted error message for an invalid status code.
-func (r *ReqError) Error() string {
-	const maxBody = 400 // arbitrary.
-
-	switch body := string(r.Body); {
-	case r.Name != "":
-		return fmt.Sprintf("invalid status code, %d < 200 || %[1]d > 299, %s: %s", r.Code, r.Name, r.Msg)
-	case r.Msg != "":
-		return fmt.Sprintf("invalid status code, %d < 200 || %[1]d > 299, %s", r.Code, r.Msg)
-	case len(body) > maxBody:
-		return fmt.Sprintf("invalid status code, %d < 200 || %[1]d > 299, %s", r.Code, body[:maxBody])
-	case len(body) != 0:
-		return fmt.Sprintf("invalid status code, %d < 200 || %[1]d > 299, %s", r.Code, body)
-	default:
-		return fmt.Sprintf("invalid status code, %d < 200 || %[1]d > 299", r.Code)
-	}
-}
-
-// Is provides a custom error match facility.
-func (r *ReqError) Is(tgt error) bool {
-	target, ok := tgt.(*ReqError) //nolint:errorlint
-	return ok && (r.Code == target.Code || target.Code == -1)
-}

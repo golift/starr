@@ -25,6 +25,16 @@ type Request struct {
 	Body  io.Reader  // Used in PUT, POST, DELETE. Not for GET.
 }
 
+// ReqError is returned when a Starr app returns an invalid status code.
+type ReqError struct {
+	Code int
+	Body []byte
+	Msg  string
+	Name string
+	Err  error // sub error, often nil, or not useful.
+	http.Header
+}
+
 // String turns a request into a string. Usually used in error messages.
 func (r *Request) String() string {
 	return r.URI
@@ -64,7 +74,7 @@ func (c *Config) req(ctx context.Context, method string, req Request) (*http.Res
 		return nil, fmt.Errorf("httpClient.Do(req): %w", err)
 	}
 
-	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
 		return nil, parseNon200(resp)
 	}
 
@@ -75,17 +85,18 @@ func (c *Config) req(ctx context.Context, method string, req Request) (*http.Res
 func parseNon200(resp *http.Response) *ReqError {
 	defer resp.Body.Close()
 
-	reply, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return &ReqError{Code: resp.StatusCode, Body: reply, Header: resp.Header}
+	response := &ReqError{Code: resp.StatusCode, Header: resp.Header}
+	if response.Body, response.Err = io.ReadAll(resp.Body); response.Err != nil {
+		return response
 	}
 
 	var msg struct {
 		Msg string `json:"message"`
 	}
 
-	if err := json.Unmarshal(reply, &msg); err == nil && msg.Msg != "" {
-		return &ReqError{Code: resp.StatusCode, Body: reply, Msg: msg.Msg, Header: resp.Header}
+	if response.Err = json.Unmarshal(response.Body, &msg); response.Err == nil && msg.Msg != "" {
+		response.Msg = msg.Msg
+		return response
 	}
 
 	var errMsg struct {
@@ -93,23 +104,12 @@ func parseNon200(resp *http.Response) *ReqError {
 		Name string `json:"propertyName"`
 	}
 
-	if err := json.Unmarshal(reply, &errMsg); err == nil && errMsg.Msg != "" {
-		return &ReqError{
-			Code:   resp.StatusCode,
-			Body:   reply,
-			Msg:    errMsg.Msg,
-			Name:   errMsg.Name,
-			Header: resp.Header,
-		}
+	if response.Err = json.Unmarshal(response.Body, &errMsg); response.Err == nil && errMsg.Msg != "" {
+		response.Name, response.Msg = errMsg.Name, errMsg.Msg
+		return response
 	}
 
-	return &ReqError{
-		Code:   resp.StatusCode,
-		Body:   reply,
-		Msg:    errMsg.Msg,
-		Name:   errMsg.Name,
-		Header: resp.Header,
-	}
+	return response
 }
 
 // closeResp should be used to close requests that don't require a response body.
@@ -149,4 +149,36 @@ func SetAPIPath(uriPath string) string {
 	}
 
 	return path.Join("/", API, uriPath)
+}
+
+// Error returns the formatted error message for an invalid status code.
+func (r *ReqError) Error() string {
+	const (
+		prefix  = "invalid status code"
+		maxBody = 400 // arbitrary.
+	)
+
+	msg := fmt.Sprintf("%s, %d < %d", prefix, r.Code, http.StatusOK)
+	if r.Code >= http.StatusMultipleChoices { // 300
+		msg = fmt.Sprintf("%s, %d >= %d", prefix, r.Code, http.StatusMultipleChoices)
+	}
+
+	switch body := string(r.Body); {
+	case r.Name != "":
+		return fmt.Sprintf("%s, %s: %s", msg, r.Name, r.Msg)
+	case r.Msg != "":
+		return fmt.Sprintf("%s, %s", msg, r.Msg)
+	case len(body) > maxBody:
+		return fmt.Sprintf("%s, %s", msg, body[:maxBody])
+	case len(body) != 0:
+		return fmt.Sprintf("%s, %s", msg, body)
+	default:
+		return msg
+	}
+}
+
+// Is provides a custom error match facility.
+func (r *ReqError) Is(tgt error) bool {
+	target, ok := tgt.(*ReqError) //nolint:errorlint
+	return ok && (r.Code == target.Code || target.Code == -1)
 }
