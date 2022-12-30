@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"golift.io/starr"
 	"golift.io/starr/sonarr"
+	"golift.io/starr/starrtest"
 )
 
 var testCalendarJSON = `{
@@ -141,7 +142,7 @@ var testCalendarStruct = sonarr.Episode{
 func TestGetCalendar(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name: "200",
 			ExpectedPath: "/api/v3/calendar" +
@@ -203,7 +204,7 @@ func TestGetCalendar(t *testing.T) {
 func TestGetCalendarID(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   "/api/v3/calendar/1",

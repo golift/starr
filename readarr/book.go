@@ -147,12 +147,12 @@ func (r *Readarr) GetBookByIDContext(ctx context.Context, bookID int64) (*Book, 
 }
 
 // UpdateBook updates a book in place.
-func (r *Readarr) UpdateBook(bookID int64, book *Book) error {
-	return r.UpdateBookContext(context.Background(), bookID, book)
+func (r *Readarr) UpdateBook(bookID int64, book *Book, moveFiles bool) error {
+	return r.UpdateBookContext(context.Background(), bookID, book, moveFiles)
 }
 
 // UpdateBookContext updates a book in place.
-func (r *Readarr) UpdateBookContext(ctx context.Context, bookID int64, book *Book) error {
+func (r *Readarr) UpdateBookContext(ctx context.Context, bookID int64, book *Book, moveFiles bool) error {
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(book); err != nil {
 		return fmt.Errorf("json.Marshal(%s): %w", bpBook, err)
@@ -163,7 +163,7 @@ func (r *Readarr) UpdateBookContext(ctx context.Context, bookID int64, book *Boo
 		Query: make(url.Values),
 		Body:  &body,
 	}
-	req.Query.Add("moveFiles", "true")
+	req.Query.Add("moveFiles", fmt.Sprint(moveFiles))
 
 	var output interface{} // do not know what this looks like.
 
@@ -191,7 +191,6 @@ func (r *Readarr) AddBookContext(ctx context.Context, book *AddBookInput) (*Book
 		Query: make(url.Values),
 		Body:  &body,
 	}
-	req.Query.Add("moveFiles", "true")
 
 	var output Book
 	if err := r.PostInto(ctx, req, &output); err != nil {

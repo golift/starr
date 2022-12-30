@@ -1,4 +1,4 @@
-package starr
+package starrtest
 
 import (
 	"io"
@@ -9,9 +9,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// TestMockData allows generic testing of http inputs and outputs.
+// MockData allows generic testing of http inputs and outputs.
 // This is used by the submodule tests.
-type TestMockData struct {
+type MockData struct {
 	Name            string      // A name for the test.
 	ExpectedPath    string      // The path expected in the request ie. /api/v1/thing
 	ExpectedRequest string      // The request body (json) expected from the caller.
@@ -32,10 +32,8 @@ const (
 	BodyMethodNotAllowed = `{"message": "MethodNotAllowed"}`
 )
 
-// GetMockServer is used in all the http tests.
-//
-//nolint:lll
-func (test *TestMockData) GetMockServer(t *testing.T) *httptest.Server {
+// GetMockServer is used in all the submodule http tests.
+func (test *MockData) GetMockServer(t *testing.T) *httptest.Server {
 	t.Helper()
 
 	return httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, req *http.Request) {

@@ -10,6 +10,9 @@ issues:
         - funlen
         - maintidx # uhg.
       path: '(.+)_test\.go'
+    - linters:
+        - lll
+      path: 'starrtest/'
 
 linters:
   enable-all: true

@@ -16,10 +16,12 @@ const bpCommand = APIver + "/command"
 // CommandRequest goes into the /api/v3/command endpoint.
 // This was created from the search command and may not support other commands yet.
 type CommandRequest struct {
-	Name      string  `json:"name"`
-	Files     []int64 `json:"files,omitempty"` // RenameFiles only
-	SeriesIDs []int64 `json:"seriesIds,omitempty"`
-	SeriesID  int64   `json:"seriesId,omitempty"`
+	Name       string  `json:"name"`
+	Files      []int64 `json:"files,omitempty"` // RenameFiles only
+	SeriesIDs  []int64 `json:"seriesIds,omitempty"`
+	SeriesID   int64   `json:"seriesId,omitempty"`
+	EpisodeIDs []int64 `json:"episodeIds,omitempty"`
+	EpisodeID  int64   `json:"episodeId,omitempty"`
 }
 
 // CommandResponse comes from the /api/v3/command endpoint.
@@ -102,7 +104,7 @@ func (s *Sonarr) GetCommandStatusContext(ctx context.Context, commandID int64) (
 
 	req := starr.Request{URI: path.Join(bpCommand, fmt.Sprint(commandID))}
 	if err := s.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return &output, nil

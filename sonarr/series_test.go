@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"golift.io/starr"
 	"golift.io/starr/sonarr"
+	"golift.io/starr/starrtest"
 )
 
 const (
@@ -269,7 +270,7 @@ func TestGetAllSeries(t *testing.T) {
 	loc, _ := time.LoadLocation("")
 	date := time.Date(2019, 6, 4, 1, 0, 0, 0, loc)
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series"),
@@ -521,7 +522,7 @@ func TestGetAllSeries(t *testing.T) {
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
-			ResponseBody:   starr.BodyNotFound,
+			ResponseBody:   starrtest.BodyNotFound,
 			WithError:      starr.ErrInvalidStatusCode,
 			WithResponse:   []*sonarr.Series(nil),
 		},
@@ -546,7 +547,7 @@ func TestGetSeries(t *testing.T) {
 	loc, _ := time.LoadLocation("")
 	date := time.Date(2019, 6, 4, 1, 0, 0, 0, loc)
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series?tvdbId=360893"),
@@ -657,7 +658,7 @@ func TestGetSeries(t *testing.T) {
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series?tvdbId=360893"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
-			ResponseBody:   starr.BodyNotFound,
+			ResponseBody:   starrtest.BodyNotFound,
 			WithRequest:    360893,
 			WithError:      starr.ErrInvalidStatusCode,
 			WithResponse:   []*sonarr.Series(nil),
@@ -683,7 +684,7 @@ func TestGetSeriesByID(t *testing.T) {
 	loc, _ := time.LoadLocation("")
 	date := time.Date(2019, 6, 4, 1, 0, 0, 0, loc)
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series", "2"),
@@ -792,7 +793,7 @@ func TestGetSeriesByID(t *testing.T) {
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series", "2"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
-			ResponseBody:   starr.BodyNotFound,
+			ResponseBody:   starrtest.BodyNotFound,
 			WithRequest:    2,
 			WithError:      starr.ErrInvalidStatusCode,
 			WithResponse:   (*sonarr.Series)(nil),
@@ -818,10 +819,10 @@ func TestAddSeries(t *testing.T) {
 	loc, _ := time.LoadLocation("")
 	date := time.Date(2019, 6, 4, 1, 0, 0, 0, loc)
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:            "200",
-			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "series?moveFiles=true"),
+			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "series"),
 			ExpectedMethod:  "POST",
 			ExpectedRequest: addSeries,
 			ResponseStatus:  200,
@@ -965,7 +966,7 @@ func TestAddSeries(t *testing.T) {
 		},
 		{
 			Name:            "404",
-			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "series?moveFiles=true"),
+			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "series"),
 			ExpectedMethod:  "POST",
 			ExpectedRequest: addSeries,
 			ResponseStatus:  404,
@@ -1010,7 +1011,7 @@ func TestAddSeries(t *testing.T) {
 					SearchForMissingEpisodes: true,
 				},
 			},
-			ResponseBody: starr.BodyNotFound,
+			ResponseBody: starrtest.BodyNotFound,
 			WithError:    starr.ErrInvalidStatusCode,
 			WithResponse: (*sonarr.Series)(nil),
 		},
@@ -1035,10 +1036,10 @@ func TestUpdateSeries(t *testing.T) {
 	loc, _ := time.LoadLocation("")
 	date := time.Date(2019, 6, 4, 1, 0, 0, 0, loc)
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:            "200",
-			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "series/1?moveFiles=true"),
+			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "series/1?moveFiles=false"),
 			ExpectedMethod:  "PUT",
 			ExpectedRequest: updateSeries,
 			ResponseStatus:  200,
@@ -1165,7 +1166,7 @@ func TestUpdateSeries(t *testing.T) {
 		},
 		{
 			Name:            "404",
-			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "series/1?moveFiles=true"),
+			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "series/1?moveFiles=false"),
 			ExpectedMethod:  "PUT",
 			ExpectedRequest: updateSeries,
 			ResponseStatus:  404,
@@ -1193,7 +1194,7 @@ func TestUpdateSeries(t *testing.T) {
 				},
 				ID: 1,
 			},
-			ResponseBody: starr.BodyNotFound,
+			ResponseBody: starrtest.BodyNotFound,
 			WithError:    starr.ErrInvalidStatusCode,
 			WithResponse: (*sonarr.Series)(nil),
 		},
@@ -1205,7 +1206,7 @@ func TestUpdateSeries(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := sonarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			output, err := client.UpdateSeries(test.WithRequest.(*sonarr.AddSeriesInput))
+			output, err := client.UpdateSeries(test.WithRequest.(*sonarr.AddSeriesInput), false)
 			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, output, test.WithResponse, "response is not the same as expected")
 		})
@@ -1215,7 +1216,7 @@ func TestUpdateSeries(t *testing.T) {
 func TestDeleteSeries(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series/2?addImportListExclusion=false&deleteFiles=true"),
@@ -1230,7 +1231,7 @@ func TestDeleteSeries(t *testing.T) {
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series/2?addImportListExclusion=false&deleteFiles=true"),
 			ExpectedMethod: "DELETE",
 			ResponseStatus: 404,
-			ResponseBody:   starr.BodyNotFound,
+			ResponseBody:   starrtest.BodyNotFound,
 			WithRequest:    2,
 			WithError:      starr.ErrInvalidStatusCode,
 		},
@@ -1254,7 +1255,7 @@ func TestLookupName(t *testing.T) {
 	loc, _ := time.LoadLocation("")
 	date := time.Date(2019, 6, 4, 1, 0, 0, 0, loc)
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series/lookup?term=Chernobyl+Breaking+Bad"),
@@ -1508,7 +1509,7 @@ func TestLookupName(t *testing.T) {
 			ExpectedMethod: "GET",
 			WithRequest:    "Chernobyl Breaking Bad",
 			ResponseStatus: 404,
-			ResponseBody:   starr.BodyNotFound,
+			ResponseBody:   starrtest.BodyNotFound,
 			WithError:      starr.ErrInvalidStatusCode,
 			WithResponse:   []*sonarr.Series(nil),
 		},
@@ -1533,7 +1534,7 @@ func TestLookupID(t *testing.T) {
 	loc, _ := time.LoadLocation("")
 	date := time.Date(2019, 6, 4, 1, 0, 0, 0, loc)
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series/lookup?term=tvdbid%3A360893"),
@@ -1645,7 +1646,7 @@ func TestLookupID(t *testing.T) {
 			ExpectedMethod: "GET",
 			WithRequest:    360893,
 			ResponseStatus: 404,
-			ResponseBody:   starr.BodyNotFound,
+			ResponseBody:   starrtest.BodyNotFound,
 			WithError:      starr.ErrInvalidStatusCode,
 			WithResponse:   []*sonarr.Series(nil),
 		},

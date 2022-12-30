@@ -102,7 +102,11 @@ type Ratings struct {
 	Votes      int64   `json:"votes"`
 	Value      float64 `json:"value"`
 	Popularity float64 `json:"popularity,omitempty"`
+	Type       string  `json:"type,omitempty"`
 }
+
+// OpenRatings is a ratings type that has a source and type.
+type OpenRatings map[string]Ratings
 
 // IsLoaded is a generic struct used in a few places.
 type IsLoaded struct {
@@ -135,6 +139,14 @@ type Path struct {
 	Path string `json:"path"`
 }
 
+// RemotePathMapping is the remotePathMapping endpoint.
+type RemotePathMapping struct {
+	ID         int64  `json:"id,omitempty"`
+	Host       string `json:"host"`
+	RemotePath string `json:"remotePath"`
+	LocalPath  string `json:"localPath"`
+}
+
 // Value is generic ID/Name struct applied to a few places.
 type Value struct {
 	ID   int64  `json:"id"`
@@ -164,10 +176,11 @@ type FieldInput struct {
 
 // SelectOption is part of Field.
 type SelectOption struct {
-	Order int64  `json:"order"`
-	Value int64  `json:"value"`
-	Hint  string `json:"hint"`
-	Name  string `json:"name"`
+	DividerAfter bool   `json:"dividerAfter,omitempty"`
+	Order        int64  `json:"order"`
+	Value        int64  `json:"value"`
+	Hint         string `json:"hint"`
+	Name         string `json:"name"`
 }
 
 // KeyValue is yet another reusable generic type.

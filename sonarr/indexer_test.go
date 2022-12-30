@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"golift.io/starr"
 	"golift.io/starr/sonarr"
+	"golift.io/starr/starrtest"
 )
 
 const indexerResponseBody = `{
@@ -59,7 +60,7 @@ const updateIndexer = `{"enableAutomaticSearch":true,"enableInteractiveSearch":t
 func TestGetIndexers(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:            "200",
 			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "indexer"),
@@ -134,7 +135,7 @@ func TestGetIndexers(t *testing.T) {
 func TestGetIndexer(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:            "200",
 			ExpectedPath:    path.Join("/", starr.API, sonarr.APIver, "indexer", "1"),
@@ -207,7 +208,7 @@ func TestGetIndexer(t *testing.T) {
 func TestAddIndexer(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "indexer"),
@@ -324,7 +325,7 @@ func TestAddIndexer(t *testing.T) {
 func TestUpdateIndexer(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "indexer", "1"),
@@ -443,7 +444,7 @@ func TestUpdateIndexer(t *testing.T) {
 func TestDeleteIndexer(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "indexer", "2"),

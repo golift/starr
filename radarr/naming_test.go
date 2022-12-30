@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"golift.io/starr"
 	"golift.io/starr/radarr"
+	"golift.io/starr/starrtest"
 )
 
 const namingBody = `{
@@ -23,7 +24,7 @@ const namingBody = `{
 func TestGetNaming(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "config", "naming"),
@@ -69,7 +70,7 @@ func TestGetNaming(t *testing.T) {
 func TestUpdateNaming(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name:           "202",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "config", "naming"),
@@ -78,6 +79,7 @@ func TestUpdateNaming(t *testing.T) {
 			WithRequest: &radarr.Naming{
 				ID:                       1,
 				ReplaceIllegalCharacters: true,
+				RenameMovies:             false,
 			},
 			ExpectedRequest: `{"replaceIllegalCharacters":true,"id":1,"standardMovieFormat":"","movieFolderFormat":""}` + "\n",
 			ResponseBody:    namingBody,
@@ -100,6 +102,7 @@ func TestUpdateNaming(t *testing.T) {
 			WithRequest: &radarr.Naming{
 				ID:                       1,
 				ReplaceIllegalCharacters: true,
+				RenameMovies:             false,
 			},
 			ExpectedRequest: `{"replaceIllegalCharacters":true,"id":1,"standardMovieFormat":"","movieFolderFormat":""}` + "\n",
 			ResponseStatus:  404,
