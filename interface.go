@@ -54,6 +54,9 @@ func (c *Config) Login(ctx context.Context) error {
 		if !errors.As(err, &codeErr) { // pointer to a pointer, yup.
 			return fmt.Errorf("invalid reply authenticating as user '%s': %w", c.Username, err)
 		}
+	} else {
+		// Protect a nil map in case we don't get an error (which should be impossible).
+		codeErr.Header = resp.Header
 	}
 
 	closeResp(resp)
