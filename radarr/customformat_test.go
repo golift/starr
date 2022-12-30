@@ -379,7 +379,7 @@ func TestAddCustomFormat(t *testing.T) {
 			WithError: nil,
 		},
 		{
-			Name:           "200",
+			Name:           "404",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "customFormat"),
 			ExpectedMethod: "POST",
 			ResponseStatus: 404,
@@ -537,7 +537,7 @@ func TestUpdateCustomFormat(t *testing.T) {
 			WithError: nil,
 		},
 		{
-			Name:           "200",
+			Name:           "404",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "customFormat", "1"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 404,

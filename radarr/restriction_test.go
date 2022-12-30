@@ -130,7 +130,7 @@ func TestAddRestriction(t *testing.T) {
 			WithError: nil,
 		},
 		{
-			Name:           "200",
+			Name:           "404",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "restriction"),
 			ExpectedMethod: "POST",
 			ResponseStatus: 404,

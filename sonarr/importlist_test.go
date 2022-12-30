@@ -281,7 +281,7 @@ func TestAddImportList(t *testing.T) {
 			WithError: nil,
 		},
 		{
-			Name:           "200",
+			Name:           "404",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "importList"),
 			ExpectedMethod: "POST",
 			ResponseStatus: 404,
@@ -395,7 +395,7 @@ func TestUpdateImportList(t *testing.T) {
 			WithError: nil,
 		},
 		{
-			Name:           "200",
+			Name:           "404",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "importList", "4"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 404,

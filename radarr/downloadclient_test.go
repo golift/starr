@@ -296,7 +296,7 @@ func TestAddDownloadClient(t *testing.T) {
 			WithError: nil,
 		},
 		{
-			Name:           "200",
+			Name:           "404",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "downloadClient"),
 			ExpectedMethod: "POST",
 			ResponseStatus: 404,
@@ -422,7 +422,7 @@ func TestUpdateDownloadClient(t *testing.T) {
 			WithError: nil,
 		},
 		{
-			Name:           "200",
+			Name:           "404",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "downloadClient", "3"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 404,

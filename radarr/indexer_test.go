@@ -277,7 +277,7 @@ func TestAddIndexer(t *testing.T) {
 			WithError: nil,
 		},
 		{
-			Name:           "200",
+			Name:           "404",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "indexer"),
 			ExpectedMethod: "POST",
 			ResponseStatus: 404,
@@ -395,7 +395,7 @@ func TestUpdateIndexer(t *testing.T) {
 			WithError: nil,
 		},
 		{
-			Name:           "200",
+			Name:           "404",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "indexer", "1"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 404,
