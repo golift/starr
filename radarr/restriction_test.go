@@ -1,6 +1,7 @@
 package radarr_test
 
 import (
+	"net/http"
 	"path"
 	"testing"
 
@@ -43,7 +44,7 @@ func TestGetRestrictions(t *testing.T) {
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   []*radarr.Restriction(nil),
 		},
 	}
@@ -88,7 +89,7 @@ func TestGetRestriction(t *testing.T) {
 			WithRequest:    int64(2),
 			ResponseBody:   `{"message": "NotFound"}`,
 			WithResponse:   (*radarr.Restriction)(nil),
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 		},
 	}
 
@@ -139,7 +140,7 @@ func TestAddRestriction(t *testing.T) {
 			},
 			ExpectedRequest: `{"required":"test1","ignored":"test2"}` + "\n",
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*radarr.Restriction)(nil),
 		},
 	}
@@ -193,7 +194,7 @@ func TestUpdateRestriction(t *testing.T) {
 			},
 			ExpectedRequest: `{"required":"test1","ignored":"test2","id":2}` + "\n",
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*radarr.Restriction)(nil),
 		},
 	}
@@ -231,7 +232,7 @@ func TestDeleteRestriction(t *testing.T) {
 			WithRequest:    int64(1),
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 		},
 	}
 

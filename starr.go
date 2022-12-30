@@ -29,8 +29,8 @@ const (
 
 // Errors you may receive from this package.
 var (
-	// ErrInvalidStatusCode is returned when the server (*arr app) returns a bad status code during an API request.
-	ErrInvalidStatusCode = fmt.Errorf("invalid status code, <200||>299")
+	// ErrInvalidStatusCode matches ANY ReqError.
+	ErrInvalidStatusCode = &ReqError{Code: -1}
 	// ErrNilClient is returned if you attempt a request with a nil http.Client.
 	ErrNilClient = fmt.Errorf("http.Client must not be nil")
 	// ErrNilInterface is returned by *Into() methods when a nil interface is provided.
@@ -68,4 +68,23 @@ func New(apiKey, appURL string, timeout time.Duration) *Config {
 		URL:    appURL,
 		Client: Client(timeout, false),
 	}
+}
+
+// ReqError is returned when a Starr app returns an invalid status code.
+type ReqError struct {
+	Code int
+	Body []byte
+	Msg  string
+	Name string
+}
+
+// Error returns the formatted error message.
+func (r *ReqError) Error() string {
+	return fmt.Sprintf("invalid status code, %d < 200 || %d > 299", r.Code, r.Code)
+}
+
+// Is provides a custom error match facility.
+func (r *ReqError) Is(tgt error) bool {
+	target, ok := tgt.(*ReqError) //nolint:errorlint
+	return ok && (r.Code == target.Code || target.Code == -1)
 }

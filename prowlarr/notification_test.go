@@ -1,6 +1,7 @@
 package prowlarr_test
 
 import (
+	"net/http"
 	"path"
 	"testing"
 
@@ -107,7 +108,7 @@ func TestGetNotifications(t *testing.T) {
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   ([]*prowlarr.NotificationOutput)(nil),
 		},
 	}
@@ -176,7 +177,7 @@ func TestGetNotification(t *testing.T) {
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   (*prowlarr.NotificationOutput)(nil),
 		},
 	}
@@ -269,7 +270,7 @@ func TestAddNotification(t *testing.T) {
 			},
 			ExpectedRequest: addNotification + "\n",
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*prowlarr.NotificationOutput)(nil),
 		},
 	}
@@ -364,7 +365,7 @@ func TestUpdateNotification(t *testing.T) {
 			},
 			ExpectedRequest: updateNotification + "\n",
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*prowlarr.NotificationOutput)(nil),
 		},
 	}
@@ -402,7 +403,7 @@ func TestDeleteNotification(t *testing.T) {
 			WithRequest:    int64(2),
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 		},
 	}
 

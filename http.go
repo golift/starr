@@ -23,7 +23,6 @@ type Request struct {
 	URI   string     // Required: path portion of the URL.
 	Query url.Values // GET parameters work for any request type.
 	Body  io.Reader  // Used in PUT, POST, DELETE. Not for GET.
-	InvOK bool       // Do not return ErrInvalidStatusCode error.
 }
 
 // String turns a request into a string. Usually used in error messages.
@@ -65,7 +64,7 @@ func (c *Config) req(ctx context.Context, method string, req Request) (*http.Res
 		return nil, fmt.Errorf("httpClient.Do(req): %w", err)
 	}
 
-	if !req.InvOK && (resp.StatusCode < 200 || resp.StatusCode > 299) {
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		return nil, parseNon200(resp)
 	}
 
@@ -73,12 +72,12 @@ func (c *Config) req(ctx context.Context, method string, req Request) (*http.Res
 }
 
 // parseNon200 attempts to extract an error message from a non-200 response.
-func parseNon200(resp *http.Response) error {
+func parseNon200(resp *http.Response) *ReqError {
 	defer resp.Body.Close()
 
 	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return fmt.Errorf("failed, status: %s: %w", resp.Status, ErrInvalidStatusCode)
+		return &ReqError{Code: resp.StatusCode, Body: reply}
 	}
 
 	var msg struct {
@@ -86,7 +85,7 @@ func parseNon200(resp *http.Response) error {
 	}
 
 	if err := json.Unmarshal(reply, &msg); err == nil && msg.Msg != "" {
-		return fmt.Errorf("failed, status: %s: %w: %s", resp.Status, ErrInvalidStatusCode, msg.Msg)
+		return &ReqError{Code: resp.StatusCode, Body: reply, Msg: msg.Msg}
 	}
 
 	var errMsg struct {
@@ -95,17 +94,10 @@ func parseNon200(resp *http.Response) error {
 	}
 
 	if err := json.Unmarshal(reply, &errMsg); err == nil && errMsg.Msg != "" {
-		return fmt.Errorf("failed, status: %s: %w: %s (%s)", resp.Status, ErrInvalidStatusCode, errMsg.Msg, errMsg.Name)
+		return &ReqError{Code: resp.StatusCode, Body: reply, Msg: errMsg.Msg, Name: errMsg.Name}
 	}
 
-	const maxSize = 400 // arbitrary max size
-
-	replyStr := string(reply)
-	if len(replyStr) > maxSize {
-		return fmt.Errorf("failed, status: %s: %w: %s", resp.Status, ErrInvalidStatusCode, replyStr[:maxSize])
-	}
-
-	return fmt.Errorf("failed, status: %s: %w: %s", resp.Status, ErrInvalidStatusCode, replyStr)
+	return &ReqError{Code: resp.StatusCode, Body: reply, Msg: errMsg.Msg, Name: errMsg.Name}
 }
 
 // closeResp should be used to close requests that don't require a response body.

@@ -1,6 +1,7 @@
 package prowlarr_test
 
 import (
+	"net/http"
 	"path"
 	"testing"
 	"time"
@@ -214,7 +215,7 @@ func TestGetIndexers(t *testing.T) {
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   ([]*prowlarr.IndexerOutput)(nil),
 		},
 	}
@@ -254,7 +255,7 @@ func TestGetIndexer(t *testing.T) {
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
 			WithRequest:    int64(2),
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   (*prowlarr.IndexerOutput)(nil),
 		},
 	}
@@ -331,7 +332,7 @@ func TestAddIndexer(t *testing.T) {
 			},
 			ExpectedRequest: addIndexer + "\n",
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*prowlarr.IndexerOutput)(nil),
 		},
 	}
@@ -410,7 +411,7 @@ func TestUpdateIndexer(t *testing.T) {
 			},
 			ExpectedRequest: updateIndexer + "\n",
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*prowlarr.IndexerOutput)(nil),
 		},
 	}
@@ -448,7 +449,7 @@ func TestDeleteIndexer(t *testing.T) {
 			WithRequest:    int64(2),
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 		},
 	}
 

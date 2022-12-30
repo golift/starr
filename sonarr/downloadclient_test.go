@@ -1,6 +1,7 @@
 package sonarr_test
 
 import (
+	"net/http"
 	"path"
 	"testing"
 
@@ -123,7 +124,7 @@ func TestGetDownloadClients(t *testing.T) {
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   ([]*sonarr.DownloadClientOutput)(nil),
 		},
 	}
@@ -200,7 +201,7 @@ func TestGetDownloadClient(t *testing.T) {
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   (*sonarr.DownloadClientOutput)(nil),
 		},
 	}
@@ -325,7 +326,7 @@ func TestAddDownloadClient(t *testing.T) {
 			},
 			ExpectedRequest: addDownloadClient + "\n",
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*sonarr.DownloadClientOutput)(nil),
 		},
 	}
@@ -452,7 +453,7 @@ func TestUpdateDownloadClient(t *testing.T) {
 			},
 			ExpectedRequest: updateDownloadClient + "\n",
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*sonarr.DownloadClientOutput)(nil),
 		},
 	}
@@ -490,7 +491,7 @@ func TestDeleteDownloadClient(t *testing.T) {
 			WithRequest:    int64(2),
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 		},
 	}
 

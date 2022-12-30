@@ -1,6 +1,7 @@
 package radarr_test
 
 import (
+	"net/http"
 	"path"
 	"testing"
 
@@ -76,7 +77,7 @@ func TestGetMediaManagement(t *testing.T) {
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   (*radarr.MediaManagement)(nil),
 		},
 	}
@@ -144,7 +145,7 @@ func TestUpdateMediaManagement(t *testing.T) {
 			ExpectedRequest: mediaManagementRequest + "\n",
 			ResponseStatus:  404,
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*radarr.MediaManagement)(nil),
 		},
 	}

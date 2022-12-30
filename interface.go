@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/cookiejar"
@@ -45,11 +46,14 @@ func (c *Config) Login(ctx context.Context) error {
 	}
 
 	post := "username=" + c.Username + "&password=" + c.Password
-	req := Request{URI: "/login", Body: bytes.NewBufferString(post), InvOK: true}
+	req := Request{URI: "/login", Body: bytes.NewBufferString(post)}
 
 	resp, err := c.req(ctx, http.MethodPost, req)
 	if err != nil {
-		return fmt.Errorf("authenticating as user '%s' failed: %w", c.Username, err)
+		codeErr := &ReqError{}
+		if !errors.As(err, &codeErr) { // pointer to a pointer, yup.
+			return fmt.Errorf("authenticating as user '%s' failed: %w", c.Username, err)
+		}
 	}
 
 	closeResp(resp)

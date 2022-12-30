@@ -1,6 +1,7 @@
 package readarr_test
 
 import (
+	"net/http"
 	"path"
 	"testing"
 
@@ -113,7 +114,7 @@ func TestGetIndexers(t *testing.T) {
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   ([]*readarr.IndexerOutput)(nil),
 		},
 	}
@@ -186,7 +187,7 @@ func TestGetIndexer(t *testing.T) {
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   (*readarr.IndexerOutput)(nil),
 		},
 	}
@@ -301,7 +302,7 @@ func TestAddIndexer(t *testing.T) {
 			},
 			ExpectedRequest: addIndexer + "\n",
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*readarr.IndexerOutput)(nil),
 		},
 	}
@@ -418,7 +419,7 @@ func TestUpdateIndexer(t *testing.T) {
 			},
 			ExpectedRequest: updateIndexer + "\n",
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*readarr.IndexerOutput)(nil),
 		},
 	}
@@ -456,7 +457,7 @@ func TestDeleteIndexer(t *testing.T) {
 			WithRequest:    int64(2),
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 		},
 	}
 

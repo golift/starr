@@ -1,6 +1,7 @@
 package radarr_test
 
 import (
+	"net/http"
 	"path"
 	"testing"
 
@@ -38,7 +39,7 @@ func TestGetTags(t *testing.T) {
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   []*starr.Tag(nil),
 		},
 	}
@@ -81,7 +82,7 @@ func TestGetTag(t *testing.T) {
 			WithRequest:    1,
 			ResponseBody:   `{"message": "NotFound"}`,
 			WithResponse:   (*starr.Tag)(nil),
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 		},
 	}
 
@@ -128,7 +129,7 @@ func TestAddTag(t *testing.T) {
 			},
 			ExpectedRequest: `{"label":"amzn"}` + "\n",
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*starr.Tag)(nil),
 		},
 	}
@@ -178,7 +179,7 @@ func TestUpdateTag(t *testing.T) {
 			},
 			ExpectedRequest: `{"id":1,"label":"amzn"}` + "\n",
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*starr.Tag)(nil),
 		},
 	}
@@ -216,7 +217,7 @@ func TestDeleteTag(t *testing.T) {
 			WithRequest:    1,
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 		},
 	}
 
