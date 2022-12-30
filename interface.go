@@ -47,10 +47,10 @@ func (c *Config) Login(ctx context.Context) error {
 
 	post := "username=" + c.Username + "&password=" + c.Password
 	req := Request{URI: "/login", Body: bytes.NewBufferString(post)}
+	codeErr := &ReqError{}
 
 	resp, err := c.req(ctx, http.MethodPost, req)
 	if err != nil {
-		codeErr := &ReqError{}
 		if !errors.As(err, &codeErr) { // pointer to a pointer, yup.
 			return fmt.Errorf("invalid reply authenticating as user '%s': %w", c.Username, err)
 		}
@@ -58,7 +58,7 @@ func (c *Config) Login(ctx context.Context) error {
 
 	closeResp(resp)
 
-	if u, _ := url.Parse(c.URL); strings.Contains(resp.Header.Get("location"), "loginFailed") ||
+	if u, _ := url.Parse(c.URL); strings.Contains(codeErr.Get("location"), "loginFailed") ||
 		len(c.Client.Jar.Cookies(u)) == 0 {
 		return fmt.Errorf("%w: authenticating as user '%s' failed", ErrRequestError, c.Username)
 	}
