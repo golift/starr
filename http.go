@@ -77,7 +77,7 @@ func parseNon200(resp *http.Response) *ReqError {
 
 	reply, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return &ReqError{Code: resp.StatusCode, Body: reply}
+		return &ReqError{Code: resp.StatusCode, Body: reply, Header: resp.Header}
 	}
 
 	var msg struct {
@@ -85,7 +85,7 @@ func parseNon200(resp *http.Response) *ReqError {
 	}
 
 	if err := json.Unmarshal(reply, &msg); err == nil && msg.Msg != "" {
-		return &ReqError{Code: resp.StatusCode, Body: reply, Msg: msg.Msg}
+		return &ReqError{Code: resp.StatusCode, Body: reply, Msg: msg.Msg, Header: resp.Header}
 	}
 
 	var errMsg struct {
@@ -94,10 +94,22 @@ func parseNon200(resp *http.Response) *ReqError {
 	}
 
 	if err := json.Unmarshal(reply, &errMsg); err == nil && errMsg.Msg != "" {
-		return &ReqError{Code: resp.StatusCode, Body: reply, Msg: errMsg.Msg, Name: errMsg.Name}
+		return &ReqError{
+			Code:   resp.StatusCode,
+			Body:   reply,
+			Msg:    errMsg.Msg,
+			Name:   errMsg.Name,
+			Header: resp.Header,
+		}
 	}
 
-	return &ReqError{Code: resp.StatusCode, Body: reply, Msg: errMsg.Msg, Name: errMsg.Name}
+	return &ReqError{
+		Code:   resp.StatusCode,
+		Body:   reply,
+		Msg:    errMsg.Msg,
+		Name:   errMsg.Name,
+		Header: resp.Header,
+	}
 }
 
 // closeResp should be used to close requests that don't require a response body.

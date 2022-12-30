@@ -29,7 +29,9 @@ const (
 
 // Errors you may receive from this package.
 var (
-	// ErrInvalidStatusCode matches ANY ReqError.
+	// ErrInvalidStatusCode matches ANY ReqError when using errors.Is.
+	// You should instead use errors.As if you need the response data.
+	// Find an example of errors.As in the Login() method.
 	ErrInvalidStatusCode = &ReqError{Code: -1}
 	// ErrNilClient is returned if you attempt a request with a nil http.Client.
 	ErrNilClient = fmt.Errorf("http.Client must not be nil")
@@ -76,6 +78,7 @@ type ReqError struct {
 	Body []byte
 	Msg  string
 	Name string
+	http.Header
 }
 
 // Error returns the formatted error message.

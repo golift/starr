@@ -52,7 +52,7 @@ func (c *Config) Login(ctx context.Context) error {
 	if err != nil {
 		codeErr := &ReqError{}
 		if !errors.As(err, &codeErr) { // pointer to a pointer, yup.
-			return fmt.Errorf("authenticating as user '%s' failed: %w", c.Username, err)
+			return fmt.Errorf("invalid reply authenticating as user '%s': %w", c.Username, err)
 		}
 	}
 
