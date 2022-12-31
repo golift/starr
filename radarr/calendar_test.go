@@ -1,6 +1,5 @@
 package radarr_test
 
-/*
 import (
 	"net/http"
 	"testing"
@@ -9,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"golift.io/starr"
 	"golift.io/starr/radarr"
+	"golift.io/starr/starrtest"
 )
 
 var testMovieJSON = `{
@@ -144,7 +144,7 @@ var testMovieStruct = radarr.Movie{
 func TestGetCalendar(t *testing.T) {
 	t.Parallel()
 
-	tests := []*starr.TestMockData{
+	tests := []*starrtest.MockData{
 		{
 			Name: "200",
 			ExpectedPath: "/api/v3/calendar" +
@@ -156,7 +156,7 @@ func TestGetCalendar(t *testing.T) {
 			WithRequest: radarr.Calendar{
 				Start:       time.Unix(1582172420, 0),
 				End:         time.Unix(1582172420, 0),
-				Unmonitored: starr.True(),
+				Unmonitored: true,
 			},
 			WithError:      nil,
 			ExpectedMethod: http.MethodGet,
@@ -175,7 +175,7 @@ func TestGetCalendar(t *testing.T) {
 			WithRequest: radarr.Calendar{
 				Start:       time.Unix(1582172420, 0),
 				End:         time.Unix(1582172420, 0),
-				Unmonitored: starr.True(),
+				Unmonitored: true,
 			},
 			WithResponse: []*radarr.Movie(nil),
 		},
@@ -193,4 +193,5 @@ func TestGetCalendar(t *testing.T) {
 		})
 	}
 }
+
 /**/
