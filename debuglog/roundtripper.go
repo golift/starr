@@ -118,22 +118,22 @@ func (f *fakeCloser) Close() error {
 
 func (f *fakeCloser) logRequest() (int, int) {
 	var (
-		rcvdBytes = f.Body.Len()
 		sentBytes = f.Sent.Len()
+		rcvdBytes = f.Body.Len()
 		sent      = f.Sent.String()
 		rcvd      = f.Body.String()
 	)
 
-	if f.MaxBody > 0 && sentBytes > f.MaxBody {
-		sent = string(f.Sent.Bytes()[:f.MaxBody]) + " <data truncated>"
+	if f.MaxBody > 0 && len(sent) > f.MaxBody {
+		sent = sent[:f.MaxBody] + " <data truncated>"
 	}
 
 	switch ctype := f.Header.Get("content-type"); {
 	case !strings.Contains(ctype, "json"):
 		// We only log JSON. Need something else? Ask!
 		rcvd = "<data not logged, content-type: " + ctype + ">"
-	case f.MaxBody > 0 && rcvdBytes > f.MaxBody:
-		rcvd = string(f.Body.Bytes()[:f.MaxBody]) + " <body truncated>"
+	case f.MaxBody > 0 && len(rcvd) > f.MaxBody:
+		rcvd = rcvd[:f.MaxBody] + " <body truncated>"
 	}
 
 	if sentBytes > 0 {
