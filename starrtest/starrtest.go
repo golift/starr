@@ -37,14 +37,16 @@ func (test *MockData) GetMockServer(t *testing.T) *httptest.Server {
 	t.Helper()
 
 	return httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, req *http.Request) {
-		assert.EqualValues(t, test.ExpectedPath, req.URL.String(), "test.ExpectedPath does not match the actual path")
+		assert.EqualValues(t, test.ExpectedPath, req.URL.String(),
+			"test.ExpectedPath does not match the actual path")
 		writer.WriteHeader(test.ResponseStatus)
-
-		assert.EqualValues(t, test.ExpectedMethod, req.Method, "test.ExpectedMethod does not match the actual method")
+		assert.EqualValues(t, test.ExpectedMethod, req.Method,
+			"test.ExpectedMethod does not match the actual method")
 
 		body, err := io.ReadAll(req.Body)
 		assert.NoError(t, err)
-		assert.EqualValues(t, test.ExpectedRequest, string(body), "test.ExpectedRequest does not match body for actual request")
+		assert.EqualValues(t, test.ExpectedRequest, string(body),
+			"test.ExpectedRequest does not match body for actual request")
 
 		_, err = writer.Write([]byte(test.ResponseBody))
 		assert.NoError(t, err)

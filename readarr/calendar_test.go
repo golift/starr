@@ -140,7 +140,7 @@ func TestGetCalendar(t *testing.T) {
 				"&unmonitored=true",
 			ResponseStatus: http.StatusNotFound,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			ExpectedMethod: http.MethodGet,
 			WithRequest: readarr.Calendar{
 				Start:       time.Unix(1582172420, 0),
@@ -183,7 +183,7 @@ func TestGetCalendarID(t *testing.T) {
 			ExpectedPath:   "/api/v1/calendar/1",
 			ResponseStatus: http.StatusNotFound,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			ExpectedMethod: http.MethodGet,
 			WithRequest:    int64(1),
 			WithResponse:   (*readarr.Book)(nil),

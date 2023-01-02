@@ -1,6 +1,7 @@
 package readarr_test
 
 import (
+	"net/http"
 	"path"
 	"testing"
 
@@ -50,7 +51,7 @@ func TestGetDownloadClientConfig(t *testing.T) {
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   (*readarr.DownloadClientConfig)(nil),
 		},
 	}
@@ -112,7 +113,7 @@ func TestUpdateDownloadClientConfig(t *testing.T) {
 			ExpectedRequest: updateDownloadClientConfig + "\n",
 			ResponseStatus:  404,
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*readarr.DownloadClientConfig)(nil),
 		},
 	}

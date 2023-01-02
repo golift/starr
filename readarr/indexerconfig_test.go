@@ -1,6 +1,7 @@
 package readarr_test
 
 import (
+	"net/http"
 	"path"
 	"testing"
 
@@ -43,7 +44,7 @@ func TestGetIndexerConfig(t *testing.T) {
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   (*readarr.IndexerConfig)(nil),
 		},
 	}
@@ -102,7 +103,7 @@ func TestUpdateIndexerConfig(t *testing.T) {
 			ExpectedRequest: `{"id":1,"maximumSize":0,"minimumAge":0,"retention":0,"rssSyncInterval":20}` + "\n",
 			ResponseStatus:  404,
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*readarr.IndexerConfig)(nil),
 		},
 	}

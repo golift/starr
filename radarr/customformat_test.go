@@ -1,6 +1,7 @@
 package radarr_test
 
 import (
+	"net/http"
 	"path"
 	"testing"
 
@@ -160,7 +161,7 @@ func TestGetCustomFormats(t *testing.T) {
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   ([]*radarr.CustomFormatOutput)(nil),
 		},
 	}
@@ -257,7 +258,7 @@ func TestGetCustomFormat(t *testing.T) {
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   (*radarr.CustomFormatOutput)(nil),
 		},
 	}
@@ -378,7 +379,7 @@ func TestAddCustomFormat(t *testing.T) {
 			WithError: nil,
 		},
 		{
-			Name:           "200",
+			Name:           "404",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "customFormat"),
 			ExpectedMethod: "POST",
 			ResponseStatus: 404,
@@ -414,7 +415,7 @@ func TestAddCustomFormat(t *testing.T) {
 			},
 			ExpectedRequest: addCustomFormat + "\n",
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*radarr.CustomFormatOutput)(nil),
 		},
 	}
@@ -536,7 +537,7 @@ func TestUpdateCustomFormat(t *testing.T) {
 			WithError: nil,
 		},
 		{
-			Name:           "200",
+			Name:           "404",
 			ExpectedPath:   path.Join("/", starr.API, radarr.APIver, "customFormat", "1"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 404,
@@ -573,7 +574,7 @@ func TestUpdateCustomFormat(t *testing.T) {
 			},
 			ExpectedRequest: updateCustomFormat + "\n",
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*radarr.CustomFormatOutput)(nil),
 		},
 	}
@@ -611,7 +612,7 @@ func TestDeleteCustomFormat(t *testing.T) {
 			WithRequest:    int64(2),
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 		},
 	}
 

@@ -1,6 +1,7 @@
 package sonarr_test
 
 import (
+	"net/http"
 	"path"
 	"testing"
 
@@ -65,7 +66,7 @@ func TestGetNaming(t *testing.T) {
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   (*sonarr.Naming)(nil),
 		},
 	}
@@ -127,7 +128,7 @@ func TestUpdateNaming(t *testing.T) {
 			ExpectedRequest: `{"replaceIllegalCharacters":true}` + "\n",
 			ResponseStatus:  404,
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*sonarr.Naming)(nil),
 		},
 	}

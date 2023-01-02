@@ -40,4 +40,4 @@ linters:
 #      - fieldalignment
 
 run:
-  timeout: 35m
+  timeout: 5m
