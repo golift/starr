@@ -30,7 +30,7 @@ type Album struct {
 	Ratings        *starr.Ratings   `json:"ratings"`
 	ReleaseDate    time.Time        `json:"releaseDate"`
 	Releases       []*Release       `json:"releases"`
-	Genres         []interface{}    `json:"genres"`
+	Genres         []string         `json:"genres"`
 	Media          []*Media         `json:"media"`
 	Artist         *Artist          `json:"artist"`
 	Links          []*starr.Link    `json:"links"`
