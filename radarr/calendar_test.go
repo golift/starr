@@ -170,7 +170,7 @@ func TestGetCalendar(t *testing.T) {
 				"&unmonitored=true",
 			ResponseStatus: http.StatusNotFound,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			ExpectedMethod: http.MethodGet,
 			WithRequest: radarr.Calendar{
 				Start:       time.Unix(1582172420, 0),
