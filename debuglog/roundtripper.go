@@ -22,7 +22,7 @@ type Config struct {
 	// This can be used for byte counters, but is optional otherwise.
 	Caller Caller
 	// Any strings in this list are replaced with <recated> in the log output.
-	// Useful for hiding api keys and passwords from debug logs.
+	// Useful for hiding api keys and passwords from debug logs. String must be 4+ chars.
 	Redact []string
 }
 
@@ -154,7 +154,9 @@ func (f *fakeCloser) logRequest() (int, int) {
 	}
 
 	for _, redact := range f.Redact {
-		sent = strings.ReplaceAll(sent, redact, "<redacted>")
+		if len(redact) > 3 {
+			sent = strings.ReplaceAll(sent, redact, "<redacted>")
+		}
 	}
 
 	f.Debugf(sent)
