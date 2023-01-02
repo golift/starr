@@ -1,3 +1,4 @@
+// Package starrtest provides methods that are shared by all the tests in the other sub packages.
 package starrtest
 
 import (
@@ -12,15 +13,24 @@ import (
 // MockData allows generic testing of http inputs and outputs.
 // This is used by the submodule tests.
 type MockData struct {
-	Name            string      // A name for the test.
-	ExpectedPath    string      // The path expected in the request ie. /api/v1/thing
-	ExpectedRequest string      // The request body (json) expected from the caller.
-	ExpectedMethod  string      // The request method (GET/POST) expected from the caller.
-	ResponseStatus  int         // This is the status that gets returned the caller.
-	ResponseBody    string      // The (json) response body returned to caller.
-	WithRequest     interface{} // Caller's request.
-	WithResponse    interface{} // Caller's response.
-	WithError       error       // Caller's response.
+	// A name for the test.
+	Name string
+	// The path expected in the request ie. /api/v1/thing
+	ExpectedPath string
+	// The request body (json) expected from the caller.
+	ExpectedRequest string
+	// The request method (GET/POST) expected from the caller.
+	ExpectedMethod string
+	// This is the status that gets returned the caller.
+	ResponseStatus int
+	// The (json) response body returned to caller.
+	ResponseBody string
+	// Caller's request.
+	WithRequest interface{}
+	// Caller's response.
+	WithResponse interface{}
+	// Caller's response.
+	WithError error
 }
 
 const (

@@ -1,9 +1,12 @@
 // Package debuglog provides a RoundTripper you can put into
 // an HTTP client Transport to log requests made with that client.
+// This has been proven useful for finding starr app API payloads,
+// and as a general debug log wrapper for an integrating application.
 package debuglog
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -12,9 +15,15 @@ import (
 
 // Config is the input data for the logger.
 type Config struct {
-	MaxBody int                          // Limit payloads to this many bytes. 0=unlimited
-	Debugf  func(string, ...interface{}) // This is where logs go.
-	Caller  Caller                       // This can be used for byte counters.
+	// Limit logged JSON payloads to this many bytes. 0=unlimited
+	MaxBody int
+	// This is where logs go.
+	Debugf func(string, ...interface{})
+	// This can be used for byte counters, but is optional otherwise.
+	Caller Caller
+	// Any strings in this list are replaced with <recated> in the log output.
+	// Useful for hiding api keys and passwords from debug logs.
+	Redact []string
 }
 
 // Caller is a callback function you may use to collect statistics.
@@ -122,6 +131,7 @@ func (f *fakeCloser) logRequest() (int, int) {
 
 	switch ctype := f.Header.Get("content-type"); {
 	case !strings.Contains(ctype, "json"):
+		// We only log JSON. Need something else? Ask!
 		rcvd = "<data not logged, content-type: " + ctype + ">"
 	case f.MaxBody > 0 && rcvdBytes > f.MaxBody:
 		rcvd = string(f.Body.Bytes()[:f.MaxBody]) + " <body truncated>"
@@ -129,19 +139,25 @@ func (f *fakeCloser) logRequest() (int, int) {
 		rcvd = f.Body.String()
 	}
 
-	for header, value := range f.Header {
-		for _, v := range value {
-			headers += header + ": " + v + "\n"
+	for header, values := range f.Header {
+		for _, value := range values {
+			headers += header + ": " + value + "\n"
 		}
 	}
 
 	if sentBytes > 0 {
-		f.Debugf("Sent (%s) %d bytes to %s: %s\n Response: %s %d bytes\n%s%s)",
+		sent = fmt.Sprintf("Sent (%s) %d bytes to %s: %s\n Response: %s %d bytes\n%s%s)",
 			f.Method, sentBytes, f.URL, sent, f.Status, rcvdBytes, headers, rcvd)
 	} else {
-		f.Debugf("Sent (%s) to %s, Response: %s %d bytes\n%s%s",
+		sent = fmt.Sprintf("Sent (%s) to %s, Response: %s %d bytes\n%s%s",
 			f.Method, f.URL, f.Status, rcvdBytes, headers, rcvd)
 	}
+
+	for _, redact := range f.Redact {
+		sent = strings.ReplaceAll(sent, redact, "<redacted>")
+	}
+
+	f.Debugf(sent)
 
 	return sentBytes, rcvdBytes
 }
