@@ -17,7 +17,7 @@ import (
 type Config struct {
 	// Limit logged JSON payloads to this many bytes. 0=unlimited
 	MaxBody int
-	// This is where logs go.
+	// This is where logs go. If not set they go to log.Printf.
 	Debugf func(string, ...interface{})
 	// This can be used for byte counters, but is optional otherwise.
 	Caller Caller
@@ -25,6 +25,8 @@ type Config struct {
 	// Useful for hiding api keys and passwords from debug logs. String must be 4+ chars.
 	Redact []string
 }
+
+const minRedactChars = 4
 
 // Caller is a callback function you may use to collect statistics.
 type Caller func(status, method string, sentBytes, rcvdBytes int, err error)
@@ -116,17 +118,14 @@ func (f *fakeCloser) Close() error {
 
 func (f *fakeCloser) logRequest() (int, int) {
 	var (
-		sent      string
-		rcvd      string
-		headers   string
 		rcvdBytes = f.Body.Len()
 		sentBytes = f.Sent.Len()
+		sent      = f.Sent.String()
+		rcvd      = f.Body.String()
 	)
 
 	if f.MaxBody > 0 && sentBytes > f.MaxBody {
 		sent = string(f.Sent.Bytes()[:f.MaxBody]) + " <data truncated>"
-	} else {
-		sent = f.Sent.String()
 	}
 
 	switch ctype := f.Header.Get("content-type"); {
@@ -135,9 +134,21 @@ func (f *fakeCloser) logRequest() (int, int) {
 		rcvd = "<data not logged, content-type: " + ctype + ">"
 	case f.MaxBody > 0 && rcvdBytes > f.MaxBody:
 		rcvd = string(f.Body.Bytes()[:f.MaxBody]) + " <body truncated>"
-	default:
-		rcvd = f.Body.String()
 	}
+
+	if sentBytes > 0 {
+		f.redactLog("Sent (%s) %d bytes to %s: %s\n Response: %s %d bytes\n%s%s)",
+			f.Method, sentBytes, f.URL, sent, f.Status, rcvdBytes, f.headers(), rcvd)
+	} else {
+		f.redactLog("Sent (%s) to %s, Response: %s %d bytes\n%s%s",
+			f.Method, f.URL, f.Status, rcvdBytes, f.headers(), rcvd)
+	}
+
+	return sentBytes, rcvdBytes
+}
+
+func (f *fakeCloser) headers() string {
+	var headers string
 
 	for header, values := range f.Header {
 		for _, value := range values {
@@ -145,21 +156,17 @@ func (f *fakeCloser) logRequest() (int, int) {
 		}
 	}
 
-	if sentBytes > 0 {
-		sent = fmt.Sprintf("Sent (%s) %d bytes to %s: %s\n Response: %s %d bytes\n%s%s)",
-			f.Method, sentBytes, f.URL, sent, f.Status, rcvdBytes, headers, rcvd)
-	} else {
-		sent = fmt.Sprintf("Sent (%s) to %s, Response: %s %d bytes\n%s%s",
-			f.Method, f.URL, f.Status, rcvdBytes, headers, rcvd)
-	}
+	return headers
+}
+
+func (f *fakeCloser) redactLog(msg string, format ...interface{}) {
+	msg = fmt.Sprintf(msg, format...)
 
 	for _, redact := range f.Redact {
-		if len(redact) > 3 {
-			sent = strings.ReplaceAll(sent, redact, "<redacted>")
+		if len(redact) >= minRedactChars {
+			msg = strings.ReplaceAll(msg, redact, "<redacted>")
 		}
 	}
 
-	f.Debugf(sent)
-
-	return sentBytes, rcvdBytes
+	f.Debugf(msg)
 }
