@@ -29,8 +29,10 @@ const (
 
 // Errors you may receive from this package.
 var (
-	// ErrInvalidStatusCode is returned when the server (*arr app) returns a bad status code during an API request.
-	ErrInvalidStatusCode = fmt.Errorf("invalid status code, <200||>299")
+	// ErrInvalidStatusCode matches ANY ReqError when using errors.Is.
+	// You should instead use errors.As if you need the response data.
+	// Find an example of errors.As in the Login() method.
+	ErrInvalidStatusCode = &ReqError{Code: -1}
 	// ErrNilClient is returned if you attempt a request with a nil http.Client.
 	ErrNilClient = fmt.Errorf("http.Client must not be nil")
 	// ErrNilInterface is returned by *Into() methods when a nil interface is provided.

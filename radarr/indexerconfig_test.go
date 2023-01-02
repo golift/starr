@@ -1,6 +1,7 @@
 package radarr_test
 
 import (
+	"net/http"
 	"path"
 	"testing"
 
@@ -54,7 +55,7 @@ func TestGetIndexerConfig(t *testing.T) {
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   (*radarr.IndexerConfig)(nil),
 		},
 	}
@@ -124,7 +125,7 @@ func TestUpdateIndexerConfig(t *testing.T) {
 			ExpectedRequest: indexerRequest,
 			ResponseStatus:  404,
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*radarr.IndexerConfig)(nil),
 		},
 	}

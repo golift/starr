@@ -1,6 +1,7 @@
 package sonarr_test
 
 import (
+	"net/http"
 	"path"
 	"testing"
 
@@ -117,7 +118,7 @@ func TestGetImportLists(t *testing.T) {
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   ([]*sonarr.ImportListOutput)(nil),
 		},
 	}
@@ -192,7 +193,7 @@ func TestGetImportList(t *testing.T) {
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   (*sonarr.ImportListOutput)(nil),
 		},
 	}
@@ -280,7 +281,7 @@ func TestAddImportList(t *testing.T) {
 			WithError: nil,
 		},
 		{
-			Name:           "200",
+			Name:           "404",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "importList"),
 			ExpectedMethod: "POST",
 			ResponseStatus: 404,
@@ -305,7 +306,7 @@ func TestAddImportList(t *testing.T) {
 			},
 			ExpectedRequest: addImportList + "\n",
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*sonarr.ImportListOutput)(nil),
 		},
 	}
@@ -394,7 +395,7 @@ func TestUpdateImportList(t *testing.T) {
 			WithError: nil,
 		},
 		{
-			Name:           "200",
+			Name:           "404",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "importList", "4"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 404,
@@ -420,7 +421,7 @@ func TestUpdateImportList(t *testing.T) {
 			},
 			ExpectedRequest: updateImportList + "\n",
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*sonarr.ImportListOutput)(nil),
 		},
 	}
@@ -458,7 +459,7 @@ func TestDeleteImportList(t *testing.T) {
 			WithRequest:    int64(2),
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 		},
 	}
 

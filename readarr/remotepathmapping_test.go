@@ -1,6 +1,7 @@
 package readarr_test
 
 import (
+	"net/http"
 	"path"
 	"testing"
 
@@ -45,7 +46,7 @@ func TestGetRemotePathMappings(t *testing.T) {
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   []*starr.RemotePathMapping(nil),
 		},
 	}
@@ -90,7 +91,7 @@ func TestGetRemotePathMapping(t *testing.T) {
 			WithRequest:    int64(1),
 			ResponseBody:   `{"message": "NotFound"}`,
 			WithResponse:   (*starr.RemotePathMapping)(nil),
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 		},
 	}
 
@@ -143,7 +144,7 @@ func TestAddRemotePathMapping(t *testing.T) {
 			},
 			ExpectedRequest: `{"host":"transmission","remotePath":"/remote/","localPath":"/local/"}` + "\n",
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*starr.RemotePathMapping)(nil),
 		},
 	}
@@ -199,7 +200,7 @@ func TestUpdateRemotePathMapping(t *testing.T) {
 			},
 			ExpectedRequest: `{"id":2,"host":"transmission","remotePath":"/remote/","localPath":"/local/"}` + "\n",
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*starr.RemotePathMapping)(nil),
 		},
 	}
@@ -237,7 +238,7 @@ func TestDeleteRemotePathMapping(t *testing.T) {
 			WithRequest:    int64(2),
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 		},
 	}
 

@@ -1,6 +1,7 @@
 package sonarr_test
 
 import (
+	"net/http"
 	"path"
 	"testing"
 	"time"
@@ -523,7 +524,7 @@ func TestGetAllSeries(t *testing.T) {
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   starrtest.BodyNotFound,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   []*sonarr.Series(nil),
 		},
 	}
@@ -660,7 +661,7 @@ func TestGetSeries(t *testing.T) {
 			ResponseStatus: 404,
 			ResponseBody:   starrtest.BodyNotFound,
 			WithRequest:    360893,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   []*sonarr.Series(nil),
 		},
 	}
@@ -795,7 +796,7 @@ func TestGetSeriesByID(t *testing.T) {
 			ResponseStatus: 404,
 			ResponseBody:   starrtest.BodyNotFound,
 			WithRequest:    2,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   (*sonarr.Series)(nil),
 		},
 	}
@@ -1012,7 +1013,7 @@ func TestAddSeries(t *testing.T) {
 				},
 			},
 			ResponseBody: starrtest.BodyNotFound,
-			WithError:    starr.ErrInvalidStatusCode,
+			WithError:    &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse: (*sonarr.Series)(nil),
 		},
 	}
@@ -1195,7 +1196,7 @@ func TestUpdateSeries(t *testing.T) {
 				ID: 1,
 			},
 			ResponseBody: starrtest.BodyNotFound,
-			WithError:    starr.ErrInvalidStatusCode,
+			WithError:    &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse: (*sonarr.Series)(nil),
 		},
 	}
@@ -1233,7 +1234,7 @@ func TestDeleteSeries(t *testing.T) {
 			ResponseStatus: 404,
 			ResponseBody:   starrtest.BodyNotFound,
 			WithRequest:    2,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 		},
 	}
 
@@ -1510,7 +1511,7 @@ func TestLookupName(t *testing.T) {
 			WithRequest:    "Chernobyl Breaking Bad",
 			ResponseStatus: 404,
 			ResponseBody:   starrtest.BodyNotFound,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   []*sonarr.Series(nil),
 		},
 	}
@@ -1647,7 +1648,7 @@ func TestLookupID(t *testing.T) {
 			WithRequest:    360893,
 			ResponseStatus: 404,
 			ResponseBody:   starrtest.BodyNotFound,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   []*sonarr.Series(nil),
 		},
 	}

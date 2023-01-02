@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/cookiejar"
@@ -46,15 +47,21 @@ func (c *Config) Login(ctx context.Context) error {
 
 	post := "username=" + c.Username + "&password=" + c.Password
 	req := Request{URI: "/login", Body: bytes.NewBufferString(post)}
+	codeErr := &ReqError{}
 
-	resp, err := c.api(ctx, http.MethodPost, req)
+	resp, err := c.req(ctx, http.MethodPost, req)
 	if err != nil {
-		return fmt.Errorf("authenticating as user '%s' failed: %w", c.Username, err)
+		if !errors.As(err, &codeErr) { // pointer to a pointer, yup.
+			return fmt.Errorf("invalid reply authenticating as user '%s': %w", c.Username, err)
+		}
+	} else {
+		// Protect a nil map in case we don't get an error (which should be impossible).
+		codeErr.Header = resp.Header
 	}
 
 	closeResp(resp)
 
-	if u, _ := url.Parse(c.URL); strings.Contains(resp.Header.Get("location"), "loginFailed") ||
+	if u, _ := url.Parse(c.URL); strings.Contains(codeErr.Get("location"), "loginFailed") ||
 		len(c.Client.Jar.Cookies(u)) == 0 {
 		return fmt.Errorf("%w: authenticating as user '%s' failed", ErrRequestError, c.Username)
 	}

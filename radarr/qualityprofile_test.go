@@ -1,6 +1,7 @@
 package radarr_test
 
 import (
+	"net/http"
 	"path"
 	"testing"
 
@@ -128,7 +129,7 @@ func TestGetQualityProfiles(t *testing.T) {
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   []*radarr.QualityProfile(nil),
 		},
 	}
@@ -208,7 +209,7 @@ func TestGetQualityProfile(t *testing.T) {
 			ResponseStatus: 404,
 			WithRequest:    int64(1),
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   (*radarr.QualityProfile)(nil),
 		},
 	}
@@ -366,7 +367,7 @@ func TestAddQualityProfile(t *testing.T) {
 			ExpectedRequest: addQualityProfileRequest,
 			ResponseStatus:  404,
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*radarr.QualityProfile)(nil),
 		},
 	}
@@ -526,7 +527,7 @@ func TestUpdateQualityProfile(t *testing.T) {
 			ExpectedRequest: updateQualityProfileRequest,
 			ResponseStatus:  404,
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*radarr.QualityProfile)(nil),
 		},
 	}
@@ -564,7 +565,7 @@ func TestDeleteQualityProfile(t *testing.T) {
 			WithRequest:    int64(10),
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   (*radarr.QualityProfile)(nil),
 		},
 	}

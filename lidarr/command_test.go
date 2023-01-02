@@ -55,7 +55,7 @@ func TestGetCommands(t *testing.T) {
 			ExpectedPath:   path.Join("/", starr.API, lidarr.APIver, "command"),
 			ResponseStatus: http.StatusNotFound,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			ExpectedMethod: "GET",
 			WithResponse:   []*lidarr.CommandResponse(nil),
 		},
@@ -122,7 +122,7 @@ func TestSendCommand(t *testing.T) {
 			ExpectedPath:    path.Join("/", starr.API, lidarr.APIver, "command"),
 			ResponseStatus:  http.StatusNotFound,
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			ExpectedMethod:  "POST",
 			WithResponse:    (*lidarr.CommandResponse)(nil), // completely nil (typed) response.
 			WithRequest:     &lidarr.CommandRequest{Name: "Something"},

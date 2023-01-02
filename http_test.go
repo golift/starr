@@ -1,6 +1,7 @@
 package starr_test
 
 import (
+	"net/http"
 	"path"
 	"testing"
 
@@ -32,4 +33,21 @@ func TestSetAPIPath(t *testing.T) {
 	assert.Equal(t, api+"/v1/test/another/level", starr.SetAPIPath("api/v1/test/another/level/"))
 	assert.Equal(t, api+"/v1/test/another/level", starr.SetAPIPath("/api/v1/test/another/level"))
 	assert.Equal(t, api+"/v1/test/another/level", starr.SetAPIPath("/api/v1/test/another/level/"))
+}
+
+func TestReqError(t *testing.T) {
+	t.Parallel()
+
+	err := &starr.ReqError{Code: http.StatusForbidden}
+	assert.ErrorIs(t, err, starr.ErrInvalidStatusCode)
+	assert.Equal(t, "invalid status code, 403 >= 300", err.Error())
+
+	err.Body = []byte("Some Body")
+	assert.Equal(t, "invalid status code, 403 >= 300, Some Body", err.Error())
+
+	err.Msg = "Some message"
+	assert.Equal(t, "invalid status code, 403 >= 300, Some message", err.Error())
+
+	err.Name = "Varname"
+	assert.Equal(t, "invalid status code, 403 >= 300, Varname: Some message", err.Error())
 }

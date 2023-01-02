@@ -1,6 +1,7 @@
 package radarr_test
 
 import (
+	"net/http"
 	"path"
 	"testing"
 
@@ -49,7 +50,7 @@ func TestGetNaming(t *testing.T) {
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   (*radarr.Naming)(nil),
 		},
 	}
@@ -107,7 +108,7 @@ func TestUpdateNaming(t *testing.T) {
 			ExpectedRequest: `{"replaceIllegalCharacters":true,"id":1,"standardMovieFormat":"","movieFolderFormat":""}` + "\n",
 			ResponseStatus:  404,
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*radarr.Naming)(nil),
 		},
 	}

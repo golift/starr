@@ -1,6 +1,7 @@
 package sonarr_test
 
 import (
+	"net/http"
 	"path"
 	"testing"
 
@@ -78,7 +79,7 @@ func TestGetDelayProfiles(t *testing.T) {
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   []*sonarr.DelayProfile(nil),
 		},
 	}
@@ -127,7 +128,7 @@ func TestGetDelayProfile(t *testing.T) {
 			ResponseStatus: 404,
 			WithRequest:    int64(1),
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   (*sonarr.DelayProfile)(nil),
 		},
 	}
@@ -196,7 +197,7 @@ func TestAddDelayProfile(t *testing.T) {
 			ExpectedRequest: delayProfileRequest,
 			ResponseStatus:  404,
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*sonarr.DelayProfile)(nil),
 		},
 	}
@@ -255,7 +256,7 @@ func TestUpdateDelayProfile(t *testing.T) {
 			ExpectedRequest: `{"enableTorrent":true,"id":10,"tags":[11]}` + "\n",
 			ResponseStatus:  404,
 			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       starr.ErrInvalidStatusCode,
+			WithError:       &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:    (*sonarr.DelayProfile)(nil),
 		},
 	}
@@ -293,7 +294,7 @@ func TestDeleteDelayProfile(t *testing.T) {
 			WithRequest:    int64(10),
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   (*sonarr.DelayProfile)(nil),
 		},
 	}

@@ -1,6 +1,7 @@
 package radarr_test
 
 import (
+	"net/http"
 	"path"
 	"testing"
 
@@ -45,7 +46,7 @@ func TestGetDownloadClientConfig(t *testing.T) {
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   (*radarr.DownloadClientConfig)(nil),
 		},
 	}
@@ -106,7 +107,7 @@ func TestUpdateDownloadClientConfig(t *testing.T) {
 				`"checkForFinishedDownloadInterval":1,"id":1,"downloadClientWorkingFolders":"_UNPACK_|_FAILED_"}` + "\n",
 			ResponseStatus: 404,
 			ResponseBody:   `{"message": "NotFound"}`,
-			WithError:      starr.ErrInvalidStatusCode,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
 			WithResponse:   (*radarr.DownloadClientConfig)(nil),
 		},
 	}
