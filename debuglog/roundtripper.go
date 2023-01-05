@@ -1,9 +1,12 @@
 // Package debuglog provides a RoundTripper you can put into
 // an HTTP client Transport to log requests made with that client.
+// This has been proven useful for finding starr app API payloads,
+// and as a general debug log wrapper for an integrating application.
 package debuglog
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -12,10 +15,18 @@ import (
 
 // Config is the input data for the logger.
 type Config struct {
-	MaxBody int                          // Limit payloads to this many bytes. 0=unlimited
-	Debugf  func(string, ...interface{}) // This is where logs go.
-	Caller  Caller                       // This can be used for byte counters.
+	// Limit logged JSON payloads to this many bytes. 0=unlimited
+	MaxBody int
+	// This is where logs go. If not set they go to log.Printf.
+	Debugf func(string, ...interface{})
+	// This can be used for byte counters, but is optional otherwise.
+	Caller Caller
+	// Any strings in this list are replaced with <recated> in the log output.
+	// Useful for hiding api keys and passwords from debug logs. String must be 4+ chars.
+	Redact []string
 }
+
+const minRedactChars = 4
 
 // Caller is a callback function you may use to collect statistics.
 type Caller func(status, method string, sentBytes, rcvdBytes int, err error)
@@ -107,41 +118,55 @@ func (f *fakeCloser) Close() error {
 
 func (f *fakeCloser) logRequest() (int, int) {
 	var (
-		sent      string
-		rcvd      string
-		headers   string
-		rcvdBytes = f.Body.Len()
 		sentBytes = f.Sent.Len()
+		rcvdBytes = f.Body.Len()
+		sent      = f.Sent.String()
+		rcvd      = f.Body.String()
 	)
 
-	if f.MaxBody > 0 && sentBytes > f.MaxBody {
-		sent = string(f.Sent.Bytes()[:f.MaxBody]) + " <data truncated>"
-	} else {
-		sent = f.Sent.String()
+	if f.MaxBody > 0 && len(sent) > f.MaxBody {
+		sent = sent[:f.MaxBody] + " <data truncated>"
 	}
 
 	switch ctype := f.Header.Get("content-type"); {
 	case !strings.Contains(ctype, "json"):
+		// We only log JSON. Need something else? Ask!
 		rcvd = "<data not logged, content-type: " + ctype + ">"
-	case f.MaxBody > 0 && rcvdBytes > f.MaxBody:
-		rcvd = string(f.Body.Bytes()[:f.MaxBody]) + " <body truncated>"
-	default:
-		rcvd = f.Body.String()
-	}
-
-	for header, value := range f.Header {
-		for _, v := range value {
-			headers += header + ": " + v + "\n"
-		}
+	case f.MaxBody > 0 && len(rcvd) > f.MaxBody:
+		rcvd = rcvd[:f.MaxBody] + " <body truncated>"
 	}
 
 	if sentBytes > 0 {
-		f.Debugf("Sent (%s) %d bytes to %s: %s\n Response: %s %d bytes\n%s%s)",
-			f.Method, sentBytes, f.URL, sent, f.Status, rcvdBytes, headers, rcvd)
+		f.redactLog("Sent (%s) %d bytes to %s: %s\n Response: %s %d bytes\n%s%s)",
+			f.Method, sentBytes, f.URL, sent, f.Status, rcvdBytes, f.headers(), rcvd)
 	} else {
-		f.Debugf("Sent (%s) to %s, Response: %s %d bytes\n%s%s",
-			f.Method, f.URL, f.Status, rcvdBytes, headers, rcvd)
+		f.redactLog("Sent (%s) to %s, Response: %s %d bytes\n%s%s",
+			f.Method, f.URL, f.Status, rcvdBytes, f.headers(), rcvd)
 	}
 
 	return sentBytes, rcvdBytes
+}
+
+func (f *fakeCloser) headers() string {
+	var headers string
+
+	for header, values := range f.Header {
+		for _, value := range values {
+			headers += header + ": " + value + "\n"
+		}
+	}
+
+	return headers
+}
+
+func (f *fakeCloser) redactLog(msg string, format ...interface{}) {
+	msg = fmt.Sprintf(msg, format...)
+
+	for _, redact := range f.Redact {
+		if len(redact) >= minRedactChars {
+			msg = strings.ReplaceAll(msg, redact, "<redacted>")
+		}
+	}
+
+	f.Debugf(msg)
 }
