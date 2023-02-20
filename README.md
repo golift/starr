@@ -2,20 +2,20 @@
 
 [![GoDoc](https://godoc.org/golift.io/starr/svc?status.svg)](https://pkg.go.dev/golift.io/starr)
 [![Go Report Card](https://goreportcard.com/badge/golift.io/starr)](https://goreportcard.com/report/golift.io/starr)
-[![MIT License](http://img.shields.io/:license-mit-blue.svg)](https://github.com/golift/starr/blob/master/LICENSE)
+[![MIT License](http://img.shields.io/:license-mit-blue.svg)](https://github.com/golift/starr/blob/main/LICENSE)
 [![discord](https://badgen.net/badge/icon/Discord?color=0011ff&label&icon=https://simpleicons.now.sh/discord/eee "GoLift Discord")](https://golift.io/discord)
 
 ## The correct way to say `*arr`.
 
  **Go library to interact with APIs in all the Starr apps.**
 
--   [Lidarr](http://lidarr.audio) ([over 60 methods](https://pkg.go.dev/golift.io/starr@master/lidarr)) 
--   [Prowlarr](https://prowlarr.com) ([over 20 methods!](https://pkg.go.dev/golift.io/starr@master/prowlarr)) 
--   [Radarr](http://radarr.video) ([over 80 methods](https://pkg.go.dev/golift.io/starr@master/radarr)) 
--   [Readarr](http://readarr.com) ([over 50 methods](https://pkg.go.dev/golift.io/starr@master/readarr)) 
--   [Sonarr](http://sonarr.tv) ([over 90 methods](https://pkg.go.dev/golift.io/starr@master/sonarr)) 
+-   [Lidarr](http://lidarr.audio) ([over 60 methods](https://pkg.go.dev/golift.io/starr@main/lidarr)) 
+-   [Prowlarr](https://prowlarr.com) ([over 20 methods!](https://pkg.go.dev/golift.io/starr@main/prowlarr)) 
+-   [Radarr](http://radarr.video) ([over 80 methods](https://pkg.go.dev/golift.io/starr@main/radarr)) 
+-   [Readarr](http://readarr.com) ([over 50 methods](https://pkg.go.dev/golift.io/starr@main/readarr)) 
+-   [Sonarr](http://sonarr.tv) ([over 90 methods](https://pkg.go.dev/golift.io/starr@main/sonarr)) 
 
-Custom Scripts support is also included. [Check out the types and methods](https://pkg.go.dev/golift.io/starr@master/starrcmd) to get that data.
+Custom Scripts support is also included. [Check out the types and methods](https://pkg.go.dev/golift.io/starr@main/starrcmd) to get that data.
 
 ## One 🌟 To Rule Them All
 
