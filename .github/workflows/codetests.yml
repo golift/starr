@@ -9,7 +9,7 @@ jobs:
   nopollution:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.3.0
+      - uses: actions/checkout@v3.4.0
       - name: no cross pollution
         run: make nopollution
   # Runs `go test` against 3 operating systems.
@@ -19,7 +19,7 @@ jobs:
         os: [macos, windows, ubuntu]
     runs-on: ${{ matrix.os }}-latest
     steps:
-      - uses: actions/checkout@v3.3.0
+      - uses: actions/checkout@v3.4.0
       - uses: actions/setup-go@v3
         with:
           go-version: 1.19
