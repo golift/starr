@@ -18,7 +18,6 @@ import (
 type App string
 
 // These constants are just here for convenience.
-// If you add more here, add them to String() below.
 const (
 	Emby     App = "Emby"
 	Lidarr   App = "Lidarr"
@@ -27,6 +26,7 @@ const (
 	Radarr   App = "Radarr"
 	Readarr  App = "Readarr"
 	Sonarr   App = "Sonarr"
+	Whisparr App = "Whisparr"
 )
 
 // String turns an App name into a string.
