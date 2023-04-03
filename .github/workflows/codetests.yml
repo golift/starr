@@ -22,7 +22,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
         with:
-          go-version: 1.19
+          go-version: '1.20'
       - name: go-test
         run: 	go test -race -v -covermode=atomic  ./...
   # Runs golangci-lint on macos against freebsd and macos.
@@ -37,12 +37,12 @@ jobs:
     steps:
       - uses: actions/setup-go@v4
         with:
-          go-version: 1.19
+          go-version: '1.20'
       - uses: actions/checkout@v3
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.50
+          version: 'v1.51'
   # Runs golangci-lint on linux against linux and windows.
   golangci-linux:
     strategy:
@@ -55,9 +55,9 @@ jobs:
     steps:
       - uses: actions/setup-go@v4
         with:
-          go-version: 1.19
+          go-version: '1.20'
       - uses: actions/checkout@v3
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.50
+          version: 'v1.51'

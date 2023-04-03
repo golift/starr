@@ -48,7 +48,7 @@ func (r *Readarr) GetBlockList(count int) (*BlockList, error) {
 // GetBlockListContext returns block list items.
 func (r *Readarr) GetBlockListContext(ctx context.Context, records int) (*BlockList, error) {
 	list := &BlockList{Records: []*BlockListRecord{}}
-	perPage := starr.SetPerPage(records, 500)
+	perPage := starr.SetPerPage(records, 0)
 
 	for page := 1; ; page++ {
 		curr, err := r.GetBlockListPageContext(ctx, &starr.PageReq{PageSize: perPage, Page: page})

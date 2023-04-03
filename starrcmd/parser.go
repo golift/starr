@@ -99,7 +99,7 @@ func parseStructMember(field reflect.Value, value, splitVal string) error { //no
 		if val, err = time.Parse(DateFormat, value); err != nil {
 			var err2 error
 			if val, err2 = time.Parse(DateFormat2, value); err2 != nil {
-				err = fmt.Errorf("error1: %v, error2: %w", err, err2)
+				err = fmt.Errorf("error1: %v, error2: %w", err, err2) //nolint:errorlint
 			} else {
 				err = nil
 			}
@@ -147,7 +147,7 @@ func parseSlices(field reflect.Value, value, splitVal string) (bool, error) { //
 				if err != nil {
 					var err2 error
 					if vals[idx], err2 = time.Parse(DateFormat2, value); err2 != nil {
-						return false, fmt.Errorf("error1: %v, error2: %w", err, err2)
+						return false, fmt.Errorf("error1: %v, error2: %w", err, err2) //nolint:errorlint
 					}
 
 					err = nil
