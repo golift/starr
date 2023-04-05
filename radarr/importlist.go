@@ -13,54 +13,51 @@ import (
 const bpImportList = APIver + "/importlist"
 
 // ImportList represents the api/v3/importlist endpoint.
-type ImportList struct {
-	ID                  int64        `json:"id"`
-	Name                string       `json:"name"`
-	Enabled             bool         `json:"enabled"`
-	EnableAuto          bool         `json:"enableAuto"`
-	ShouldMonitor       bool         `json:"shouldMonitor"`
-	SearchOnAdd         bool         `json:"searchOnAdd"`
-	RootFolderPath      string       `json:"rootFolderPath"`
-	QualityProfileID    int64        `json:"qualityProfileId"`
-	MinimumAvailability Availability `json:"minimumAvailability"`
-	ListType            string       `json:"listType"`
-	ListOrder           int64        `json:"listOrder"`
-	Fields              []*Field     `json:"fields"`
-	ImplementationName  string       `json:"implementationName"`
-	Implementation      string       `json:"implementation"`
-	ConfigContract      string       `json:"configContract"`
-	InfoLink            string       `json:"infoLink"`
-	Tags                []int        `json:"tags"`
+type ImportListInput struct {
+	EnableAuto          bool                `json:"enableAuto"`
+	Enabled             bool                `json:"enabled"`
+	SearchOnAdd         bool                `json:"searchOnAdd"`
+	ShouldMonitor       bool                `json:"shouldMonitor"`
+	ID                  int64               `json:"id"`
+	QualityProfileID    int64               `json:"qualityProfileId"`
+	ConfigContract      string              `json:"configContract"`
+	Implementation      string              `json:"implementation"`
+	Name                string              `json:"name"`
+	RootFolderPath      string              `json:"rootFolderPath"`
+	MinimumAvailability Availability        `json:"minimumAvailability"`
+	Tags                []int               `json:"tags"`
+	Fields              []*starr.FieldInput `json:"fields"`
 }
 
-// Field is currently only part of ImportList.
-type Field struct {
-	Name          string          `json:"name"`
-	Value         interface{}     `json:"value"` // sometimes number, sometimes string. 'Type' may tell you.
-	Label         string          `json:"label"`
-	HelpText      string          `json:"helpText"`
-	Type          string          `json:"type"`
-	Order         int64           `json:"order"`
-	Advanced      bool            `json:"advanced"`
-	SelectOptions []*SelectOption `json:"selectOptions,omitempty"`
-}
-
-// SelectOption is part of a Field from an ImportList.
-type SelectOption struct {
-	Value        int    `json:"value"`
-	Name         string `json:"name"`
-	Order        int    `json:"order"`
-	DividerAfter bool   `json:"dividerAfter"`
+// ImportList represents the api/v3/importlist endpoint.
+type ImportListOutput struct {
+	EnableAuto          bool                 `json:"enableAuto"`
+	Enabled             bool                 `json:"enabled"`
+	SearchOnAdd         bool                 `json:"searchOnAdd"`
+	ShouldMonitor       bool                 `json:"shouldMonitor"`
+	ID                  int64                `json:"id"`
+	ListOrder           int64                `json:"listOrder"`
+	QualityProfileID    int64                `json:"qualityProfileId"`
+	ConfigContract      string               `json:"configContract"`
+	Implementation      string               `json:"implementation"`
+	ImplementationName  string               `json:"implementationName"`
+	InfoLink            string               `json:"infoLink"`
+	ListType            string               `json:"listType"`
+	Name                string               `json:"name"`
+	RootFolderPath      string               `json:"rootFolderPath"`
+	MinimumAvailability Availability         `json:"minimumAvailability"`
+	Tags                []int                `json:"tags"`
+	Fields              []*starr.FieldOutput `json:"fields"`
 }
 
 // GetImportLists returns all import lists.
-func (r *Radarr) GetImportLists() ([]*ImportList, error) {
+func (r *Radarr) GetImportLists() ([]*ImportListOutput, error) {
 	return r.GetImportListsContext(context.Background())
 }
 
 // GetImportListsContext returns all import lists.
-func (r *Radarr) GetImportListsContext(ctx context.Context) ([]*ImportList, error) {
-	var output []*ImportList
+func (r *Radarr) GetImportListsContext(ctx context.Context) ([]*ImportListOutput, error) {
+	var output []*ImportListOutput
 
 	req := starr.Request{URI: bpImportList}
 	if err := r.GetInto(ctx, req, &output); err != nil {
@@ -71,12 +68,12 @@ func (r *Radarr) GetImportListsContext(ctx context.Context) ([]*ImportList, erro
 }
 
 // CreateImportList creates an import list in Radarr.
-func (r *Radarr) CreateImportList(il *ImportList) (*ImportList, error) {
-	return r.CreateImportListContext(context.Background(), il)
+func (r *Radarr) CreateImportList(list *ImportListInput) (*ImportListOutput, error) {
+	return r.CreateImportListContext(context.Background(), list)
 }
 
 // CreateImportListContext creates an import list in Radarr.
-func (r *Radarr) CreateImportListContext(ctx context.Context, list *ImportList) (*ImportList, error) {
+func (r *Radarr) CreateImportListContext(ctx context.Context, list *ImportListInput) (*ImportListOutput, error) {
 	list.ID = 0
 
 	var body bytes.Buffer
@@ -84,7 +81,7 @@ func (r *Radarr) CreateImportListContext(ctx context.Context, list *ImportList) 
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpImportList, err)
 	}
 
-	var output ImportList
+	var output ImportListOutput
 
 	req := starr.Request{URI: bpImportList, Body: &body}
 	if err := r.PostInto(ctx, req, &output); err != nil {
@@ -118,18 +115,18 @@ func (r *Radarr) DeleteImportListContext(ctx context.Context, ids []int64) error
 }
 
 // UpdateImportList updates an existing import list and returns the response.
-func (r *Radarr) UpdateImportList(list *ImportList) (*ImportList, error) {
+func (r *Radarr) UpdateImportList(list *ImportListInput) (*ImportListOutput, error) {
 	return r.UpdateImportListContext(context.Background(), list)
 }
 
 // UpdateImportListContext updates an existing import list and returns the response.
-func (r *Radarr) UpdateImportListContext(ctx context.Context, list *ImportList) (*ImportList, error) {
+func (r *Radarr) UpdateImportListContext(ctx context.Context, list *ImportListInput) (*ImportListOutput, error) {
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(list); err != nil {
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpImportList, err)
 	}
 
-	var output ImportList
+	var output ImportListOutput
 
 	req := starr.Request{URI: path.Join(bpImportList, fmt.Sprint(list.ID)), Body: &body}
 	if err := r.PutInto(ctx, req, &output); err != nil {
