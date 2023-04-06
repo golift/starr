@@ -163,7 +163,7 @@ func decode(output interface{}, resp *http.Response, err error) error {
 func (c *Config) GetInitializeJS(ctx context.Context) (*InitializeJS, error) {
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, c.URL+"initialize.js", nil)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("http.NewRequestWithContext(initialize.js): %w", err)
 	}
 
 	resp, err := c.Client.Do(req)
@@ -180,7 +180,7 @@ func (c *Config) GetInitializeJS(ctx context.Context) (*InitializeJS, error) {
 	return readInitializeJS(resp.Body)
 }
 
-func readInitializeJS(input io.Reader) (*InitializeJS, error) {
+func readInitializeJS(input io.Reader) (*InitializeJS, error) { //nolint:cyclop
 	output := &InitializeJS{}
 	scanner := bufio.NewScanner(input)
 
