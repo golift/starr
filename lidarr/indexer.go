@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"path"
 
 	"golift.io/starr"
@@ -102,13 +103,13 @@ func (l *Lidarr) AddIndexerContext(ctx context.Context, indexer *IndexerInput) (
 	return &output, nil
 }
 
-// UpdateIndexer updates the indexer.
-func (l *Lidarr) UpdateIndexer(indexer *IndexerInput) (*IndexerOutput, error) {
-	return l.UpdateIndexerContext(context.Background(), indexer)
+// UpdateIndexer updates an indexer.
+func (l *Lidarr) UpdateIndexer(indexer *IndexerInput, force bool) (*IndexerOutput, error) {
+	return l.UpdateIndexerContext(context.Background(), indexer, force)
 }
 
-// UpdateIndexerContext updates the indexer.
-func (l *Lidarr) UpdateIndexerContext(ctx context.Context, indexer *IndexerInput) (*IndexerOutput, error) {
+// UpdateIndexerContext updates an indexer.
+func (l *Lidarr) UpdateIndexerContext(ctx context.Context, indexer *IndexerInput, force bool) (*IndexerOutput, error) {
 	var output IndexerOutput
 
 	var body bytes.Buffer
@@ -116,7 +117,11 @@ func (l *Lidarr) UpdateIndexerContext(ctx context.Context, indexer *IndexerInput
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpIndexer, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpIndexer, fmt.Sprint(indexer.ID)), Body: &body}
+	req := starr.Request{
+		URI:   path.Join(bpIndexer, fmt.Sprint(indexer.ID)),
+		Body:  &body,
+		Query: url.Values{"forceSave": []string{fmt.Sprint(force)}},
+	}
 	if err := l.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}

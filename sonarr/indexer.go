@@ -105,12 +105,12 @@ func (s *Sonarr) AddIndexerContext(ctx context.Context, indexer *IndexerInput) (
 }
 
 // UpdateIndexer updates the indexer.
-func (s *Sonarr) UpdateIndexer(indexer *IndexerInput) (*IndexerOutput, error) {
-	return s.UpdateIndexerContext(context.Background(), indexer)
+func (s *Sonarr) UpdateIndexer(indexer *IndexerInput, force bool) (*IndexerOutput, error) {
+	return s.UpdateIndexerContext(context.Background(), indexer, force)
 }
 
 // UpdateIndexerContext updates the indexer.
-func (s *Sonarr) UpdateIndexerContext(ctx context.Context, indexer *IndexerInput) (*IndexerOutput, error) {
+func (s *Sonarr) UpdateIndexerContext(ctx context.Context, indexer *IndexerInput, force bool) (*IndexerOutput, error) {
 	var output IndexerOutput
 
 	var body bytes.Buffer
