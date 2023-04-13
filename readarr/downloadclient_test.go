@@ -452,7 +452,7 @@ func TestUpdateDownloadClient(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := readarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			output, err := client.UpdateDownloadClient(test.WithRequest.(*readarr.DownloadClientInput))
+			output, err := client.UpdateDownloadClient(test.WithRequest.(*readarr.DownloadClientInput), false)
 			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})

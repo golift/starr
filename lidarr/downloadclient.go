@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"path"
 
 	"golift.io/starr"
@@ -104,13 +105,14 @@ func (l *Lidarr) AddDownloadClientContext(ctx context.Context,
 }
 
 // UpdateDownloadClient updates the download client.
-func (l *Lidarr) UpdateDownloadClient(downloadclient *DownloadClientInput) (*DownloadClientOutput, error) {
-	return l.UpdateDownloadClientContext(context.Background(), downloadclient)
+func (l *Lidarr) UpdateDownloadClient(downloadclient *DownloadClientInput, force bool) (*DownloadClientOutput, error) {
+	return l.UpdateDownloadClientContext(context.Background(), downloadclient, force)
 }
 
 // UpdateDownloadClientContext updates the download client.
 func (l *Lidarr) UpdateDownloadClientContext(ctx context.Context,
 	client *DownloadClientInput,
+	force bool,
 ) (*DownloadClientOutput, error) {
 	var output DownloadClientOutput
 
@@ -119,7 +121,11 @@ func (l *Lidarr) UpdateDownloadClientContext(ctx context.Context,
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpDownloadClient, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpDownloadClient, fmt.Sprint(client.ID)), Body: &body}
+	req := starr.Request{
+		URI:   path.Join(bpDownloadClient, fmt.Sprint(client.ID)),
+		Body:  &body,
+		Query: url.Values{"forceSave": []string{fmt.Sprint(force)}},
+	}
 	if err := l.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}

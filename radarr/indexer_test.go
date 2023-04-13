@@ -435,7 +435,7 @@ func TestUpdateIndexer(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := radarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			output, err := client.UpdateIndexer(test.WithRequest.(*radarr.IndexerInput))
+			output, err := client.UpdateIndexer(test.WithRequest.(*radarr.IndexerInput), false)
 			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
