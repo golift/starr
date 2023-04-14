@@ -17,11 +17,11 @@ type ImportListInput struct {
 	EnableAuto          bool                `json:"enableAuto"`
 	Enabled             bool                `json:"enabled"`
 	SearchOnAdd         bool                `json:"searchOnAdd"`
-	ShouldMonitor       bool                `json:"shouldMonitor"`
 	ID                  int64               `json:"id"`
 	QualityProfileID    int64               `json:"qualityProfileId"`
 	ConfigContract      string              `json:"configContract"`
 	Implementation      string              `json:"implementation"`
+	Monitor             string              `json:"monitor"`
 	Name                string              `json:"name"`
 	RootFolderPath      string              `json:"rootFolderPath"`
 	MinimumAvailability Availability        `json:"minimumAvailability"`
@@ -34,7 +34,6 @@ type ImportListOutput struct {
 	EnableAuto          bool                 `json:"enableAuto"`
 	Enabled             bool                 `json:"enabled"`
 	SearchOnAdd         bool                 `json:"searchOnAdd"`
-	ShouldMonitor       bool                 `json:"shouldMonitor"`
 	ID                  int64                `json:"id"`
 	ListOrder           int64                `json:"listOrder"`
 	QualityProfileID    int64                `json:"qualityProfileId"`
@@ -42,6 +41,7 @@ type ImportListOutput struct {
 	Implementation      string               `json:"implementation"`
 	ImplementationName  string               `json:"implementationName"`
 	InfoLink            string               `json:"infoLink"`
+	Monitor             string               `json:"monitor"`
 	ListType            string               `json:"listType"`
 	Name                string               `json:"name"`
 	RootFolderPath      string               `json:"rootFolderPath"`
