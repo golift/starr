@@ -61,25 +61,25 @@ func (r *Readarr) AddQualityProfileContext(ctx context.Context, profile *Quality
 }
 
 // UpdateQualityProfile updates a quality profile in place.
-func (r *Readarr) UpdateQualityProfile(profile *QualityProfile) error {
+func (r *Readarr) UpdateQualityProfile(profile *QualityProfile) (*QualityProfile, error) {
 	return r.UpdateQualityProfileContext(context.Background(), profile)
 }
 
 // UpdateQualityProfileContext updates a quality profile in place.
-func (r *Readarr) UpdateQualityProfileContext(ctx context.Context, profile *QualityProfile) error {
+func (r *Readarr) UpdateQualityProfileContext(ctx context.Context, profile *QualityProfile) (*QualityProfile, error) {
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(profile); err != nil {
-		return fmt.Errorf("json.Marshal(%s): %w", bpQualityProfile, err)
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpQualityProfile, err)
 	}
 
-	var output interface{}
+	var output QualityProfile
 
 	req := starr.Request{URI: path.Join(bpQualityProfile, fmt.Sprint(profile.ID)), Body: &body}
 	if err := r.PutInto(ctx, req, &output); err != nil {
-		return fmt.Errorf("api.Put(%s): %w", &req, err)
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
-	return nil
+	return &output, nil
 }
 
 // DeleteQualityProfile deletes a quality profile.
