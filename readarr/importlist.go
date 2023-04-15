@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"path"
 
 	"golift.io/starr"
@@ -17,9 +18,11 @@ type ImportListInput struct {
 	EnableAutomaticAdd    bool                `json:"enableAutomaticAdd"`
 	ShouldMonitorExisting bool                `json:"shouldMonitorExisting"`
 	ShouldSearch          bool                `json:"shouldSearch"`
+	ListOrder             int                 `json:"listOrder"`
 	ID                    int64               `json:"id,omitempty"` // for update not add.
 	MetadataProfileID     int64               `json:"metadataProfileId"`
 	QualityProfileID      int64               `json:"qualityProfileId"`
+	ListType              string              `json:"listType"`
 	ConfigContract        string              `json:"configContract"`
 	Implementation        string              `json:"implementation"`
 	Name                  string              `json:"name"`
@@ -32,24 +35,24 @@ type ImportListInput struct {
 
 // ImportListOutput is the output from the import list methods.
 type ImportListOutput struct {
-	EnableAutomaticAdd    bool                `json:"enableAutomaticAdd"`
-	ShouldMonitorExisting bool                `json:"shouldMonitorExisting"`
-	ShouldSearch          bool                `json:"shouldSearch"`
-	ID                    int64               `json:"id"`
-	ListOrder             int64               `json:"listOrder"`
-	MetadataProfileID     int64               `json:"metadataProfileId"`
-	QualityProfileID      int64               `json:"qualityProfileId"`
-	ConfigContract        string              `json:"configContract"`
-	Implementation        string              `json:"implementation"`
-	ImplementationName    string              `json:"implementationName"`
-	InfoLink              string              `json:"infoLink"`
-	ListType              string              `json:"listType"`
-	MonitorNewItems       string              `json:"monitorNewItems"`
-	Name                  string              `json:"name"`
-	RootFolderPath        string              `json:"rootFolderPath"`
-	ShouldMonitor         string              `json:"shouldMonitor"`
-	Tags                  []int               `json:"tags"`
-	Fields                []*starr.FieldInput `json:"fields"`
+	EnableAutomaticAdd    bool                 `json:"enableAutomaticAdd"`
+	ShouldMonitorExisting bool                 `json:"shouldMonitorExisting"`
+	ShouldSearch          bool                 `json:"shouldSearch"`
+	ID                    int64                `json:"id"`
+	ListOrder             int64                `json:"listOrder"`
+	MetadataProfileID     int64                `json:"metadataProfileId"`
+	QualityProfileID      int64                `json:"qualityProfileId"`
+	ConfigContract        string               `json:"configContract"`
+	Implementation        string               `json:"implementation"`
+	ImplementationName    string               `json:"implementationName"`
+	InfoLink              string               `json:"infoLink"`
+	ListType              string               `json:"listType"`
+	MonitorNewItems       string               `json:"monitorNewItems"`
+	Name                  string               `json:"name"`
+	RootFolderPath        string               `json:"rootFolderPath"`
+	ShouldMonitor         string               `json:"shouldMonitor"`
+	Tags                  []int                `json:"tags"`
+	Fields                []*starr.FieldOutput `json:"fields"`
 }
 
 // GetImportLists returns all configured import lists.
@@ -109,12 +112,16 @@ func (r *Readarr) AddImportListContext(ctx context.Context, importList *ImportLi
 }
 
 // UpdateImportList updates the import list.
-func (r *Readarr) UpdateImportList(importList *ImportListInput) (*ImportListOutput, error) {
-	return r.UpdateImportListContext(context.Background(), importList)
+func (r *Readarr) UpdateImportList(importList *ImportListInput, force bool) (*ImportListOutput, error) {
+	return r.UpdateImportListContext(context.Background(), importList, force)
 }
 
 // UpdateImportListContext updates the import list.
-func (r *Readarr) UpdateImportListContext(ctx context.Context, importList *ImportListInput) (*ImportListOutput, error) {
+func (r *Readarr) UpdateImportListContext(
+	ctx context.Context,
+	importList *ImportListInput,
+	force bool,
+) (*ImportListOutput, error) {
 	var output ImportListOutput
 
 	var body bytes.Buffer
@@ -122,7 +129,11 @@ func (r *Readarr) UpdateImportListContext(ctx context.Context, importList *Impor
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpImportList, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpImportList, fmt.Sprint(importList.ID)), Body: &body}
+	req := starr.Request{
+		URI:   path.Join(bpImportList, fmt.Sprint(importList.ID)),
+		Body:  &body,
+		Query: url.Values{"forceSave": []string{fmt.Sprint(force)}},
+	}
 	if err := r.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}

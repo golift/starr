@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"path"
 
 	"golift.io/starr"
@@ -17,10 +18,14 @@ type ImportListInput struct {
 	EnableAuto          bool                `json:"enableAuto"`
 	Enabled             bool                `json:"enabled"`
 	SearchOnAdd         bool                `json:"searchOnAdd"`
+	ListOrder           int                 `json:"listOrder"`
 	ID                  int64               `json:"id"`
 	QualityProfileID    int64               `json:"qualityProfileId"`
 	ConfigContract      string              `json:"configContract"`
 	Implementation      string              `json:"implementation"`
+	ImplementationName  string              `json:"implementationName"`
+	InfoLink            string              `json:"infoLink"`
+	ListType            string              `json:"listType"`
 	Monitor             string              `json:"monitor"`
 	Name                string              `json:"name"`
 	RootFolderPath      string              `json:"rootFolderPath"`
@@ -115,20 +120,28 @@ func (r *Radarr) DeleteImportListContext(ctx context.Context, ids []int64) error
 }
 
 // UpdateImportList updates an existing import list and returns the response.
-func (r *Radarr) UpdateImportList(list *ImportListInput) (*ImportListOutput, error) {
-	return r.UpdateImportListContext(context.Background(), list)
+func (r *Radarr) UpdateImportList(list *ImportListInput, force bool) (*ImportListOutput, error) {
+	return r.UpdateImportListContext(context.Background(), list, force)
 }
 
 // UpdateImportListContext updates an existing import list and returns the response.
-func (r *Radarr) UpdateImportListContext(ctx context.Context, list *ImportListInput) (*ImportListOutput, error) {
+func (r *Radarr) UpdateImportListContext(
+	ctx context.Context,
+	importList *ImportListInput,
+	force bool,
+) (*ImportListOutput, error) {
 	var body bytes.Buffer
-	if err := json.NewEncoder(&body).Encode(list); err != nil {
+	if err := json.NewEncoder(&body).Encode(importList); err != nil {
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpImportList, err)
 	}
 
 	var output ImportListOutput
 
-	req := starr.Request{URI: path.Join(bpImportList, fmt.Sprint(list.ID)), Body: &body}
+	req := starr.Request{
+		URI:   path.Join(bpImportList, fmt.Sprint(importList.ID)),
+		Body:  &body,
+		Query: url.Values{"forceSave": []string{fmt.Sprint(force)}},
+	}
 	if err := r.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}

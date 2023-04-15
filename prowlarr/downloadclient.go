@@ -101,8 +101,8 @@ func (p *Prowlarr) AddDownloadClientContext(ctx context.Context,
 }
 
 // UpdateDownloadClient updates the download client.
-func (p *Prowlarr) UpdateDownloadClient(downloadclient *DownloadClientInput, force bool) (*DownloadClientOutput, error) {
-	return p.UpdateDownloadClientContext(context.Background(), downloadclient, force)
+func (p *Prowlarr) UpdateDownloadClient(client *DownloadClientInput, force bool) (*DownloadClientOutput, error) {
+	return p.UpdateDownloadClientContext(context.Background(), client, force)
 }
 
 // UpdateDownloadClientContext updates the download client.
