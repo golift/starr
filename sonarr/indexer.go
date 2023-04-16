@@ -35,7 +35,7 @@ type IndexerOutput struct {
 	EnableRss               bool                 `json:"enableRss"`
 	SupportsRss             bool                 `json:"supportsRss"`
 	SupportsSearch          bool                 `json:"supportsSearch"`
-	DownloadClientID        int64                `json:"DownloadClientID"`
+	DownloadClientID        int64                `json:"downloadClientId"`
 	Priority                int64                `json:"priority"`
 	ID                      int64                `json:"id,omitempty"`
 	ConfigContract          string               `json:"configContract"`
