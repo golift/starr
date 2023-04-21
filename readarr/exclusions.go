@@ -14,7 +14,7 @@ const bpExclusions = APIver + "/importlistexclusion"
 
 // Exclusion is a Readarr excluded item.
 type Exclusion struct {
-	ForeignID  int64  `json:"foreignId"`
+	ForeignID  string `json:"foreignId"`
 	AuthorName string `json:"authorName"`
 	ID         int64  `json:"id,omitempty"`
 }

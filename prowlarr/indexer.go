@@ -141,7 +141,11 @@ func (p *Prowlarr) UpdateIndexer(indexer *IndexerInput, force bool) (*IndexerOut
 }
 
 // UpdateIndexerContext updates the indexer.
-func (p *Prowlarr) UpdateIndexerContext(ctx context.Context, indexer *IndexerInput, force bool) (*IndexerOutput, error) {
+func (p *Prowlarr) UpdateIndexerContext(
+	ctx context.Context,
+	indexer *IndexerInput,
+	force bool,
+) (*IndexerOutput, error) {
 	var output IndexerOutput
 
 	var body bytes.Buffer

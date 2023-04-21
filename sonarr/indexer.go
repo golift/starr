@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"path"
 
 	"golift.io/starr"
@@ -110,7 +111,11 @@ func (s *Sonarr) UpdateIndexer(indexer *IndexerInput, force bool) (*IndexerOutpu
 }
 
 // UpdateIndexerContext updates the indexer.
-func (s *Sonarr) UpdateIndexerContext(ctx context.Context, indexer *IndexerInput, force bool) (*IndexerOutput, error) {
+func (s *Sonarr) UpdateIndexerContext(
+	ctx context.Context,
+	indexer *IndexerInput,
+	force bool,
+) (*IndexerOutput, error) {
 	var output IndexerOutput
 
 	var body bytes.Buffer
@@ -118,7 +123,11 @@ func (s *Sonarr) UpdateIndexerContext(ctx context.Context, indexer *IndexerInput
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpIndexer, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpIndexer, fmt.Sprint(indexer.ID)), Body: &body}
+	req := starr.Request{
+		URI:   path.Join(bpIndexer, fmt.Sprint(indexer.ID)),
+		Body:  &body,
+		Query: url.Values{"forceSave": []string{fmt.Sprint(force)}},
+	}
 	if err := s.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}

@@ -14,7 +14,7 @@ const bpExclusions = APIver + "/importlistexclusion"
 
 // Exclusion is a Lidarr excluded item.
 type Exclusion struct {
-	ForeignID  int64  `json:"foreignId"`
+	ForeignID  string `json:"foreignId"`
 	ArtistName string `json:"artistName"`
 	ID         int64  `json:"id,omitempty"`
 }
