@@ -51,13 +51,9 @@ const downloadClientResponseBody = `{
     "id": 3
 }`
 
-const addDownloadClient = `{"enable":true,"priority":1,"configContract":"TransmissionSettings",` +
-	`"implementation":"Transmission","name":"Transmission","protocol":"torrent","tags":null,"fields":` +
-	`[{"name":"host","value":"transmission"},{"name":"port","value":9091},{"name":"useSSL","value":false}]}`
+const addDownloadClient = `{"enable":true,"priority":1,"configContract":"TransmissionSettings","implementation":"Transmission","implementationName":"","name":"Transmission","protocol":"torrent","tags":null,"fields":[{"name":"host","value":"transmission"},{"name":"port","value":9091},{"name":"useSSL","value":false}]}`
 
-const updateDownloadClient = `{"enable":true,"priority":1,"id":3,"configContract":"TransmissionSettings",` +
-	`"implementation":"Transmission","name":"Transmission","protocol":"torrent","tags":null,"fields":` +
-	`[{"name":"host","value":"transmission"},{"name":"port","value":9091},{"name":"useSSL","value":false}]}`
+const updateDownloadClient = `{"enable":true,"priority":1,"id":3,"configContract":"TransmissionSettings","implementation":"Transmission","implementationName":"","name":"Transmission","protocol":"torrent","tags":null,"fields":[{"name":"host","value":"transmission"},{"name":"port","value":9091},{"name":"useSSL","value":false}]}`
 
 func TestGetDownloadClients(t *testing.T) {
 	t.Parallel()
