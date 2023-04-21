@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"path"
 
 	"golift.io/starr"
@@ -17,15 +18,17 @@ type ImportListInput struct {
 	EnableAutomaticAdd    bool                `json:"enableAutomaticAdd"`
 	ShouldMonitorExisting bool                `json:"shouldMonitorExisting"`
 	ShouldSearch          bool                `json:"shouldSearch"`
+	ListOrder             int                 `json:"listOrder"`
 	ID                    int64               `json:"id,omitempty"` // for update not add.
 	QualityProfileID      int64               `json:"qualityProfileId"`
 	MetadataProfileID     int64               `json:"metadataProfileId"`
-	ShouldMonitor         string              `json:"shouldMonitor"`
+	ConfigContract        string              `json:"configContract"`
+	Implementation        string              `json:"implementation"`
+	ListType              string              `json:"listType"`
 	MonitorNewItems       string              `json:"monitorNewItems"`
 	Name                  string              `json:"name"`
-	Implementation        string              `json:"implementation"`
-	ConfigContract        string              `json:"configContract"`
 	RootFolderPath        string              `json:"rootFolderPath"`
+	ShouldMonitor         string              `json:"shouldMonitor"`
 	Tags                  []int               `json:"tags"`
 	Fields                []*starr.FieldInput `json:"fields"`
 }
@@ -35,10 +38,10 @@ type ImportListOutput struct {
 	EnableAutomaticAdd    bool                 `json:"enableAutomaticAdd"`
 	ShouldMonitorExisting bool                 `json:"shouldMonitorExisting"`
 	ShouldSearch          bool                 `json:"shouldSearch"`
+	ListOrder             int                  `json:"listOrder"`
 	ID                    int64                `json:"id"`
 	QualityProfileID      int64                `json:"qualityProfileId"`
 	MetadataProfileID     int64                `json:"metadataProfileId"`
-	ListOrder             int64                `json:"listOrder"`
 	ShouldMonitor         string               `json:"shouldMonitor"`
 	RootFolderPath        string               `json:"rootFolderPath"`
 	MonitorNewItems       string               `json:"monitorNewItems"`
@@ -113,12 +116,16 @@ func (l *Lidarr) AddImportListContext(ctx context.Context, importList *ImportLis
 }
 
 // UpdateImportList updates the import list.
-func (l *Lidarr) UpdateImportList(importList *ImportListInput) (*ImportListOutput, error) {
-	return l.UpdateImportListContext(context.Background(), importList)
+func (l *Lidarr) UpdateImportList(importList *ImportListInput, force bool) (*ImportListOutput, error) {
+	return l.UpdateImportListContext(context.Background(), importList, force)
 }
 
 // UpdateImportListContext updates the import list.
-func (l *Lidarr) UpdateImportListContext(ctx context.Context, importList *ImportListInput) (*ImportListOutput, error) {
+func (l *Lidarr) UpdateImportListContext(
+	ctx context.Context,
+	importList *ImportListInput,
+	force bool,
+) (*ImportListOutput, error) {
 	var output ImportListOutput
 
 	var body bytes.Buffer
@@ -126,7 +133,11 @@ func (l *Lidarr) UpdateImportListContext(ctx context.Context, importList *Import
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpImportList, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpImportList, fmt.Sprint(importList.ID)), Body: &body}
+	req := starr.Request{
+		URI:   path.Join(bpImportList, fmt.Sprint(importList.ID)),
+		Body:  &body,
+		Query: url.Values{"forceSave": []string{fmt.Sprint(force)}},
+	}
 	if err := l.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}

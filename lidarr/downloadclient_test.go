@@ -350,7 +350,7 @@ func TestUpdateDownloadClient(t *testing.T) {
 	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, lidarr.APIver, "downloadClient", "3"),
+			ExpectedPath:   path.Join("/", starr.API, lidarr.APIver, "downloadClient", "3?forceSave=false"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 200,
 			WithRequest: &lidarr.DownloadClientInput{
@@ -423,7 +423,7 @@ func TestUpdateDownloadClient(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, lidarr.APIver, "downloadClient", "3"),
+			ExpectedPath:   path.Join("/", starr.API, lidarr.APIver, "downloadClient", "3?forceSave=false"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 404,
 			WithRequest: &lidarr.DownloadClientInput{

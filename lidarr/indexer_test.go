@@ -326,7 +326,7 @@ func TestUpdateIndexer(t *testing.T) {
 	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, lidarr.APIver, "indexer", "1"),
+			ExpectedPath:   path.Join("/", starr.API, lidarr.APIver, "indexer", "1?forceSave=false"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 200,
 			WithRequest: &lidarr.IndexerInput{
@@ -392,7 +392,7 @@ func TestUpdateIndexer(t *testing.T) {
 		},
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, lidarr.APIver, "indexer", "1"),
+			ExpectedPath:   path.Join("/", starr.API, lidarr.APIver, "indexer", "1?forceSave=false"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 404,
 			WithRequest: &lidarr.IndexerInput{

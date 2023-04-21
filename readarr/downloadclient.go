@@ -16,15 +16,16 @@ const bpDownloadClient = APIver + "/downloadClient"
 
 // DownloadClientInput is the input for a new or updated download client.
 type DownloadClientInput struct {
-	Enable         bool                `json:"enable"`
-	Priority       int                 `json:"priority"`
-	ID             int64               `json:"id,omitempty"`
-	ConfigContract string              `json:"configContract"`
-	Implementation string              `json:"implementation"`
-	Name           string              `json:"name"`
-	Protocol       string              `json:"protocol"`
-	Tags           []int               `json:"tags"`
-	Fields         []*starr.FieldInput `json:"fields"`
+	Enable             bool                `json:"enable"`
+	Priority           int                 `json:"priority"`
+	ID                 int64               `json:"id,omitempty"`
+	ConfigContract     string              `json:"configContract"`
+	Implementation     string              `json:"implementation"`
+	ImplementationName string              `json:"implementationName"`
+	Name               string              `json:"name"`
+	Protocol           string              `json:"protocol"`
+	Tags               []int               `json:"tags"`
+	Fields             []*starr.FieldInput `json:"fields"`
 }
 
 // DownloadClientOutput is the output from the download client methods.
