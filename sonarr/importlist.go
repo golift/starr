@@ -111,6 +111,28 @@ func (s *Sonarr) AddImportListContext(ctx context.Context, importList *ImportLis
 	return &output, nil
 }
 
+// TestImportList tests an import list.
+func (s *Sonarr) TestImportList(list *ImportListInput) error {
+	return s.TestImportListContextt(context.Background(), list)
+}
+
+// TestImportListContextt tests an import list.
+func (s *Sonarr) TestImportListContextt(ctx context.Context, list *ImportListInput) error {
+	var output interface{}
+
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(list); err != nil {
+		return fmt.Errorf("json.Marshal(%s): %w", bpImportList, err)
+	}
+
+	req := starr.Request{URI: path.Join(bpImportList, "test"), Body: &body}
+	if err := s.PostInto(ctx, req, &output); err != nil {
+		return fmt.Errorf("api.Post(%s): %w", &req, err)
+	}
+
+	return nil
+}
+
 // UpdateImportList updates the import list.
 func (s *Sonarr) UpdateImportList(importList *ImportListInput, force bool) (*ImportListOutput, error) {
 	return s.UpdateImportListContext(context.Background(), importList, force)

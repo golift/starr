@@ -115,6 +115,28 @@ func (l *Lidarr) AddImportListContext(ctx context.Context, importList *ImportLis
 	return &output, nil
 }
 
+// TestImportList tests an import list.
+func (l *Lidarr) TestImportList(list *ImportListInput) error {
+	return l.TestImportListContextt(context.Background(), list)
+}
+
+// TestImportListContextt tests an import list.
+func (l *Lidarr) TestImportListContextt(ctx context.Context, list *ImportListInput) error {
+	var output interface{}
+
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(list); err != nil {
+		return fmt.Errorf("json.Marshal(%s): %w", bpImportList, err)
+	}
+
+	req := starr.Request{URI: path.Join(bpImportList, "test"), Body: &body}
+	if err := l.PostInto(ctx, req, &output); err != nil {
+		return fmt.Errorf("api.Post(%s): %w", &req, err)
+	}
+
+	return nil
+}
+
 // UpdateImportList updates the import list.
 func (l *Lidarr) UpdateImportList(importList *ImportListInput, force bool) (*ImportListOutput, error) {
 	return l.UpdateImportListContext(context.Background(), importList, force)

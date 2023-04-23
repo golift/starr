@@ -111,6 +111,28 @@ func (r *Readarr) AddImportListContext(ctx context.Context, importList *ImportLi
 	return &output, nil
 }
 
+// TestImportList tests an import list.
+func (r *Readarr) TestImportList(list *ImportListInput) error {
+	return r.TestImportListContextt(context.Background(), list)
+}
+
+// TestImportListContextt tests an import list.
+func (r *Readarr) TestImportListContextt(ctx context.Context, list *ImportListInput) error {
+	var output interface{}
+
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(list); err != nil {
+		return fmt.Errorf("json.Marshal(%s): %w", bpImportList, err)
+	}
+
+	req := starr.Request{URI: path.Join(bpImportList, "test"), Body: &body}
+	if err := r.PostInto(ctx, req, &output); err != nil {
+		return fmt.Errorf("api.Post(%s): %w", &req, err)
+	}
+
+	return nil
+}
+
 // UpdateImportList updates the import list.
 func (r *Readarr) UpdateImportList(importList *ImportListInput, force bool) (*ImportListOutput, error) {
 	return r.UpdateImportListContext(context.Background(), importList, force)
