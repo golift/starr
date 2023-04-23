@@ -70,25 +70,25 @@ func (l *Lidarr) GetIndexer(indexerID int64) (*IndexerOutput, error) {
 }
 
 // TestIndexer tests an indexer.
-func (l *Lidarr) TestIndexer(indexer *IndexerInput) (*IndexerOutput, error) {
+func (l *Lidarr) TestIndexer(indexer *IndexerInput) error {
 	return l.TestIndexerContext(context.Background(), indexer)
 }
 
 // TestIndexerContext tests an indexer.
-func (l *Lidarr) TestIndexerContext(ctx context.Context, indexer *IndexerInput) (*IndexerOutput, error) {
-	var output IndexerOutput
+func (l *Lidarr) TestIndexerContext(ctx context.Context, indexer *IndexerInput) error {
+	var output interface{}
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(indexer); err != nil {
-		return nil, fmt.Errorf("json.Marshal(%s): %w", bpIndexer, err)
+		return fmt.Errorf("json.Marshal(%s): %w", bpIndexer, err)
 	}
 
 	req := starr.Request{URI: path.Join(bpIndexer, "test"), Body: &body}
-	if err := l.PutInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
+	if err := l.PostInto(ctx, req, &output); err != nil {
+		return fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
-	return &output, nil
+	return nil
 }
 
 // GetIndGetIndexerContextexer returns a single indexer.

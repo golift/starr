@@ -84,25 +84,25 @@ func (s *Sonarr) GetIndexerContext(ctx context.Context, indexerID int64) (*Index
 }
 
 // TestIndexer tests an indexer.
-func (s *Sonarr) TestIndexer(indexer *IndexerInput) (*IndexerOutput, error) {
+func (s *Sonarr) TestIndexer(indexer *IndexerInput) error {
 	return s.TestIndexerContext(context.Background(), indexer)
 }
 
 // TestIndexerContext tests an indexer.
-func (s *Sonarr) TestIndexerContext(ctx context.Context, indexer *IndexerInput) (*IndexerOutput, error) {
-	var output IndexerOutput
+func (s *Sonarr) TestIndexerContext(ctx context.Context, indexer *IndexerInput) error {
+	var output interface{}
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(indexer); err != nil {
-		return nil, fmt.Errorf("json.Marshal(%s): %w", bpIndexer, err)
+		return fmt.Errorf("json.Marshal(%s): %w", bpIndexer, err)
 	}
 
 	req := starr.Request{URI: path.Join(bpIndexer, "test"), Body: &body}
-	if err := s.PutInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
+	if err := s.PostInto(ctx, req, &output); err != nil {
+		return fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
-	return &output, nil
+	return nil
 }
 
 // AddIndexer creates a indexer.

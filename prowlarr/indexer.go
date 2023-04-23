@@ -97,25 +97,25 @@ func (p *Prowlarr) GetIndexersContext(ctx context.Context) ([]*IndexerOutput, er
 }
 
 // TestIndexer tests an indexer.
-func (p *Prowlarr) TestIndexer(indexer *IndexerInput) (*IndexerOutput, error) {
+func (p *Prowlarr) TestIndexer(indexer *IndexerInput) error {
 	return p.TestIndexerContext(context.Background(), indexer)
 }
 
 // TestIndexerContext tests an indexer.
-func (p *Prowlarr) TestIndexerContext(ctx context.Context, indexer *IndexerInput) (*IndexerOutput, error) {
-	var output IndexerOutput
+func (p *Prowlarr) TestIndexerContext(ctx context.Context, indexer *IndexerInput) error {
+	var output interface{}
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(indexer); err != nil {
-		return nil, fmt.Errorf("json.Marshal(%s): %w", bpIndexer, err)
+		return fmt.Errorf("json.Marshal(%s): %w", bpIndexer, err)
 	}
 
 	req := starr.Request{URI: path.Join(bpIndexer, "test"), Body: &body}
-	if err := p.PutInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
+	if err := p.PostInto(ctx, req, &output); err != nil {
+		return fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
-	return &output, nil
+	return nil
 }
 
 // GetIndexer returns a single indexer.

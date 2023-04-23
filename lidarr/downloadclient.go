@@ -104,6 +104,28 @@ func (l *Lidarr) AddDownloadClientContext(ctx context.Context,
 	return &output, nil
 }
 
+// TestDownloadClient tests a download client.
+func (l *Lidarr) TestDownloadClient(client *DownloadClientInput) error {
+	return l.TestDownloadClientContext(context.Background(), client)
+}
+
+// TestDownloadClientContext tests a download client.
+func (l *Lidarr) TestDownloadClientContext(ctx context.Context, client *DownloadClientInput) error {
+	var output interface{}
+
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(client); err != nil {
+		return fmt.Errorf("json.Marshal(%s): %w", bpDownloadClient, err)
+	}
+
+	req := starr.Request{URI: path.Join(bpDownloadClient, "test"), Body: &body}
+	if err := l.PostInto(ctx, req, &output); err != nil {
+		return fmt.Errorf("api.Post(%s): %w", &req, err)
+	}
+
+	return nil
+}
+
 // UpdateDownloadClient updates the download client.
 func (l *Lidarr) UpdateDownloadClient(downloadclient *DownloadClientInput, force bool) (*DownloadClientOutput, error) {
 	return l.UpdateDownloadClientContext(context.Background(), downloadclient, force)
