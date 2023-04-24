@@ -234,14 +234,35 @@ func (r *Radarr) Lookup(term string) ([]*Movie, error) {
 
 // LookupContext will search for movies matching the specified search term.
 func (r *Radarr) LookupContext(ctx context.Context, term string) ([]*Movie, error) {
+	return r.lookupSubContext(ctx, "", "term", term)
+}
+
+// LookupIMDB will search IMDB for the imdbId provided.
+func (r *Radarr) LookupIMDB(imdbID string) ([]*Movie, error) {
+	return r.LookupIMDBContext(context.Background(), imdbID)
+}
+
+// LookupIMDB will search IMDB for the imdbId provided.
+func (r *Radarr) LookupIMDBContext(ctx context.Context, imdbID string) ([]*Movie, error) {
+	return r.lookupSubContext(ctx, "imdb", "imdbId", imdbID)
+}
+
+// LookupTMDB will search TMDB for the imdbId provided.
+func (r *Radarr) LookupTMDB(tmdbID int64) ([]*Movie, error) {
+	return r.LookupTMDBContext(context.Background(), tmdbID)
+}
+
+// LookupTMDB will search TMDB for the imdbId provided.
+func (r *Radarr) LookupTMDBContext(ctx context.Context, tmdbID int64) ([]*Movie, error) {
+	return r.lookupSubContext(ctx, "tmdb", "tmdbId", fmt.Sprint(tmdbID))
+}
+
+// lookupSubContext abstracts lookup requests.
+func (r *Radarr) lookupSubContext(ctx context.Context, sub, name, val string) ([]*Movie, error) {
 	var output []*Movie
 
-	if term == "" {
-		return output, nil
-	}
-
-	req := starr.Request{URI: path.Join(bpMovie, "lookup"), Query: make(url.Values)}
-	req.Query.Set("term", term)
+	req := starr.Request{URI: path.Join(bpMovie, "lookup", sub), Query: make(url.Values)}
+	req.Query.Set(name, val)
 
 	if err := r.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
