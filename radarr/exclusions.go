@@ -37,6 +37,28 @@ func (r *Radarr) GetExclusionsContext(ctx context.Context) ([]*Exclusion, error)
 	return output, nil
 }
 
+// UpdateExclusion changes an exclusions in Radarr.
+func (r *Radarr) UpdateExclusion(exclusion *Exclusion) (*Exclusion, error) {
+	return r.UpdateExclusionContext(context.Background(), exclusion)
+}
+
+// UpdateExclusionContext changes an exclusions in Radarr.
+func (r *Radarr) UpdateExclusionContext(ctx context.Context, exclusion *Exclusion) (*Exclusion, error) {
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(exclusion); err != nil {
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpExclusions, err)
+	}
+
+	var output Exclusion
+
+	req := starr.Request{URI: path.Join(bpExclusions, fmt.Sprint(exclusion.ID)), Body: &body}
+	if err := r.PutInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
+	}
+
+	return &output, nil
+}
+
 // DeleteExclusions removes exclusions from Radarr.
 func (r *Radarr) DeleteExclusions(ids []int64) error {
 	return r.DeleteExclusionsContext(context.Background(), ids)
@@ -60,12 +82,12 @@ func (r *Radarr) DeleteExclusionsContext(ctx context.Context, ids []int64) error
 	return nil
 }
 
-// AddExclusions adds an exclusion to Radarr.
+// AddExclusions adds multiple exclusions to Radarr.
 func (r *Radarr) AddExclusions(exclusions []*Exclusion) error {
 	return r.AddExclusionsContext(context.Background(), exclusions)
 }
 
-// AddExclusionsContext adds an exclusion to Radarr.
+// AddExclusionsContext adds exclusions to Radarr.
 func (r *Radarr) AddExclusionsContext(ctx context.Context, exclusions []*Exclusion) error {
 	for i := range exclusions {
 		exclusions[i].ID = 0

@@ -8,6 +8,7 @@ issues:
         - gochecknoglobals
         - forcetypeassert
         - funlen
+        - lll
         - maintidx # uhg.
       path: '(.+)_test\.go'
     - linters:

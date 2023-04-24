@@ -1,11 +1,13 @@
 package starr
 
 import (
+	"bufio"
 	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
@@ -17,7 +19,9 @@ import (
 // APIer is used by the sub packages to allow mocking the http methods in tests.
 // It changes once in a while, so avoid making hard dependencies on it.
 type APIer interface {
-	Login(ctx context.Context) error // Login is used for non-API paths, like downloading backups.
+	GetInitializeJS(ctx context.Context) (*InitializeJS, error)
+	// Login is used for non-API paths, like downloading backups or the initialize.js file.
+	Login(ctx context.Context) error
 	// Normal data, returns response. Do not use these in starr app methods.
 	// These methods are generally for non-api paths and will not ensure an /api uri prefix.
 	Get(ctx context.Context, req Request) (*http.Response, error)    // Get request; Params are optional.
@@ -33,6 +37,22 @@ type APIer interface {
 
 // Config must satify the APIer struct.
 var _ APIer = (*Config)(nil)
+
+// InitializeJS is the data contained in the initialize.js file.
+type InitializeJS struct {
+	App          string
+	APIRoot      string
+	APIKey       string
+	Release      string
+	Version      string
+	InstanceName string
+	Theme        string
+	Branch       string
+	Analytics    string
+	UserHash     string
+	URLBase      string
+	IsProduction bool
+}
 
 // Login POSTs to the login form in a Starr app and saves the authentication cookie for future use.
 func (c *Config) Login(ctx context.Context) error {
@@ -136,4 +156,68 @@ func decode(output interface{}, resp *http.Response, err error) error {
 	}
 
 	return nil
+}
+
+// GetInitializeJS returns the data from the initialize.js file.
+// If the instance requires authentication, you must call Login() before this method.
+func (c *Config) GetInitializeJS(ctx context.Context) (*InitializeJS, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, c.URL+"initialize.js", nil)
+	if err != nil {
+		return nil, fmt.Errorf("http.NewRequestWithContext(initialize.js): %w", err)
+	}
+
+	resp, err := c.Client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("httpClient.Do(req): %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		_, _ = io.Copy(io.Discard, resp.Body)
+		return nil, &ReqError{Code: resp.StatusCode}
+	}
+
+	return readInitializeJS(resp.Body)
+}
+
+func readInitializeJS(input io.Reader) (*InitializeJS, error) { //nolint:cyclop
+	output := &InitializeJS{}
+	scanner := bufio.NewScanner(input)
+
+	for scanner.Scan() {
+		switch split := strings.Fields(scanner.Text()); {
+		case len(split) < 2: //nolint:gomnd
+			continue
+		case split[0] == "apiRoot:":
+			output.APIRoot = strings.Trim(split[1], `"',`)
+		case split[0] == "apiKey:":
+			output.APIKey = strings.Trim(split[1], `"',`)
+		case split[0] == "version:":
+			output.Version = strings.Trim(split[1], `"',`)
+		case split[0] == "release:":
+			output.Release = strings.Trim(split[1], `"',`)
+		case split[0] == "instanceName:":
+			output.InstanceName = strings.Trim(split[1], `"',`)
+		case split[0] == "theme:":
+			output.Theme = strings.Trim(split[1], `"',`)
+		case split[0] == "branch:":
+			output.Branch = strings.Trim(split[1], `"',`)
+		case split[0] == "analytics:":
+			output.Analytics = strings.Trim(split[1], `"',`)
+		case split[0] == "userHash:":
+			output.UserHash = strings.Trim(split[1], `"',`)
+		case split[0] == "urlBase:":
+			output.URLBase = strings.Trim(split[1], `"',`)
+		case split[0] == "isProduction:":
+			output.IsProduction = strings.Trim(split[1], `"',`) == "true"
+		case strings.HasPrefix(split[0], "window."):
+			output.App = strings.TrimPrefix(split[0], "window.")
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		return output, fmt.Errorf("scanning HTTP response: %w", err)
+	}
+
+	return output, nil
 }

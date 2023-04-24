@@ -356,7 +356,7 @@ func TestUpdateIndexer(t *testing.T) {
 	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, prowlarr.APIver, "indexer", "2"),
+			ExpectedPath:   path.Join("/", starr.API, prowlarr.APIver, "indexer", "2?forceSave=false"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 200,
 			WithRequest: &prowlarr.IndexerInput{
@@ -386,7 +386,7 @@ func TestUpdateIndexer(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, prowlarr.APIver, "indexer", "2"),
+			ExpectedPath:   path.Join("/", starr.API, prowlarr.APIver, "indexer", "2?forceSave=false"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 404,
 			WithRequest: &prowlarr.IndexerInput{
@@ -422,7 +422,7 @@ func TestUpdateIndexer(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := prowlarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			output, err := client.UpdateIndexer(test.WithRequest.(*prowlarr.IndexerInput))
+			output, err := client.UpdateIndexer(test.WithRequest.(*prowlarr.IndexerInput), false)
 			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})

@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"path"
 
 	"golift.io/starr"
@@ -35,7 +36,7 @@ type IndexerOutput struct {
 	EnableRss               bool                 `json:"enableRss"`
 	SupportsRss             bool                 `json:"supportsRss"`
 	SupportsSearch          bool                 `json:"supportsSearch"`
-	DownloadClientID        int64                `json:"DownloadClientID"`
+	DownloadClientID        int64                `json:"downloadClientId"`
 	Priority                int64                `json:"priority"`
 	ID                      int64                `json:"id,omitempty"`
 	ConfigContract          string               `json:"configContract"`
@@ -82,6 +83,28 @@ func (s *Sonarr) GetIndexerContext(ctx context.Context, indexerID int64) (*Index
 	return &output, nil
 }
 
+// TestIndexer tests an indexer.
+func (s *Sonarr) TestIndexer(indexer *IndexerInput) error {
+	return s.TestIndexerContext(context.Background(), indexer)
+}
+
+// TestIndexerContext tests an indexer.
+func (s *Sonarr) TestIndexerContext(ctx context.Context, indexer *IndexerInput) error {
+	var output interface{}
+
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(indexer); err != nil {
+		return fmt.Errorf("json.Marshal(%s): %w", bpIndexer, err)
+	}
+
+	req := starr.Request{URI: path.Join(bpIndexer, "test"), Body: &body}
+	if err := s.PostInto(ctx, req, &output); err != nil {
+		return fmt.Errorf("api.Post(%s): %w", &req, err)
+	}
+
+	return nil
+}
+
 // AddIndexer creates a indexer.
 func (s *Sonarr) AddIndexer(indexer *IndexerInput) (*IndexerOutput, error) {
 	return s.AddIndexerContext(context.Background(), indexer)
@@ -105,12 +128,16 @@ func (s *Sonarr) AddIndexerContext(ctx context.Context, indexer *IndexerInput) (
 }
 
 // UpdateIndexer updates the indexer.
-func (s *Sonarr) UpdateIndexer(indexer *IndexerInput) (*IndexerOutput, error) {
-	return s.UpdateIndexerContext(context.Background(), indexer)
+func (s *Sonarr) UpdateIndexer(indexer *IndexerInput, force bool) (*IndexerOutput, error) {
+	return s.UpdateIndexerContext(context.Background(), indexer, force)
 }
 
 // UpdateIndexerContext updates the indexer.
-func (s *Sonarr) UpdateIndexerContext(ctx context.Context, indexer *IndexerInput) (*IndexerOutput, error) {
+func (s *Sonarr) UpdateIndexerContext(
+	ctx context.Context,
+	indexer *IndexerInput,
+	force bool,
+) (*IndexerOutput, error) {
 	var output IndexerOutput
 
 	var body bytes.Buffer
@@ -118,7 +145,11 @@ func (s *Sonarr) UpdateIndexerContext(ctx context.Context, indexer *IndexerInput
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpIndexer, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpIndexer, fmt.Sprint(indexer.ID)), Body: &body}
+	req := starr.Request{
+		URI:   path.Join(bpIndexer, fmt.Sprint(indexer.ID)),
+		Body:  &body,
+		Query: url.Values{"forceSave": []string{fmt.Sprint(force)}},
+	}
 	if err := s.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}

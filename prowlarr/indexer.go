@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"path"
 	"time"
 
@@ -95,6 +96,28 @@ func (p *Prowlarr) GetIndexersContext(ctx context.Context) ([]*IndexerOutput, er
 	return output, nil
 }
 
+// TestIndexer tests an indexer.
+func (p *Prowlarr) TestIndexer(indexer *IndexerInput) error {
+	return p.TestIndexerContext(context.Background(), indexer)
+}
+
+// TestIndexerContext tests an indexer.
+func (p *Prowlarr) TestIndexerContext(ctx context.Context, indexer *IndexerInput) error {
+	var output interface{}
+
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(indexer); err != nil {
+		return fmt.Errorf("json.Marshal(%s): %w", bpIndexer, err)
+	}
+
+	req := starr.Request{URI: path.Join(bpIndexer, "test"), Body: &body}
+	if err := p.PostInto(ctx, req, &output); err != nil {
+		return fmt.Errorf("api.Post(%s): %w", &req, err)
+	}
+
+	return nil
+}
+
 // GetIndexer returns a single indexer.
 func (p *Prowlarr) GetIndexer(indexerID int64) (*IndexerOutput, error) {
 	return p.GetIndexerContext(context.Background(), indexerID)
@@ -135,12 +158,16 @@ func (p *Prowlarr) AddIndexerContext(ctx context.Context, indexer *IndexerInput)
 }
 
 // UpdateIndexer updates the indexer.
-func (p *Prowlarr) UpdateIndexer(indexer *IndexerInput) (*IndexerOutput, error) {
-	return p.UpdateIndexerContext(context.Background(), indexer)
+func (p *Prowlarr) UpdateIndexer(indexer *IndexerInput, force bool) (*IndexerOutput, error) {
+	return p.UpdateIndexerContext(context.Background(), indexer, force)
 }
 
 // UpdateIndexerContext updates the indexer.
-func (p *Prowlarr) UpdateIndexerContext(ctx context.Context, indexer *IndexerInput) (*IndexerOutput, error) {
+func (p *Prowlarr) UpdateIndexerContext(
+	ctx context.Context,
+	indexer *IndexerInput,
+	force bool,
+) (*IndexerOutput, error) {
 	var output IndexerOutput
 
 	var body bytes.Buffer
@@ -148,7 +175,11 @@ func (p *Prowlarr) UpdateIndexerContext(ctx context.Context, indexer *IndexerInp
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpIndexer, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpIndexer, fmt.Sprint(indexer.ID)), Body: &body}
+	req := starr.Request{
+		URI:   path.Join(bpIndexer, fmt.Sprint(indexer.ID)),
+		Body:  &body,
+		Query: url.Values{"forceSave": []string{fmt.Sprint(force)}},
+	}
 	if err := p.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}

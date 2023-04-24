@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"path"
 
 	"golift.io/starr"
@@ -103,14 +104,37 @@ func (s *Sonarr) AddDownloadClientContext(ctx context.Context,
 	return &output, nil
 }
 
+// TestDownloadClient tests a download client.
+func (s *Sonarr) TestDownloadClient(client *DownloadClientInput) error {
+	return s.TestDownloadClientContext(context.Background(), client)
+}
+
+// TestDownloadClientContext tests a download client.
+func (s *Sonarr) TestDownloadClientContext(ctx context.Context, client *DownloadClientInput) error {
+	var output interface{}
+
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(client); err != nil {
+		return fmt.Errorf("json.Marshal(%s): %w", bpDownloadClient, err)
+	}
+
+	req := starr.Request{URI: path.Join(bpDownloadClient, "test"), Body: &body}
+	if err := s.PostInto(ctx, req, &output); err != nil {
+		return fmt.Errorf("api.Post(%s): %w", &req, err)
+	}
+
+	return nil
+}
+
 // UpdateDownloadClient updates the download client.
-func (s *Sonarr) UpdateDownloadClient(downloadclient *DownloadClientInput) (*DownloadClientOutput, error) {
-	return s.UpdateDownloadClientContext(context.Background(), downloadclient)
+func (s *Sonarr) UpdateDownloadClient(downloadclient *DownloadClientInput, force bool) (*DownloadClientOutput, error) {
+	return s.UpdateDownloadClientContext(context.Background(), downloadclient, force)
 }
 
 // UpdateDownloadClientContext updates the download client.
 func (s *Sonarr) UpdateDownloadClientContext(ctx context.Context,
 	client *DownloadClientInput,
+	force bool,
 ) (*DownloadClientOutput, error) {
 	var output DownloadClientOutput
 
@@ -119,7 +143,11 @@ func (s *Sonarr) UpdateDownloadClientContext(ctx context.Context,
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpDownloadClient, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpDownloadClient, fmt.Sprint(client.ID)), Body: &body}
+	req := starr.Request{
+		URI:   path.Join(bpDownloadClient, fmt.Sprint(client.ID)),
+		Body:  &body,
+		Query: url.Values{"forceSave": []string{fmt.Sprint(force)}},
+	}
 	if err := s.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}

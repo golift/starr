@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"path"
 
 	"golift.io/starr"
@@ -16,15 +17,19 @@ const bpImportList = APIver + "/importList"
 type ImportListInput struct {
 	EnableAutomaticAdd bool                `json:"enableAutomaticAdd"`
 	SeasonFolder       bool                `json:"seasonFolder"`
-	LanguageProfileID  int64               `json:"languageProfileId"`
+	ListOrder          int                 `json:"listOrder"`
 	QualityProfileID   int64               `json:"qualityProfileId"`
-	ID                 int64               `json:"id,omitempty"`
-	ShouldMonitor      string              `json:"shouldMonitor"`
-	RootFolderPath     string              `json:"rootFolderPath"`
-	SeriesType         string              `json:"seriesType"`
+	ID                 int64               `json:"id,omitempty"` // update only.
 	ConfigContract     string              `json:"configContract"`
 	Implementation     string              `json:"implementation"`
+	ImplementationName string              `json:"implementationName"`
+	InfoLink           string              `json:"infoLink"`
+	ListType           string              `json:"listType"`
+	MinRefreshInterval string              `json:"minRefreshInterval"`
 	Name               string              `json:"name"`
+	RootFolderPath     string              `json:"rootFolderPath"`
+	SeriesType         string              `json:"seriesType"`
+	ShouldMonitor      string              `json:"shouldMonitor"`
 	Tags               []int               `json:"tags"`
 	Fields             []*starr.FieldInput `json:"fields"`
 }
@@ -33,19 +38,19 @@ type ImportListInput struct {
 type ImportListOutput struct {
 	EnableAutomaticAdd bool                 `json:"enableAutomaticAdd"`
 	SeasonFolder       bool                 `json:"seasonFolder"`
-	LanguageProfileID  int64                `json:"languageProfileId"`
 	QualityProfileID   int64                `json:"qualityProfileId"`
 	ListOrder          int64                `json:"listOrder"`
 	ID                 int64                `json:"id"`
-	ShouldMonitor      string               `json:"shouldMonitor"`
+	ConfigContract     string               `json:"configContract"`
+	Implementation     string               `json:"implementation"`
+	ImplementationName string               `json:"implementationName"`
+	InfoLink           string               `json:"infoLink"`
+	ListType           string               `json:"listType"`
+	MinRefreshInterval string               `json:"minRefreshInterval"`
+	Name               string               `json:"name"`
 	RootFolderPath     string               `json:"rootFolderPath"`
 	SeriesType         string               `json:"seriesType"`
-	ListType           string               `json:"listType"`
-	Name               string               `json:"name"`
-	ImplementationName string               `json:"implementationName"`
-	Implementation     string               `json:"implementation"`
-	ConfigContract     string               `json:"configContract"`
-	InfoLink           string               `json:"infoLink"`
+	ShouldMonitor      string               `json:"shouldMonitor"`
 	Tags               []int                `json:"tags"`
 	Fields             []*starr.FieldOutput `json:"fields"`
 }
@@ -106,13 +111,39 @@ func (s *Sonarr) AddImportListContext(ctx context.Context, importList *ImportLis
 	return &output, nil
 }
 
+// TestImportList tests an import list.
+func (s *Sonarr) TestImportList(list *ImportListInput) error {
+	return s.TestImportListContextt(context.Background(), list)
+}
+
+// TestImportListContextt tests an import list.
+func (s *Sonarr) TestImportListContextt(ctx context.Context, list *ImportListInput) error {
+	var output interface{}
+
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(list); err != nil {
+		return fmt.Errorf("json.Marshal(%s): %w", bpImportList, err)
+	}
+
+	req := starr.Request{URI: path.Join(bpImportList, "test"), Body: &body}
+	if err := s.PostInto(ctx, req, &output); err != nil {
+		return fmt.Errorf("api.Post(%s): %w", &req, err)
+	}
+
+	return nil
+}
+
 // UpdateImportList updates the import list.
-func (s *Sonarr) UpdateImportList(importList *ImportListInput) (*ImportListOutput, error) {
-	return s.UpdateImportListContext(context.Background(), importList)
+func (s *Sonarr) UpdateImportList(importList *ImportListInput, force bool) (*ImportListOutput, error) {
+	return s.UpdateImportListContext(context.Background(), importList, force)
 }
 
 // UpdateImportListContext updates the import list.
-func (s *Sonarr) UpdateImportListContext(ctx context.Context, importList *ImportListInput) (*ImportListOutput, error) {
+func (s *Sonarr) UpdateImportListContext(
+	ctx context.Context,
+	importList *ImportListInput,
+	force bool,
+) (*ImportListOutput, error) {
 	var output ImportListOutput
 
 	var body bytes.Buffer
@@ -120,7 +151,11 @@ func (s *Sonarr) UpdateImportListContext(ctx context.Context, importList *Import
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpImportList, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpImportList, fmt.Sprint(importList.ID)), Body: &body}
+	req := starr.Request{
+		URI:   path.Join(bpImportList, fmt.Sprint(importList.ID)),
+		Body:  &body,
+		Query: url.Values{"forceSave": []string{fmt.Sprint(force)}},
+	}
 	if err := s.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}

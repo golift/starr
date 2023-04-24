@@ -99,13 +99,23 @@ func parseNon200(resp *http.Response) *ReqError {
 		return response
 	}
 
-	var errMsg struct {
+	type propError struct {
 		Msg  string `json:"errorMessage"`
 		Name string `json:"propertyName"`
 	}
 
+	var errMsg propError
+
 	if response.Err = json.Unmarshal(response.Body, &errMsg); response.Err == nil && errMsg.Msg != "" {
 		response.Name, response.Msg = errMsg.Name, errMsg.Msg
+		return response
+	}
+
+	// Sometimes we get a list of errors. This grabs the first one.
+	var errMsg2 []propError
+
+	if response.Err = json.Unmarshal(response.Body, &errMsg2); response.Err == nil && len(errMsg2) > 0 {
+		response.Name, response.Msg = errMsg2[0].Name, errMsg2[0].Msg
 		return response
 	}
 

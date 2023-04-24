@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"path"
 
 	"golift.io/starr"
@@ -15,15 +16,16 @@ const bpDownloadClient = APIver + "/downloadClient"
 
 // DownloadClientInput is the input for a new or updated download client.
 type DownloadClientInput struct {
-	Enable         bool                `json:"enable"`
-	Priority       int                 `json:"priority"`
-	ID             int64               `json:"id,omitempty"`
-	ConfigContract string              `json:"configContract"`
-	Implementation string              `json:"implementation"`
-	Name           string              `json:"name"`
-	Protocol       string              `json:"protocol"`
-	Tags           []int               `json:"tags"`
-	Fields         []*starr.FieldInput `json:"fields"`
+	Enable             bool                `json:"enable"`
+	Priority           int                 `json:"priority"`
+	ID                 int64               `json:"id,omitempty"`
+	ConfigContract     string              `json:"configContract"`
+	Implementation     string              `json:"implementation"`
+	ImplementationName string              `json:"implementationName"`
+	Name               string              `json:"name"`
+	Protocol           string              `json:"protocol"`
+	Tags               []int               `json:"tags"`
+	Fields             []*starr.FieldInput `json:"fields"`
 }
 
 // DownloadClientOutput is the output from the download client methods.
@@ -99,14 +101,37 @@ func (r *Readarr) AddDownloadClientContext(ctx context.Context,
 	return &output, nil
 }
 
+// TestDownloadClient tests a download client.
+func (r *Readarr) TestDownloadClient(client *DownloadClientInput) error {
+	return r.TestDownloadClientContext(context.Background(), client)
+}
+
+// TestDownloadClientContext tests a download client.
+func (r *Readarr) TestDownloadClientContext(ctx context.Context, client *DownloadClientInput) error {
+	var output interface{}
+
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(client); err != nil {
+		return fmt.Errorf("json.Marshal(%s): %w", bpDownloadClient, err)
+	}
+
+	req := starr.Request{URI: path.Join(bpDownloadClient, "test"), Body: &body}
+	if err := r.PostInto(ctx, req, &output); err != nil {
+		return fmt.Errorf("api.Post(%s): %w", &req, err)
+	}
+
+	return nil
+}
+
 // UpdateDownloadClient updates the download client.
-func (r *Readarr) UpdateDownloadClient(downloadclient *DownloadClientInput) (*DownloadClientOutput, error) {
-	return r.UpdateDownloadClientContext(context.Background(), downloadclient)
+func (r *Readarr) UpdateDownloadClient(downloadclient *DownloadClientInput, force bool) (*DownloadClientOutput, error) {
+	return r.UpdateDownloadClientContext(context.Background(), downloadclient, force)
 }
 
 // UpdateDownloadClientContext updates the download client.
 func (r *Readarr) UpdateDownloadClientContext(ctx context.Context,
 	client *DownloadClientInput,
+	force bool,
 ) (*DownloadClientOutput, error) {
 	var output DownloadClientOutput
 
@@ -115,7 +140,11 @@ func (r *Readarr) UpdateDownloadClientContext(ctx context.Context,
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpDownloadClient, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpDownloadClient, fmt.Sprint(client.ID)), Body: &body}
+	req := starr.Request{
+		URI:   path.Join(bpDownloadClient, fmt.Sprint(client.ID)),
+		Body:  &body,
+		Query: url.Values{"forceSave": []string{fmt.Sprint(force)}},
+	}
 	if err := r.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}

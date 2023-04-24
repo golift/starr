@@ -16,7 +16,6 @@ const importListResponseBody = `{
 	"shouldMonitor": "all",
 	"rootFolderPath": "/config",
 	"qualityProfileId": 1,
-	"languageProfileId": 1,
 	"seriesType": "standard",
 	"seasonFolder": true,
 	"listType": "plex",
@@ -49,15 +48,9 @@ const importListResponseBody = `{
 	"id": 4
   }`
 
-const addImportList = `{"enableAutomaticAdd":false,"seasonFolder":true,"languageProfileId":1,` +
-	`"qualityProfileId":1,"shouldMonitor":"all","rootFolderPath":"/config","seriesType":"standard",` +
-	`"configContract":"PlexListSettings","implementation":"PlexImport","name":"PlexImport",` +
-	`"tags":[],"fields":[{"name":"accessToken","value":"test"}]}`
+const addImportList = `{"enableAutomaticAdd":false,"seasonFolder":true,"listOrder":0,"qualityProfileId":1,"configContract":"PlexListSettings","implementation":"PlexImport","implementationName":"","infoLink":"","listType":"","minRefreshInterval":"","name":"PlexImport","rootFolderPath":"/config","seriesType":"standard","shouldMonitor":"all","tags":[],"fields":[{"name":"accessToken","value":"test"}]}`
 
-const updateImportList = `{"enableAutomaticAdd":false,"seasonFolder":true,"languageProfileId":1,` +
-	`"qualityProfileId":1,"id":4,"shouldMonitor":"all","rootFolderPath":"/config","seriesType":"standard",` +
-	`"configContract":"PlexListSettings","implementation":"PlexImport","name":"PlexImport",` +
-	`"tags":[],"fields":[{"name":"accessToken","value":"test"}]}`
+const updateImportList = `{"enableAutomaticAdd":false,"seasonFolder":true,"listOrder":0,"qualityProfileId":1,"id":4,"configContract":"PlexListSettings","implementation":"PlexImport","implementationName":"","infoLink":"","listType":"","minRefreshInterval":"","name":"PlexImport","rootFolderPath":"/config","seriesType":"standard","shouldMonitor":"all","tags":[],"fields":[{"name":"accessToken","value":"test"}]}`
 
 func TestGetImportLists(t *testing.T) {
 	t.Parallel()
@@ -77,7 +70,6 @@ func TestGetImportLists(t *testing.T) {
 					ShouldMonitor:      "all",
 					RootFolderPath:     "/config",
 					QualityProfileID:   1,
-					LanguageProfileID:  1,
 					SeriesType:         "standard",
 					SeasonFolder:       true,
 					ListType:           "plex",
@@ -153,7 +145,6 @@ func TestGetImportList(t *testing.T) {
 				ShouldMonitor:      "all",
 				RootFolderPath:     "/config",
 				QualityProfileID:   1,
-				LanguageProfileID:  1,
 				SeriesType:         "standard",
 				SeasonFolder:       true,
 				ListType:           "plex",
@@ -225,7 +216,6 @@ func TestAddImportList(t *testing.T) {
 				ShouldMonitor:      "all",
 				RootFolderPath:     "/config",
 				QualityProfileID:   1,
-				LanguageProfileID:  1,
 				SeriesType:         "standard",
 				SeasonFolder:       true,
 				Name:               "PlexImport",
@@ -246,7 +236,6 @@ func TestAddImportList(t *testing.T) {
 				ShouldMonitor:      "all",
 				RootFolderPath:     "/config",
 				QualityProfileID:   1,
-				LanguageProfileID:  1,
 				SeriesType:         "standard",
 				SeasonFolder:       true,
 				ListType:           "plex",
@@ -290,7 +279,6 @@ func TestAddImportList(t *testing.T) {
 				ShouldMonitor:      "all",
 				RootFolderPath:     "/config",
 				QualityProfileID:   1,
-				LanguageProfileID:  1,
 				SeriesType:         "standard",
 				SeasonFolder:       true,
 				Name:               "PlexImport",
@@ -330,7 +318,7 @@ func TestUpdateImportList(t *testing.T) {
 	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "importList", "4"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "importList", "4?forceSave=false"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 200,
 			WithRequest: &sonarr.ImportListInput{
@@ -338,7 +326,6 @@ func TestUpdateImportList(t *testing.T) {
 				ShouldMonitor:      "all",
 				RootFolderPath:     "/config",
 				QualityProfileID:   1,
-				LanguageProfileID:  1,
 				SeriesType:         "standard",
 				SeasonFolder:       true,
 				Name:               "PlexImport",
@@ -360,7 +347,6 @@ func TestUpdateImportList(t *testing.T) {
 				ShouldMonitor:      "all",
 				RootFolderPath:     "/config",
 				QualityProfileID:   1,
-				LanguageProfileID:  1,
 				SeriesType:         "standard",
 				SeasonFolder:       true,
 				ListType:           "plex",
@@ -396,7 +382,7 @@ func TestUpdateImportList(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "importList", "4"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "importList", "4?forceSave=false"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 404,
 			WithRequest: &sonarr.ImportListInput{
@@ -404,7 +390,6 @@ func TestUpdateImportList(t *testing.T) {
 				ShouldMonitor:      "all",
 				RootFolderPath:     "/config",
 				QualityProfileID:   1,
-				LanguageProfileID:  1,
 				SeriesType:         "standard",
 				SeasonFolder:       true,
 				Name:               "PlexImport",
@@ -432,7 +417,7 @@ func TestUpdateImportList(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := sonarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			output, err := client.UpdateImportList(test.WithRequest.(*sonarr.ImportListInput))
+			output, err := client.UpdateImportList(test.WithRequest.(*sonarr.ImportListInput), false)
 			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})

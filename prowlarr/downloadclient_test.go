@@ -342,7 +342,7 @@ func TestUpdateDownloadClient(t *testing.T) {
 	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, prowlarr.APIver, "downloadClient", "3"),
+			ExpectedPath:   path.Join("/", starr.API, prowlarr.APIver, "downloadClient", "3?forceSave=false"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 200,
 			WithRequest: &prowlarr.DownloadClientInput{
@@ -413,7 +413,7 @@ func TestUpdateDownloadClient(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, prowlarr.APIver, "downloadClient", "3"),
+			ExpectedPath:   path.Join("/", starr.API, prowlarr.APIver, "downloadClient", "3?forceSave=false"),
 			ExpectedMethod: "PUT",
 			ResponseStatus: 404,
 			WithRequest: &prowlarr.DownloadClientInput{
@@ -452,7 +452,7 @@ func TestUpdateDownloadClient(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := prowlarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			output, err := client.UpdateDownloadClient(test.WithRequest.(*prowlarr.DownloadClientInput))
+			output, err := client.UpdateDownloadClient(test.WithRequest.(*prowlarr.DownloadClientInput), false)
 			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
