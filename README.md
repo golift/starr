@@ -9,11 +9,11 @@
 
  **Go library to interact with APIs in all the Starr apps.**
 
--   [Lidarr](http://lidarr.audio) ([over 60 methods](https://pkg.go.dev/golift.io/starr@main/lidarr)) 
--   [Prowlarr](https://prowlarr.com) ([over 20 methods!](https://pkg.go.dev/golift.io/starr@main/prowlarr)) 
--   [Radarr](http://radarr.video) ([over 80 methods](https://pkg.go.dev/golift.io/starr@main/radarr)) 
--   [Readarr](http://readarr.com) ([over 50 methods](https://pkg.go.dev/golift.io/starr@main/readarr)) 
--   [Sonarr](http://sonarr.tv) ([over 90 methods](https://pkg.go.dev/golift.io/starr@main/sonarr)) 
+-   [Lidarr](http://lidarr.audio) ([over 70 methods](https://pkg.go.dev/golift.io/starr@main/lidarr)) 
+-   [Prowlarr](https://prowlarr.com) ([over 20 methods](https://pkg.go.dev/golift.io/starr@main/prowlarr)) 
+-   [Radarr](http://radarr.video) ([over 90 methods](https://pkg.go.dev/golift.io/starr@main/radarr)) 
+-   [Readarr](http://readarr.com) ([over 60 methods](https://pkg.go.dev/golift.io/starr@main/readarr)) 
+-   [Sonarr](http://sonarr.tv) ([over 100 methods](https://pkg.go.dev/golift.io/starr@main/sonarr)) 
 
 Custom Scripts support is also included. [Check out the types and methods](https://pkg.go.dev/golift.io/starr@main/starrcmd) to get that data.
 
@@ -25,8 +25,9 @@ specific needs this library doesn't currently meet, but should or could, please
 
 This library is currently in use by:
 
--   [Unpackerr](https://github.com/davidnewhall/unpackerr/)
--   [Notifiarr](https://github.com/Notifiarr/notifiarr/)
+-   [Toolbarr](https://github.com/Notifiarr/toolbarr/) (all of it)
+-   [Unpackerr](https://github.com/Unpackerr/unpackerr/) (queue only)
+-   [Notifiarr](https://github.com/Notifiarr/notifiarr/) (a lot of it)
 -   [Checkrr](https://github.com/aetaric/checkrr/)
 
 # Usage
