@@ -65,8 +65,11 @@ func (c *Config) Login(ctx context.Context) error {
 		c.Client.Jar = jar
 	}
 
-	post := "username=" + c.Username + "&password=" + c.Password
-	req := Request{URI: "/login", Body: bytes.NewBufferString(post)}
+	params := make(url.Values)
+	params.Add("username", c.Username)
+	params.Add("password", c.Password)
+
+	req := Request{URI: "/login", Body: bytes.NewBufferString(params.Encode())}
 	codeErr := &ReqError{}
 
 	resp, err := c.req(ctx, http.MethodPost, req)
