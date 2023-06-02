@@ -6,6 +6,13 @@ on:
 permissions:
   contents: read
 jobs:
+  codespell:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: codespell-project/actions-codespell@v2
+        with:
+          skip: .git
   nopollution:
     runs-on: ubuntu-latest
     steps:

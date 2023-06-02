@@ -35,7 +35,7 @@ type APIer interface {
 	DeleteAny(ctx context.Context, req Request) error                    // API Delete request.
 }
 
-// Config must satify the APIer struct.
+// Config must satisfy the APIer struct.
 var _ APIer = (*Config)(nil)
 
 // InitializeJS is the data contained in the initialize.js file.

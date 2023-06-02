@@ -249,15 +249,15 @@ func (s *Sonarr) LookupContext(ctx context.Context, term string) ([]*Series, err
 }
 
 // DeleteSeries removes a single Series.
-// deleteFiles flag defines the deleteFiles query paramenter.
-// importExclude defines the addImportListExclusion query paramenter.
+// deleteFiles flag defines the deleteFiles query parameter.
+// importExclude defines the addImportListExclusion query parameter.
 func (s *Sonarr) DeleteSeries(seriesID int, deleteFiles bool, importExclude bool) error {
 	return s.DeleteSeriesContext(context.Background(), seriesID, deleteFiles, importExclude)
 }
 
 // DeleteSeries removes a single Series.
-// deleteFiles flag defines the deleteFiles query paramenter.
-// importExclude defines the addImportListExclusion query paramenter.
+// deleteFiles flag defines the deleteFiles query parameter.
+// importExclude defines the addImportListExclusion query parameter.
 func (s *Sonarr) DeleteSeriesContext(ctx context.Context, seriesID int, deleteFiles bool, importExclude bool) error {
 	req := starr.Request{URI: path.Join(bpSeries, fmt.Sprint(seriesID)), Query: make(url.Values)}
 	req.Query.Add("deleteFiles", fmt.Sprint(deleteFiles))
