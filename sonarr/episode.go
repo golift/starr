@@ -55,6 +55,23 @@ func (s *Sonarr) GetSeriesEpisodesContext(ctx context.Context, seriesID int64) (
 	return output, nil
 }
 
+// GetEpisodeByID locates and returns an episode by DB [episode] ID.
+func (s *Sonarr) GetEpisodeByID(episodeID int64) (*Episode, error) {
+	return s.GetEpisodeByIDContext(context.Background(), episodeID)
+}
+
+// GetEpisodeByIDContext locates and returns an episode by DB [episode] ID.
+func (s *Sonarr) GetEpisodeByIDContext(ctx context.Context, episodeID int64) (*Episode, error) {
+	var output Episode
+
+	req := starr.Request{URI: path.Join(bpEpisode, fmt.Sprint(episodeID))}
+	if err := s.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
+	}
+
+	return &output, nil
+}
+
 // MonitorEpisode sends a request to monitor (true) or unmonitor (false) a list of episodes by ID.
 // You can get episode IDs from GetSeriesEpisodes().
 func (s *Sonarr) MonitorEpisode(episodeIDs []int64, monitor bool) ([]*Episode, error) {
