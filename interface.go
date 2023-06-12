@@ -35,7 +35,7 @@ type APIer interface {
 	DeleteAny(ctx context.Context, req Request) error                    // API Delete request.
 }
 
-// Config must satify the APIer struct.
+// Config must satisfy the APIer struct.
 var _ APIer = (*Config)(nil)
 
 // InitializeJS is the data contained in the initialize.js file.
@@ -65,8 +65,11 @@ func (c *Config) Login(ctx context.Context) error {
 		c.Client.Jar = jar
 	}
 
-	post := "username=" + c.Username + "&password=" + c.Password
-	req := Request{URI: "/login", Body: bytes.NewBufferString(post)}
+	params := make(url.Values)
+	params.Add("username", c.Username)
+	params.Add("password", c.Password)
+
+	req := Request{URI: "/login", Body: bytes.NewBufferString(params.Encode())}
 	codeErr := &ReqError{}
 
 	resp, err := c.req(ctx, http.MethodPost, req)
