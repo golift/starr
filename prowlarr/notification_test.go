@@ -11,7 +11,9 @@ import (
 	"golift.io/starr/starrtest"
 )
 
-const notificationResponseBody = `{
+//nolint:lll
+const (
+	notificationResponseBody = `{
     "onHealthIssue": false,
     "onApplicationUpdate": true,
     "supportsOnHealthIssue": true,
@@ -48,12 +50,9 @@ const notificationResponseBody = `{
 	"tags": [],
 	"id": 3
   }`
-
-const addNotification = `{"onApplicationUpdate":true,"name":"Test","implementation":"CustomScript","configContract":` +
-	`"CustomScriptSettings","fields":[{"name":"path","value":"/scripts/prowlarr.sh"}]}`
-
-const updateNotification = `{"onApplicationUpdate":true,"id":3,"name":"Test","implementation":"CustomScript",` +
-	`"configContract":"CustomScriptSettings","fields":[{"name":"path","value":"/scripts/prowlarr.sh"}]}`
+	addNotification    = `{"onGrab":false,"onHealthIssue":false,"onHealthRestored":false,"onApplicationUpdate":true,"supportsOnGrab":false,"includeManualGrabs":false,"supportsOnHealthIssue":false,"supportsOnHealthRestored":false,"includeHealthWarnings":false,"supportsOnApplicationUpdate":false,"name":"Test","implementationName":"","implementation":"CustomScript","configContract":"CustomScriptSettings","infoLink":"","tags":null,"fields":[{"name":"path","value":"/scripts/prowlarr.sh"}]}`
+	updateNotification = `{"onGrab":false,"onHealthIssue":false,"onHealthRestored":false,"onApplicationUpdate":true,"supportsOnGrab":false,"includeManualGrabs":false,"supportsOnHealthIssue":false,"supportsOnHealthRestored":false,"includeHealthWarnings":false,"supportsOnApplicationUpdate":false,"id":3,"name":"Test","implementationName":"","implementation":"CustomScript","configContract":"CustomScriptSettings","infoLink":"","tags":null,"fields":[{"name":"path","value":"/scripts/prowlarr.sh"}]}`
+)
 
 func TestGetNotifications(t *testing.T) {
 	t.Parallel()
@@ -97,6 +96,13 @@ func TestGetNotifications(t *testing.T) {
 							Type:     "textbox",
 							Advanced: false,
 						},
+					},
+					Message: struct {
+						Message string "json:\"message\""
+						Type    string "json:\"type\""
+					}{
+						Message: "Testing will execute the script with the EventType set to Test",
+						Type:    "warning",
 					},
 				},
 			},
@@ -167,6 +173,13 @@ func TestGetNotification(t *testing.T) {
 						Type:     "textbox",
 						Advanced: false,
 					},
+				},
+				Message: struct {
+					Message string "json:\"message\""
+					Type    string "json:\"type\""
+				}{
+					Message: "Testing will execute the script with the EventType set to Test",
+					Type:    "warning",
 				},
 			},
 			WithError: nil,
@@ -247,6 +260,13 @@ func TestAddNotification(t *testing.T) {
 						Type:     "textbox",
 						Advanced: false,
 					},
+				},
+				Message: struct {
+					Message string "json:\"message\""
+					Type    string "json:\"type\""
+				}{
+					Message: "Testing will execute the script with the EventType set to Test",
+					Type:    "warning",
 				},
 			},
 			WithError: nil,
@@ -341,6 +361,13 @@ func TestUpdateNotification(t *testing.T) {
 						Type:     "textbox",
 						Advanced: false,
 					},
+				},
+				Message: struct {
+					Message string "json:\"message\""
+					Type    string "json:\"type\""
+				}{
+					Message: "Testing will execute the script with the EventType set to Test",
+					Type:    "warning",
 				},
 			},
 			WithError: nil,
