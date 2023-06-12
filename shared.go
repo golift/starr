@@ -55,7 +55,7 @@ func Client(timeout time.Duration, verifySSL bool) *http.Client {
 // ClientWithDebug returns an http client with a debug logger enabled.
 func ClientWithDebug(timeout time.Duration, verifySSL bool, logConfig debuglog.Config) *http.Client {
 	client := Client(timeout, verifySSL)
-	client.Transport = debuglog.NewLoggingRoundTripper(logConfig, nil)
+	client.Transport = debuglog.NewLoggingRoundTripper(logConfig, client.Transport)
 
 	return client
 }
