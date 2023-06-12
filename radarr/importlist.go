@@ -19,19 +19,19 @@ type ImportListInput struct {
 	Enabled             bool                `json:"enabled"`
 	SearchOnAdd         bool                `json:"searchOnAdd"`
 	ListOrder           int                 `json:"listOrder"`
-	ID                  int64               `json:"id"`
-	QualityProfileID    int64               `json:"qualityProfileId"`
-	ConfigContract      string              `json:"configContract"`
-	Implementation      string              `json:"implementation"`
-	ImplementationName  string              `json:"implementationName"`
-	InfoLink            string              `json:"infoLink"`
-	ListType            string              `json:"listType"`
-	Monitor             string              `json:"monitor"`
-	Name                string              `json:"name"`
-	RootFolderPath      string              `json:"rootFolderPath"`
-	MinimumAvailability Availability        `json:"minimumAvailability"`
-	Tags                []int               `json:"tags"`
-	Fields              []*starr.FieldInput `json:"fields"`
+	ID                  int64               `json:"id,omitempty"`
+	QualityProfileID    int64               `json:"qualityProfileId,omitempty"`
+	ConfigContract      string              `json:"configContract,omitempty"`
+	Implementation      string              `json:"implementation,omitempty"`
+	ImplementationName  string              `json:"implementationName,omitempty"`
+	InfoLink            string              `json:"infoLink,omitempty"`
+	ListType            string              `json:"listType,omitempty"`
+	Monitor             string              `json:"monitor,omitempty"`
+	Name                string              `json:"name,omitempty"`
+	RootFolderPath      string              `json:"rootFolderPath,omitempty"`
+	MinimumAvailability Availability        `json:"minimumAvailability,omitempty"`
+	Tags                []int               `json:"tags,omitempty"`
+	Fields              []*starr.FieldInput `json:"fields,omitempty"`
 }
 
 // ImportList represents the api/v3/importlist endpoint.

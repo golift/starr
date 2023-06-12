@@ -18,20 +18,20 @@ type ImportListInput struct {
 	EnableAutomaticAdd bool                `json:"enableAutomaticAdd"`
 	SeasonFolder       bool                `json:"seasonFolder"`
 	ListOrder          int                 `json:"listOrder"`
-	QualityProfileID   int64               `json:"qualityProfileId"`
+	QualityProfileID   int64               `json:"qualityProfileId,omitempty"`
 	ID                 int64               `json:"id,omitempty"` // update only.
-	ConfigContract     string              `json:"configContract"`
-	Implementation     string              `json:"implementation"`
-	ImplementationName string              `json:"implementationName"`
-	InfoLink           string              `json:"infoLink"`
-	ListType           string              `json:"listType"`
-	MinRefreshInterval string              `json:"minRefreshInterval"`
-	Name               string              `json:"name"`
-	RootFolderPath     string              `json:"rootFolderPath"`
-	SeriesType         string              `json:"seriesType"`
-	ShouldMonitor      string              `json:"shouldMonitor"`
-	Tags               []int               `json:"tags"`
-	Fields             []*starr.FieldInput `json:"fields"`
+	ConfigContract     string              `json:"configContract,omitempty"`
+	Implementation     string              `json:"implementation,omitempty"`
+	ImplementationName string              `json:"implementationName,omitempty"`
+	InfoLink           string              `json:"infoLink,omitempty"`
+	ListType           string              `json:"listType,omitempty"`
+	MinRefreshInterval string              `json:"minRefreshInterval,omitempty"`
+	Name               string              `json:"name,omitempty"`
+	RootFolderPath     string              `json:"rootFolderPath,omitempty"`
+	SeriesType         string              `json:"seriesType,omitempty"`
+	ShouldMonitor      string              `json:"shouldMonitor,omitempty"`
+	Tags               []int               `json:"tags,omitempty"`
+	Fields             []*starr.FieldInput `json:"fields,omitempty"`
 }
 
 // ImportListOutput is the output from the import list methods.
