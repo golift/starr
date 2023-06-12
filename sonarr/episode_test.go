@@ -30,7 +30,7 @@ const (
 			"path": "/media/tv/The Last of Us (2023) [imdb-tt3581920] [tvdbid-392256]/Season 01/The Last of Us (2023) - S01E01 - When You're Lost in the Darkness [AMZN WEBDL-1080p Proper][EAC3 Atmos 5.1][h264]-FLUX.mkv",
 			"size": 6002269811,
 			"dateAdded": "2023-03-14T03:34:28Z",
-			"sceneName": "The.Last.Of.Us.S01E01.When.Youre.Lost.in.the.Darkness.REPACK.1080p.AMZN.WEB-DL.DDP5.1.Atmos.H.264-FLUX",
+			"sceneName": "The.Last.Of.Us.S01E01.When.Your.Lost.in.the.Darkness.REPACK.1080p.AMZN.WEB-DL.DDP5.1.Atmos.H.264-FLUX",
 			"releaseGroup": "FLUX",
 			"languages": [
 				{
