@@ -48,9 +48,9 @@ const importListResponseBody = `{
 	"id": 4
   }`
 
-const addImportList = `{"enableAutomaticAdd":false,"seasonFolder":true,"listOrder":0,"qualityProfileId":1,"configContract":"PlexListSettings","implementation":"PlexImport","implementationName":"","infoLink":"","listType":"","minRefreshInterval":"","name":"PlexImport","rootFolderPath":"/config","seriesType":"standard","shouldMonitor":"all","tags":[],"fields":[{"name":"accessToken","value":"test"}]}`
+const addImportList = `{"enableAutomaticAdd":false,"seasonFolder":true,"listOrder":0,"qualityProfileId":1,"configContract":"PlexListSettings","implementation":"PlexImport","name":"PlexImport","rootFolderPath":"/config","seriesType":"standard","shouldMonitor":"all","fields":[{"name":"accessToken","value":"test"}]}`
 
-const updateImportList = `{"enableAutomaticAdd":false,"seasonFolder":true,"listOrder":0,"qualityProfileId":1,"id":4,"configContract":"PlexListSettings","implementation":"PlexImport","implementationName":"","infoLink":"","listType":"","minRefreshInterval":"","name":"PlexImport","rootFolderPath":"/config","seriesType":"standard","shouldMonitor":"all","tags":[],"fields":[{"name":"accessToken","value":"test"}]}`
+const updateImportList = `{"enableAutomaticAdd":false,"seasonFolder":true,"listOrder":0,"qualityProfileId":1,"id":4,"configContract":"PlexListSettings","implementation":"PlexImport","name":"PlexImport","rootFolderPath":"/config","seriesType":"standard","shouldMonitor":"all","fields":[{"name":"accessToken","value":"test"}]}`
 
 func TestGetImportLists(t *testing.T) {
 	t.Parallel()

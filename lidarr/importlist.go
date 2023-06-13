@@ -20,17 +20,17 @@ type ImportListInput struct {
 	ShouldSearch          bool                `json:"shouldSearch"`
 	ListOrder             int                 `json:"listOrder"`
 	ID                    int64               `json:"id,omitempty"` // for update not add.
-	QualityProfileID      int64               `json:"qualityProfileId"`
-	MetadataProfileID     int64               `json:"metadataProfileId"`
-	ConfigContract        string              `json:"configContract"`
-	Implementation        string              `json:"implementation"`
-	ListType              string              `json:"listType"`
-	MonitorNewItems       string              `json:"monitorNewItems"`
-	Name                  string              `json:"name"`
-	RootFolderPath        string              `json:"rootFolderPath"`
-	ShouldMonitor         string              `json:"shouldMonitor"`
-	Tags                  []int               `json:"tags"`
-	Fields                []*starr.FieldInput `json:"fields"`
+	QualityProfileID      int64               `json:"qualityProfileId,omitempty"`
+	MetadataProfileID     int64               `json:"metadataProfileId,omitempty"`
+	ConfigContract        string              `json:"configContract,omitempty"`
+	Implementation        string              `json:"implementation,omitempty"`
+	ListType              string              `json:"listType,omitempty"`
+	MonitorNewItems       string              `json:"monitorNewItems,omitempty"`
+	Name                  string              `json:"name,omitempty"`
+	RootFolderPath        string              `json:"rootFolderPath,omitempty"`
+	ShouldMonitor         string              `json:"shouldMonitor,omitempty"`
+	Tags                  []int               `json:"tags,omitempty"`
+	Fields                []*starr.FieldInput `json:"fields,omitempty"`
 }
 
 // ImportListOutput is the output from the import list methods.

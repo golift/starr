@@ -15,24 +15,38 @@ const bpNotification = APIver + "/notification"
 
 // NotificationInput is the input for a new or updated notification.
 type NotificationInput struct {
-	OnHealthIssue         bool                `json:"onHealthIssue,omitempty"`
-	OnApplicationUpdate   bool                `json:"onApplicationUpdate,omitempty"`
-	IncludeHealthWarnings bool                `json:"includeHealthWarnings,omitempty"`
-	ID                    int64               `json:"id,omitempty"`
-	Name                  string              `json:"name"`
-	Implementation        string              `json:"implementation"`
-	ConfigContract        string              `json:"configContract"`
-	Tags                  []int               `json:"tags,omitempty"`
-	Fields                []*starr.FieldInput `json:"fields"`
+	OnGrab                      bool                `json:"onGrab"`
+	OnHealthIssue               bool                `json:"onHealthIssue"`
+	OnHealthRestored            bool                `json:"onHealthRestored"`
+	OnApplicationUpdate         bool                `json:"onApplicationUpdate"`
+	SupportsOnGrab              bool                `json:"supportsOnGrab"`
+	IncludeManualGrabs          bool                `json:"includeManualGrabs"`
+	SupportsOnHealthIssue       bool                `json:"supportsOnHealthIssue"`
+	SupportsOnHealthRestored    bool                `json:"supportsOnHealthRestored"`
+	IncludeHealthWarnings       bool                `json:"includeHealthWarnings"`
+	SupportsOnApplicationUpdate bool                `json:"supportsOnApplicationUpdate"`
+	ID                          int64               `json:"id,omitempty"` // update only
+	Name                        string              `json:"name"`
+	ImplementationName          string              `json:"implementationName"`
+	Implementation              string              `json:"implementation"`
+	ConfigContract              string              `json:"configContract"`
+	InfoLink                    string              `json:"infoLink"`
+	Tags                        []int               `json:"tags"`
+	Fields                      []*starr.FieldInput `json:"fields"`
 }
 
 // NotificationOutput is the output from the notification methods.
 type NotificationOutput struct {
-	OnHealthIssue               bool                 `json:"onHealthIssue,omitempty"`
-	OnApplicationUpdate         bool                 `json:"onApplicationUpdate,omitempty"`
-	SupportsOnApplicationUpdate bool                 `json:"supportsOnApplicationUpdate"`
+	OnGrab                      bool                 `json:"onGrab"`
+	OnHealthIssue               bool                 `json:"onHealthIssue"`
+	OnHealthRestored            bool                 `json:"onHealthRestored"`
+	OnApplicationUpdate         bool                 `json:"onApplicationUpdate"`
+	SupportsOnGrab              bool                 `json:"supportsOnGrab"`
+	IncludeManualGrabs          bool                 `json:"includeManualGrabs"`
 	SupportsOnHealthIssue       bool                 `json:"supportsOnHealthIssue"`
+	SupportsOnHealthRestored    bool                 `json:"supportsOnHealthRestored"`
 	IncludeHealthWarnings       bool                 `json:"includeHealthWarnings"`
+	SupportsOnApplicationUpdate bool                 `json:"supportsOnApplicationUpdate"`
 	ID                          int64                `json:"id"`
 	Name                        string               `json:"name"`
 	ImplementationName          string               `json:"implementationName"`
@@ -41,6 +55,10 @@ type NotificationOutput struct {
 	InfoLink                    string               `json:"infoLink"`
 	Tags                        []int                `json:"tags"`
 	Fields                      []*starr.FieldOutput `json:"fields"`
+	Message                     struct {
+		Message string `json:"message"` // this is a weird place for a message
+		Type    string `json:"type"`
+	} `json:"message"`
 }
 
 // GetNotifications returns all configured notifications.
