@@ -11,7 +11,7 @@ import (
 	"golift.io/starr/starrtest"
 )
 
-//nolint:lll
+//nolint:lll,nolintlint // go linters are pretty stupid sometimes.
 const (
 	notificationResponseBody = `{
     "onHealthIssue": false,
