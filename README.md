@@ -15,7 +15,8 @@
 -   [Readarr](http://readarr.com) ([over 60 methods](https://pkg.go.dev/golift.io/starr@main/readarr)) 
 -   [Sonarr](http://sonarr.tv) ([over 100 methods](https://pkg.go.dev/golift.io/starr@main/sonarr)) 
 
-Custom Scripts support is also included. [Check out the types and methods](https://pkg.go.dev/golift.io/starr@main/starrcmd) to get that data.
+[Custom Scripts support](https://wiki.servarr.com/radarr/custom-scripts) is also included. 
+[Check out the types and methods](https://pkg.go.dev/golift.io/starr@main/starrcmd) to get that data.
 
 ## One 🌟 To Rule Them All
 
