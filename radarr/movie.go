@@ -138,16 +138,21 @@ type AlternativeTitle struct {
 	ID              int64        `json:"id"`
 }
 
+type GetMovieOptions struct {
+	TMDBID int64 // 0 grabs all movies.
+	// IncludeLocalCovers bool  //
+}
+
 // GetMovie grabs a movie from the queue, or all movies if tmdbId is 0.
-func (r *Radarr) GetMovie(tmdbID int64) ([]*Movie, error) {
-	return r.GetMovieContext(context.Background(), tmdbID)
+func (r *Radarr) GetMovie(opts *GetMovieOptions) ([]*Movie, error) {
+	return r.GetMovieContext(context.Background(), opts)
 }
 
 // GetMovieContext grabs a movie from the queue, or all movies if tmdbId is 0.
-func (r *Radarr) GetMovieContext(ctx context.Context, tmdbID int64) ([]*Movie, error) {
+func (r *Radarr) GetMovieContext(ctx context.Context, opts *GetMovieOptions) ([]*Movie, error) {
 	params := make(url.Values)
-	if tmdbID != 0 {
-		params.Set("tmdbId", fmt.Sprint(tmdbID))
+	if opts != nil && opts.TMDBID != 0 {
+		params.Set("tmdbId", fmt.Sprint(opts.TMDBID))
 	}
 
 	var output []*Movie
@@ -161,12 +166,12 @@ func (r *Radarr) GetMovieContext(ctx context.Context, tmdbID int64) ([]*Movie, e
 }
 
 // GetMovieByID grabs a movie from the database by DB [movie] ID.
-func (r *Radarr) GetMovieByID(movieID int64) (*Movie, error) {
-	return r.GetMovieByIDContext(context.Background(), movieID)
+func (r *Radarr) GetMovieByID(movieID int64, opts *GetMovieOptions) (*Movie, error) {
+	return r.GetMovieByIDContext(context.Background(), movieID, opts)
 }
 
 // GetMovieByIDContext grabs a movie from the database by DB [movie] ID.
-func (r *Radarr) GetMovieByIDContext(ctx context.Context, movieID int64) (*Movie, error) {
+func (r *Radarr) GetMovieByIDContext(ctx context.Context, movieID int64, opts *GetMovieOptions) (*Movie, error) {
 	var output Movie
 
 	req := starr.Request{URI: path.Join(bpMovie, fmt.Sprint(movieID))}
