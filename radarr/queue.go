@@ -3,6 +3,7 @@ package radarr
 import (
 	"context"
 	"fmt"
+	"path"
 	"time"
 
 	"golift.io/starr"
@@ -105,4 +106,19 @@ func (r *Radarr) GetQueuePageContext(ctx context.Context, params *starr.PageReq)
 	}
 
 	return &output, nil
+}
+
+// DeleteQueue deletes an item from the Activity Queue.
+func (r *Radarr) DeleteQueue(queueID int64, opts *starr.QueueDeleteOpts) error {
+	return r.DeleteQueueContext(context.Background(), queueID, opts)
+}
+
+// DeleteQueueContext deletes an item from the Activity Queue.
+func (r *Radarr) DeleteQueueContext(ctx context.Context, queueID int64, opts *starr.QueueDeleteOpts) error {
+	req := starr.Request{URI: path.Join(bpQueue, fmt.Sprint(queueID)), Query: opts.Values()}
+	if err := r.DeleteAny(ctx, req); err != nil {
+		return fmt.Errorf("api.Delete(%s): %w", &req, err)
+	}
+
+	return nil
 }

@@ -3,7 +3,9 @@ package starr
 import (
 	"crypto/tls"
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -197,6 +199,36 @@ type BackupFile struct {
 	Time time.Time `json:"time"`
 	ID   int64     `json:"id"`
 	Size int64     `json:"size"`
+}
+
+// QueueDeleteOpts are the extra inputs when deleting an item from the Activity Queue.
+// Set these appropriately for your expectations. All inputs are the same in all apps.
+type QueueDeleteOpts struct {
+	// Default True, use starr.False() to change it.
+	RemoveFromClient *bool
+	// Default False
+	BlockList bool
+	// Default False
+	SkipRedownload bool
+}
+
+// Values turns delete options into http get query parameters.
+func (o *QueueDeleteOpts) Values() url.Values {
+	params := make(url.Values)
+	params.Set("removeFromClient", "true")
+
+	if o == nil {
+		return params
+	}
+
+	params.Set("blocklist", fmt.Sprint(o.BlockList))
+	params.Set("skipRedownload", fmt.Sprint(o.SkipRedownload))
+
+	if o.RemoveFromClient != nil {
+		params.Set("removeFromClient", fmt.Sprint(*o.RemoveFromClient))
+	}
+
+	return params
 }
 
 // PlayTime is used in at least Sonarr, maybe other places.
