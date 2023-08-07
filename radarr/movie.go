@@ -250,6 +250,53 @@ func (r *Radarr) LookupContext(ctx context.Context, term string) ([]*Movie, erro
 	return output, nil
 }
 
+// LookupID will return a movie by its ID.
+func (r *Radarr) LookupID(movieID int64) (*Movie, error) {
+	return r.LookupIDContext(context.Background(), movieID)
+}
+
+// LookupIDContext will return a movie by its ID using a context.
+func (r *Radarr) LookupIDContext(ctx context.Context, movieID int64) (*Movie, error) {
+	return r.lookupSubContext(ctx, fmt.Sprint(movieID), "", "")
+}
+
+// LookupIMDB will search IMDB for the imdbId provided.
+func (r *Radarr) LookupIMDB(imdbID string) (*Movie, error) {
+	return r.LookupIMDBContext(context.Background(), imdbID)
+}
+
+// LookupIMDBContext will search IMDB for the imdbId provided using a context.
+func (r *Radarr) LookupIMDBContext(ctx context.Context, imdbID string) (*Movie, error) {
+	return r.lookupSubContext(ctx, "imdb", "imdbId", imdbID)
+}
+
+// LookupTMDB will search TMDB for the tmdbID provided.
+func (r *Radarr) LookupTMDB(tmdbID int64) (*Movie, error) {
+	return r.LookupTMDBContext(context.Background(), tmdbID)
+}
+
+// LookupTMDBContext will search TMDB for the tmdbID provided using a context.
+func (r *Radarr) LookupTMDBContext(ctx context.Context, tmdbID int64) (*Movie, error) {
+	return r.lookupSubContext(ctx, "tmdb", "tmdbId", fmt.Sprint(tmdbID))
+}
+
+// lookupSubContext abstracts lookup requests.
+func (r *Radarr) lookupSubContext(ctx context.Context, sub, name, val string) (*Movie, error) {
+	var output *Movie
+
+	req := starr.Request{URI: path.Join(bpMovie, "lookup", sub), Query: make(url.Values)}
+
+	if name != "" {
+		req.Query.Set(name, val)
+	}
+
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
+	}
+
+	return output, nil
+}
+
 // DeleteMovie removes a movie from the database. Setting deleteFiles true will delete all content for the movie.
 func (r *Radarr) DeleteMovie(movieID int64, deleteFiles, addImportExclusion bool) error {
 	return r.DeleteMovieContext(context.Background(), movieID, deleteFiles, addImportExclusion)
