@@ -59,7 +59,6 @@ type HistoryRecord struct {
 }
 
 // GetHistory returns the Lidarr History (grabs/failures/completed).
-// WARNING: 12/30/2021 - this method changed.
 // If you need control over the page, use lidarr.GetHistoryPage().
 // This function simply returns the number of history records desired,
 // up to the number of records present in the application.

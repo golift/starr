@@ -48,7 +48,6 @@ type QueueRecord struct {
 }
 
 // GetQueue returns a single page from the Sonarr Queue (processing, but not yet imported).
-// WARNING: 12/30/2021 - this method changed.
 // If you need control over the page, use sonarr.GetQueuePage().
 // This function simply returns the number of queue records desired,
 // up to the number of records present in the application.

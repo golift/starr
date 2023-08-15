@@ -221,3 +221,23 @@ func (l *Lidarr) LookupContext(ctx context.Context, term string) ([]*Album, erro
 
 	return output, nil
 }
+
+// DeleteAlbum removes an album from the database.
+// Setting deleteFiles true will delete all content for the album.
+func (l *Lidarr) DeleteAlbum(albumID int64, deleteFiles, addImportExclusion bool) error {
+	return l.DeleteAlbumContext(context.Background(), albumID, deleteFiles, addImportExclusion)
+}
+
+// DeleteAlbumContext removes an album from the database.
+// Setting deleteFiles true will delete all content for the album.
+func (l *Lidarr) DeleteAlbumContext(ctx context.Context, albumID int64, deleteFiles, addImportExclusion bool) error {
+	req := starr.Request{URI: path.Join(bpAlbum, fmt.Sprint(albumID)), Query: make(url.Values)}
+	req.Query.Set("deleteFiles", fmt.Sprint(deleteFiles))
+	req.Query.Set("addImportListExclusion", fmt.Sprint(addImportExclusion))
+
+	if err := l.DeleteAny(ctx, req); err != nil {
+		return fmt.Errorf("api.Delete(%s): %w", &req, err)
+	}
+
+	return nil
+}

@@ -62,7 +62,6 @@ type HistoryRecord struct {
 }
 
 // GetHistory returns the Sonarr History (grabs/failures/completed).
-// WARNING: 12/30/2021 - this method changed.
 // If you need control over the page, use sonarr.GetHistoryPage().
 // This function simply returns the number of history records desired,
 // up to the number of records present in the application.
@@ -72,6 +71,7 @@ func (s *Sonarr) GetHistory(records, perPage int) (*History, error) {
 	return s.GetHistoryContext(context.Background(), records, perPage)
 }
 
+// GetHistoryContext returns the Sonarr History (grabs/failures/completed). See GetHistory for more.
 func (s *Sonarr) GetHistoryContext(ctx context.Context, records, perPage int) (*History, error) {
 	hist := &History{Records: []*HistoryRecord{}}
 	perPage = starr.SetPerPage(records, perPage)
@@ -107,6 +107,8 @@ func (s *Sonarr) GetHistoryPage(params *starr.PageReq) (*History, error) {
 	return s.GetHistoryPageContext(context.Background(), params)
 }
 
+// GetHistoryPageContext returns a single page from the Sonarr History (grabs/failures/completed).
+// The page size and number is configurable with the input request parameters.
 func (s *Sonarr) GetHistoryPageContext(ctx context.Context, params *starr.PageReq) (*History, error) {
 	var output History
 
@@ -129,7 +131,7 @@ func (s *Sonarr) FailContext(ctx context.Context, historyID int64) error {
 		return fmt.Errorf("%w: invalid history ID: %d", starr.ErrRequestError, historyID)
 	}
 
-	var output interface{} // do not know what this looks like.
+	var output interface{} // any ok
 
 	// Strangely uses a POST without a payload.
 	req := starr.Request{URI: path.Join(bpHistory, "failed", fmt.Sprint(historyID))}
