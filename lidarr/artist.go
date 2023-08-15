@@ -140,18 +140,20 @@ func (l *Lidarr) UpdateArtistContext(ctx context.Context, artist *Artist, moveFi
 	return &output, nil
 }
 
-// DeleteArtist removes an artist from the database. Setting deleteFiles true will delete all content for the artist.
-func (r *Lidarr) DeleteArtist(artistID int64, deleteFiles, addImportExclusion bool) error {
-	return r.DeleteArtistContext(context.Background(), artistID, deleteFiles, addImportExclusion)
+// DeleteArtist removes an artist from the database.
+// Setting deleteFiles true will delete all content for the artist.
+func (l *Lidarr) DeleteArtist(artistID int64, deleteFiles, addImportExclusion bool) error {
+	return l.DeleteArtistContext(context.Background(), artistID, deleteFiles, addImportExclusion)
 }
 
-// DeleteArtistContext removes an artist from the database. Setting deleteFiles true will delete all content for the artist.
-func (r *Lidarr) DeleteArtistContext(ctx context.Context, artistID int64, deleteFiles, addImportExclusion bool) error {
+// DeleteArtistContext removes an artist from the database.
+// Setting deleteFiles true will delete all content for the artist.
+func (l *Lidarr) DeleteArtistContext(ctx context.Context, artistID int64, deleteFiles, addImportExclusion bool) error {
 	req := starr.Request{URI: path.Join(bpArtist, fmt.Sprint(artistID)), Query: make(url.Values)}
 	req.Query.Set("deleteFiles", fmt.Sprint(deleteFiles))
 	req.Query.Set("addImportListExclusion", fmt.Sprint(addImportExclusion))
 
-	if err := r.DeleteAny(ctx, req); err != nil {
+	if err := l.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}
 

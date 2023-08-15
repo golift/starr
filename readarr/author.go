@@ -123,12 +123,14 @@ func (r *Readarr) UpdateAuthorContext(ctx context.Context, author *Author, moveF
 	return &output, nil
 }
 
-// DeleteAuthor removes an Author from the database. Setting deleteFiles true will delete all content for the Author.
+// DeleteAuthor removes an Author from the database.
+// Setting deleteFiles true will delete all content for the Author.
 func (r *Readarr) DeleteAuthor(authorID int64, deleteFiles, addImportExclusion bool) error {
 	return r.DeleteAuthorContext(context.Background(), authorID, deleteFiles, addImportExclusion)
 }
 
-// DeleteAuthorContext removes na Author from the database. Setting deleteFiles true will delete all content for the Author.
+// DeleteAuthorContext removes na Author from the database.
+// Setting deleteFiles true will delete all content for the Author.
 func (r *Readarr) DeleteAuthorContext(ctx context.Context, authorID int64, deleteFiles, addImportExclusion bool) error {
 	req := starr.Request{URI: path.Join(bpAuthor, fmt.Sprint(authorID)), Query: make(url.Values)}
 	req.Query.Set("deleteFiles", fmt.Sprint(deleteFiles))
