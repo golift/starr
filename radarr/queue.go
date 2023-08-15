@@ -26,7 +26,7 @@ type QueueRecord struct {
 	MovieID                 int64                  `json:"movieId"`
 	Languages               []*starr.Value         `json:"languages"`
 	Quality                 *starr.Quality         `json:"quality"`
-	CustomFormats           []interface{}          `json:"customFormats"` // probably []int64
+	CustomFormats           []*CustomFormatOutput  `json:"customFormats"`
 	Size                    float64                `json:"size"`
 	Title                   string                 `json:"title"`
 	Sizeleft                float64                `json:"sizeleft"`

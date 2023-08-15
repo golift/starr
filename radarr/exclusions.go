@@ -98,7 +98,7 @@ func (r *Radarr) AddExclusionsContext(ctx context.Context, exclusions []*Exclusi
 		return fmt.Errorf("json.Marshal(%s): %w", bpExclusions, err)
 	}
 
-	var output interface{}
+	var output interface{} // any ok
 
 	req := starr.Request{URI: path.Join(bpExclusions, "bulk"), Body: &body}
 	if err := r.PostInto(ctx, req, &output); err != nil {

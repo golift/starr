@@ -26,17 +26,17 @@ type BlockList struct {
 
 // BlockListRecord represents a single block list item.
 type BlockListRecord struct {
-	Movie         *Movie         `json:"movie"`
-	Quality       *starr.Quality `json:"quality"`
-	Languages     []*starr.Value `json:"languages"`
-	CustomFormats []interface{}  `json:"customFormats"`
-	MovieID       int64          `json:"movieId"`
-	ID            int64          `json:"id"`
-	Date          time.Time      `json:"date"`
-	SourceTitle   string         `json:"sourceTitle"`
-	Protocol      string         `json:"protocol"`
-	Indexer       string         `json:"indexer"`
-	Message       string         `json:"message"`
+	Movie         *Movie                `json:"movie"`
+	Quality       *starr.Quality        `json:"quality"`
+	Languages     []*starr.Value        `json:"languages"`
+	CustomFormats []*CustomFormatOutput `json:"customFormats"`
+	MovieID       int64                 `json:"movieId"`
+	ID            int64                 `json:"id"`
+	Date          time.Time             `json:"date"`
+	SourceTitle   string                `json:"sourceTitle"`
+	Protocol      string                `json:"protocol"`
+	Indexer       string                `json:"indexer"`
+	Message       string                `json:"message"`
 }
 
 // GetBlockList returns the count of block list items requested.
