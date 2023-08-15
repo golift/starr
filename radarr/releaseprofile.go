@@ -13,7 +13,7 @@ import (
 // Define Base Path for Release Profile calls.
 const bpReleaseProfile = APIver + "/releaseProfile"
 
-// ReleaseProfile defines a release profile's data from Radarr. v4 only
+// ReleaseProfile defines a release profile's data from Radarr. v4 only.
 type ReleaseProfile struct {
 	Name      string   `json:"name"`
 	Enabled   bool     `json:"enabled"`
