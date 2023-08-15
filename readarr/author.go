@@ -96,28 +96,46 @@ func (r *Readarr) GetAuthorByIDContext(ctx context.Context, authorID int64) (*Au
 }
 
 // UpdateAuthor updates an author in place.
-func (r *Readarr) UpdateAuthor(authorID int64, author *Author) error {
-	return r.UpdateAuthorContext(context.Background(), authorID, author)
+func (r *Readarr) UpdateAuthor(author *Author, moveFiles bool) (*Author, error) {
+	return r.UpdateAuthorContext(context.Background(), author, moveFiles)
 }
 
 // UpdateAuthorContext updates an author in place.
-func (r *Readarr) UpdateAuthorContext(ctx context.Context, authorID int64, author *Author) error {
+func (r *Readarr) UpdateAuthorContext(ctx context.Context, author *Author, moveFiles bool) (*Author, error) {
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(author); err != nil {
-		return fmt.Errorf("json.Marshal(%s): %w", bpAuthor, err)
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpAuthor, err)
 	}
 
-	var output interface{} // not sure what this looks like.
+	var output Author
 
 	req := starr.Request{
-		URI:   path.Join(bpAuthor, fmt.Sprint(authorID)),
+		URI:   path.Join(bpAuthor, fmt.Sprint(author.ID)),
 		Query: make(url.Values),
 		Body:  &body,
 	}
-	req.Query.Add("moveFiles", "true")
+	req.Query.Add("moveFiles", fmt.Sprint(moveFiles))
 
 	if err := r.PutInto(ctx, req, &output); err != nil {
-		return fmt.Errorf("api.Put(%s): %w", &req, err)
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
+	}
+
+	return &output, nil
+}
+
+// DeleteAuthor removes an Author from the database. Setting deleteFiles true will delete all content for the Author.
+func (r *Readarr) DeleteAuthor(authorID int64, deleteFiles, addImportExclusion bool) error {
+	return r.DeleteAuthorContext(context.Background(), authorID, deleteFiles, addImportExclusion)
+}
+
+// DeleteAuthorContext removes na Author from the database. Setting deleteFiles true will delete all content for the Author.
+func (r *Readarr) DeleteAuthorContext(ctx context.Context, authorID int64, deleteFiles, addImportExclusion bool) error {
+	req := starr.Request{URI: path.Join(bpAuthor, fmt.Sprint(authorID)), Query: make(url.Values)}
+	req.Query.Set("deleteFiles", fmt.Sprint(deleteFiles))
+	req.Query.Set("addImportListExclusion", fmt.Sprint(addImportExclusion))
+
+	if err := r.DeleteAny(ctx, req); err != nil {
+		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}
 
 	return nil

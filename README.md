@@ -9,13 +9,13 @@
 
  **Go library to interact with APIs in all the Starr apps.**
 
--   [Lidarr](http://lidarr.audio) ([over 70 methods](https://pkg.go.dev/golift.io/starr@main/lidarr)) 
--   [Prowlarr](https://prowlarr.com) ([over 20 methods](https://pkg.go.dev/golift.io/starr@main/prowlarr)) 
--   [Radarr](http://radarr.video) ([over 90 methods](https://pkg.go.dev/golift.io/starr@main/radarr)) 
--   [Readarr](http://readarr.com) ([over 60 methods](https://pkg.go.dev/golift.io/starr@main/readarr)) 
--   [Sonarr](http://sonarr.tv) ([over 100 methods](https://pkg.go.dev/golift.io/starr@main/sonarr)) 
+-   [Lidarr](http://lidarr.audio) ([over 80 methods](https://pkg.go.dev/golift.io/starr@main/lidarr))
+-   [Prowlarr](https://prowlarr.com) ([over 20 methods](https://pkg.go.dev/golift.io/starr@main/prowlarr))
+-   [Radarr](http://radarr.video) ([over 100 methods](https://pkg.go.dev/golift.io/starr@main/radarr))
+-   [Readarr](http://readarr.com) ([over 70 methods](https://pkg.go.dev/golift.io/starr@main/readarr))
+-   [Sonarr](http://sonarr.tv) ([over 100 methods](https://pkg.go.dev/golift.io/starr@main/sonarr))
 
-[Custom Scripts support](https://wiki.servarr.com/radarr/custom-scripts) is also included. 
+[Custom Scripts support](https://wiki.servarr.com/radarr/custom-scripts) is also included.
 [Check out the types and methods](https://pkg.go.dev/golift.io/starr@main/starrcmd) to get that data.
 
 ## One 🌟 To Rule Them All
