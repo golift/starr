@@ -164,6 +164,7 @@ type FieldOutput struct {
 	Name                        string          `json:"name"`
 	SelectOptionsProviderAction string          `json:"selectOptionsProviderAction,omitempty"`
 	Type                        string          `json:"type,omitempty"`
+	Privacy                     string          `json:"privacy"`
 	Value                       interface{}     `json:"value,omitempty"`
 	SelectOptions               []*SelectOption `json:"selectOptions,omitempty"`
 }

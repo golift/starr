@@ -16,21 +16,21 @@ const bpEpisodeFile = APIver + "/episodeFile"
 
 // EpisodeFile is the output from the /api/v3/episodeFile endpoint.
 type EpisodeFile struct {
-	ID                   int64           `json:"id"`
-	SeriesID             int64           `json:"seriesId"`
-	SeasonNumber         int             `json:"seasonNumber"`
-	RelativePath         string          `json:"relativePath"`
-	Path                 string          `json:"path"`
-	Size                 int64           `json:"size"`
-	DateAdded            time.Time       `json:"dateAdded"`
-	SceneName            string          `json:"sceneName"`
-	ReleaseGroup         string          `json:"releaseGroup"`
-	Language             *starr.Value    `json:"language"`
-	Quality              *starr.Quality  `json:"quality"`
-	MediaInfo            *MediaInfo      `json:"mediaInfo"`
-	QualityCutoffNotMet  bool            `json:"qualityCutoffNotMet"`
-	LanguageCutoffNotMet bool            `json:"languageCutoffNotMet"`
-	CustomFormats        []*CustomFormat `json:"customFormats"` // v4 only
+	ID                   int64                 `json:"id"`
+	SeriesID             int64                 `json:"seriesId"`
+	SeasonNumber         int                   `json:"seasonNumber"`
+	RelativePath         string                `json:"relativePath"`
+	Path                 string                `json:"path"`
+	Size                 int64                 `json:"size"`
+	DateAdded            time.Time             `json:"dateAdded"`
+	SceneName            string                `json:"sceneName"`
+	ReleaseGroup         string                `json:"releaseGroup"`
+	Language             *starr.Value          `json:"language"`
+	Quality              *starr.Quality        `json:"quality"`
+	MediaInfo            *MediaInfo            `json:"mediaInfo"`
+	QualityCutoffNotMet  bool                  `json:"qualityCutoffNotMet"`
+	LanguageCutoffNotMet bool                  `json:"languageCutoffNotMet"`
+	CustomFormats        []*CustomFormatOutput `json:"customFormats"` // v4 only
 }
 
 // MediaInfo is part of an EpisodeFile.
