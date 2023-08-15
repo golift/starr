@@ -118,7 +118,7 @@ func (s *Sonarr) TestImportList(list *ImportListInput) error {
 
 // TestImportListContextt tests an import list.
 func (s *Sonarr) TestImportListContextt(ctx context.Context, list *ImportListInput) error {
-	var output interface{}
+	var output interface{} // any ok
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(list); err != nil {

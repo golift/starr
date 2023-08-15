@@ -24,16 +24,16 @@ type History struct {
 // HistoryRecord is part of the History data.
 // Not all items have all Data members. Check EventType for what you need.
 type HistoryRecord struct {
-	ID                  int64          `json:"id"`
-	MovieID             int64          `json:"movieId"`
-	SourceTitle         string         `json:"sourceTitle"`
-	Languages           []*starr.Value `json:"languages"`
-	Quality             *starr.Quality `json:"quality"`
-	CustomFormats       []interface{}  `json:"customFormats"`
-	QualityCutoffNotMet bool           `json:"qualityCutoffNotMet"`
-	Date                time.Time      `json:"date"`
-	DownloadID          string         `json:"downloadId"`
-	EventType           string         `json:"eventType"`
+	ID                  int64                 `json:"id"`
+	MovieID             int64                 `json:"movieId"`
+	SourceTitle         string                `json:"sourceTitle"`
+	Languages           []*starr.Value        `json:"languages"`
+	Quality             *starr.Quality        `json:"quality"`
+	CustomFormats       []*CustomFormatOutput `json:"customFormats"`
+	QualityCutoffNotMet bool                  `json:"qualityCutoffNotMet"`
+	Date                time.Time             `json:"date"`
+	DownloadID          string                `json:"downloadId"`
+	EventType           string                `json:"eventType"`
 	Data                struct {
 		Age                string    `json:"age"`
 		AgeHours           string    `json:"ageHours"`
@@ -61,13 +61,11 @@ type HistoryRecord struct {
 }
 
 // GetHistory returns the Radarr History (grabs/failures/completed).
-// WARNING: 12/30/2021 - this method changed. The second argument no longer
-// controls which page is returned, but instead adjusts the pagination size.
 // If you need control over the page, use radarr.GetHistoryPage().
 // This function simply returns the number of history records desired,
 // up to the number of records present in the application.
 // It grabs records in (paginated) batches of perPage, and concatenates
-// them into one list.  Passing zero for records will return all of them.
+// them into one list. Passing zero for records will return all of them.
 func (r *Radarr) GetHistory(records, perPage int) (*History, error) {
 	return r.GetHistoryContext(context.Background(), records, perPage)
 }
@@ -131,7 +129,7 @@ func (r *Radarr) FailContext(ctx context.Context, historyID int64) error {
 		return fmt.Errorf("%w: invalid history ID: %d", starr.ErrRequestError, historyID)
 	}
 
-	var output interface{}
+	var output interface{} // any ok
 
 	// Strangely uses a POST without a payload.
 	req := starr.Request{URI: path.Join(bpHistory, "failed", fmt.Sprint(historyID))}

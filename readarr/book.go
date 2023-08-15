@@ -222,3 +222,23 @@ func (r *Readarr) LookupContext(ctx context.Context, term string) ([]*Book, erro
 
 	return output, nil
 }
+
+// DeleteBook removes a Book from the database.
+// Setting deleteFiles true will delete all content for the Book.
+func (r *Readarr) DeleteBook(bookID int64, deleteFiles, addImportExclusion bool) error {
+	return r.DeleteBookContext(context.Background(), bookID, deleteFiles, addImportExclusion)
+}
+
+// DeleteBookContext removes a Book from the database.
+// Setting deleteFiles true will delete all content for the Book.
+func (r *Readarr) DeleteBookContext(ctx context.Context, bookID int64, deleteFiles, addImportExclusion bool) error {
+	req := starr.Request{URI: path.Join(bpBook, fmt.Sprint(bookID)), Query: make(url.Values)}
+	req.Query.Set("deleteFiles", fmt.Sprint(deleteFiles))
+	req.Query.Set("addImportListExclusion", fmt.Sprint(addImportExclusion))
+
+	if err := r.DeleteAny(ctx, req); err != nil {
+		return fmt.Errorf("api.Delete(%s): %w", &req, err)
+	}
+
+	return nil
+}

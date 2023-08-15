@@ -43,7 +43,7 @@ func (s *Sonarr) UpdateSeasonPassContext(ctx context.Context, seasonPass *Season
 		return fmt.Errorf("json.Marshal(%s): %w", bpSeasonPass, err)
 	}
 
-	var output interface{} // not sure what this looks like
+	var output interface{} // any ok
 
 	req := starr.Request{URI: bpSeasonPass, Body: &body}
 	if err := s.PostInto(ctx, req, &output); err != nil {

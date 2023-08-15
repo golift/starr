@@ -26,7 +26,7 @@ type QueueRecord struct {
 	MovieID                 int64                  `json:"movieId"`
 	Languages               []*starr.Value         `json:"languages"`
 	Quality                 *starr.Quality         `json:"quality"`
-	CustomFormats           []interface{}          `json:"customFormats"` // probably []int64
+	CustomFormats           []*CustomFormatOutput  `json:"customFormats"`
 	Size                    float64                `json:"size"`
 	Title                   string                 `json:"title"`
 	Sizeleft                float64                `json:"sizeleft"`
@@ -46,8 +46,6 @@ type QueueRecord struct {
 }
 
 // GetQueue returns a single page from the Radarr Queue (processing, but not yet imported).
-// WARNING: 12/30/2021 - this method changed. The second argument no longer
-// controls which page is returned, but instead adjusts the pagination size.
 // If you need control over the page, use radarr.GetQueuePage().
 // This function simply returns the number of queue records desired,
 // up to the number of records present in the application.
