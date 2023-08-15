@@ -204,6 +204,7 @@ type BackupFile struct {
 
 // QueueDeleteOpts are the extra inputs when deleting an item from the Activity Queue.
 // Set these appropriately for your expectations. All inputs are the same in all apps.
+// Providing this input to the QueueDelete methods is optional; nil sets the defaults shown.
 type QueueDeleteOpts struct {
 	// Default True, use starr.False() to change it.
 	RemoveFromClient *bool
