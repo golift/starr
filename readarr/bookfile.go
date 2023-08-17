@@ -30,6 +30,7 @@ type BookFile struct {
 
 /* I've never seen audio tags in the wild. */
 
+// AudioTags are part of a bookfile.
 type AudioTags struct {
 	Title          string          `json:"title"`
 	CleanTitle     string          `json:"cleanTitle"`

@@ -31,11 +31,13 @@ type Track struct {
 	TrackFile           *TrackFile     `json:"trackFile"` // probably empty.
 }
 
-func (l *Lidarr) GetTracksByID(trackID ...int64) ([]*Track, error) {
-	return l.GetTracksByIDContext(context.Background(), trackID...)
+// GetTracks by their IDs.
+func (l *Lidarr) GetTracks(trackID ...int64) ([]*Track, error) {
+	return l.GetTracksContext(context.Background(), trackID...)
 }
 
-func (l *Lidarr) GetTracksByIDContext(ctx context.Context, trackID ...int64) ([]*Track, error) {
+// GetTracksContext gets track files by their IDs using a provided context.
+func (l *Lidarr) GetTracksContext(ctx context.Context, trackID ...int64) ([]*Track, error) {
 	req := starr.Request{URI: bpTrack, Query: make(url.Values)}
 	for _, id := range trackID {
 		req.Query.Add("trackIds", fmt.Sprint(id))
@@ -49,10 +51,12 @@ func (l *Lidarr) GetTracksByIDContext(ctx context.Context, trackID ...int64) ([]
 	return output, nil
 }
 
+// GetTracksByAlbum gets track files using an album ID.
 func (l *Lidarr) GetTracksByAlbum(albumID int64) ([]*Track, error) {
 	return l.GetTracksByAlbumContext(context.Background(), albumID)
 }
 
+// GetTracksByAlbumContext gets track files using an album ID.
 func (l *Lidarr) GetTracksByAlbumContext(ctx context.Context, albumID int64) ([]*Track, error) {
 	req := starr.Request{URI: bpTrack, Query: make(url.Values)}
 	req.Query.Add("albumId", fmt.Sprint(albumID))
@@ -65,10 +69,12 @@ func (l *Lidarr) GetTracksByAlbumContext(ctx context.Context, albumID int64) ([]
 	return output, nil
 }
 
+// GetTracksByArtist gets track files using an artist ID.
 func (l *Lidarr) GetTracksByArtist(artistID int64) ([]*Track, error) {
 	return l.GetTracksByArtistContext(context.Background(), artistID)
 }
 
+// GetTracksByAlbumRelease gets track files using an artist ID.
 func (l *Lidarr) GetTracksByArtistContext(ctx context.Context, artistID int64) ([]*Track, error) {
 	req := starr.Request{URI: bpTrack, Query: make(url.Values)}
 	req.Query.Add("artistId", fmt.Sprint(artistID))
@@ -81,10 +87,12 @@ func (l *Lidarr) GetTracksByArtistContext(ctx context.Context, artistID int64) (
 	return output, nil
 }
 
+// GetTracksByAlbumRelease gets track files using an album release ID.
 func (l *Lidarr) GetTracksByAlbumRelease(albumID int64) ([]*Track, error) {
 	return l.GetTracksByAlbumContext(context.Background(), albumID)
 }
 
+// GetTracksByAlbumReleaseContext gets track files using an album release ID.
 func (l *Lidarr) GetTracksByAlbumReleaseContext(ctx context.Context, albumReleaseID int64) ([]*Track, error) {
 	req := starr.Request{URI: bpTrack, Query: make(url.Values)}
 	req.Query.Add("albumReleaseId", fmt.Sprint(albumReleaseID))
