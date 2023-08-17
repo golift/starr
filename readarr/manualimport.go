@@ -32,22 +32,22 @@ type ManualImportInput struct {
 
 // ManualImportOutput is the output data for a manual import request.
 type ManualImportOutput struct {
-	ID               int64          `json:"id"`
-	Path             string         `json:"path"`
-	Name             string         `json:"name"`
-	Size             int            `json:"size"`
-	Author           *Author        `json:"author"`
-	Book             *Book          `json:"book"`
-	ForeignEditionID int64          `json:"foreignEditionId"`
-	Quality          *starr.Quality `json:"quality"`
-	ReleaseGroup     string         `json:"releaseGroup"`
-	QualityWeight    int64          `json:"qualityWeight"`
-	DownloadID       string         `json:"downloadId"`
-	// AudioTags               *AudioTags     `json:"audioTags"` // NEEDS BOOKFILE.GO
-	AdditionalFile          bool         `json:"additionalFile"`
-	ReplaceExistingFiles    bool         `json:"replaceExistingFiles"`
-	DisableReleaseSwitching bool         `json:"disableReleaseSwitching"`
-	Rejections              []*Rejection `json:"rejections"`
+	ID                      int64          `json:"id"`
+	Path                    string         `json:"path"`
+	Name                    string         `json:"name"`
+	Size                    int            `json:"size"`
+	Author                  *Author        `json:"author"`
+	Book                    *Book          `json:"book"`
+	ForeignEditionID        int64          `json:"foreignEditionId"`
+	Quality                 *starr.Quality `json:"quality"`
+	ReleaseGroup            string         `json:"releaseGroup"`
+	QualityWeight           int64          `json:"qualityWeight"`
+	DownloadID              string         `json:"downloadId"`
+	AudioTags               *AudioTags     `json:"audioTags"`
+	AdditionalFile          bool           `json:"additionalFile"`
+	ReplaceExistingFiles    bool           `json:"replaceExistingFiles"`
+	DisableReleaseSwitching bool           `json:"disableReleaseSwitching"`
+	Rejections              []*Rejection   `json:"rejections"`
 }
 
 // Rejection is part of the manual import payload.

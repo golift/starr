@@ -15,13 +15,13 @@ const bpManualImport = APIver + "/manualimport"
 
 // ManualImportInput is the input data for a manual import request using a POST request.
 type ManualImportInput struct {
-	ID             int64  `json:"id"`
-	Path           string `json:"path"`
-	Name           string `json:"name"`
-	ArtistID       int64  `json:"artistID"`
-	AlbumID        int64  `json:"albumID"`
-	AlbumReleaseID int64  `json:"albumReleaseId"`
-	// Tracks            []*Track              `json:"tracks"` // NEEDS TRACKS.GO
+	ID                      int64          `json:"id"`
+	Path                    string         `json:"path"`
+	Name                    string         `json:"name"`
+	ArtistID                int64          `json:"artistID"`
+	AlbumID                 int64          `json:"albumID"`
+	AlbumReleaseID          int64          `json:"albumReleaseId"`
+	Tracks                  []*Track       `json:"tracks"`
 	TrackIDs                []int64        `json:"trackIds"`
 	Quality                 *starr.Quality `json:"quality"`
 	ReleaseGroup            string         `json:"releaseGroup"`
@@ -34,14 +34,14 @@ type ManualImportInput struct {
 
 // ManualImportOutput is the output data for a manual import request.
 type ManualImportOutput struct {
-	ID             int64   `json:"id"`
-	Path           string  `json:"path"`
-	Name           string  `json:"name"`
-	Size           int     `json:"size"`
-	Artist         *Artist `json:"artist"`
-	Album          *Album  `json:"album"`
-	AlbumReleaseID int64   `json:"albumReleaseId"`
-	// Tracks            []*Track              `json:"tracks"`
+	ID                      int64          `json:"id"`
+	Path                    string         `json:"path"`
+	Name                    string         `json:"name"`
+	Size                    int            `json:"size"`
+	Artist                  *Artist        `json:"artist"`
+	Album                   *Album         `json:"album"`
+	AlbumReleaseID          int64          `json:"albumReleaseId"`
+	Tracks                  []*Track       `json:"tracks"`
 	Quality                 *starr.Quality `json:"quality"`
 	ReleaseGroup            string         `json:"releaseGroup"`
 	QualityWeight           int64          `json:"qualityWeight"`

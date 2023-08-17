@@ -290,3 +290,18 @@ const (
 func (a ApplyTags) Ptr() *ApplyTags {
 	return &a
 }
+
+// TimeSpan is part of AudioTags and possibly used other places.
+type TimeSpan struct {
+	Ticks             int64 `json:"ticks"`
+	Days              int64 `json:"days"`
+	Hours             int64 `json:"hours"`
+	Milliseconds      int64 `json:"milliseconds"`
+	Minutes           int64 `json:"minutes"`
+	Seconds           int64 `json:"seconds"`
+	TotalDays         int64 `json:"totalDays"`
+	TotalHours        int64 `json:"totalHours"`
+	TotalMilliseconds int64 `json:"totalMilliseconds"`
+	TotalMinutes      int64 `json:"totalMinutes"`
+	TotalSeconds      int64 `json:"totalSeconds"`
+}
