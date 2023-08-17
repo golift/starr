@@ -64,44 +64,6 @@ type Collection struct {
 	Images []*starr.Image `json:"images"`
 }
 
-// MovieFile is part of a Movie.
-type MovieFile struct {
-	ID                  int64          `json:"id"`
-	MovieID             int64          `json:"movieId"`
-	RelativePath        string         `json:"relativePath"`
-	Path                string         `json:"path"`
-	Size                int64          `json:"size"`
-	DateAdded           time.Time      `json:"dateAdded"`
-	SceneName           string         `json:"sceneName"`
-	IndexerFlags        int64          `json:"indexerFlags"`
-	Quality             *starr.Quality `json:"quality"`
-	MediaInfo           *MediaInfo     `json:"mediaInfo"`
-	QualityCutoffNotMet bool           `json:"qualityCutoffNotMet"`
-	Languages           []*starr.Value `json:"languages"`
-	ReleaseGroup        string         `json:"releaseGroup"`
-	Edition             string         `json:"edition"`
-	OriginalFilePath    string         `json:"originalFilePath"`
-}
-
-// MediaInfo is part of a MovieFile.
-type MediaInfo struct {
-	AudioAdditionalFeatures string  `json:"audioAdditionalFeatures"`
-	AudioBitrate            int     `json:"audioBitrate"`
-	AudioChannels           float64 `json:"audioChannels"`
-	AudioCodec              string  `json:"audioCodec"`
-	AudioLanguages          string  `json:"audioLanguages"`
-	AudioStreamCount        int     `json:"audioStreamCount"`
-	VideoBitDepth           int     `json:"videoBitDepth"`
-	VideoBitrate            int     `json:"videoBitrate"`
-	VideoCodec              string  `json:"videoCodec"`
-	VideoFps                float64 `json:"videoFps"`
-	VideoDynamicRangeType   string  `json:"videoDynamicRangeType"`
-	Resolution              string  `json:"resolution"`
-	RunTime                 string  `json:"runTime"`
-	ScanType                string  `json:"scanType"`
-	Subtitles               string  `json:"subtitles"`
-}
-
 // AddMovieInput is the input for a new movie.
 type AddMovieInput struct {
 	Title               string           `json:"title,omitempty"`

@@ -72,7 +72,7 @@ func (r *Radarr) DeleteMovies(deleteMovies *BulkEdit) error {
 	return r.DeleteMoviesContext(context.Background(), deleteMovies)
 }
 
-// DeleteDeleteMoviesContextMovies bulk deletes movies. Can also mark them as excluded, and delete their files.
+// DeleteMoviesContext bulk deletes movies. Can also mark them as excluded, and delete their files.
 func (r *Radarr) DeleteMoviesContext(ctx context.Context, deleteMovies *BulkEdit) error {
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(deleteMovies); err != nil {
