@@ -60,27 +60,12 @@ type AudioTags struct {
 	Label           string           `json:"label"`
 	CatalogNumber   string           `json:"catalogNumber"`
 	Disambiguation  string           `json:"disambiguation"`
-	Duration        *TrackDuration   `json:"duration"`
+	Duration        *starr.TimeSpan  `json:"duration"`
 	Quality         *starr.Quality   `json:"quality"`
 	MediaInfo       *AudioMediaInfo  `json:"mediaInfo"`
 	TrackNumbers    []int            `json:"trackNumbers"`
 	ReleaseGroup    string           `json:"releaseGroup"`
 	ReleaseHash     string           `json:"releaseHash"`
-}
-
-// TrackDuration is part of AudioTags.
-type TrackDuration struct {
-	Ticks             int64 `json:"ticks"`
-	Days              int64 `json:"days"`
-	Hours             int64 `json:"hours"`
-	Milliseconds      int64 `json:"milliseconds"`
-	Minutes           int64 `json:"minutes"`
-	Seconds           int64 `json:"seconds"`
-	TotalDays         int64 `json:"totalDays"`
-	TotalHours        int64 `json:"totalHours"`
-	TotalMilliseconds int64 `json:"totalMilliseconds"`
-	TotalMinutes      int64 `json:"totalMinutes"`
-	TotalSeconds      int64 `json:"totalSeconds"`
 }
 
 // AudioMediaInfo is part of AudioTags.

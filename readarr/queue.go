@@ -1,7 +1,9 @@
 package readarr
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"path"
 	"time"
@@ -118,6 +120,34 @@ func (r *Readarr) DeleteQueueContext(ctx context.Context, queueID int64, opts *s
 	req := starr.Request{URI: path.Join(bpQueue, fmt.Sprint(queueID)), Query: opts.Values()}
 	if err := r.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
+	}
+
+	return nil
+}
+
+// QueueGrab tells the app to grab an item that's in queue.
+// Most often used on items with a delay set from a delay profile.
+func (r *Readarr) QueueGrab(ids ...int64) error {
+	return r.QueueGrabContext(context.Background(), ids...)
+}
+
+// QueueGrabContext tells the app to grab an item that's in queue, probably set to a delay.
+// Most often used on items with a delay set from a delay profile.
+func (r *Readarr) QueueGrabContext(ctx context.Context, ids ...int64) error {
+	idList := struct {
+		IDs []int64 `json:"ids"`
+	}{IDs: ids}
+
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(idList); err != nil {
+		return fmt.Errorf("json.Marshal(%s): %w", bpQueue, err)
+	}
+
+	var output interface{} // any ok
+
+	req := starr.Request{URI: path.Join(bpQueue, "grab", "bulk"), Body: &body}
+	if err := r.PostInto(ctx, req, &output); err != nil {
+		return fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return nil
