@@ -110,10 +110,9 @@ func (r *Radarr) GetMovie(tmdbID int64, excludeLocalCovers bool) ([]*Movie, erro
 func (r *Radarr) GetMovieContext(ctx context.Context, tmdbID int64, excludeLocalCovers bool) ([]*Movie, error) {
 	params := make(url.Values)
 	if tmdbID != 0 {
-		params.Set("tmdbId", fmt.Sprint(tmdbID))
-	}
-	if tmdbID == 0 {
-		params.Set("excludeLocalCovers", fmt.Sprint(excludeLocalCovers))
+        	params.Set("tmdbId", fmt.Sprint(tmdbID))
+	} else {
+        	params.Set("excludeLocalCovers", fmt.Sprint(excludeLocalCovers))
 	}
 
 	var output []*Movie
