@@ -106,7 +106,7 @@ func (r *Radarr) GetMovie(tmdbID int64, excludeLocalCovers bool) ([]*Movie, erro
 }
 
 // GetMovieContext grabs a movie from the queue, or all movies if tmdbId is 0.
-// excludeLocalCovers is only applicable to all movies endpoint and prevents radarr from spending IO mapping the local mediaCovers which speeds up /movie queries.
+// excludeLocalCovers is only applicable to all movies endpoint.
 func (r *Radarr) GetMovieContext(ctx context.Context, tmdbID int64, excludeLocalCovers bool) ([]*Movie, error) {
 	params := make(url.Values)
 	if tmdbID != 0 {
