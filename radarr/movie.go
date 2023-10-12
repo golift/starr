@@ -113,7 +113,7 @@ func (r *Radarr) GetMovieContext(ctx context.Context, tmdbID int64, excludeLocal
 		params.Set("tmdbId", fmt.Sprint(tmdbID))
 	}
 	if tmdbID == 0 {
-		params.Set("excludeLocalCovers", excludeLocalCovers)
+		params.Set("excludeLocalCovers", fmt.Sprint(excludeLocalCovers))
 	}
 
 	var output []*Movie
