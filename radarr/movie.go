@@ -102,7 +102,7 @@ type AlternativeTitle struct {
 
 // GetMovie grabs a movie from the queue, or all movies if tmdbId is 0.
 func (r *Radarr) GetMovie(tmdbID int64) ([]*Movie, error) {
-	return r.GetMovieContext(context.Background(), tmdbID)
+	return r.GetMovieContext(context.Background(), tmdbID, excludeLocalCovers)
 }
 
 // GetMovieContext grabs a movie from the queue, or all movies if tmdbId is 0.
