@@ -106,12 +106,13 @@ func (r *Radarr) GetMovie(tmdbID int64) ([]*Movie, error) {
 }
 
 // GetMovieContext grabs a movie from the queue, or all movies if tmdbId is 0.
+// excludeLocalCovers is only applicable to all movies endpoint
 func (r *Radarr) GetMovieContext(ctx context.Context, tmdbID int64, excludeLocalCovers bool) ([]*Movie, error) {
 	params := make(url.Values)
 	if tmdbID != 0 {
 		params.Set("tmdbId", fmt.Sprint(tmdbID))
 	}
-	if tmdbID = 0 {
+	if tmdbID == 0 {
 		params.Set("excludeLocalCovers", excludeLocalCovers)
 	}
 
