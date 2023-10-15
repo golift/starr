@@ -100,16 +100,31 @@ type AlternativeTitle struct {
 	ID              int64        `json:"id"`
 }
 
+// GetMovie represents the input parameters for a movie api request.
+type GetMovie struct {
+	// Set TMDBID to retrieve a single movie. Leave it at 0 to retrieve them all.
+	TMDBID int64
+	// Setting this to true may speed up the response time, but less data is returned.
+	ExcludeLocalCovers bool
+}
+
 // GetMovie grabs a movie from the queue, or all movies if tmdbId is 0.
-func (r *Radarr) GetMovie(tmdbID int64) ([]*Movie, error) {
-	return r.GetMovieContext(context.Background(), tmdbID)
+func (r *Radarr) GetMovie(getMovie *GetMovie) ([]*Movie, error) {
+	return r.GetMovieContext(context.Background(), getMovie)
 }
 
 // GetMovieContext grabs a movie from the queue, or all movies if tmdbId is 0.
-func (r *Radarr) GetMovieContext(ctx context.Context, tmdbID int64) ([]*Movie, error) {
+func (r *Radarr) GetMovieContext(ctx context.Context, getMovie *GetMovie) ([]*Movie, error) {
+	if getMovie == nil {
+		getMovie = &GetMovie{}
+	}
+
 	params := make(url.Values)
-	if tmdbID != 0 {
-		params.Set("tmdbId", fmt.Sprint(tmdbID))
+	if getMovie.TMDBID != 0 {
+		params.Set("tmdbId", fmt.Sprint(getMovie.TMDBID))
+	} else {
+		// excludeLocalCovers can only be true without a tmdbid.
+		params.Set("excludeLocalCovers", fmt.Sprint(getMovie.ExcludeLocalCovers))
 	}
 
 	var output []*Movie
