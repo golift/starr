@@ -189,6 +189,6 @@ func (r *ReqError) Error() string {
 
 // Is provides a custom error match facility.
 func (r *ReqError) Is(tgt error) bool {
-	target, ok := tgt.(*ReqError) //nolint:errorlint
+	target, ok := tgt.(*ReqError)
 	return ok && (r.Code == target.Code || target.Code == -1)
 }
