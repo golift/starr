@@ -22,7 +22,7 @@ type CommandRequest struct {
 	SeriesID      int64   `json:"seriesId,omitempty"`
 	EpisodeIDs    []int64 `json:"episodeIds,omitempty"`
 	EpisodeID     int64   `json:"episodeId,omitempty"`
-	SeasonNumber  int64   `json:"seasonNumber,omitempty"`
+	SeasonNumber  int     `json:"seasonNumber,omitempty"`
 }
 
 // CommandResponse comes from the /api/v3/command endpoint.
