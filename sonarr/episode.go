@@ -16,13 +16,13 @@ const bpEpisode = APIver + "/episode"
 
 // Episode is the /api/v3/episode endpoint.
 type Episode struct {
+	AbsoluteEpisodeNumber    int            `json:"absoluteEpisodeNumber"`
+	SeasonNumber             int            `json:"seasonNumber"`
+	EpisodeNumber            int            `json:"episodeNumber"`
 	ID                       int64          `json:"id"`
 	SeriesID                 int64          `json:"seriesId"`
 	TvdbID                   int64          `json:"tvdbId"`
-	AbsoluteEpisodeNumber    int64          `json:"absoluteEpisodeNumber"`
 	EpisodeFileID            int64          `json:"episodeFileId"`
-	SeasonNumber             int64          `json:"seasonNumber"`
-	EpisodeNumber            int64          `json:"episodeNumber"`
 	AirDateUtc               time.Time      `json:"airDateUtc"`
 	AirDate                  string         `json:"airDate"`
 	Title                    string         `json:"title"`
