@@ -25,6 +25,7 @@ type Queue struct {
 
 // QueueRecord represents the records returns by the /api/v1/queue endpoint.
 type QueueRecord struct {
+	HasPostImportCategory   bool                   `json:"downloadClientHasPostImportCategory"`
 	ArtistID                int64                  `json:"artistId"`
 	AlbumID                 int64                  `json:"albumId"`
 	Quality                 *starr.Quality         `json:"quality"`

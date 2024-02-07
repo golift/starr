@@ -25,6 +25,7 @@ type Queue struct {
 
 // QueueRecord is part of the activity Queue.
 type QueueRecord struct {
+	HasPostImportCategory   bool                   `json:"downloadClientHasPostImportCategory"`
 	MovieID                 int64                  `json:"movieId"`
 	Languages               []*starr.Value         `json:"languages"`
 	Quality                 *starr.Quality         `json:"quality"`

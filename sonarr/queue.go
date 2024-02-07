@@ -25,6 +25,7 @@ type Queue struct {
 
 // QueueRecord is part of Queue.
 type QueueRecord struct {
+	HasPostImportCategory   bool                   `json:"downloadClientHasPostImportCategory"`
 	ID                      int64                  `json:"id"`
 	SeriesID                int64                  `json:"seriesId"`
 	EpisodeID               int64                  `json:"episodeId"`

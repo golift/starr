@@ -25,6 +25,7 @@ type Queue struct {
 
 // QueueRecord is a book from the queue API path.
 type QueueRecord struct {
+	HasPostImportCategory   bool                   `json:"downloadClientHasPostImportCategory"`
 	AuthorID                int64                  `json:"authorId"`
 	BookID                  int64                  `json:"bookId"`
 	Quality                 *starr.Quality         `json:"quality"`
