@@ -212,6 +212,8 @@ type QueueDeleteOpts struct {
 	BlockList bool
 	// Default False
 	SkipRedownload bool
+	// Default False
+	ChangeCategory bool
 }
 
 // Values turns delete options into http get query parameters.
@@ -225,6 +227,7 @@ func (o *QueueDeleteOpts) Values() url.Values {
 
 	params.Set("blocklist", fmt.Sprint(o.BlockList))
 	params.Set("skipRedownload", fmt.Sprint(o.SkipRedownload))
+	params.Set("changeCategory", fmt.Sprint(o.ChangeCategory))
 
 	if o.RemoveFromClient != nil {
 		params.Set("removeFromClient", fmt.Sprint(*o.RemoveFromClient))
