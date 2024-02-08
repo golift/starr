@@ -75,7 +75,7 @@ func (l *Lidarr) GetCustomFormat(customformatID int64) (*CustomFormatOutput, err
 func (l *Lidarr) GetCustomFormatContext(ctx context.Context, customformatID int64) (*CustomFormatOutput, error) {
 	var output CustomFormatOutput
 
-	req := starr.Request{URI: path.Join(bpCustomFormat, fmt.Sprint(customformatID))}
+	req := starr.Request{URI: path.Join(bpCustomFormat, starr.Itoa(customformatID))}
 	if err := l.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -121,7 +121,7 @@ func (l *Lidarr) UpdateCustomFormatContext(ctx context.Context,
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpCustomFormat, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpCustomFormat, fmt.Sprint(format.ID)), Body: &body}
+	req := starr.Request{URI: path.Join(bpCustomFormat, starr.Itoa(format.ID)), Body: &body}
 	if err := l.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
@@ -136,7 +136,7 @@ func (l *Lidarr) DeleteCustomFormat(cfID int64) error {
 
 // DeleteCustomFormatContext deletes a custom format.
 func (l *Lidarr) DeleteCustomFormatContext(ctx context.Context, cfID int64) error {
-	req := starr.Request{URI: path.Join(bpCustomFormat, fmt.Sprint(cfID))}
+	req := starr.Request{URI: path.Join(bpCustomFormat, starr.Itoa(cfID))}
 	if err := l.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

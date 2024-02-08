@@ -308,3 +308,9 @@ type TimeSpan struct {
 	TotalMinutes      int64 `json:"totalMinutes"`
 	TotalSeconds      int64 `json:"totalSeconds"`
 }
+
+// Itoa converts an int64 to a string.
+func Itoa(val int64) string {
+	const base10 = 10
+	return strconv.FormatInt(val, base10)
+}
