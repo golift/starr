@@ -30,6 +30,7 @@ This library is currently in use by:
 -   [Unpackerr](https://github.com/Unpackerr/unpackerr/) (queue only)
 -   [Notifiarr](https://github.com/Notifiarr/notifiarr/) (a lot of it)
 -   [Checkrr](https://github.com/aetaric/checkrr/)
+-   [telegram-bot](https://github.com/woiza/telegram-bot-radarr) (radarr)
 
 # Usage
 
