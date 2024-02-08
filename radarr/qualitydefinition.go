@@ -24,7 +24,7 @@ type QualityDefinition struct {
 // Define Base Path for Quality Definition calls.
 const bpQualityDefinition = APIver + "/qualityDefinition"
 
-// GetQualityDefinitions returns all configured qualityQ definitions.
+// GetQualityDefinitions returns all configured quality definitions.
 func (r *Radarr) GetQualityDefinitions() ([]*QualityDefinition, error) {
 	return r.GetQualityDefinitionsContext(context.Background())
 }
