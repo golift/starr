@@ -48,13 +48,13 @@ type GetEpisode struct {
 	IncludeImages bool
 }
 
-// GetSeriesEpisodes returns all episodes for a series by Series ID, Season Number, Episode ID's, or EpisodeFileID.
+// GetSeriesEpisodes returns all episodes matching the provided filters
 // You can get series IDs from GetAllSeries() and GetSeries().
 func (s *Sonarr) GetSeriesEpisodes(getEpisode *GetEpisode) ([]*Episode, error) {
 	return s.GetSeriesEpisodesContext(context.Background(), getEpisode)
 }
 
-// GetSeriesEpisodesContext returns all episodes for a series by Series ID, Season Number, Episode ID's, or EpisodeFileID.
+// GetSeriesEpisodesContext returns all episodes matching the provided filters.
 // You can get series IDs from GetAllSeries() and GetSeries().
 func (s *Sonarr) GetSeriesEpisodesContext(ctx context.Context, getEpisode *GetEpisode) ([]*Episode, error) {
 	var output []*Episode
