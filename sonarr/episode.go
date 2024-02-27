@@ -34,49 +34,47 @@ type Episode struct {
 	Series                   *Series        `json:"series"`
 }
 
-// GetMovie represents the input parameters for a movie api request.
+// GetEpisode represents the input parameters for an episode api request.
 type GetEpisode struct {
 	// Set seriesID to get episodes for a specific series. Set to zero to get all episodes.
 	SeriesID int64
 	// Set seasonNumber to get episodes for a specific season. Set to zero to get all episodes.
 	SeasonNumber int
 	// Set episodeIds to get episodes for a specific set of ID's. Set to zero to get all episodes.
-	EpisodeIDS []int64
+	EpisodeIDs []int64
 	// Set episodeFileId to get episodes for a specific file. Set to zero to get all episodes.
 	EpisodeFileID int64
 	// Set includeImages to include images for each episode.
 	IncludeImages bool
 }
 
-// GetSeriesEpisodes returns all episodes for a series by series ID.
+// GetSeriesEpisodes returns all episodes for a series by Series ID, Season Number, Episode ID's, or EpisodeFileID.
 // You can get series IDs from GetAllSeries() and GetSeries().
 func (s *Sonarr) GetSeriesEpisodes(getEpisode *GetEpisode) ([]*Episode, error) {
 	return s.GetSeriesEpisodesContext(context.Background(), getEpisode)
 }
 
-// GetSeriesEpisodesContext returns all episodes for a series by series ID.
+// GetSeriesEpisodesContext returns all episodes for a series by Series ID, Season Number, Episode ID's, or EpisodeFileID.
 // You can get series IDs from GetAllSeries() and GetSeries().
 func (s *Sonarr) GetSeriesEpisodesContext(ctx context.Context, getEpisode *GetEpisode) ([]*Episode, error) {
 	var output []*Episode
 
 	params := make(url.Values)
 
-	if getEpisode.SeriesID != 0 {
-		params.Set("seriesId", fmt.Sprint(getEpisode.SeriesID))
+	if getEpisode.SeriesID > 0 {
+		params.Set("seriesId", starr.Itoa(getEpisode.SeriesID))
 	}
 
-	if getEpisode.SeasonNumber != 0 {
-		params.Set("seasonNumber", fmt.Sprint(getEpisode.SeasonNumber))
+	if getEpisode.SeasonNumber > 0 {
+		params.Set("seasonNumber", starr.Itoa(int64(getEpisode.SeasonNumber)))
 	}
 
-	if len(getEpisode.EpisodeIDS) > 0 {
-		for _, id := range getEpisode.EpisodeIDS {
-			params.Add("episodeIds", fmt.Sprint(id))
-		}
+	for _, id := range getEpisode.EpisodeIDs {
+		params.Add("episodeIds", starr.Itoa(id))
 	}
 
-	if getEpisode.EpisodeFileID != 0 {
-		params.Set("episodeFileId", fmt.Sprint(getEpisode.EpisodeFileID))
+	if getEpisode.EpisodeFileID > 0 {
+		params.Set("episodeFileId", starr.Itoa(getEpisode.EpisodeFileID))
 	}
 
 	if getEpisode.IncludeImages {
