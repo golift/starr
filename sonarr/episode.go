@@ -34,37 +34,62 @@ type Episode struct {
 	Series                   *Series        `json:"series"`
 }
 
+// GetMovie represents the input parameters for a movie api request.
+type GetEpisode struct {
+	// Set seriesID to get episodes for a specific series. Set to zero to get all episodes.
+	SeriesID int64
+	// Set seasonNumber to get episodes for a specific season. Set to zero to get all episodes.
+	SeasonNumber int
+	// Set episodeIds to get episodes for a specific set of ID's. Set to zero to get all episodes.
+	EpisodeIDS []int64
+	// Set episodeFileId to get episodes for a specific file. Set to zero to get all episodes.
+	EpisodeFileID int64
+	// Set includeImages to include images for each episode.
+	IncludeImages bool
+}
+
 // GetSeriesEpisodes returns all episodes for a series by series ID.
 // You can get series IDs from GetAllSeries() and GetSeries().
-func (s *Sonarr) GetSeriesEpisodes(seriesID int64) ([]*Episode, error) {
-	return s.GetSeriesEpisodesContext(context.Background(), seriesID, 0)
+func (s *Sonarr) GetSeriesEpisodes(getEpisode *GetEpisode) ([]*Episode, error) {
+	return s.GetSeriesEpisodesContext(context.Background(), getEpisode)
 }
 
 // GetSeriesEpisodesContext returns all episodes for a series by series ID.
 // You can get series IDs from GetAllSeries() and GetSeries().
-func (s *Sonarr) GetSeriesEpisodesContext(ctx context.Context, seriesID int64, episodeFileId int64) ([]*Episode, error) {
+func (s *Sonarr) GetSeriesEpisodesContext(ctx context.Context, getEpisode *GetEpisode) ([]*Episode, error) {
 	var output []*Episode
 
-	req := starr.Request{URI: bpEpisode, Query: make(url.Values)}
+	params := make(url.Values)
 
-	if seriesID > 0 {
-		req.Query.Add("seriesId", fmt.Sprint(seriesID))
+	if getEpisode.SeriesID != 0 {
+		params.Set("seriesId", fmt.Sprint(getEpisode.SeriesID))
 	}
 
-	if episodeFileId > 0 {
-		req.Query.Add("episodeFileId", fmt.Sprint(episodeFileId))
+	if getEpisode.SeasonNumber != 0 {
+		params.Set("seasonNumber", fmt.Sprint(getEpisode.SeasonNumber))
 	}
+
+	if len(getEpisode.EpisodeIDS) > 0 {
+		for _, id := range getEpisode.EpisodeIDS {
+			params.Add("episodeIds", fmt.Sprint(id))
+		}
+	}
+
+	if getEpisode.EpisodeFileID != 0 {
+		params.Set("episodeFileId", fmt.Sprint(getEpisode.EpisodeFileID))
+	}
+
+	if getEpisode.IncludeImages {
+		params.Set("includeImages", "true")
+	}
+
+	req := starr.Request{URI: bpEpisode, Query: params}
 
 	if err := s.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return output, nil
-}
-
-// GetSeriesEpisodesByFileID returns all episodes for a series by episodeFileId.
-func (s *Sonarr) GetSeriesEpisodesByFileID(seriesID int64, episodeFileId int64) ([]*Episode, error) {
-	return s.GetSeriesEpisodesContext(context.Background(), 0, episodeFileId)
 }
 
 // GetEpisodeByID locates and returns an episode by DB [episode] ID.
