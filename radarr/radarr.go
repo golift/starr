@@ -45,7 +45,7 @@ func New(config *starr.Config) *Radarr {
 }
 
 // bp means base path. You'll see it a lot in these files.
-const bpPing = "ping" // ping has no api or version prefix.
+const bpPing = "/ping" // ping has no api or version prefix.
 
 // Ping returns an error if the starr instance does not respond with a 200 to an HTTP /ping request.
 func (r *Radarr) Ping() error {
