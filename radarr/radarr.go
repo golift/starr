@@ -1,6 +1,8 @@
 package radarr
 
 import (
+	"context"
+	"fmt"
 	"strings"
 
 	"golift.io/starr"
@@ -40,4 +42,25 @@ func New(config *starr.Config) *Radarr {
 	config.URL = strings.TrimSuffix(config.URL, "/")
 
 	return &Radarr{APIer: config}
+}
+
+// bp means base path. You'll see it a lot in these files.
+const bpPing = "ping" // ping has no api or version prefix.
+
+// Ping returns an error if the starr instance does not respond with a 200 to an HTTP /ping request.
+func (r *Radarr) Ping() error {
+	return r.PingContext(context.Background())
+}
+
+// PingContext returns an error if the starr instance does not respond with a 200 to an HTTP /ping request.
+func (r *Radarr) PingContext(ctx context.Context) error {
+	req := starr.Request{URI: bpPing}
+
+	resp, err := r.Get(ctx, req)
+	if err != nil {
+		return fmt.Errorf("api.Get(%s): %w", &req, err)
+	}
+	defer resp.Body.Close()
+
+	return nil
 }
