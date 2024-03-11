@@ -81,10 +81,11 @@ type Series struct {
 
 // AddSeriesOptions is part of AddSeriesInput.
 type AddSeriesOptions struct {
-	SearchForMissingEpisodes     bool `json:"searchForMissingEpisodes"`
-	SearchForCutoffUnmetEpisodes bool `json:"searchForCutoffUnmetEpisodes,omitempty"`
-	IgnoreEpisodesWithFiles      bool `json:"ignoreEpisodesWithFiles,omitempty"`
-	IgnoreEpisodesWithoutFiles   bool `json:"ignoreEpisodesWithoutFiles,omitempty"`
+	SearchForMissingEpisodes     bool   `json:"searchForMissingEpisodes"`
+	SearchForCutoffUnmetEpisodes bool   `json:"searchForCutoffUnmetEpisodes,omitempty"`
+	Monitor                      string `json:"monitor,omitempty"`
+	IgnoreEpisodesWithFiles      bool   `json:"ignoreEpisodesWithFiles,omitempty"`
+	IgnoreEpisodesWithoutFiles   bool   `json:"ignoreEpisodesWithoutFiles,omitempty"`
 }
 
 // AlternateTitle is part of a AddSeriesInput.
