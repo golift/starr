@@ -91,7 +91,7 @@ func (l *Lidarr) TestIndexerContext(ctx context.Context, indexer *IndexerInput) 
 	return nil
 }
 
-// GetIndGetIndexerContextexer returns a single indexer.
+// GetIndexerContext returns a single indexer.
 func (l *Lidarr) GetIndexerContext(ctx context.Context, indexerID int64) (*IndexerOutput, error) {
 	var output IndexerOutput
 

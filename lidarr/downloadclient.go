@@ -89,9 +89,12 @@ func (l *Lidarr) AddDownloadClient(downloadclient *DownloadClientInput) (*Downlo
 func (l *Lidarr) AddDownloadClientContext(ctx context.Context,
 	client *DownloadClientInput,
 ) (*DownloadClientOutput, error) {
-	var output DownloadClientOutput
+	var (
+		output DownloadClientOutput
+		body   bytes.Buffer
+	)
 
-	var body bytes.Buffer
+	client.ID = 0
 	if err := json.NewEncoder(&body).Encode(client); err != nil {
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpDownloadClient, err)
 	}
