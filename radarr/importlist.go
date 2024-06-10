@@ -72,13 +72,13 @@ func (r *Radarr) GetImportListsContext(ctx context.Context) ([]*ImportListOutput
 	return output, nil
 }
 
-// CreateImportList creates an import list in Radarr.
+// AddImportList creates an import list in Radarr without testing it.
 func (r *Radarr) CreateImportList(list *ImportListInput) (*ImportListOutput, error) {
-	return r.CreateImportListContext(context.Background(), list)
+	return r.AddImportListContext(context.Background(), list)
 }
 
-// CreateImportListContext creates an import list in Radarr.
-func (r *Radarr) CreateImportListContext(ctx context.Context, list *ImportListInput) (*ImportListOutput, error) {
+// AddImportListContext creates an import list in Radarr without testing it.
+func (r *Radarr) AddImportListContext(ctx context.Context, list *ImportListInput) (*ImportListOutput, error) {
 	list.ID = 0
 
 	var body bytes.Buffer
@@ -88,7 +88,7 @@ func (r *Radarr) CreateImportListContext(ctx context.Context, list *ImportListIn
 
 	var output ImportListOutput
 
-	req := starr.Request{URI: bpImportList, Body: &body}
+	req := starr.Request{URI: bpImportList, Body: &body, Query: url.Values{"forceSave": []string{"true"}}}
 	if err := r.PostInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}

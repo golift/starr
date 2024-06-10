@@ -89,12 +89,12 @@ func (r *Readarr) GetImportListContext(ctx context.Context, importListID int64) 
 	return &output, nil
 }
 
-// AddImportList creates a import list.
+// AddImportList creates an import list without testing it.
 func (r *Readarr) AddImportList(importList *ImportListInput) (*ImportListOutput, error) {
 	return r.AddImportListContext(context.Background(), importList)
 }
 
-// AddImportListContext creates a import list.
+// AddImportListContext creates an import list without testing it.
 func (r *Readarr) AddImportListContext(ctx context.Context, importList *ImportListInput) (*ImportListOutput, error) {
 	var output ImportListOutput
 
@@ -103,7 +103,7 @@ func (r *Readarr) AddImportListContext(ctx context.Context, importList *ImportLi
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpImportList, err)
 	}
 
-	req := starr.Request{URI: bpImportList, Body: &body}
+	req := starr.Request{URI: bpImportList, Body: &body, Query: url.Values{"forceSave": []string{"true"}}}
 	if err := r.PostInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
