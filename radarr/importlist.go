@@ -73,7 +73,7 @@ func (r *Radarr) GetImportListsContext(ctx context.Context) ([]*ImportListOutput
 }
 
 // AddImportList creates an import list in Radarr without testing it.
-func (r *Radarr) CreateImportList(list *ImportListInput) (*ImportListOutput, error) {
+func (r *Radarr) AddImportList(list *ImportListInput) (*ImportListOutput, error) {
 	return r.AddImportListContext(context.Background(), list)
 }
 
