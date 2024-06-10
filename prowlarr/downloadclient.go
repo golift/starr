@@ -76,12 +76,12 @@ func (p *Prowlarr) GetDownloadClientContext(ctx context.Context, clientID int64)
 	return &output, nil
 }
 
-// AddDownloadClient creates a download client.
+// AddDownloadClient creates a download client without testing it.
 func (p *Prowlarr) AddDownloadClient(downloadclient *DownloadClientInput) (*DownloadClientOutput, error) {
 	return p.AddDownloadClientContext(context.Background(), downloadclient)
 }
 
-// AddDownloadClientContext creates a download client.
+// AddDownloadClientContext creates a download client without testing it.
 func (p *Prowlarr) AddDownloadClientContext(ctx context.Context,
 	client *DownloadClientInput,
 ) (*DownloadClientOutput, error) {
@@ -92,7 +92,7 @@ func (p *Prowlarr) AddDownloadClientContext(ctx context.Context,
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpDownloadClient, err)
 	}
 
-	req := starr.Request{URI: bpDownloadClient, Body: &body}
+	req := starr.Request{URI: bpDownloadClient, Body: &body, Query: url.Values{"forceSave": []string{"true"}}}
 	if err := p.PostInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
