@@ -71,7 +71,7 @@ func (s *Sonarr) GetIndexer(indexerID int64) (*IndexerOutput, error) {
 	return s.GetIndexerContext(context.Background(), indexerID)
 }
 
-// GetIndGetIndexerContextexer returns a single indexer.
+// GetIndexerContext returns a single indexer.
 func (s *Sonarr) GetIndexerContext(ctx context.Context, indexerID int64) (*IndexerOutput, error) {
 	var output IndexerOutput
 
@@ -105,12 +105,12 @@ func (s *Sonarr) TestIndexerContext(ctx context.Context, indexer *IndexerInput) 
 	return nil
 }
 
-// AddIndexer creates a indexer.
+// AddIndexer creates an indexer without testing it.
 func (s *Sonarr) AddIndexer(indexer *IndexerInput) (*IndexerOutput, error) {
 	return s.AddIndexerContext(context.Background(), indexer)
 }
 
-// AddIndexerContext creates a indexer.
+// AddIndexerContext creates an indexer without testing it.
 func (s *Sonarr) AddIndexerContext(ctx context.Context, indexer *IndexerInput) (*IndexerOutput, error) {
 	var output IndexerOutput
 
@@ -119,7 +119,7 @@ func (s *Sonarr) AddIndexerContext(ctx context.Context, indexer *IndexerInput) (
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpIndexer, err)
 	}
 
-	req := starr.Request{URI: bpIndexer, Body: &body}
+	req := starr.Request{URI: bpIndexer, Body: &body, Query: url.Values{"forceSave": []string{"true"}}}
 	if err := s.PostInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}

@@ -103,12 +103,12 @@ func (r *Readarr) TestIndexerContext(ctx context.Context, indexer *IndexerInput)
 	return nil
 }
 
-// AddIndexer creates a indexer.
+// AddIndexer creates an indexer without testing it.
 func (r *Readarr) AddIndexer(indexer *IndexerInput) (*IndexerOutput, error) {
 	return r.AddIndexerContext(context.Background(), indexer)
 }
 
-// AddIndexerContext creates a indexer.
+// AddIndexerContext creates an indexer without testing it.
 func (r *Readarr) AddIndexerContext(ctx context.Context, indexer *IndexerInput) (*IndexerOutput, error) {
 	var output IndexerOutput
 
@@ -117,7 +117,7 @@ func (r *Readarr) AddIndexerContext(ctx context.Context, indexer *IndexerInput) 
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpIndexer, err)
 	}
 
-	req := starr.Request{URI: bpIndexer, Body: &body}
+	req := starr.Request{URI: bpIndexer, Body: &body, Query: url.Values{"forceSave": []string{"true"}}}
 	if err := r.PostInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
