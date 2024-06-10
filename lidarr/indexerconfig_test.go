@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"golift.io/starr"
 	"golift.io/starr/lidarr"
 	"golift.io/starr/starrtest"
@@ -115,7 +116,7 @@ func TestUpdateIndexerConfig(t *testing.T) {
 			mockServer := test.GetMockServer(t)
 			client := lidarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.UpdateIndexerConfig(test.WithRequest.(*lidarr.IndexerConfig))
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, output, test.WithResponse, "response is not the same as expected")
 		})
 	}

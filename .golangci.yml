@@ -1,4 +1,6 @@
 issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
   exclude-rules:
     # Exclude funlen for testing files.
     - linters:
@@ -36,7 +38,11 @@ linters:
     - nlreturn
     - tagalign
     - depguard
+    - musttag
+    - perfsprint # need to fix these
+    - testifylint # fix these too
 
+# One day we'll fix all the field alignments. Anyone got a tool that just does it?
 #linters-settings:
 #  govet:
 #    enable:

@@ -1,4 +1,4 @@
-//nolint:paralleltest,dupl
+//nolint:dupl
 package starrcmd_test
 
 import (
