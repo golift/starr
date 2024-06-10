@@ -80,3 +80,27 @@ func (l *Lidarr) DeleteExclusionsContext(ctx context.Context, ids []int64) error
 
 	return nil
 }
+
+// AddExclusion adds one exclusion to Lidarr.
+func (l *Lidarr) AddExclusion(exclusion *Exclusion) (*Exclusion, error) {
+	return l.AddExclusionContext(context.Background(), exclusion)
+}
+
+// AddExclusionContext adds one exclusion to Lidarr.
+func (l *Lidarr) AddExclusionContext(ctx context.Context, exclusion *Exclusion) (*Exclusion, error) {
+	exclusion.ID = 0 // if this panics, fix your code
+
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(exclusion); err != nil {
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpExclusions, err)
+	}
+
+	var output Exclusion
+
+	req := starr.Request{URI: path.Join(bpExclusions), Body: &body}
+	if err := l.PostInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
+	}
+
+	return &output, nil
+}

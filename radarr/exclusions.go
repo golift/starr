@@ -107,3 +107,27 @@ func (r *Radarr) AddExclusionsContext(ctx context.Context, exclusions []*Exclusi
 
 	return nil
 }
+
+// AddExclusion adds one exclusion to Radarr.
+func (r *Radarr) AddExclusion(exclusion *Exclusion) (*Exclusion, error) {
+	return r.AddExclusionContext(context.Background(), exclusion)
+}
+
+// AddExclusionContext adds one exclusion to Radarr.
+func (r *Radarr) AddExclusionContext(ctx context.Context, exclusion *Exclusion) (*Exclusion, error) {
+	exclusion.ID = 0 // if this panics, fix your code
+
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(exclusion); err != nil {
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpExclusions, err)
+	}
+
+	var output Exclusion
+
+	req := starr.Request{URI: path.Join(bpExclusions), Body: &body}
+	if err := r.PostInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
+	}
+
+	return &output, nil
+}
