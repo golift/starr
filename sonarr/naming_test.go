@@ -12,6 +12,7 @@ import (
 )
 
 const namingBody = `{
+	"colonReplacementFormat": 0,
 	"renameEpisodes": false,
 	"replaceIllegalCharacters": true,
 	"multiEpisodeStyle": 0,
@@ -21,12 +22,6 @@ const namingBody = `{
 	"seriesFolderFormat": "{Series Title}",
 	"seasonFolderFormat": "Season {season}",
 	"specialsFolderFormat": "Specials",
-	"includeSeriesTitle": true,
-	"includeEpisodeTitle": false,
-	"includeQuality": false,
-	"replaceSpaces": true,
-	"separator": " - ",
-	"numberStyle": "S{season:00}E{episode:00}",
 	"id": 1
 }`
 
@@ -51,12 +46,7 @@ func TestGetNaming(t *testing.T) {
 				SeriesFolderFormat:       "{Series Title}",
 				SeasonFolderFormat:       "Season {season}",
 				SpecialsFolderFormat:     "Specials",
-				IncludeSeriesTitle:       true,
-				IncludeEpisodeTitle:      false,
-				IncludeQuality:           false,
-				ReplaceSpaces:            true,
-				Separator:                " - ",
-				NumberStyle:              "S{season:00}E{episode:00}",
+				ColonReplacementFormat:   sonarr.ColonDelete,
 			},
 			WithError: nil,
 		},
@@ -109,12 +99,6 @@ func TestUpdateNaming(t *testing.T) {
 				SeriesFolderFormat:       "{Series Title}",
 				SeasonFolderFormat:       "Season {season}",
 				SpecialsFolderFormat:     "Specials",
-				IncludeSeriesTitle:       true,
-				IncludeEpisodeTitle:      false,
-				IncludeQuality:           false,
-				ReplaceSpaces:            true,
-				Separator:                " - ",
-				NumberStyle:              "S{season:00}E{episode:00}",
 			},
 			WithError: nil,
 		},

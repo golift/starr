@@ -12,18 +12,25 @@ import (
 // Define Base Path for Naming calls.
 const bpNaming = APIver + "/config/naming"
 
+// CRF is ColonReplacementFormat, for naming config.
+type CRF int
+
+// These are all of the possible Colon Replacement Formats (for naming config) in Sonarr.
+const (
+	ColonDelete CRF = iota
+	ColonReplaceWithDash
+	ColonReplaceWithSpaceDash
+	ColonReplaceWithSpaceDashSpace
+	ColonSmartReplace
+)
+
 // Naming represents the config/naming endpoint in Sonarr.
 type Naming struct {
 	RenameEpisodes           bool   `json:"renameEpisodes,omitempty"`
 	ReplaceIllegalCharacters bool   `json:"replaceIllegalCharacters,omitempty"`
-	IncludeQuality           bool   `json:"includeQuality,omitempty"`
-	IncludeSeriesTitle       bool   `json:"includeSeriesTitle,omitempty"`
-	IncludeEpisodeTitle      bool   `json:"includeEpisodeTitle,omitempty"`
-	ReplaceSpaces            bool   `json:"replaceSpaces,omitempty"`
+	ColonReplacementFormat   CRF    `json:"colonReplacementFormat,omitempty"`
 	ID                       int64  `json:"id,omitempty"`
 	MultiEpisodeStyle        int64  `json:"multiEpisodeStyle,omitempty"`
-	Separator                string `json:"separator,omitempty"`
-	NumberStyle              string `json:"numberStyle,omitempty"`
 	DailyEpisodeFormat       string `json:"dailyEpisodeFormat,omitempty"`
 	AnimeEpisodeFormat       string `json:"animeEpisodeFormat,omitempty"`
 	SeriesFolderFormat       string `json:"seriesFolderFormat,omitempty"`
@@ -56,9 +63,12 @@ func (s *Sonarr) UpdateNaming(naming *Naming) (*Naming, error) {
 
 // UpdateNamingContext updates the naming.
 func (s *Sonarr) UpdateNamingContext(ctx context.Context, naming *Naming) (*Naming, error) {
-	var output Naming
+	var (
+		output Naming
+		body   bytes.Buffer
+	)
 
-	var body bytes.Buffer
+	naming.ID = 1
 	if err := json.NewEncoder(&body).Encode(naming); err != nil {
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpNaming, err)
 	}
