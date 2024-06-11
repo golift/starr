@@ -112,9 +112,12 @@ func (r *Radarr) AddIndexer(indexer *IndexerInput) (*IndexerOutput, error) {
 
 // AddIndexerContext creates an indexer without testing it.
 func (r *Radarr) AddIndexerContext(ctx context.Context, indexer *IndexerInput) (*IndexerOutput, error) {
-	var output IndexerOutput
+	var (
+		output IndexerOutput
+		body   bytes.Buffer
+	)
 
-	var body bytes.Buffer
+	indexer.ID = 0
 	if err := json.NewEncoder(&body).Encode(indexer); err != nil {
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpIndexer, err)
 	}

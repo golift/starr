@@ -100,9 +100,12 @@ func (l *Lidarr) AddImportList(importList *ImportListInput) (*ImportListOutput, 
 
 // AddImportListContext creates an import list without testing it.
 func (l *Lidarr) AddImportListContext(ctx context.Context, importList *ImportListInput) (*ImportListOutput, error) {
-	var output ImportListOutput
+	var (
+		output ImportListOutput
+		body   bytes.Buffer
+	)
 
-	var body bytes.Buffer
+	importList.ID = 0
 	if err := json.NewEncoder(&body).Encode(importList); err != nil {
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpImportList, err)
 	}
