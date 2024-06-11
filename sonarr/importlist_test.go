@@ -208,7 +208,7 @@ func TestAddImportList(t *testing.T) {
 	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "importList"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "importList?forceSave=true"),
 			ExpectedMethod: "POST",
 			ResponseStatus: 200,
 			WithRequest: &sonarr.ImportListInput{
@@ -271,7 +271,7 @@ func TestAddImportList(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "importList"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "importList?forceSave=true"),
 			ExpectedMethod: "POST",
 			ResponseStatus: 404,
 			WithRequest: &sonarr.ImportListInput{

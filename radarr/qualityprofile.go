@@ -66,9 +66,12 @@ func (r *Radarr) AddQualityProfile(profile *QualityProfile) (*QualityProfile, er
 
 // AddQualityProfileContext updates a quality profile in place.
 func (r *Radarr) AddQualityProfileContext(ctx context.Context, profile *QualityProfile) (*QualityProfile, error) {
-	var output QualityProfile
+	var (
+		output QualityProfile
+		body   bytes.Buffer
+	)
 
-	var body bytes.Buffer
+	profile.ID = 0
 	if err := json.NewEncoder(&body).Encode(profile); err != nil {
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpQualityProfile, err)
 	}

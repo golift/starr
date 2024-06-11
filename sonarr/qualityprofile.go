@@ -67,9 +67,12 @@ func (s *Sonarr) AddQualityProfile(profile *QualityProfile) (*QualityProfile, er
 
 // AddQualityProfileContext creates a quality profile.
 func (s *Sonarr) AddQualityProfileContext(ctx context.Context, profile *QualityProfile) (*QualityProfile, error) {
-	var output QualityProfile
+	var (
+		output QualityProfile
+		body   bytes.Buffer
+	)
 
-	var body bytes.Buffer
+	profile.ID = 0
 	if err := json.NewEncoder(&body).Encode(profile); err != nil {
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpQualityProfile, err)
 	}

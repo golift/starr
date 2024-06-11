@@ -77,23 +77,26 @@ func (r *Readarr) GetDownloadClientContext(ctx context.Context, downloadclientID
 	return &output, nil
 }
 
-// AddDownloadClient creates a download client.
+// AddDownloadClient creates a download client without testing it.
 func (r *Readarr) AddDownloadClient(downloadclient *DownloadClientInput) (*DownloadClientOutput, error) {
 	return r.AddDownloadClientContext(context.Background(), downloadclient)
 }
 
-// AddDownloadClientContext creates a download client.
+// AddDownloadClientContext creates a download client without testing it.
 func (r *Readarr) AddDownloadClientContext(ctx context.Context,
 	client *DownloadClientInput,
 ) (*DownloadClientOutput, error) {
-	var output DownloadClientOutput
+	var (
+		output DownloadClientOutput
+		body   bytes.Buffer
+	)
 
-	var body bytes.Buffer
+	client.ID = 0
 	if err := json.NewEncoder(&body).Encode(client); err != nil {
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpDownloadClient, err)
 	}
 
-	req := starr.Request{URI: bpDownloadClient, Body: &body}
+	req := starr.Request{URI: bpDownloadClient, Body: &body, Query: url.Values{"forceSave": []string{"true"}}}
 	if err := r.PostInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}

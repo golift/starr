@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"golift.io/starr"
 )
 
@@ -39,7 +40,7 @@ func TestReqError(t *testing.T) {
 	t.Parallel()
 
 	err := &starr.ReqError{Code: http.StatusForbidden}
-	assert.ErrorIs(t, err, starr.ErrInvalidStatusCode)
+	require.ErrorIs(t, err, starr.ErrInvalidStatusCode)
 	assert.Equal(t, "invalid status code, 403 >= 300", err.Error())
 
 	err.Body = []byte("Some Body")

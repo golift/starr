@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // MockData allows generic testing of http inputs and outputs.
@@ -54,11 +55,11 @@ func (test *MockData) GetMockServer(t *testing.T) *httptest.Server {
 			"test.ExpectedMethod does not match the actual method")
 
 		body, err := io.ReadAll(req.Body)
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.EqualValues(t, test.ExpectedRequest, string(body),
 			"test.ExpectedRequest does not match body for actual request")
 
 		_, err = writer.Write([]byte(test.ResponseBody))
-		assert.NoError(t, err)
+		require.NoError(t, err)
 	}))
 }

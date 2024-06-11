@@ -17,8 +17,6 @@ const namingBody = `{
 	"colonReplacementFormat": "delete",
 	"standardMovieFormat": "{Movie.Title}.{Release.Year}.{Quality.Title}",
 	"movieFolderFormat": "{Movie Title} ({Release Year})",
-	"includeQuality": true,
-	"replaceSpaces": true,
 	"id": 1
   }`
 
@@ -35,10 +33,8 @@ func TestGetNaming(t *testing.T) {
 			WithResponse: &radarr.Naming{
 				ID:                       1,
 				ReplaceIllegalCharacters: true,
-				IncludeQuality:           true,
-				ReplaceSpaces:            true,
 				RenameMovies:             true,
-				ColonReplacementFormat:   "delete",
+				ColonReplacementFormat:   radarr.ColonDelete,
 				StandardMovieFormat:      "{Movie.Title}.{Release.Year}.{Quality.Title}",
 				MovieFolderFormat:        "{Movie Title} ({Release Year})",
 			},
@@ -87,8 +83,6 @@ func TestUpdateNaming(t *testing.T) {
 			WithResponse: &radarr.Naming{
 				ID:                       1,
 				ReplaceIllegalCharacters: true,
-				IncludeQuality:           true,
-				ReplaceSpaces:            true,
 				RenameMovies:             true,
 				ColonReplacementFormat:   "delete",
 				StandardMovieFormat:      "{Movie.Title}.{Release.Year}.{Quality.Title}",

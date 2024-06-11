@@ -48,12 +48,15 @@ func (r *Readarr) AddQualityProfile(profile *QualityProfile) (int64, error) {
 
 // AddQualityProfileContext updates a quality profile in place.
 func (r *Readarr) AddQualityProfileContext(ctx context.Context, profile *QualityProfile) (int64, error) {
-	var body bytes.Buffer
+	var (
+		output QualityProfile
+		body   bytes.Buffer
+	)
+
+	profile.ID = 0
 	if err := json.NewEncoder(&body).Encode(profile); err != nil {
 		return 0, fmt.Errorf("json.Marshal(%s): %w", bpQualityProfile, err)
 	}
-
-	var output QualityProfile
 
 	req := starr.Request{URI: bpQualityProfile, Body: &body}
 	if err := r.PostInto(ctx, req, &output); err != nil {

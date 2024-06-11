@@ -45,7 +45,7 @@ func (a App) Lower() string {
 func Client(timeout time.Duration, verifySSL bool) *http.Client {
 	return &http.Client{
 		Timeout: timeout,
-		CheckRedirect: func(r *http.Request, via []*http.Request) error {
+		CheckRedirect: func(_ *http.Request, _ []*http.Request) error {
 			return http.ErrUseLastResponse
 		},
 		Transport: &http.Transport{
@@ -238,7 +238,7 @@ func (o *QueueDeleteOpts) Values() url.Values {
 
 // PlayTime is used in at least Sonarr, maybe other places.
 // Holds a string duration converted from hh:mm:ss.
-type PlayTime struct { //nolint:musttag
+type PlayTime struct {
 	Original string
 	time.Duration
 }
