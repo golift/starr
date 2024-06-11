@@ -86,7 +86,7 @@ func TestUpdateNaming(t *testing.T) {
 			WithRequest: &sonarr.Naming{
 				ReplaceIllegalCharacters: true,
 			},
-			ExpectedRequest: `{"replaceIllegalCharacters":true}` + "\n",
+			ExpectedRequest: `{"replaceIllegalCharacters":true,"id":1}` + "\n",
 			ResponseBody:    namingBody,
 			WithResponse: &sonarr.Naming{
 				ID:                       1,
@@ -109,7 +109,7 @@ func TestUpdateNaming(t *testing.T) {
 			WithRequest: &sonarr.Naming{
 				ReplaceIllegalCharacters: true,
 			},
-			ExpectedRequest: `{"replaceIllegalCharacters":true}` + "\n",
+			ExpectedRequest: `{"replaceIllegalCharacters":true,"id":1}` + "\n",
 			ResponseStatus:  404,
 			ResponseBody:    `{"message": "NotFound"}`,
 			WithError:       &starr.ReqError{Code: http.StatusNotFound},
