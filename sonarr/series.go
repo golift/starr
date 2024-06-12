@@ -124,6 +124,7 @@ type Season struct {
 
 // Statistics is part of AddSeriesInput and Queue.
 type Statistics struct {
+	SeasonCount       int       `json:"seasonCount"`
 	EpisodeFileCount  int       `json:"episodeFileCount"`
 	EpisodeCount      int       `json:"episodeCount"`
 	TotalEpisodeCount int       `json:"totalEpisodeCount"`
