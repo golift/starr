@@ -12,6 +12,18 @@ import (
 // Define Base Path for Naming calls.
 const bpNaming = APIver + "/config/naming"
 
+// CRF is ColonReplacementFormat, for naming config.
+type CRF int
+
+// These are all of the possible Colon Replacement Formats (for naming config) in Lidarr.
+const (
+	ColonDelete CRF = iota
+	ColonReplaceWithDash
+	ColonReplaceWithSpaceDash
+	ColonReplaceWithSpaceDashSpace
+	ColonSmartReplace
+)
+
 // Naming represents the config/naming endpoint in Lidarr.
 type Naming struct {
 	RenameTracks             bool   `json:"renameTracks"`
@@ -20,7 +32,7 @@ type Naming struct {
 	IncludeAlbumTitle        bool   `json:"includeAlbumTitle"`
 	IncludeQuality           bool   `json:"includeQuality"`
 	ReplaceSpaces            bool   `json:"replaceSpaces"`
-	ColonReplacementFormat   int    `json:"colonReplacementFormat"`
+	ColonReplacementFormat   CRF    `json:"colonReplacementFormat"`
 	ID                       int64  `json:"id"`
 	StandardTrackFormat      string `json:"standardTrackFormat"`
 	MultiDiscTrackFormat     string `json:"multiDiscTrackFormat"`
