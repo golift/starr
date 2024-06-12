@@ -124,13 +124,14 @@ type Season struct {
 
 // Statistics is part of AddSeriesInput and Queue.
 type Statistics struct {
-	SeasonCount       int       `json:"seasonCount"`
 	EpisodeFileCount  int       `json:"episodeFileCount"`
 	EpisodeCount      int       `json:"episodeCount"`
 	TotalEpisodeCount int       `json:"totalEpisodeCount"`
 	SizeOnDisk        int64     `json:"sizeOnDisk"`
 	PercentOfEpisodes float64   `json:"percentOfEpisodes"`
 	PreviousAiring    time.Time `json:"previousAiring"`
+	NextAiring        time.Time `json:"nextAiring"`
+	ReleaseGroups     []string  `json:"releaseGroups"`
 }
 
 // GetAllSeries returns all configured series.
