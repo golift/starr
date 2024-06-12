@@ -12,7 +12,7 @@ import (
 // Define Base Path for Naming calls.
 const bpNaming = APIver + "/config/naming"
 
-// Naming represents the config/naming endpoint in Radarr.
+// Naming represents the config/naming endpoint in Readarr.
 type Naming struct {
 	RenameBooks              bool   `json:"renameBooks"`
 	ReplaceIllegalCharacters bool   `json:"replaceIllegalCharacters"`
