@@ -61,7 +61,7 @@ type ParseOutput struct {
 	ID                int64                 `json:"id"`
 	Title             string                `json:"title"`
 	// You need to check this for nil before accessing it.
-	// If the parse failed, this wont exist, and you wont get an error.
+	// If the parse failed, this won't exist, and you won't get an error.
 	ParsedEpisodeInfo *ParsedEpisodeInfo `json:"parsedEpisodeInfo"`
 }
 
