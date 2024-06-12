@@ -31,6 +31,7 @@ This library is currently in use by:
 -   [Notifiarr](https://github.com/Notifiarr/notifiarr/) (a lot of it)
 -   [Checkrr](https://github.com/aetaric/checkrr/)
 -   [telegram-bot](https://github.com/woiza/telegram-bot-radarr) (radarr)
+-   [telegram-bot2](https://github.com/woiza/telegram-bot-sonarr) (sonarr)
 
 # Usage
 
