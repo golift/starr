@@ -88,8 +88,10 @@ type AddSeriesOptions struct {
 	Monitor                      MonitorType `json:"monitor,omitempty"`
 }
 
+// MonitorType is part of the AddSeriesOptions.
 type MonitorType string
 
+// These are the possible values for the monitor option when adding a new series.
 const (
 	MonitorUnknown           MonitorType = "unknown"
 	MonitorAll               MonitorType = "all"
