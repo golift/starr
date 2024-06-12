@@ -81,12 +81,33 @@ type Series struct {
 
 // AddSeriesOptions is part of AddSeriesInput.
 type AddSeriesOptions struct {
-	SearchForMissingEpisodes     bool   `json:"searchForMissingEpisodes"`
-	SearchForCutoffUnmetEpisodes bool   `json:"searchForCutoffUnmetEpisodes,omitempty"`
-	Monitor                      string `json:"monitor,omitempty"`
-	IgnoreEpisodesWithFiles      bool   `json:"ignoreEpisodesWithFiles,omitempty"`
-	IgnoreEpisodesWithoutFiles   bool   `json:"ignoreEpisodesWithoutFiles,omitempty"`
+	SearchForMissingEpisodes     bool        `json:"searchForMissingEpisodes"`
+	SearchForCutoffUnmetEpisodes bool        `json:"searchForCutoffUnmetEpisodes,omitempty"`
+	IgnoreEpisodesWithFiles      bool        `json:"ignoreEpisodesWithFiles,omitempty"`
+	IgnoreEpisodesWithoutFiles   bool        `json:"ignoreEpisodesWithoutFiles,omitempty"`
+	Monitor                      MonitorType `json:"monitor,omitempty"`
 }
+
+// MonitorType is part of the AddSeriesOptions.
+type MonitorType string
+
+// These are the possible values for the monitor option when adding a new series.
+const (
+	MonitorUnknown           MonitorType = "unknown"
+	MonitorAll               MonitorType = "all"
+	MonitorFuture            MonitorType = "future"
+	MonitorMissing           MonitorType = "missing"
+	MonitorExisting          MonitorType = "existing"
+	MonitorFirstSeason       MonitorType = "firstSeason"
+	MonitorLastSeason        MonitorType = "lastSeason"
+	MonitorLatestSeason      MonitorType = "latestSeason" // obsolete
+	MonitorPilot             MonitorType = "pilot"
+	MonitorRecent            MonitorType = "recent"
+	MonitorMonitorSpecials   MonitorType = "monitorSpecials"
+	MonitorUnmonitorSpecials MonitorType = "unmonitorSpecials"
+	MonitorNone              MonitorType = "none"
+	MonitorSkip              MonitorType = "skip"
+)
 
 // AlternateTitle is part of a AddSeriesInput.
 type AlternateTitle struct {
