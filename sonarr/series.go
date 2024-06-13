@@ -131,6 +131,8 @@ type Statistics struct {
 	SizeOnDisk        int64     `json:"sizeOnDisk"`
 	PercentOfEpisodes float64   `json:"percentOfEpisodes"`
 	PreviousAiring    time.Time `json:"previousAiring"`
+	NextAiring        time.Time `json:"nextAiring"`
+	ReleaseGroups     []string  `json:"releaseGroups"`
 }
 
 // GetAllSeries returns all configured series.
