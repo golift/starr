@@ -9,7 +9,7 @@ import (
 	"golift.io/starr"
 )
 
-const bpHistory = APIver + "history"
+const bpHistory = APIver + "/history"
 
 // History is the /api/v3/history endpoint.
 type History struct {
