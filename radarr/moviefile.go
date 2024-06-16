@@ -72,6 +72,23 @@ func (r *Radarr) GetMovieFileContext(ctx context.Context, movieID int64) ([]*Mov
 	return output, nil
 }
 
+// GetMovieFileByID grabs a movie from the database by DB [movieFile] ID.
+func (r *Radarr) GetMovieFileByID(movieFileID int64) (*MovieFile, error) {
+	return r.GetMovieFileByIDContext(context.Background(), movieFileID)
+}
+
+// GetMovieFileByIDContext grabs a movie from the database by DB [movieFile] ID.
+func (r *Radarr) GetMovieFileByIDContext(ctx context.Context, movieFileID int64) (*MovieFile, error) {
+	var output MovieFile
+
+	req := starr.Request{URI: path.Join(bpMovieFile, fmt.Sprint(movieFileID))}
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
+	}
+
+	return &output, nil
+}
+
 // GetMovieFiles returns the movie file(s) requested.
 func (r *Radarr) GetMovieFiles(movieFileIDs []int64) ([]*MovieFile, error) {
 	return r.GetMovieFilesContext(context.Background(), movieFileIDs)
