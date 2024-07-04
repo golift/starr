@@ -154,12 +154,12 @@ type Grab struct {
 	Protocol                 starr.Protocol `json:"protocol"`
 }
 
-// Grab adds a release and attempts to download it. Use this with Prowl*rr search output.
+// Grab adds a release and attempts to download it. Use this with Pr*wlarr search output.
 func (s *Sonarr) Grab(guid string, indexerID int64) (*Grab, error) {
 	return s.GrabContext(context.Background(), guid, indexerID)
 }
 
-// GrabContext adds a release and attempts to download it. Use this with Prowl*rr search output.
+// GrabContext adds a release and attempts to download it. Use this with Pr*wlarr search output.
 func (s *Sonarr) GrabContext(ctx context.Context, guid string, indexerID int64) (*Grab, error) {
 	return s.GrabReleaseContext(ctx, &Release{IndexerID: indexerID, GUID: guid})
 }
