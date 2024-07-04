@@ -123,35 +123,45 @@ func (s *Sonarr) SearchReleaseContext(ctx context.Context, input *SearchRelease)
 	return output, nil
 }
 
-// Grab is the output from the GrabRelease method.
+// Grab is the output from the Grab* methods.
 type Grab struct {
-	GUID                     string         `json:"guid"`
-	QualityWeight            int64          `json:"qualityWeight"`
-	Age                      int64          `json:"age"`
+	Approved                 bool           `json:"approved"`
+	DownloadAllowed          bool           `json:"downloadAllowed"`
+	EpisodeRequested         bool           `json:"episodeRequested"`
+	FullSeason               bool           `json:"fullSeason"`
+	Special                  bool           `json:"special"`
+	TemporarilyRejected      bool           `json:"temporarilyRejected"`
+	IsAbsoluteNumbering      bool           `json:"isAbsoluteNumbering"`
+	IsDaily                  bool           `json:"isDaily"`
+	IsPossibleSpecialEpisode bool           `json:"isPossibleSpecialEpisode"`
+	Rejected                 bool           `json:"rejected"`
+	SceneSource              bool           `json:"sceneSource"`
 	AgeHours                 int            `json:"ageHours"`
 	AgeMinutes               int            `json:"ageMinutes"`
-	Size                     int            `json:"size"`
-	IndexerID                int64          `json:"indexerId"`
-	FullSeason               bool           `json:"fullSeason"`
-	SceneSource              bool           `json:"sceneSource"`
 	SeasonNumber             int            `json:"seasonNumber"`
-	LanguageWeight           int64          `json:"languageWeight"`
-	Approved                 bool           `json:"approved"`
-	TemporarilyRejected      bool           `json:"temporarilyRejected"`
-	Rejected                 bool           `json:"rejected"`
-	TvdbID                   int64          `json:"tvdbId"`
-	TvRageID                 int64          `json:"tvRageId"`
-	PublishDate              time.Time      `json:"publishDate"`
-	EpisodeRequested         bool           `json:"episodeRequested"`
-	DownloadAllowed          bool           `json:"downloadAllowed"`
-	ReleaseWeight            int64          `json:"releaseWeight"`
+	Size                     int            `json:"size"`
+	Age                      int64          `json:"age"`
 	CustomFormatScore        int64          `json:"customFormatScore"`
-	Protocol                 starr.Protocol `json:"protocol"`
 	IndexerFlags             int64          `json:"indexerFlags"`
-	IsDaily                  bool           `json:"isDaily"`
-	IsAbsoluteNumbering      bool           `json:"isAbsoluteNumbering"`
-	IsPossibleSpecialEpisode bool           `json:"isPossibleSpecialEpisode"`
-	Special                  bool           `json:"special"`
+	IndexerID                int64          `json:"indexerId"`
+	LanguageWeight           int64          `json:"languageWeight"`
+	QualityWeight            int64          `json:"qualityWeight"`
+	ReleaseWeight            int64          `json:"releaseWeight"`
+	TvRageID                 int64          `json:"tvRageId"`
+	TvdbID                   int64          `json:"tvdbId"`
+	PublishDate              time.Time      `json:"publishDate"`
+	GUID                     string         `json:"guid"`
+	Protocol                 starr.Protocol `json:"protocol"`
+}
+
+// Grab adds a release and attempts to download it. Use this with Prowlarr search output.
+func (s *Sonarr) Grab(guid string, indexerID int64) (*Grab, error) {
+	return s.GrabContext(context.Background(), guid, indexerID)
+}
+
+// GrabContext adds a release and attempts to download it. Use this with Prowlarr search output.
+func (s *Sonarr) GrabContext(ctx context.Context, guid string, indexerID int64) (*Grab, error) {
+	return s.GrabReleaseContext(ctx, &Release{IndexerID: indexerID, GUID: guid})
 }
 
 // GrabRelease adds a release and attempts to download it.
