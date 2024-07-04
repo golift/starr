@@ -23,7 +23,7 @@ type DownloadClientInput struct {
 	Implementation     string              `json:"implementation"`
 	ImplementationName string              `json:"implementationName"`
 	Name               string              `json:"name"`
-	Protocol           string              `json:"protocol"`
+	Protocol           starr.Protocol      `json:"protocol"`
 	Tags               []int               `json:"tags"`
 	Fields             []*starr.FieldInput `json:"fields"`
 }
@@ -38,7 +38,7 @@ type DownloadClientOutput struct {
 	ImplementationName string               `json:"implementationName"`
 	InfoLink           string               `json:"infoLink"`
 	Name               string               `json:"name"`
-	Protocol           string               `json:"protocol"`
+	Protocol           starr.Protocol       `json:"protocol"`
 	Tags               []int                `json:"tags"`
 	Fields             []*starr.FieldOutput `json:"fields"`
 }

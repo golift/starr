@@ -23,7 +23,7 @@ type IndexerInput struct {
 	ConfigContract          string              `json:"configContract"`
 	Implementation          string              `json:"implementation"`
 	Name                    string              `json:"name"`
-	Protocol                string              `json:"protocol"`
+	Protocol                starr.Protocol      `json:"protocol"`
 	Tags                    []int               `json:"tags"`
 	Fields                  []*starr.FieldInput `json:"fields"`
 }
@@ -42,7 +42,7 @@ type IndexerOutput struct {
 	ImplementationName      string               `json:"implementationName"`
 	InfoLink                string               `json:"infoLink"`
 	Name                    string               `json:"name"`
-	Protocol                string               `json:"protocol"`
+	Protocol                starr.Protocol       `json:"protocol"`
 	Tags                    []int                `json:"tags"`
 	Fields                  []*starr.FieldOutput `json:"fields"`
 }

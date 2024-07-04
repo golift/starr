@@ -314,3 +314,13 @@ func Itoa(val int64) string {
 	const base10 = 10
 	return strconv.FormatInt(val, base10)
 }
+
+// Protocol used to download media. Comes with enum constants.
+type Protocol string
+
+// These are all the starr-supported protocols.
+const (
+	ProtocolUnknown Protocol = "unknown"
+	ProtocolUsenet  Protocol = "usenet"
+	ProtocolTorrent Protocol = "torrent"
+)

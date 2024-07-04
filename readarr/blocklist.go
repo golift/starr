@@ -34,7 +34,7 @@ type BlockListRecord struct {
 	AuthorID      int64          `json:"authorId"`
 	Date          time.Time      `json:"date"`
 	SourceTitle   string         `json:"sourceTitle"`
-	Protocol      string         `json:"protocol"`
+	Protocol      starr.Protocol `json:"protocol"`
 	Indexer       string         `json:"indexer"`
 	Message       string         `json:"message"`
 }
