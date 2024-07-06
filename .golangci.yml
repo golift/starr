@@ -44,3 +44,6 @@ linters-settings:
 
 run:
   timeout: 5m
+
+output:
+  sort-results: true
