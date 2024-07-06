@@ -121,10 +121,10 @@ func (r *Radarr) GetMovieContext(ctx context.Context, getMovie *GetMovie) ([]*Mo
 
 	params := make(url.Values)
 	if getMovie.TMDBID != 0 {
-		params.Set("tmdbId", fmt.Sprint(getMovie.TMDBID))
+		params.Set("tmdbId", starr.Itoa(getMovie.TMDBID))
 	} else {
 		// excludeLocalCovers can only be true without a tmdbid.
-		params.Set("excludeLocalCovers", fmt.Sprint(getMovie.ExcludeLocalCovers))
+		params.Set("excludeLocalCovers", starr.Itoa(getMovie.ExcludeLocalCovers))
 	}
 
 	var output []*Movie
@@ -146,7 +146,7 @@ func (r *Radarr) GetMovieByID(movieID int64) (*Movie, error) {
 func (r *Radarr) GetMovieByIDContext(ctx context.Context, movieID int64) (*Movie, error) {
 	var output Movie
 
-	req := starr.Request{URI: path.Join(bpMovie, fmt.Sprint(movieID))}
+	req := starr.Request{URI: path.Join(bpMovie, starr.Itoa(movieID))}
 	if err := r.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -169,11 +169,11 @@ func (r *Radarr) UpdateMovieContext(ctx context.Context, movieID int64, movie *M
 	var output Movie
 
 	req := starr.Request{
-		URI:   path.Join(bpMovie, fmt.Sprint(movieID)),
+		URI:   path.Join(bpMovie, starr.Itoa(movieID)),
 		Query: make(url.Values),
 		Body:  &body,
 	}
-	req.Query.Add("moveFiles", fmt.Sprint(moveFiles))
+	req.Query.Add("moveFiles", starr.Itoa(moveFiles))
 
 	if err := r.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
@@ -234,7 +234,7 @@ func (r *Radarr) LookupID(movieID int64) (*Movie, error) {
 
 // LookupIDContext will return a movie by its ID using a context.
 func (r *Radarr) LookupIDContext(ctx context.Context, movieID int64) (*Movie, error) {
-	return r.lookupSubContext(ctx, fmt.Sprint(movieID), "", "")
+	return r.lookupSubContext(ctx, starr.Itoa(movieID), "", "")
 }
 
 // LookupIMDB will search IMDB for the imdbId provided.
@@ -254,7 +254,7 @@ func (r *Radarr) LookupTMDB(tmdbID int64) (*Movie, error) {
 
 // LookupTMDBContext will search TMDB for the tmdbID provided using a context.
 func (r *Radarr) LookupTMDBContext(ctx context.Context, tmdbID int64) (*Movie, error) {
-	return r.lookupSubContext(ctx, "tmdb", "tmdbId", fmt.Sprint(tmdbID))
+	return r.lookupSubContext(ctx, "tmdb", "tmdbId", starr.Itoa(tmdbID))
 }
 
 // lookupSubContext abstracts lookup requests.
@@ -281,9 +281,9 @@ func (r *Radarr) DeleteMovie(movieID int64, deleteFiles, addImportExclusion bool
 
 // DeleteMovieContext removes a movie from the database. Setting deleteFiles true will delete all content for the movie.
 func (r *Radarr) DeleteMovieContext(ctx context.Context, movieID int64, deleteFiles, addImportExclusion bool) error {
-	req := starr.Request{URI: path.Join(bpMovie, fmt.Sprint(movieID)), Query: make(url.Values)}
-	req.Query.Set("deleteFiles", fmt.Sprint(deleteFiles))
-	req.Query.Set("addImportExclusion", fmt.Sprint(addImportExclusion))
+	req := starr.Request{URI: path.Join(bpMovie, starr.Itoa(movieID)), Query: make(url.Values)}
+	req.Query.Set("deleteFiles", starr.Itoa(deleteFiles))
+	req.Query.Set("addImportExclusion", starr.Itoa(addImportExclusion))
 
 	if err := r.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)

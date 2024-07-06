@@ -107,7 +107,7 @@ func (r *Radarr) DeleteImportListContext(ctx context.Context, ids []int64) error
 	var errs string
 
 	for _, id := range ids {
-		req := starr.Request{URI: path.Join(bpImportList, fmt.Sprint(id))}
+		req := starr.Request{URI: path.Join(bpImportList, starr.Itoa(id))}
 		if err := r.DeleteAny(ctx, req); err != nil {
 			errs += fmt.Errorf("api.Delete(%s): %w", &req, err).Error() + " "
 		}
@@ -161,9 +161,9 @@ func (r *Radarr) UpdateImportListContext(
 	var output ImportListOutput
 
 	req := starr.Request{
-		URI:   path.Join(bpImportList, fmt.Sprint(importList.ID)),
+		URI:   path.Join(bpImportList, starr.Itoa(importList.ID)),
 		Body:  &body,
-		Query: url.Values{"forceSave": []string{fmt.Sprint(force)}},
+		Query: url.Values{"forceSave": []string{starr.Itoa(force)}},
 	}
 	if err := r.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)

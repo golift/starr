@@ -75,7 +75,7 @@ func (r *Radarr) GetIndexer(indexerID int64) (*IndexerOutput, error) {
 func (r *Radarr) GetIndexerContext(ctx context.Context, indexerID int64) (*IndexerOutput, error) {
 	var output IndexerOutput
 
-	req := starr.Request{URI: path.Join(bpIndexer, fmt.Sprint(indexerID))}
+	req := starr.Request{URI: path.Join(bpIndexer, starr.Itoa(indexerID))}
 	if err := r.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -145,9 +145,9 @@ func (r *Radarr) UpdateIndexerContext(ctx context.Context, indexer *IndexerInput
 	}
 
 	req := starr.Request{
-		URI:   path.Join(bpIndexer, fmt.Sprint(indexer.ID)),
+		URI:   path.Join(bpIndexer, starr.Itoa(indexer.ID)),
 		Body:  &body,
-		Query: url.Values{"forceSave": []string{fmt.Sprint(force)}},
+		Query: url.Values{"forceSave": []string{starr.Itoa(force)}},
 	}
 	if err := r.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
@@ -163,7 +163,7 @@ func (r *Radarr) DeleteIndexer(indexerID int64) error {
 
 // DeleteIndexerContext removes a single indexer.
 func (r *Radarr) DeleteIndexerContext(ctx context.Context, indexerID int64) error {
-	req := starr.Request{URI: path.Join(bpIndexer, fmt.Sprint(indexerID))}
+	req := starr.Request{URI: path.Join(bpIndexer, starr.Itoa(indexerID))}
 	if err := r.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

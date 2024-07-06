@@ -30,7 +30,7 @@ func (r *Radarr) GetCalendarContext(ctx context.Context, filter Calendar) ([]*Mo
 	var output []*Movie
 
 	req := starr.Request{URI: bpCalendar, Query: make(url.Values)}
-	req.Query.Add("unmonitored", fmt.Sprint(filter.Unmonitored))
+	req.Query.Add("unmonitored", starr.Itoa(filter.Unmonitored))
 
 	if !filter.Start.IsZero() {
 		req.Query.Add("start", filter.Start.UTC().Format(starr.CalendarTimeFilterFormat))
@@ -60,7 +60,7 @@ func (r *Radarr) GetCalendarID(calendarID int64) (*Movie, error) {
 func (r *Radarr) GetCalendarIDContext(ctx context.Context, calendarID int64) (*Movie, error) {
 	var output *Movie
 
-	req := starr.Request{URI: path.Join(bpCalendar, fmt.Sprint(calendarID))}
+	req := starr.Request{URI: path.Join(bpCalendar, starr.Itoa(calendarID))}
 	if err := r.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
