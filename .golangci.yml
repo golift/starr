@@ -31,13 +31,20 @@ linters:
     - musttag
     # fix these so they work
     - tagalign
-    - depguard
 
+linters-settings:
 # One day we'll fix all the field alignments. Anyone got a tool that just does it?
-#linters-settings:
 #  govet:
 #    enable:
 #      - fieldalignment
+   depguard:
+     rules:
+       main:
+        files:
+          - $all
+        allow:
+          - $gostd
+          - github.com/stretchr/testify
 
 run:
   timeout: 5m
