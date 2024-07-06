@@ -1,7 +1,9 @@
 package prowlarr
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/url"
 	"time"
@@ -99,4 +101,61 @@ func (p *Prowlarr) SearchContext(ctx context.Context, search SearchInput) ([]*Se
 	}
 
 	return output, nil
+}
+
+// Grab is the output from the /search POST endpoint.
+// GUID may be the only member with a value set.
+type Grab struct {
+	GUID        string         `json:"guid"`
+	Age         int64          `json:"age"`
+	AgeHours    int            `json:"ageHours"`
+	AgeMinutes  int            `json:"ageMinutes"`
+	Size        int            `json:"size"`
+	IndexerID   int64          `json:"indexerId"`
+	ImdbID      int64          `json:"imdbId"`
+	TmdbID      int64          `json:"tmdbId"`
+	TvdbID      int64          `json:"tvdbId"`
+	TvMazeID    int64          `json:"tvMazeId"`
+	PublishDate time.Time      `json:"publishDate"`
+	Protocol    starr.Protocol `json:"protocol"`
+	FileName    string         `json:"fileName"`
+}
+
+// Grab attempts to download a searched item by guid. Use this with Pr*wlarr search output.
+func (p *Prowlarr) Grab(guid string, indexerID int64) (*Grab, error) {
+	return p.GrabContext(context.Background(), guid, indexerID)
+}
+
+// GrabContext attempts to download a searched item by guid. Use this with Pr*wlarr search output.
+func (p *Prowlarr) GrabContext(ctx context.Context, guid string, indexerID int64) (*Grab, error) {
+	return p.GrabSearchContext(ctx, &Search{IndexerID: indexerID, GUID: guid})
+}
+
+// GrabSearch attempts to download an item returned from a search.
+// Pass the search for the item from the Search() output.
+func (p *Prowlarr) GrabSearch(search *Search) (*Grab, error) {
+	return p.GrabSearchContext(context.Background(), search)
+}
+
+// GrabSearchContext attempts to download an item returned from a search.
+// Pass the search for the item from the Search() output.
+func (p *Prowlarr) GrabSearchContext(ctx context.Context, search *Search) (*Grab, error) {
+	grab := struct { // We only use/need the guid and indexerID from the search.
+		G string `json:"guid"`
+		I int64  `json:"indexerId"`
+	}{G: search.GUID, I: search.IndexerID}
+
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(&grab); err != nil {
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpSearch, err)
+	}
+
+	var output Grab
+
+	req := starr.Request{URI: bpSearch, Body: &body}
+	if err := p.PostInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
+	}
+
+	return &output, nil
 }
