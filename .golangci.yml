@@ -28,18 +28,20 @@ linters:
 
 
 linters-settings:
+  ireturn:
+    allow: generic,stdlib,error
 # One day we'll fix all the field alignments. Anyone got a tool that just does it?
 #  govet:
 #    enable:
-#      - fieldalignment
-   depguard:
-     rules:
-       main:
+#    - fieldalignment
+  depguard:
+    rules:
+      main:
         files:
-          - $all
+        - $all
         allow:
-          - $gostd
-          - github.com/stretchr/testify
+        - $gostd
+        - github.com/stretchr/testify
 
 run:
   timeout: 5m
