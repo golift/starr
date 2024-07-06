@@ -134,7 +134,7 @@ func (s *Sonarr) FailContext(ctx context.Context, historyID int64) error {
 	var output interface{} // any ok
 
 	// Strangely uses a POST without a payload.
-	req := starr.Request{URI: path.Join(bpHistory, "failed", fmt.Sprint(historyID))}
+	req := starr.Request{URI: path.Join(bpHistory, "failed", starr.Str(historyID))}
 	if err := s.PostInto(ctx, req, &output); err != nil {
 		return fmt.Errorf("api.Post(%s): %w", &req, err)
 	}

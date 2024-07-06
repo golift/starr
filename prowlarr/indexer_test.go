@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"golift.io/starr"
 	"golift.io/starr/prowlarr"
 	"golift.io/starr/starrtest"
@@ -227,7 +228,7 @@ func TestGetIndexers(t *testing.T) {
 			mockServer := test.GetMockServer(t)
 			client := prowlarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.GetIndexers()
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
@@ -267,7 +268,7 @@ func TestGetIndexer(t *testing.T) {
 			mockServer := test.GetMockServer(t)
 			client := prowlarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.GetIndexer(test.WithRequest.(int64))
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
@@ -344,7 +345,7 @@ func TestAddIndexer(t *testing.T) {
 			mockServer := test.GetMockServer(t)
 			client := prowlarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.AddIndexer(test.WithRequest.(*prowlarr.IndexerInput))
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
@@ -423,7 +424,7 @@ func TestUpdateIndexer(t *testing.T) {
 			mockServer := test.GetMockServer(t)
 			client := prowlarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.UpdateIndexer(test.WithRequest.(*prowlarr.IndexerInput), false)
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
@@ -460,7 +461,7 @@ func TestDeleteIndexer(t *testing.T) {
 			mockServer := test.GetMockServer(t)
 			client := prowlarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			err := client.DeleteIndexer(test.WithRequest.(int64))
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 		})
 	}
 }

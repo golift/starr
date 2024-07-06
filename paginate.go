@@ -1,7 +1,6 @@
 package starr
 
 import (
-	"fmt"
 	"net/url"
 	"strconv"
 	"strings"
@@ -50,7 +49,7 @@ func (s *Sorting) Set(val string) {
 
 // Param returns the string value of a Filter eventType.
 func (f Filtering) Param() string {
-	return fmt.Sprint(f)
+	return Str(int(f))
 }
 
 // Params returns a brand new url.Values with all request parameters combined.
@@ -62,13 +61,13 @@ func (r *PageReq) Params() url.Values {
 	}
 
 	if r.Page > 0 {
-		params.Set("page", fmt.Sprint(r.Page))
+		params.Set("page", Str(r.Page))
 	} else {
 		params.Set("page", "1")
 	}
 
 	if r.PageSize > 0 {
-		params.Set("pageSize", fmt.Sprint(r.PageSize))
+		params.Set("pageSize", Str(r.PageSize))
 	} else {
 		params.Set("pageSize", "10")
 	}

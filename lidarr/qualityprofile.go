@@ -80,7 +80,7 @@ func (l *Lidarr) UpdateQualityProfileContext(ctx context.Context, profile *Quali
 
 	var output QualityProfile
 
-	req := starr.Request{URI: path.Join(bpQualityProfile, fmt.Sprint(profile.ID)), Body: &body}
+	req := starr.Request{URI: path.Join(bpQualityProfile, starr.Str(profile.ID)), Body: &body}
 	if err := l.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
@@ -95,7 +95,7 @@ func (l *Lidarr) DeleteQualityProfile(profileID int64) error {
 
 // DeleteQualityProfileContext deletes a quality profile.
 func (l *Lidarr) DeleteQualityProfileContext(ctx context.Context, profileID int64) error {
-	req := starr.Request{URI: path.Join(bpQualityProfile, fmt.Sprint(profileID))}
+	req := starr.Request{URI: path.Join(bpQualityProfile, starr.Str(profileID))}
 	if err := l.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

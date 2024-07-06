@@ -100,7 +100,7 @@ func (l *Lidarr) DeleteBlockList(listID int64) error {
 
 // DeleteBlockListContext removes a single block list item with a context.
 func (l *Lidarr) DeleteBlockListContext(ctx context.Context, listID int64) error {
-	req := starr.Request{URI: path.Join(bpBlocklist, fmt.Sprint(listID))}
+	req := starr.Request{URI: path.Join(bpBlocklist, starr.Str(listID))}
 	if err := l.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

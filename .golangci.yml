@@ -2,51 +2,44 @@ issues:
   max-issues-per-linter: 0
   max-same-issues: 0
   exclude-rules:
-    # Exclude funlen for testing files.
-    - linters:
+    - path: 'starrcmd/'
+      linters:
         - nonamedreturns
-      path: 'starrcmd/'
-    - linters:
+    - path: '(.+)_test\.go'
+      linters:
         - gochecknoglobals
         - forcetypeassert
         - funlen
         - lll
         - maintidx # uhg.
-      path: '(.+)_test\.go'
-    - linters:
-        - lll
-      path: 'starrtest/'
 
 linters:
   enable-all: true
   disable:
     # deprecated
-    - maligned
-    - scopelint
-    - interfacer
-    - golint
-    - ifshort
-    - deadcode
-    - nosnakecase
-    - structcheck
-    - varcheck
+    - gomnd
+    - execinquery
     # unused
     - tagliatelle
-    - exhaustivestruct
     - exhaustruct
     - dupl
     - nlreturn
-    - tagalign
-    - depguard
     - musttag
-    - perfsprint # need to fix these
-    - testifylint # fix these too
 
+
+linters-settings:
 # One day we'll fix all the field alignments. Anyone got a tool that just does it?
-#linters-settings:
 #  govet:
 #    enable:
 #      - fieldalignment
+   depguard:
+     rules:
+       main:
+        files:
+          - $all
+        allow:
+          - $gostd
+          - github.com/stretchr/testify
 
 run:
   timeout: 5m

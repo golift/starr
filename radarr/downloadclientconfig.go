@@ -55,7 +55,7 @@ func (r *Radarr) UpdateDownloadClientConfigContext(ctx context.Context,
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpDownloadClientConfig, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpDownloadClientConfig, fmt.Sprint(config.ID)), Body: &body}
+	req := starr.Request{URI: path.Join(bpDownloadClientConfig, starr.Str(config.ID)), Body: &body}
 	if err := r.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}

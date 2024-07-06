@@ -33,10 +33,10 @@ func (s *Sonarr) GetCalendarContext(ctx context.Context, filter Calendar) ([]*Ep
 	var output []*Episode
 
 	req := starr.Request{URI: bpCalendar, Query: make(url.Values)}
-	req.Query.Add("unmonitored", fmt.Sprint(filter.Unmonitored))
-	req.Query.Add("includeSeries", fmt.Sprint(filter.IncludeSeries))
-	req.Query.Add("includeEpisodeFile", fmt.Sprint(filter.IncludeEpisodeFile))
-	req.Query.Add("includeEpisodeImages", fmt.Sprint(filter.IncludeEpisodeImages))
+	req.Query.Add("unmonitored", starr.Str(filter.Unmonitored))
+	req.Query.Add("includeSeries", starr.Str(filter.IncludeSeries))
+	req.Query.Add("includeEpisodeFile", starr.Str(filter.IncludeEpisodeFile))
+	req.Query.Add("includeEpisodeImages", starr.Str(filter.IncludeEpisodeImages))
 
 	if !filter.Start.IsZero() {
 		req.Query.Add("start", filter.Start.UTC().Format(starr.CalendarTimeFilterFormat))
@@ -62,7 +62,7 @@ func (s *Sonarr) GetCalendarID(calendarID int64) (*Episode, error) {
 func (s *Sonarr) GetCalendarIDContext(ctx context.Context, calendarID int64) (*Episode, error) {
 	var output *Episode
 
-	req := starr.Request{URI: path.Join(bpCalendar, fmt.Sprint(calendarID))}
+	req := starr.Request{URI: path.Join(bpCalendar, starr.Str(calendarID))}
 	if err := s.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}

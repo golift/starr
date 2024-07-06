@@ -50,7 +50,7 @@ func (l *Lidarr) UpdateExclusionContext(ctx context.Context, exclusion *Exclusio
 
 	var output Exclusion
 
-	req := starr.Request{URI: path.Join(bpExclusions, fmt.Sprint(exclusion.ID)), Body: &body}
+	req := starr.Request{URI: path.Join(bpExclusions, starr.Str(exclusion.ID)), Body: &body}
 	if err := l.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
@@ -68,7 +68,7 @@ func (l *Lidarr) DeleteExclusionsContext(ctx context.Context, ids []int64) error
 	var errs string
 
 	for _, id := range ids {
-		req := starr.Request{URI: path.Join(bpExclusions, fmt.Sprint(id))}
+		req := starr.Request{URI: path.Join(bpExclusions, starr.Str(id))}
 		if err := l.DeleteAny(ctx, req); err != nil {
 			errs += fmt.Sprintf("api.Post(%s): %v ", &req, err)
 		}

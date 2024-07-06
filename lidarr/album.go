@@ -129,7 +129,7 @@ func (l *Lidarr) GetAlbumByID(albumID int64) (*Album, error) {
 func (l *Lidarr) GetAlbumByIDContext(ctx context.Context, albumID int64) (*Album, error) {
 	var output Album
 
-	req := starr.Request{URI: path.Join(bpAlbum, fmt.Sprint(albumID))}
+	req := starr.Request{URI: path.Join(bpAlbum, starr.Str(albumID))}
 	if err := l.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -152,11 +152,11 @@ func (l *Lidarr) UpdateAlbumContext(ctx context.Context, albumID int64, album *A
 	var output Album
 
 	req := starr.Request{
-		URI:   path.Join(bpAlbum, fmt.Sprint(albumID)),
+		URI:   path.Join(bpAlbum, starr.Str(albumID)),
 		Query: make(url.Values),
 		Body:  &body,
 	}
-	req.Query.Add("moveFiles", fmt.Sprint(moveFiles))
+	req.Query.Add("moveFiles", starr.Str(moveFiles))
 
 	if err := l.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
@@ -231,9 +231,9 @@ func (l *Lidarr) DeleteAlbum(albumID int64, deleteFiles, addImportExclusion bool
 // DeleteAlbumContext removes an album from the database.
 // Setting deleteFiles true will delete all content for the album.
 func (l *Lidarr) DeleteAlbumContext(ctx context.Context, albumID int64, deleteFiles, addImportExclusion bool) error {
-	req := starr.Request{URI: path.Join(bpAlbum, fmt.Sprint(albumID)), Query: make(url.Values)}
-	req.Query.Set("deleteFiles", fmt.Sprint(deleteFiles))
-	req.Query.Set("addImportListExclusion", fmt.Sprint(addImportExclusion))
+	req := starr.Request{URI: path.Join(bpAlbum, starr.Str(albumID)), Query: make(url.Values)}
+	req.Query.Set("deleteFiles", starr.Str(deleteFiles))
+	req.Query.Set("addImportListExclusion", starr.Str(addImportExclusion))
 
 	if err := l.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)

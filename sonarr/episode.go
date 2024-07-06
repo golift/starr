@@ -63,7 +63,7 @@ func (s *Sonarr) GetSeriesEpisodesContext(ctx context.Context, getEpisode *GetEp
 	params := make(url.Values)
 
 	if getEpisode.SeriesID > 0 {
-		params.Set("seriesId", starr.Itoa(getEpisode.SeriesID))
+		params.Set("seriesId", starr.Str(getEpisode.SeriesID))
 	}
 
 	if getEpisode.SeasonNumber > 0 {
@@ -71,11 +71,11 @@ func (s *Sonarr) GetSeriesEpisodesContext(ctx context.Context, getEpisode *GetEp
 	}
 
 	for _, id := range getEpisode.EpisodeIDs {
-		params.Add("episodeIds", starr.Itoa(id))
+		params.Add("episodeIds", starr.Str(id))
 	}
 
 	if getEpisode.EpisodeFileID > 0 {
-		params.Set("episodeFileId", starr.Itoa(getEpisode.EpisodeFileID))
+		params.Set("episodeFileId", starr.Str(getEpisode.EpisodeFileID))
 	}
 
 	if getEpisode.IncludeImages {
@@ -100,7 +100,7 @@ func (s *Sonarr) GetEpisodeByID(episodeID int64) (*Episode, error) {
 func (s *Sonarr) GetEpisodeByIDContext(ctx context.Context, episodeID int64) (*Episode, error) {
 	var output Episode
 
-	req := starr.Request{URI: path.Join(bpEpisode, fmt.Sprint(episodeID))}
+	req := starr.Request{URI: path.Join(bpEpisode, starr.Str(episodeID))}
 	if err := s.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}

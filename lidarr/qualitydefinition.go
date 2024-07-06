@@ -49,7 +49,7 @@ func (l *Lidarr) GetQualityDefinition(qualityDefinitionID int64) (*QualityDefini
 func (l *Lidarr) GetQualityDefinitionContext(ctx context.Context, qdID int64) (*QualityDefinition, error) {
 	var output QualityDefinition
 
-	req := starr.Request{URI: path.Join(bpQualityDefinition, starr.Itoa(qdID))}
+	req := starr.Request{URI: path.Join(bpQualityDefinition, starr.Str(qdID))}
 	if err := l.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -74,7 +74,7 @@ func (l *Lidarr) UpdateQualityDefinitionContext(
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpQualityDefinition, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpQualityDefinition, starr.Itoa(definition.ID)), Body: &body}
+	req := starr.Request{URI: path.Join(bpQualityDefinition, starr.Str(definition.ID)), Body: &body}
 	if err := l.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}

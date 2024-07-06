@@ -76,9 +76,9 @@ func (r *Readarr) ManualImportContext(ctx context.Context, params *ManualImportP
 	req := starr.Request{URI: bpManualImport, Query: make(url.Values)}
 	req.Query.Add("folder", params.Folder)
 	req.Query.Add("downloadId", params.DownloadID)
-	req.Query.Add("authorId", fmt.Sprint(params.AuthorID))
-	req.Query.Add("replaceExistingFiles", fmt.Sprint(params.ReplaceExistingFiles))
-	req.Query.Add("filterExistingFiles", fmt.Sprint(params.FilterExistingFiles))
+	req.Query.Add("authorId", starr.Str(params.AuthorID))
+	req.Query.Add("replaceExistingFiles", starr.Str(params.ReplaceExistingFiles))
+	req.Query.Add("filterExistingFiles", starr.Str(params.FilterExistingFiles))
 
 	var output ManualImportOutput
 	if err := r.GetInto(ctx, req, &output); err != nil {

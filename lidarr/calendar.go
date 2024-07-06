@@ -31,8 +31,8 @@ func (l *Lidarr) GetCalendarContext(ctx context.Context, filter Calendar) ([]*Al
 	var output []*Album
 
 	req := starr.Request{URI: bpCalendar, Query: make(url.Values)}
-	req.Query.Add("unmonitored", fmt.Sprint(filter.Unmonitored))
-	req.Query.Add("includeArtist", fmt.Sprint(filter.IncludeArtist))
+	req.Query.Add("unmonitored", starr.Str(filter.Unmonitored))
+	req.Query.Add("includeArtist", starr.Str(filter.IncludeArtist))
 
 	if !filter.Start.IsZero() {
 		req.Query.Add("start", filter.Start.UTC().Format(starr.CalendarTimeFilterFormat))
@@ -58,7 +58,7 @@ func (l *Lidarr) GetCalendarID(calendarID int64) (*Album, error) {
 func (l *Lidarr) GetCalendarIDContext(ctx context.Context, calendarID int64) (*Album, error) {
 	var output *Album
 
-	req := starr.Request{URI: path.Join(bpCalendar, fmt.Sprint(calendarID))}
+	req := starr.Request{URI: path.Join(bpCalendar, starr.Str(calendarID))}
 	if err := l.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}

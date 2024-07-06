@@ -132,7 +132,7 @@ func (l *Lidarr) FailContext(ctx context.Context, historyID int64) error {
 
 	req := starr.Request{
 		URI:  path.Join(bpHistory, "failed"),
-		Body: bytes.NewBufferString("id=" + fmt.Sprint(historyID)),
+		Body: bytes.NewBufferString("id=" + starr.Str(historyID)),
 	}
 	if err := l.PostInto(ctx, req, &output); err != nil {
 		return fmt.Errorf("api.Post(%s): %w", &req, err)
