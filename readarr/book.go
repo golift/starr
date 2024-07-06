@@ -138,7 +138,7 @@ func (r *Readarr) GetBookByID(bookID int64) (*Book, error) {
 func (r *Readarr) GetBookByIDContext(ctx context.Context, bookID int64) (*Book, error) {
 	var output Book
 
-	req := starr.Request{URI: path.Join(bpBook, fmt.Sprint(bookID))}
+	req := starr.Request{URI: path.Join(bpBook, starr.Itoa(bookID))}
 	if err := r.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -159,11 +159,11 @@ func (r *Readarr) UpdateBookContext(ctx context.Context, bookID int64, book *Boo
 	}
 
 	req := starr.Request{
-		URI:   path.Join(bpBook, fmt.Sprint(bookID)),
+		URI:   path.Join(bpBook, starr.Itoa(bookID)),
 		Query: make(url.Values),
 		Body:  &body,
 	}
-	req.Query.Add("moveFiles", fmt.Sprint(moveFiles))
+	req.Query.Add("moveFiles", starr.Itoa(moveFiles))
 
 	var output interface{} // do not know what this looks like.
 
@@ -232,9 +232,9 @@ func (r *Readarr) DeleteBook(bookID int64, deleteFiles, addImportExclusion bool)
 // DeleteBookContext removes a Book from the database.
 // Setting deleteFiles true will delete all content for the Book.
 func (r *Readarr) DeleteBookContext(ctx context.Context, bookID int64, deleteFiles, addImportExclusion bool) error {
-	req := starr.Request{URI: path.Join(bpBook, fmt.Sprint(bookID)), Query: make(url.Values)}
-	req.Query.Set("deleteFiles", fmt.Sprint(deleteFiles))
-	req.Query.Set("addImportListExclusion", fmt.Sprint(addImportExclusion))
+	req := starr.Request{URI: path.Join(bpBook, starr.Itoa(bookID)), Query: make(url.Values)}
+	req.Query.Set("deleteFiles", starr.Itoa(deleteFiles))
+	req.Query.Set("addImportListExclusion", starr.Itoa(addImportExclusion))
 
 	if err := r.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)

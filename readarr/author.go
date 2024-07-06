@@ -87,7 +87,7 @@ func (r *Readarr) GetAuthorByID(authorID int64) (*Author, error) {
 func (r *Readarr) GetAuthorByIDContext(ctx context.Context, authorID int64) (*Author, error) {
 	var output Author
 
-	req := starr.Request{URI: path.Join(bpAuthor, fmt.Sprint(authorID))}
+	req := starr.Request{URI: path.Join(bpAuthor, starr.Itoa(authorID))}
 	if err := r.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -110,11 +110,11 @@ func (r *Readarr) UpdateAuthorContext(ctx context.Context, author *Author, moveF
 	var output Author
 
 	req := starr.Request{
-		URI:   path.Join(bpAuthor, fmt.Sprint(author.ID)),
+		URI:   path.Join(bpAuthor, starr.Itoa(author.ID)),
 		Query: make(url.Values),
 		Body:  &body,
 	}
-	req.Query.Add("moveFiles", fmt.Sprint(moveFiles))
+	req.Query.Add("moveFiles", starr.Itoa(moveFiles))
 
 	if err := r.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
@@ -132,9 +132,9 @@ func (r *Readarr) DeleteAuthor(authorID int64, deleteFiles, addImportExclusion b
 // DeleteAuthorContext removes na Author from the database.
 // Setting deleteFiles true will delete all content for the Author.
 func (r *Readarr) DeleteAuthorContext(ctx context.Context, authorID int64, deleteFiles, addImportExclusion bool) error {
-	req := starr.Request{URI: path.Join(bpAuthor, fmt.Sprint(authorID)), Query: make(url.Values)}
-	req.Query.Set("deleteFiles", fmt.Sprint(deleteFiles))
-	req.Query.Set("addImportListExclusion", fmt.Sprint(addImportExclusion))
+	req := starr.Request{URI: path.Join(bpAuthor, starr.Itoa(authorID)), Query: make(url.Values)}
+	req.Query.Set("deleteFiles", starr.Itoa(deleteFiles))
+	req.Query.Set("addImportListExclusion", starr.Itoa(addImportExclusion))
 
 	if err := r.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
