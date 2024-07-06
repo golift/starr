@@ -68,7 +68,7 @@ func (p *Prowlarr) GetDownloadClient(downloadclientID int64) (*DownloadClientOut
 func (p *Prowlarr) GetDownloadClientContext(ctx context.Context, clientID int64) (*DownloadClientOutput, error) {
 	var output DownloadClientOutput
 
-	req := starr.Request{URI: path.Join(bpDownloadClient, starr.Itoa(clientID))}
+	req := starr.Request{URI: path.Join(bpDownloadClient, starr.Str(clientID))}
 	if err := p.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -143,9 +143,9 @@ func (p *Prowlarr) UpdateDownloadClientContext(ctx context.Context,
 	}
 
 	req := starr.Request{
-		URI:   path.Join(bpDownloadClient, starr.Itoa(client.ID)),
+		URI:   path.Join(bpDownloadClient, starr.Str(client.ID)),
 		Body:  &body,
-		Query: url.Values{"forceSave": []string{starr.Itoa(force)}},
+		Query: url.Values{"forceSave": []string{starr.Str(force)}},
 	}
 	if err := p.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
@@ -161,7 +161,7 @@ func (p *Prowlarr) DeleteDownloadClient(downloadclientID int64) error {
 
 // DeleteDownloadClientContext removes a single download client.
 func (p *Prowlarr) DeleteDownloadClientContext(ctx context.Context, downloadclientID int64) error {
-	req := starr.Request{URI: path.Join(bpDownloadClient, starr.Itoa(downloadclientID))}
+	req := starr.Request{URI: path.Join(bpDownloadClient, starr.Str(downloadclientID))}
 	if err := p.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

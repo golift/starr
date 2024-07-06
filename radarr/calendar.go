@@ -30,7 +30,7 @@ func (r *Radarr) GetCalendarContext(ctx context.Context, filter Calendar) ([]*Mo
 	var output []*Movie
 
 	req := starr.Request{URI: bpCalendar, Query: make(url.Values)}
-	req.Query.Add("unmonitored", starr.Itoa(filter.Unmonitored))
+	req.Query.Add("unmonitored", starr.Str(filter.Unmonitored))
 
 	if !filter.Start.IsZero() {
 		req.Query.Add("start", filter.Start.UTC().Format(starr.CalendarTimeFilterFormat))

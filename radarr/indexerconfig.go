@@ -56,7 +56,7 @@ func (r *Radarr) UpdateIndexerConfigContext(ctx context.Context, indexerConfig *
 
 	var output IndexerConfig
 
-	req := starr.Request{URI: path.Join(bpIndexerConfig, starr.Itoa(indexerConfig.ID)), Body: &body}
+	req := starr.Request{URI: path.Join(bpIndexerConfig, starr.Str(indexerConfig.ID)), Body: &body}
 	if err := r.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}

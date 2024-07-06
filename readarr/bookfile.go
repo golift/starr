@@ -90,7 +90,7 @@ func (r *Readarr) GetBookFilesForAuthorContext(ctx context.Context, authorID int
 	var output []*BookFile
 
 	req := starr.Request{URI: bpBookFile, Query: make(url.Values)}
-	req.Query.Add("authorId", starr.Itoa(authorID))
+	req.Query.Add("authorId", starr.Str(authorID))
 
 	if err := r.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
@@ -111,7 +111,7 @@ func (r *Readarr) GetBookFilesForBookContext(ctx context.Context, bookID ...int6
 	req := starr.Request{URI: bpBookFile, Query: make(url.Values)}
 
 	for _, id := range bookID {
-		req.Query.Add("bookId", starr.Itoa(id))
+		req.Query.Add("bookId", starr.Str(id))
 	}
 
 	if err := r.GetInto(ctx, req, &output); err != nil {
@@ -137,7 +137,7 @@ func (r *Readarr) GetBookFilesContext(ctx context.Context, bookFileIDs []int64) 
 	req := starr.Request{URI: bpBookFile, Query: make(url.Values)}
 
 	for _, fileID := range bookFileIDs {
-		req.Query.Add("bookFileIds", starr.Itoa(fileID))
+		req.Query.Add("bookFileIds", starr.Str(fileID))
 	}
 
 	if err := r.GetInto(ctx, req, &output); err != nil {
@@ -161,7 +161,7 @@ func (r *Readarr) UpdateBookFileContext(ctx context.Context, bookFile *BookFile)
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpBookFile, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpBookFile, starr.Itoa(bookFile.ID)), Body: &body}
+	req := starr.Request{URI: path.Join(bpBookFile, starr.Str(bookFile.ID)), Body: &body}
 	if err := r.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
@@ -176,7 +176,7 @@ func (r *Readarr) DeleteBookFile(bookFileID int64) error {
 
 // DeleteBookFileContext deletes a book file.
 func (r *Readarr) DeleteBookFileContext(ctx context.Context, bookFileID int64) error {
-	req := starr.Request{URI: path.Join(bpBookFile, starr.Itoa(bookFileID))}
+	req := starr.Request{URI: path.Join(bpBookFile, starr.Str(bookFileID))}
 	if err := r.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

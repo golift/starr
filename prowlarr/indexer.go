@@ -127,7 +127,7 @@ func (p *Prowlarr) GetIndexer(indexerID int64) (*IndexerOutput, error) {
 func (p *Prowlarr) GetIndexerContext(ctx context.Context, indexerID int64) (*IndexerOutput, error) {
 	var output IndexerOutput
 
-	req := starr.Request{URI: path.Join(bpIndexer, starr.Itoa(indexerID))}
+	req := starr.Request{URI: path.Join(bpIndexer, starr.Str(indexerID))}
 	if err := p.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -179,9 +179,9 @@ func (p *Prowlarr) UpdateIndexerContext(
 	}
 
 	req := starr.Request{
-		URI:   path.Join(bpIndexer, starr.Itoa(indexer.ID)),
+		URI:   path.Join(bpIndexer, starr.Str(indexer.ID)),
 		Body:  &body,
-		Query: url.Values{"forceSave": []string{starr.Itoa(force)}},
+		Query: url.Values{"forceSave": []string{starr.Str(force)}},
 	}
 	if err := p.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
@@ -197,7 +197,7 @@ func (p *Prowlarr) DeleteIndexer(indexerID int64) error {
 
 // DeleteIndexerContext removes a single indexer.
 func (p *Prowlarr) DeleteIndexerContext(ctx context.Context, indexerID int64) error {
-	req := starr.Request{URI: path.Join(bpIndexer, starr.Itoa(indexerID))}
+	req := starr.Request{URI: path.Join(bpIndexer, starr.Str(indexerID))}
 	if err := p.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

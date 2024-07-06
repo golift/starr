@@ -111,8 +111,8 @@ func (s *Sonarr) SearchRelease(input *SearchRelease) ([]*Release, error) {
 // SearchReleaseContext searches for and returns a list releases available for download.
 func (s *Sonarr) SearchReleaseContext(ctx context.Context, input *SearchRelease) ([]*Release, error) {
 	req := starr.Request{URI: bpRelease, Query: make(url.Values)}
-	req.Query.Set("seriesId", starr.Itoa(input.SeriesID))
-	req.Query.Set("episodeId", starr.Itoa(input.EpisodeID))
+	req.Query.Set("seriesId", starr.Str(input.SeriesID))
+	req.Query.Set("episodeId", starr.Str(input.EpisodeID))
 	req.Query.Set("seasonNumber", strconv.Itoa(input.SeasonNumber))
 
 	var output []*Release

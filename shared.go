@@ -3,7 +3,6 @@ package starr
 import (
 	"crypto/tls"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -225,12 +224,12 @@ func (o *QueueDeleteOpts) Values() url.Values {
 		return params
 	}
 
-	params.Set("blocklist", fmt.Sprint(o.BlockList))
-	params.Set("skipRedownload", fmt.Sprint(o.SkipRedownload))
-	params.Set("changeCategory", fmt.Sprint(o.ChangeCategory))
+	params.Set("blocklist", Str(o.BlockList))
+	params.Set("skipRedownload", Str(o.SkipRedownload))
+	params.Set("changeCategory", Str(o.ChangeCategory))
 
 	if o.RemoveFromClient != nil {
-		params.Set("removeFromClient", fmt.Sprint(*o.RemoveFromClient))
+		params.Set("removeFromClient", Str(*o.RemoveFromClient))
 	}
 
 	return params
@@ -309,8 +308,14 @@ type TimeSpan struct {
 	TotalSeconds      int64 `json:"totalSeconds"`
 }
 
-// Itoa converts numbers and booleans to a string.
-func Itoa[I int | int64 | float64 | bool](val I) string {
+// Itoa converts an int64 to a string.
+// Deprecated in favor starr.Str().
+func Itoa(v int64) string {
+	return Str(v)
+}
+
+// Str converts numbers and booleans to a string.
+func Str[I int | int64 | float64 | bool](val I) string {
 	const (
 		base10 = 10
 		bits64 = 64

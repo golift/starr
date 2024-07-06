@@ -48,7 +48,7 @@ func (s *Sonarr) GetRootFolder(folderID int64) (*RootFolder, error) {
 func (s *Sonarr) GetRootFolderContext(ctx context.Context, folderID int64) (*RootFolder, error) {
 	var output RootFolder
 
-	req := starr.Request{URI: path.Join(bpRootFolder, starr.Itoa(folderID))}
+	req := starr.Request{URI: path.Join(bpRootFolder, starr.Str(folderID))}
 	if err := s.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -85,7 +85,7 @@ func (s *Sonarr) DeleteRootFolder(folderID int64) error {
 
 // DeleteRootFolderContext removes a single root folder.
 func (s *Sonarr) DeleteRootFolderContext(ctx context.Context, folderID int64) error {
-	req := starr.Request{URI: path.Join(bpRootFolder, starr.Itoa(folderID))}
+	req := starr.Request{URI: path.Join(bpRootFolder, starr.Str(folderID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

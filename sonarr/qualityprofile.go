@@ -52,7 +52,7 @@ func (s *Sonarr) GetQualityProfile(profileID int64) (*QualityProfile, error) {
 func (s *Sonarr) GetQualityProfileContext(ctx context.Context, profileID int64) (*QualityProfile, error) {
 	var output QualityProfile
 
-	req := starr.Request{URI: path.Join(bpQualityProfile, starr.Itoa(profileID))}
+	req := starr.Request{URI: path.Join(bpQualityProfile, starr.Str(profileID))}
 	if err := s.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -99,7 +99,7 @@ func (s *Sonarr) UpdateQualityProfileContext(ctx context.Context, profile *Quali
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpQualityProfile, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpQualityProfile, starr.Itoa(profile.ID)), Body: &body}
+	req := starr.Request{URI: path.Join(bpQualityProfile, starr.Str(profile.ID)), Body: &body}
 	if err := s.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
@@ -114,7 +114,7 @@ func (s *Sonarr) DeleteQualityProfile(profileID int64) error {
 
 // DeleteQualityProfileContext removes a single quality profile.
 func (s *Sonarr) DeleteQualityProfileContext(ctx context.Context, profileID int64) error {
-	req := starr.Request{URI: path.Join(bpQualityProfile, starr.Itoa(profileID))}
+	req := starr.Request{URI: path.Join(bpQualityProfile, starr.Str(profileID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

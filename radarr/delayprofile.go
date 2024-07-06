@@ -52,7 +52,7 @@ func (r *Radarr) GetDelayProfile(profileID int64) (*DelayProfile, error) {
 func (r *Radarr) GetDelayProfileContext(ctx context.Context, profileID int64) (*DelayProfile, error) {
 	var output DelayProfile
 
-	req := starr.Request{URI: path.Join(bpDelayProfile, starr.Itoa(profileID))}
+	req := starr.Request{URI: path.Join(bpDelayProfile, starr.Str(profileID))}
 	if err := r.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -98,7 +98,7 @@ func (r *Radarr) UpdateDelayProfileContext(ctx context.Context, profile *DelayPr
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpDelayProfile, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpDelayProfile, starr.Itoa(profile.ID)), Body: &body}
+	req := starr.Request{URI: path.Join(bpDelayProfile, starr.Str(profile.ID)), Body: &body}
 	if err := r.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
@@ -113,7 +113,7 @@ func (r *Radarr) DeleteDelayProfile(profileID int64) error {
 
 // DeleteDelayProfileContext removes a single delay profile.
 func (r *Radarr) DeleteDelayProfileContext(ctx context.Context, profileID int64) error {
-	req := starr.Request{URI: path.Join(bpDelayProfile, starr.Itoa(profileID))}
+	req := starr.Request{URI: path.Join(bpDelayProfile, starr.Str(profileID))}
 	if err := r.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

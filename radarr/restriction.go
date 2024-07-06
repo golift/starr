@@ -46,7 +46,7 @@ func (r *Radarr) GetRestriction(restrictionID int64) (*Restriction, error) {
 func (r *Radarr) GetRestrictionContext(ctx context.Context, restrictionID int64) (*Restriction, error) {
 	var output Restriction
 
-	req := starr.Request{URI: path.Join(bpRestriction, starr.Itoa(restrictionID))}
+	req := starr.Request{URI: path.Join(bpRestriction, starr.Str(restrictionID))}
 	if err := r.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -90,7 +90,7 @@ func (r *Radarr) UpdateRestrictionContext(ctx context.Context, restriction *Rest
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpRestriction, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpRestriction, starr.Itoa(restriction.ID)), Body: &body}
+	req := starr.Request{URI: path.Join(bpRestriction, starr.Str(restriction.ID)), Body: &body}
 	if err := r.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
@@ -105,7 +105,7 @@ func (r *Radarr) DeleteRestriction(restrictionID int64) error {
 
 // DeleteRestrictionContext removes a single restriction.
 func (r *Radarr) DeleteRestrictionContext(ctx context.Context, restrictionID int64) error {
-	req := starr.Request{URI: path.Join(bpRestriction, starr.Itoa(restrictionID))}
+	req := starr.Request{URI: path.Join(bpRestriction, starr.Str(restrictionID))}
 	if err := r.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

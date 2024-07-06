@@ -80,9 +80,9 @@ func (s *Sonarr) ManualImportContext(ctx context.Context, params *ManualImportPa
 	req := starr.Request{URI: bpManualImport, Query: make(url.Values)}
 	req.Query.Add("folder", params.Folder)
 	req.Query.Add("downloadId", params.DownloadID)
-	req.Query.Add("seriesId", starr.Itoa(params.SeriesID))
-	req.Query.Add("seasonNumber", starr.Itoa(params.SeasonNumber))
-	req.Query.Add("filterExistingFiles", starr.Itoa(params.FilterExistingFiles))
+	req.Query.Add("seriesId", starr.Str(params.SeriesID))
+	req.Query.Add("seasonNumber", starr.Str(params.SeasonNumber))
+	req.Query.Add("filterExistingFiles", starr.Str(params.FilterExistingFiles))
 
 	if err := s.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)

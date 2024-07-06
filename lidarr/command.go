@@ -99,7 +99,7 @@ func (l *Lidarr) GetCommandStatusContext(ctx context.Context, commandID int64) (
 		return &output, nil
 	}
 
-	req := starr.Request{URI: path.Join(bpCommand, starr.Itoa(commandID))}
+	req := starr.Request{URI: path.Join(bpCommand, starr.Str(commandID))}
 	if err := l.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}

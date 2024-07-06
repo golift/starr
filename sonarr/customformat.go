@@ -79,7 +79,7 @@ func (s *Sonarr) GetCustomFormat(customformatID int64) (*CustomFormatOutput, err
 func (s *Sonarr) GetCustomFormatContext(ctx context.Context, customformatID int64) (*CustomFormatOutput, error) {
 	var output CustomFormatOutput
 
-	req := starr.Request{URI: path.Join(bpCustomFormat, starr.Itoa(customformatID))}
+	req := starr.Request{URI: path.Join(bpCustomFormat, starr.Str(customformatID))}
 	if err := s.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -136,7 +136,7 @@ func (s *Sonarr) UpdateCustomFormatContext(
 
 	var output CustomFormatOutput
 
-	req := starr.Request{URI: path.Join(bpCustomFormat, starr.Itoa(format.ID)), Body: &body}
+	req := starr.Request{URI: path.Join(bpCustomFormat, starr.Str(format.ID)), Body: &body}
 	if err := s.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
@@ -153,7 +153,7 @@ func (s *Sonarr) DeleteCustomFormat(formatID int64) error {
 // DeleteCustomFormatContext deletes a custom format.
 // This data and these endpoints do not exist in Sonarr v3; this is v4 only.
 func (s *Sonarr) DeleteCustomFormatContext(ctx context.Context, formatID int64) error {
-	req := starr.Request{URI: path.Join(bpCustomFormat, starr.Itoa(formatID))}
+	req := starr.Request{URI: path.Join(bpCustomFormat, starr.Str(formatID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

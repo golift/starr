@@ -51,7 +51,7 @@ func (r *Radarr) GetQualityProfile(profileID int64) (*QualityProfile, error) {
 func (r *Radarr) GetQualityProfileContext(ctx context.Context, profileID int64) (*QualityProfile, error) {
 	var output QualityProfile
 
-	req := starr.Request{URI: path.Join(bpQualityProfile, starr.Itoa(profileID))}
+	req := starr.Request{URI: path.Join(bpQualityProfile, starr.Str(profileID))}
 	if err := r.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -98,7 +98,7 @@ func (r *Radarr) UpdateQualityProfileContext(ctx context.Context, profile *Quali
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpQualityProfile, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpQualityProfile, starr.Itoa(profile.ID)), Body: &body}
+	req := starr.Request{URI: path.Join(bpQualityProfile, starr.Str(profile.ID)), Body: &body}
 	if err := r.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
@@ -113,7 +113,7 @@ func (r *Radarr) DeleteQualityProfile(profileID int64) error {
 
 // DeleteQualityProfileContext deletes a quality profile.
 func (r *Radarr) DeleteQualityProfileContext(ctx context.Context, profileID int64) error {
-	req := starr.Request{URI: path.Join(bpQualityProfile, starr.Itoa(profileID))}
+	req := starr.Request{URI: path.Join(bpQualityProfile, starr.Str(profileID))}
 	if err := r.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}
