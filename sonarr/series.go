@@ -158,7 +158,7 @@ func (s *Sonarr) GetSeriesContext(ctx context.Context, tvdbID int64) ([]*Series,
 
 	req := starr.Request{URI: bpSeries, Query: make(url.Values)}
 	if tvdbID != 0 {
-		req.Query.Add("tvdbId", fmt.Sprint(tvdbID))
+		req.Query.Add("tvdbId", starr.Itoa(tvdbID))
 	}
 
 	if err := s.GetInto(ctx, req, &output); err != nil {
@@ -183,11 +183,11 @@ func (s *Sonarr) UpdateSeriesContext(ctx context.Context, series *AddSeriesInput
 	var output Series
 
 	req := starr.Request{
-		URI:   path.Join(bpSeries, fmt.Sprint(series.ID)),
+		URI:   path.Join(bpSeries, starr.Itoa(series.ID)),
 		Query: make(url.Values),
 		Body:  &body,
 	}
-	req.Query.Add("moveFiles", fmt.Sprint(moveFiles))
+	req.Query.Add("moveFiles", starr.Itoa(moveFiles))
 
 	if err := s.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
@@ -227,7 +227,7 @@ func (s *Sonarr) GetSeriesByID(seriesID int64) (*Series, error) {
 func (s *Sonarr) GetSeriesByIDContext(ctx context.Context, seriesID int64) (*Series, error) {
 	var output Series
 
-	req := starr.Request{URI: path.Join(bpSeries, fmt.Sprint(seriesID))}
+	req := starr.Request{URI: path.Join(bpSeries, starr.Itoa(seriesID))}
 	if err := s.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -248,7 +248,7 @@ func (s *Sonarr) GetSeriesLookupContext(ctx context.Context, term string, tvdbID
 
 	req := starr.Request{URI: path.Join(bpSeries, "lookup"), Query: make(url.Values)}
 	if tvdbID > 0 {
-		req.Query.Add("term", "tvdbid:"+fmt.Sprint(tvdbID))
+		req.Query.Add("term", "tvdbid:"+starr.Itoa(tvdbID))
 	} else {
 		req.Query.Add("term", term)
 	}
@@ -283,9 +283,9 @@ func (s *Sonarr) DeleteSeries(seriesID int, deleteFiles bool, importExclude bool
 // deleteFiles flag defines the deleteFiles query parameter.
 // importExclude defines the addImportListExclusion query parameter.
 func (s *Sonarr) DeleteSeriesContext(ctx context.Context, seriesID int, deleteFiles bool, importExclude bool) error {
-	req := starr.Request{URI: path.Join(bpSeries, fmt.Sprint(seriesID)), Query: make(url.Values)}
-	req.Query.Add("deleteFiles", fmt.Sprint(deleteFiles))
-	req.Query.Add("addImportListExclusion", fmt.Sprint(importExclude))
+	req := starr.Request{URI: path.Join(bpSeries, starr.Itoa(seriesID)), Query: make(url.Values)}
+	req.Query.Add("deleteFiles", starr.Itoa(deleteFiles))
+	req.Query.Add("addImportListExclusion", starr.Itoa(importExclude))
 
 	if err := s.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)

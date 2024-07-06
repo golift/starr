@@ -39,7 +39,7 @@ func (s *Sonarr) GetRemotePathMapping(mappingID int64) (*starr.RemotePathMapping
 func (s *Sonarr) GetRemotePathMappingContext(ctx context.Context, mappingID int64) (*starr.RemotePathMapping, error) {
 	var output starr.RemotePathMapping
 
-	req := starr.Request{URI: path.Join(bpRemotePathMapping, fmt.Sprint(mappingID))}
+	req := starr.Request{URI: path.Join(bpRemotePathMapping, starr.Itoa(mappingID))}
 	if err := s.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -87,7 +87,7 @@ func (s *Sonarr) UpdateRemotePathMappingContext(ctx context.Context,
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpRemotePathMapping, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpRemotePathMapping, fmt.Sprint(mapping.ID)), Body: &body}
+	req := starr.Request{URI: path.Join(bpRemotePathMapping, starr.Itoa(mapping.ID)), Body: &body}
 	if err := s.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
@@ -102,7 +102,7 @@ func (s *Sonarr) DeleteRemotePathMapping(mappingID int64) error {
 
 // DeleteRemotePathMappingContext removes a single remote path mapping.
 func (s *Sonarr) DeleteRemotePathMappingContext(ctx context.Context, mappingID int64) error {
-	req := starr.Request{URI: path.Join(bpRemotePathMapping, fmt.Sprint(mappingID))}
+	req := starr.Request{URI: path.Join(bpRemotePathMapping, starr.Itoa(mappingID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

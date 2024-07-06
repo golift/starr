@@ -54,7 +54,7 @@ func (s *Sonarr) GetLanguageProfile(profileID int64) (*LanguageProfile, error) {
 func (s *Sonarr) GetLanguageProfileContext(ctx context.Context, profileID int64) (*LanguageProfile, error) {
 	var output LanguageProfile
 
-	req := starr.Request{URI: path.Join(bpLanguageProfile, fmt.Sprint(profileID))}
+	req := starr.Request{URI: path.Join(bpLanguageProfile, starr.Itoa(profileID))}
 	if err := s.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -98,7 +98,7 @@ func (s *Sonarr) UpdateLanguageProfileContext(ctx context.Context, profile *Lang
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpLanguageProfile, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpLanguageProfile, fmt.Sprint(profile.ID)), Body: &body}
+	req := starr.Request{URI: path.Join(bpLanguageProfile, starr.Itoa(profile.ID)), Body: &body}
 	if err := s.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
@@ -113,7 +113,7 @@ func (s *Sonarr) DeleteLanguageProfile(profileID int64) error {
 
 // DeleteLanguageProfileContext removes a single language profile.
 func (s *Sonarr) DeleteLanguageProfileContext(ctx context.Context, profileID int64) error {
-	req := starr.Request{URI: path.Join(bpLanguageProfile, fmt.Sprint(profileID))}
+	req := starr.Request{URI: path.Join(bpLanguageProfile, starr.Itoa(profileID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

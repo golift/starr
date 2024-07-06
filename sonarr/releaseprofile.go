@@ -52,7 +52,7 @@ func (s *Sonarr) GetReleaseProfile(profileID int64) (*ReleaseProfile, error) {
 func (s *Sonarr) GetReleaseProfileContext(ctx context.Context, profileID int64) (*ReleaseProfile, error) {
 	var output ReleaseProfile
 
-	req := starr.Request{URI: path.Join(bpReleaseProfile, fmt.Sprint(profileID))}
+	req := starr.Request{URI: path.Join(bpReleaseProfile, starr.Itoa(profileID))}
 	if err := s.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -96,7 +96,7 @@ func (s *Sonarr) UpdateReleaseProfileContext(ctx context.Context, profile *Relea
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpReleaseProfile, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpReleaseProfile, fmt.Sprint(profile.ID)), Body: &body}
+	req := starr.Request{URI: path.Join(bpReleaseProfile, starr.Itoa(profile.ID)), Body: &body}
 	if err := s.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
@@ -111,7 +111,7 @@ func (s *Sonarr) DeleteReleaseProfile(profileID int64) error {
 
 // DeleteReleaseProfileContext removes a single release profile.
 func (s *Sonarr) DeleteReleaseProfileContext(ctx context.Context, profileID int64) error {
-	req := starr.Request{URI: path.Join(bpReleaseProfile, fmt.Sprint(profileID))}
+	req := starr.Request{URI: path.Join(bpReleaseProfile, starr.Itoa(profileID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

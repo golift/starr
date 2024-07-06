@@ -59,7 +59,7 @@ func (s *Sonarr) GetEpisodeFiles(episodeFileIDs ...int64) ([]*EpisodeFile, error
 func (s *Sonarr) GetEpisodeFilesContext(ctx context.Context, episodeFileIDs ...int64) ([]*EpisodeFile, error) {
 	var ids string
 	for _, efID := range episodeFileIDs {
-		ids += fmt.Sprintf("%d,", efID) // the extra comma is ok.
+		ids += starr.Itoa(efID) + "," // the extra comma is ok.
 	}
 
 	req := starr.Request{URI: bpEpisodeFile, Query: make(url.Values)}
@@ -83,7 +83,7 @@ func (s *Sonarr) GetSeriesEpisodeFilesContext(ctx context.Context, seriesID int6
 	var output []*EpisodeFile
 
 	req := starr.Request{URI: bpEpisodeFile, Query: make(url.Values)}
-	req.Query.Add("seriesId", fmt.Sprint(seriesID))
+	req.Query.Add("seriesId", starr.Itoa(seriesID))
 
 	if err := s.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
@@ -115,7 +115,7 @@ func (s *Sonarr) UpdateEpisodeFileQualityContext(
 
 	var output EpisodeFile
 
-	req := starr.Request{URI: path.Join(bpEpisodeFile, fmt.Sprint(episodeFileID)), Body: &body}
+	req := starr.Request{URI: path.Join(bpEpisodeFile, starr.Itoa(episodeFileID)), Body: &body}
 	if err := s.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
@@ -130,7 +130,7 @@ func (s *Sonarr) DeleteEpisodeFile(episodeFileID int64) error {
 
 // DeleteEpisodeFileContext deletes an episode file, and takes a context.
 func (s *Sonarr) DeleteEpisodeFileContext(ctx context.Context, episodeFileID int64) error {
-	req := starr.Request{URI: path.Join(bpEpisodeFile, fmt.Sprint(episodeFileID))}
+	req := starr.Request{URI: path.Join(bpEpisodeFile, starr.Itoa(episodeFileID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

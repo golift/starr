@@ -81,7 +81,7 @@ func (s *Sonarr) GetImportList(importListID int64) (*ImportListOutput, error) {
 func (s *Sonarr) GetImportListContext(ctx context.Context, importListID int64) (*ImportListOutput, error) {
 	var output ImportListOutput
 
-	req := starr.Request{URI: path.Join(bpImportList, fmt.Sprint(importListID))}
+	req := starr.Request{URI: path.Join(bpImportList, starr.Itoa(importListID))}
 	if err := s.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -155,9 +155,9 @@ func (s *Sonarr) UpdateImportListContext(
 	}
 
 	req := starr.Request{
-		URI:   path.Join(bpImportList, fmt.Sprint(importList.ID)),
+		URI:   path.Join(bpImportList, starr.Itoa(importList.ID)),
 		Body:  &body,
-		Query: url.Values{"forceSave": []string{fmt.Sprint(force)}},
+		Query: url.Values{"forceSave": []string{starr.Itoa(force)}},
 	}
 	if err := s.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
@@ -173,7 +173,7 @@ func (s *Sonarr) DeleteImportList(importListID int64) error {
 
 // DeleteImportListContext removes a single import list.
 func (s *Sonarr) DeleteImportListContext(ctx context.Context, importListID int64) error {
-	req := starr.Request{URI: path.Join(bpImportList, fmt.Sprint(importListID))}
+	req := starr.Request{URI: path.Join(bpImportList, starr.Itoa(importListID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

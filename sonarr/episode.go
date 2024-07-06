@@ -100,7 +100,7 @@ func (s *Sonarr) GetEpisodeByID(episodeID int64) (*Episode, error) {
 func (s *Sonarr) GetEpisodeByIDContext(ctx context.Context, episodeID int64) (*Episode, error) {
 	var output Episode
 
-	req := starr.Request{URI: path.Join(bpEpisode, fmt.Sprint(episodeID))}
+	req := starr.Request{URI: path.Join(bpEpisode, starr.Itoa(episodeID))}
 	if err := s.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
