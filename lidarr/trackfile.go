@@ -100,7 +100,7 @@ func (l *Lidarr) GetTrackFilesForArtistContext(ctx context.Context, artistID int
 	var output []*TrackFile
 
 	req := starr.Request{URI: bpTrackFile, Query: make(url.Values)}
-	req.Query.Add("artistId", fmt.Sprint(artistID))
+	req.Query.Add("artistId", starr.Itoa(artistID))
 
 	if err := l.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
@@ -119,7 +119,7 @@ func (l *Lidarr) GetTrackFilesForAlbumContext(ctx context.Context, albumID int64
 	var output []*TrackFile
 
 	req := starr.Request{URI: bpTrackFile, Query: make(url.Values)}
-	req.Query.Add("albumId", fmt.Sprint(albumID))
+	req.Query.Add("albumId", starr.Itoa(albumID))
 
 	if err := l.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
@@ -147,7 +147,7 @@ func (l *Lidarr) GetTrackFilesContext(ctx context.Context, trackFileIDs []int64)
 	}
 
 	for idx, fileID := range trackFileIDs {
-		req.Query["trackFileIds"][idx] = fmt.Sprint(fileID)
+		req.Query["trackFileIds"][idx] = starr.Itoa(fileID)
 	}
 
 	if err := l.GetInto(ctx, req, &output); err != nil {
@@ -171,7 +171,7 @@ func (l *Lidarr) UpdateTrackFileContext(ctx context.Context, trackFile *TrackFil
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpTrackFile, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpTrackFile, fmt.Sprint(trackFile.ID)), Body: &body}
+	req := starr.Request{URI: path.Join(bpTrackFile, starr.Itoa(trackFile.ID)), Body: &body}
 	if err := l.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
@@ -186,7 +186,7 @@ func (l *Lidarr) DeleteTrackFile(trackFileID int64) error {
 
 // DeleteTrackFileContext deletes a track file.
 func (l *Lidarr) DeleteTrackFileContext(ctx context.Context, trackFileID int64) error {
-	req := starr.Request{URI: path.Join(bpTrackFile, fmt.Sprint(trackFileID))}
+	req := starr.Request{URI: path.Join(bpTrackFile, starr.Itoa(trackFileID))}
 	if err := l.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

@@ -38,7 +38,7 @@ func (p *Prowlarr) GetTag(tagID int) (*starr.Tag, error) {
 func (p *Prowlarr) GetTagContext(ctx context.Context, tagID int) (*starr.Tag, error) {
 	var output starr.Tag
 
-	req := starr.Request{URI: path.Join(bpTag, fmt.Sprint(tagID))}
+	req := starr.Request{URI: path.Join(bpTag, starr.Itoa(tagID))}
 	if err := p.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -82,7 +82,7 @@ func (p *Prowlarr) UpdateTagContext(ctx context.Context, tag *starr.Tag) (*starr
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpTag, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpTag, fmt.Sprint(tag.ID)), Body: &body}
+	req := starr.Request{URI: path.Join(bpTag, starr.Itoa(tag.ID)), Body: &body}
 	if err := p.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
@@ -96,7 +96,7 @@ func (p *Prowlarr) DeleteTag(tagID int) error {
 }
 
 func (p *Prowlarr) DeleteTagContext(ctx context.Context, tagID int) error {
-	req := starr.Request{URI: path.Join(bpTag, fmt.Sprint(tagID))}
+	req := starr.Request{URI: path.Join(bpTag, starr.Itoa(tagID))}
 	if err := p.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

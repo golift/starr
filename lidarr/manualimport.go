@@ -79,9 +79,9 @@ func (l *Lidarr) ManualImportContext(ctx context.Context, params *ManualImportPa
 	req := starr.Request{URI: bpManualImport, Query: make(url.Values)}
 	req.Query.Add("folder", params.Folder)
 	req.Query.Add("downloadId", params.DownloadID)
-	req.Query.Add("artistId", fmt.Sprint(params.ArtistID))
-	req.Query.Add("replaceExistingFiles", fmt.Sprint(params.ReplaceExistingFiles))
-	req.Query.Add("filterExistingFiles", fmt.Sprint(params.FilterExistingFiles))
+	req.Query.Add("artistId", starr.Itoa(params.ArtistID))
+	req.Query.Add("replaceExistingFiles", starr.Itoa(params.ReplaceExistingFiles))
+	req.Query.Add("filterExistingFiles", starr.Itoa(params.FilterExistingFiles))
 
 	var output ManualImportOutput
 	if err := l.GetInto(ctx, req, &output); err != nil {
