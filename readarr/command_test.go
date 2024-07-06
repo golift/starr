@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"golift.io/starr"
 	"golift.io/starr/readarr"
 	"golift.io/starr/starrtest"
@@ -68,7 +69,7 @@ func TestGetCommands(t *testing.T) {
 			mockServer := test.GetMockServer(t)
 			client := readarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.GetCommands()
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
@@ -143,7 +144,7 @@ func TestSendCommand(t *testing.T) {
 			mockServer := test.GetMockServer(t)
 			client := readarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.SendCommand(test.WithRequest.(*readarr.CommandRequest))
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}

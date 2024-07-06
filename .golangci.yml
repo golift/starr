@@ -30,7 +30,6 @@ linters:
     - nlreturn
     - musttag
     # fix these so they work
-    - testifylint
     - tagalign
     - depguard
 

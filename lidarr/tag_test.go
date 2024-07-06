@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"golift.io/starr"
 	"golift.io/starr/lidarr"
 	"golift.io/starr/starrtest"
@@ -51,7 +52,7 @@ func TestGetTags(t *testing.T) {
 			mockServer := test.GetMockServer(t)
 			client := lidarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.GetTags()
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
@@ -93,7 +94,7 @@ func TestGetTag(t *testing.T) {
 			mockServer := test.GetMockServer(t)
 			client := lidarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.GetTag(test.WithRequest.(int))
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
@@ -141,7 +142,7 @@ func TestAddTag(t *testing.T) {
 			mockServer := test.GetMockServer(t)
 			client := lidarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.AddTag(test.WithRequest.(*starr.Tag))
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
@@ -191,7 +192,7 @@ func TestUpdateTag(t *testing.T) {
 			mockServer := test.GetMockServer(t)
 			client := lidarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.UpdateTag(test.WithRequest.(*starr.Tag))
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
@@ -228,7 +229,7 @@ func TestDeleteTag(t *testing.T) {
 			mockServer := test.GetMockServer(t)
 			client := lidarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			err := client.DeleteTag(test.WithRequest.(int))
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 		})
 	}
 }

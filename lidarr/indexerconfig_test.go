@@ -57,7 +57,7 @@ func TestGetIndexerConfig(t *testing.T) {
 			mockServer := test.GetMockServer(t)
 			client := lidarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.GetIndexerConfig()
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}

@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"golift.io/starr"
 	"golift.io/starr/radarr"
 	"golift.io/starr/starrtest"
@@ -56,7 +57,7 @@ func TestGetRestrictions(t *testing.T) {
 			mockServer := test.GetMockServer(t)
 			client := radarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.GetRestrictions()
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
@@ -100,7 +101,7 @@ func TestGetRestriction(t *testing.T) {
 			mockServer := test.GetMockServer(t)
 			client := radarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.GetRestriction(test.WithRequest.(int64))
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
@@ -152,7 +153,7 @@ func TestAddRestriction(t *testing.T) {
 			mockServer := test.GetMockServer(t)
 			client := radarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.AddRestriction(test.WithRequest.(*radarr.Restriction))
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
@@ -206,7 +207,7 @@ func TestUpdateRestriction(t *testing.T) {
 			mockServer := test.GetMockServer(t)
 			client := radarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.UpdateRestriction(test.WithRequest.(*radarr.Restriction))
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
@@ -243,7 +244,7 @@ func TestDeleteRestriction(t *testing.T) {
 			mockServer := test.GetMockServer(t)
 			client := radarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			err := client.DeleteRestriction(test.WithRequest.(int64))
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 		})
 	}
 }

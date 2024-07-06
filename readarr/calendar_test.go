@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"golift.io/starr"
 	"golift.io/starr/readarr"
 	"golift.io/starr/starrtest"
@@ -158,7 +159,7 @@ func TestGetCalendar(t *testing.T) {
 			mockServer := test.GetMockServer(t)
 			client := readarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.GetCalendar(test.WithRequest.(readarr.Calendar))
-			assert.ErrorIs(t, err, test.WithError, "the wrong error was returned")
+			require.ErrorIs(t, err, test.WithError, "the wrong error was returned")
 			assert.EqualValues(t, test.WithResponse, output, "make sure ResponseBody and WithResponse are a match")
 		})
 	}
@@ -197,7 +198,7 @@ func TestGetCalendarID(t *testing.T) {
 			mockServer := test.GetMockServer(t)
 			client := readarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.GetCalendarID(test.WithRequest.(int64))
-			assert.ErrorIs(t, err, test.WithError, "the wrong error was returned")
+			require.ErrorIs(t, err, test.WithError, "the wrong error was returned")
 			assert.EqualValues(t, test.WithResponse, output, "make sure ResponseBody and WithResponse are a match")
 		})
 	}

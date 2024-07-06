@@ -309,7 +309,7 @@ type TimeSpan struct {
 }
 
 // Itoa converts an int64 to a string.
-// Deprecated in favor starr.Str().
+// Deprecated: Use starr.Str() instead.
 func Itoa(v int64) string {
 	return Str(v)
 }
