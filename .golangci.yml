@@ -2,20 +2,16 @@ issues:
   max-issues-per-linter: 0
   max-same-issues: 0
   exclude-rules:
-    # Exclude funlen for testing files.
-    - linters:
+    - path: 'starrcmd/'
+      linters:
         - nonamedreturns
-      path: 'starrcmd/'
-    - linters:
+    - path: '(.+)_test\.go'
+      linters:
         - gochecknoglobals
         - forcetypeassert
         - funlen
         - lll
         - maintidx # uhg.
-      path: '(.+)_test\.go'
-    - linters:
-        - lll
-      path: 'starrtest/'
 
 linters:
   enable-all: true
@@ -29,8 +25,7 @@ linters:
     - dupl
     - nlreturn
     - musttag
-    # fix these so they work
-    - tagalign
+
 
 linters-settings:
 # One day we'll fix all the field alignments. Anyone got a tool that just does it?

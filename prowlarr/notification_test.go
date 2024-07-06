@@ -99,8 +99,8 @@ func TestGetNotifications(t *testing.T) {
 						},
 					},
 					Message: struct {
-						Message string "json:\"message\""
-						Type    string "json:\"type\""
+						Message string `json:"message"`
+						Type    string `json:"type"`
 					}{
 						Message: "Testing will execute the script with the EventType set to Test",
 						Type:    "warning",
@@ -176,8 +176,8 @@ func TestGetNotification(t *testing.T) {
 					},
 				},
 				Message: struct {
-					Message string "json:\"message\""
-					Type    string "json:\"type\""
+					Message string `json:"message"`
+					Type    string `json:"type"`
 				}{
 					Message: "Testing will execute the script with the EventType set to Test",
 					Type:    "warning",
@@ -263,8 +263,8 @@ func TestAddNotification(t *testing.T) {
 					},
 				},
 				Message: struct {
-					Message string "json:\"message\""
-					Type    string "json:\"type\""
+					Message string `json:"message"`
+					Type    string `json:"type"`
 				}{
 					Message: "Testing will execute the script with the EventType set to Test",
 					Type:    "warning",
@@ -364,8 +364,8 @@ func TestUpdateNotification(t *testing.T) {
 					},
 				},
 				Message: struct {
-					Message string "json:\"message\""
-					Type    string "json:\"type\""
+					Message string `json:"message"`
+					Type    string `json:"type"`
 				}{
 					Message: "Testing will execute the script with the EventType set to Test",
 					Type:    "warning",
