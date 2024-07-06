@@ -21,26 +21,18 @@ linters:
   enable-all: true
   disable:
     # deprecated
-    - maligned
-    - scopelint
-    - interfacer
-    - golint
-    - ifshort
-    - deadcode
-    - nosnakecase
-    - structcheck
-    - varcheck
+    - gomnd
+    - execinquery
     # unused
     - tagliatelle
-    - exhaustivestruct
     - exhaustruct
     - dupl
     - nlreturn
+    - musttag
+    # fix these so they work
+    - testifylint
     - tagalign
     - depguard
-    - musttag
-    - perfsprint # need to fix these
-    - testifylint # fix these too
 
 # One day we'll fix all the field alignments. Anyone got a tool that just does it?
 #linters-settings:

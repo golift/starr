@@ -255,12 +255,12 @@ func (d *PlayTime) UnmarshalJSON(b []byte) error {
 	d.Original = strings.Trim(string(b), `"'`)
 
 	switch parts := strings.Split(d.Original, ":"); len(parts) {
-	case 3: //nolint:gomnd // hh:mm:ss
+	case 3: //nolint:mnd // hh:mm:ss
 		h, _ := strconv.Atoi(parts[0])
 		m, _ := strconv.Atoi(parts[1])
 		s, _ := strconv.Atoi(parts[2])
 		d.Duration = (time.Hour * time.Duration(h)) + (time.Minute * time.Duration(m)) + (time.Second * time.Duration(s))
-	case 2: //nolint:gomnd // mm:ss
+	case 2: //nolint:mnd // mm:ss
 		m, _ := strconv.Atoi(parts[0])
 		s, _ := strconv.Atoi(parts[1])
 		d.Duration = (time.Minute * time.Duration(m)) + (time.Second * time.Duration(s))
@@ -309,10 +309,25 @@ type TimeSpan struct {
 	TotalSeconds      int64 `json:"totalSeconds"`
 }
 
-// Itoa converts an int64 to a string.
-func Itoa(val int64) string {
-	const base10 = 10
-	return strconv.FormatInt(val, base10)
+// Itoa converts numbers and booleans to a string.
+func Itoa[I int | int64 | float64 | bool](val I) string {
+	const (
+		base10 = 10
+		bits64 = 64
+	)
+
+	switch val := interface{}(val).(type) {
+	case int:
+		return strconv.Itoa(val)
+	case bool:
+		return strconv.FormatBool(val)
+	case int64:
+		return strconv.FormatInt(val, base10)
+	case float64:
+		return strconv.FormatFloat(val, 'f', -1, bits64)
+	default:
+		return ""
+	}
 }
 
 // Protocol used to download media. Comes with enum constants.

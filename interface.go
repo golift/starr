@@ -189,7 +189,7 @@ func readInitializeJS(input io.Reader) (*InitializeJS, error) { //nolint:cyclop
 
 	for scanner.Scan() {
 		switch split := strings.Fields(scanner.Text()); {
-		case len(split) < 2: //nolint:gomnd
+		case len(split) < 2: //nolint:mnd
 			continue
 		case split[0] == "apiRoot:":
 			output.APIRoot = strings.Trim(split[1], `"',`)
