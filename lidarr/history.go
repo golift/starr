@@ -36,25 +36,25 @@ type HistoryRecord struct {
 	DownloadID          string         `json:"downloadId"`
 	EventType           string         `json:"eventType"`
 	Data                struct {
-		Age             string    `json:"age"`
-		AgeHours        string    `json:"ageHours"`
-		AgeMinutes      string    `json:"ageMinutes"`
-		DownloadClient  string    `json:"downloadClient"`
-		DownloadForced  string    `json:"downloadForced"`
-		DownloadURL     string    `json:"downloadUrl"`
-		DroppedPath     string    `json:"droppedPath"`
-		GUID            string    `json:"guid"`
-		ImportedPath    string    `json:"importedPath"`
-		Indexer         string    `json:"indexer"`
-		Message         string    `json:"message"`
-		NzbInfoURL      string    `json:"nzbInfoUrl"`
-		Protocol        string    `json:"protocol"`
-		PublishedDate   time.Time `json:"publishedDate"`
-		Reason          string    `json:"reason"`
-		ReleaseGroup    string    `json:"releaseGroup"`
-		Size            string    `json:"size"`
-		StatusMessages  string    `json:"statusMessages"`
-		TorrentInfoHash string    `json:"torrentInfoHash"`
+		Age             string         `json:"age"`
+		AgeHours        string         `json:"ageHours"`
+		AgeMinutes      string         `json:"ageMinutes"`
+		DownloadClient  string         `json:"downloadClient"`
+		DownloadForced  string         `json:"downloadForced"`
+		DownloadURL     string         `json:"downloadUrl"`
+		DroppedPath     string         `json:"droppedPath"`
+		GUID            string         `json:"guid"`
+		ImportedPath    string         `json:"importedPath"`
+		Indexer         string         `json:"indexer"`
+		Message         string         `json:"message"`
+		NzbInfoURL      string         `json:"nzbInfoUrl"`
+		Protocol        starr.Protocol `json:"protocol"`
+		PublishedDate   time.Time      `json:"publishedDate"`
+		Reason          string         `json:"reason"`
+		ReleaseGroup    string         `json:"releaseGroup"`
+		Size            string         `json:"size"`
+		StatusMessages  string         `json:"statusMessages"`
+		TorrentInfoHash string         `json:"torrentInfoHash"`
 	} `json:"data"`
 }
 

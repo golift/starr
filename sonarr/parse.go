@@ -27,7 +27,7 @@ type SeriesTitleInfo struct {
 type ParsedEpisodeInfo struct {
 	EpisodeNumbers                []int            `json:"episodeNumbers"`
 	AbsoluteEpisodeNumbers        []int            `json:"absoluteEpisodeNumbers"`
-	SpecialAbsoluteEpisodeNumbers []interface{}    `json:"specialAbsoluteEpisodeNumbers"`
+	SpecialAbsoluteEpisodeNumbers []int            `json:"specialAbsoluteEpisodeNumbers"`
 	Languages                     []*starr.Value   `json:"languages"`
 	SeasonNumber                  int              `json:"seasonNumber"`
 	SeasonPart                    int64            `json:"seasonPart"`

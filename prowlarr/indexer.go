@@ -24,7 +24,7 @@ type IndexerInput struct {
 	ConfigContract string              `json:"configContract"`
 	Implementation string              `json:"implementation"`
 	Name           string              `json:"name"`
-	Protocol       string              `json:"protocol"`
+	Protocol       starr.Protocol      `json:"protocol"`
 	Tags           []int               `json:"tags,omitempty"`
 	Fields         []*starr.FieldInput `json:"fields"`
 }
@@ -41,7 +41,7 @@ type IndexerOutput struct {
 	Priority           int64                `json:"priority"`
 	SortName           string               `json:"sortName"`
 	Name               string               `json:"name"`
-	Protocol           string               `json:"protocol"`
+	Protocol           starr.Protocol       `json:"protocol"`
 	Privacy            string               `json:"privacy"`
 	DefinitionName     string               `json:"definitionName"`
 	Description        string               `json:"description"`

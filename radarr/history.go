@@ -35,28 +35,28 @@ type HistoryRecord struct {
 	DownloadID          string                `json:"downloadId"`
 	EventType           string                `json:"eventType"`
 	Data                struct {
-		Age                string    `json:"age"`
-		AgeHours           string    `json:"ageHours"`
-		AgeMinutes         string    `json:"ageMinutes"`
-		DownloadClient     string    `json:"downloadClient"`
-		DownloadClientName string    `json:"downloadClientName"`
-		DownloadURL        string    `json:"downloadUrl"`
-		DroppedPath        string    `json:"droppedPath"`
-		FileID             string    `json:"fileId"`
-		GUID               string    `json:"guid"`
-		ImportedPath       string    `json:"importedPath"`
-		Indexer            string    `json:"indexer"`
-		IndexerFlags       string    `json:"indexerFlags"`
-		IndexerID          string    `json:"indexerId"`
-		Message            string    `json:"message"`
-		NzbInfoURL         string    `json:"nzbInfoUrl"`
-		Protocol           string    `json:"protocol"`
-		PublishedDate      time.Time `json:"publishedDate"`
-		Reason             string    `json:"reason"`
-		ReleaseGroup       string    `json:"releaseGroup"`
-		Size               string    `json:"size"`
-		TmdbID             string    `json:"tmdbId"`
-		TorrentInfoHash    string    `json:"torrentInfoHash"`
+		Age                string         `json:"age"`
+		AgeHours           string         `json:"ageHours"`
+		AgeMinutes         string         `json:"ageMinutes"`
+		DownloadClient     string         `json:"downloadClient"`
+		DownloadClientName string         `json:"downloadClientName"`
+		DownloadURL        string         `json:"downloadUrl"`
+		DroppedPath        string         `json:"droppedPath"`
+		FileID             string         `json:"fileId"`
+		GUID               string         `json:"guid"`
+		ImportedPath       string         `json:"importedPath"`
+		Indexer            string         `json:"indexer"`
+		IndexerFlags       string         `json:"indexerFlags"`
+		IndexerID          string         `json:"indexerId"`
+		Message            string         `json:"message"`
+		NzbInfoURL         string         `json:"nzbInfoUrl"`
+		Protocol           starr.Protocol `json:"protocol"`
+		PublishedDate      time.Time      `json:"publishedDate"`
+		Reason             string         `json:"reason"`
+		ReleaseGroup       string         `json:"releaseGroup"`
+		Size               string         `json:"size"`
+		TmdbID             string         `json:"tmdbId"`
+		TorrentInfoHash    string         `json:"torrentInfoHash"`
 	} `json:"data"`
 }
 

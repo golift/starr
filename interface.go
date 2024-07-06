@@ -84,7 +84,7 @@ func (c *Config) Login(ctx context.Context) error {
 
 	closeResp(resp)
 
-	if u, _ := url.Parse(c.URL); strings.Contains(codeErr.Get("location"), "loginFailed") ||
+	if u, _ := url.Parse(c.URL); strings.Contains(codeErr.Get("Location"), "loginFailed") ||
 		len(c.Client.Jar.Cookies(u)) == 0 {
 		return fmt.Errorf("%w: authenticating as user '%s' failed", ErrRequestError, c.Username)
 	}

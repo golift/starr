@@ -34,7 +34,7 @@ type BlockListRecord struct {
 	ArtistID      int64          `json:"artistId"`
 	Date          time.Time      `json:"date"`
 	SourceTitle   string         `json:"sourceTitle"`
-	Protocol      string         `json:"protocol"`
+	Protocol      starr.Protocol `json:"protocol"`
 	Indexer       string         `json:"indexer"`
 	Message       string         `json:"message"`
 }

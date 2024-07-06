@@ -39,7 +39,7 @@ type QueueRecord struct {
 	TrackedDownloadState    string                 `json:"trackedDownloadState,omitempty"`
 	StatusMessages          []*starr.StatusMessage `json:"statusMessages,omitempty"`
 	DownloadID              string                 `json:"downloadId,omitempty"`
-	Protocol                string                 `json:"protocol"`
+	Protocol                starr.Protocol         `json:"protocol"`
 	DownloadClient          string                 `json:"downloadClient,omitempty"`
 	Indexer                 string                 `json:"indexer"`
 	OutputPath              string                 `json:"outputPath,omitempty"`

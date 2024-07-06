@@ -133,7 +133,7 @@ func (f *fakeCloser) logRequest() (int, int) {
 		sent = sent[:f.MaxBody] + " <data truncated>"
 	}
 
-	switch ctype := f.Header.Get("content-type"); {
+	switch ctype := f.Header.Get("Content-Type"); {
 	case !strings.Contains(ctype, "json"):
 		// We only log JSON. Need something else? Ask!
 		rcvd = "<data not logged, content-type: " + ctype + ">"
