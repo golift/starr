@@ -288,11 +288,6 @@ const (
 	TagsReplace ApplyTags = "replace"
 )
 
-// Ptr returns a pointer to an apply tags value. Useful for a BulkEdit struct.
-func (a ApplyTags) Ptr() *ApplyTags {
-	return &a
-}
-
 // TimeSpan is part of AudioTags and possibly used other places.
 type TimeSpan struct {
 	Ticks             int64 `json:"ticks"`
