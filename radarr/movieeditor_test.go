@@ -41,8 +41,8 @@ func TestEditMovies(t *testing.T) {
 			WithRequest: &radarr.BulkEdit{
 				MovieIDs:            []int64{17, 13},
 				Tags:                []int{44, 55, 66},
-				ApplyTags:           starr.TagsAdd.Ptr(),
-				MinimumAvailability: radarr.AvailabilityToBeAnnounced.Ptr(),
+				ApplyTags:           starr.TagsAdd,
+				MinimumAvailability: radarr.AvailabilityToBeAnnounced,
 			},
 			ExpectedRequest: `{"movieIds":[17,13],"minimumAvailability":"tba","tags":[44,55,66],"applyTags":"add"}` + "\n",
 			ExpectedMethod:  http.MethodPut,
