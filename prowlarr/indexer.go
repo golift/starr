@@ -207,7 +207,7 @@ func (p *Prowlarr) DeleteIndexerContext(ctx context.Context, indexerID int64) er
 
 // BulkIndexer is the input to UpdateIndexers.
 type BulkIndexer struct {
-	Ids            []int64         `json:"ids"`
+	IDs            []int64         `json:"ids"`
 	Tags           []int           `json:"tags"`
 	ApplyTags      starr.ApplyTags `json:"applyTags"`
 	Enable         bool            `json:"enable"`
