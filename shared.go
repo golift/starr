@@ -344,3 +344,14 @@ const (
 	ProtocolUsenet  Protocol = "usenet"
 	ProtocolTorrent Protocol = "torrent"
 )
+
+// BulkIndexer is the input to UpdateIndexers on all apps except Prowlarr.
+type BulkIndexer struct {
+	IDs                     []int64   `json:"ids"`
+	Tags                    []int     `json:"tags"`
+	ApplyTags               ApplyTags `json:"applyTags"`
+	EnableRss               bool      `json:"enableRss"`
+	EnableAutomaticSearch   bool      `json:"enableAutomaticSearch"`
+	EnableInteractiveSearch bool      `json:"enableInteractiveSearch"`
+	Priority                int64     `json:"priority"`
+}

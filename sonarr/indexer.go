@@ -175,24 +175,13 @@ func (s *Sonarr) DeleteIndexerContext(ctx context.Context, indexerID int64) erro
 	return nil
 }
 
-// BulkIndexer is the input to UpdateIndexers.
-type BulkIndexer struct {
-	IDs                     []int64         `json:"ids"`
-	Tags                    []int           `json:"tags"`
-	ApplyTags               starr.ApplyTags `json:"applyTags"`
-	EnableRss               bool            `json:"enableRss"`
-	EnableAutomaticSearch   bool            `json:"enableAutomaticSearch"`
-	EnableInteractiveSearch bool            `json:"enableInteractiveSearch"`
-	Priority                int64           `json:"priority"`
-}
-
 // UpdateIndexers bulk updates indexers.
-func (s *Sonarr) UpdateIndexers(indexer *BulkIndexer) (*IndexerOutput, error) {
+func (s *Sonarr) UpdateIndexers(indexer *starr.BulkIndexer) (*IndexerOutput, error) {
 	return s.UpdateIndexersContext(context.Background(), indexer)
 }
 
 // UpdateIndexersContext bulk updates indexers.
-func (s *Sonarr) UpdateIndexersContext(ctx context.Context, indexer *BulkIndexer) (*IndexerOutput, error) {
+func (s *Sonarr) UpdateIndexersContext(ctx context.Context, indexer *starr.BulkIndexer) (*IndexerOutput, error) {
 	var (
 		output IndexerOutput
 		body   bytes.Buffer
