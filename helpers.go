@@ -71,7 +71,7 @@ func Str[I int | int64 | float64 | bool](val I) string {
 		bits64 = 64
 	)
 
-	switch val := interface{}(val).(type) {
+	switch val := any(val).(type) {
 	case int:
 		return strconv.Itoa(val)
 	case bool:
@@ -85,24 +85,29 @@ func Str[I int | int64 | float64 | bool](val I) string {
 	}
 }
 
-// String returns a pointer to a string.
-func String(s string) *string {
-	return &s
+// Ptr returns a pointer to the provided "whatever".
+func Ptr[P any](p P) *P {
+	return &p
 }
 
 // True returns a pointer to a true boolean.
 func True() *bool {
-	s := true
-	return &s
+	return Ptr(true)
 }
 
 // False returns a pointer to a false boolean.
 func False() *bool {
-	s := false
+	return Ptr(false)
+}
+
+// String returns a pointer to a string.
+// Deprecated: Use Ptr() function instead.
+func String(s string) *string {
 	return &s
 }
 
 // Int64 returns a pointer to the provided integer.
+// Deprecated: Use Ptr() function instead.
 func Int64(s int64) *int64 {
 	return &s
 }
