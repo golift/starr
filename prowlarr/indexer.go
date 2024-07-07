@@ -204,3 +204,41 @@ func (p *Prowlarr) DeleteIndexerContext(ctx context.Context, indexerID int64) er
 
 	return nil
 }
+
+// BulkIndexer is the input to UpdateIndexers.
+type BulkIndexer struct {
+	Ids            []int64         `json:"ids"`
+	Tags           []int           `json:"tags"`
+	ApplyTags      starr.ApplyTags `json:"applyTags"`
+	Enable         bool            `json:"enable"`
+	AppProfileID   int64           `json:"appProfileId"`
+	Priority       int64           `json:"priority"`
+	MinimumSeeders int             `json:"minimumSeeders"`
+	SeedRatio      int             `json:"seedRatio"`
+	SeedTime       int             `json:"seedTime"`
+	PackSeedTime   int             `json:"packSeedTime"`
+}
+
+// UpdateIndexers bulk updates indexers.
+func (p *Prowlarr) UpdateIndexers(indexer *BulkIndexer) (*IndexerOutput, error) {
+	return p.UpdateIndexersContext(context.Background(), indexer)
+}
+
+// UpdateIndexersContext bulk updates indexers.
+func (p *Prowlarr) UpdateIndexersContext(ctx context.Context, indexer *BulkIndexer) (*IndexerOutput, error) {
+	var (
+		output IndexerOutput
+		body   bytes.Buffer
+	)
+
+	if err := json.NewEncoder(&body).Encode(indexer); err != nil {
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpIndexer, err)
+	}
+
+	req := starr.Request{URI: path.Join(bpIndexer, "bulk"), Body: &body}
+	if err := p.PutInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
+	}
+
+	return &output, nil
+}
