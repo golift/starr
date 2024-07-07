@@ -40,11 +40,6 @@ const (
 	AvailabilityDeleted       Availability = "deleted"
 )
 
-// Ptr returns a pointer to a minimum availability. Useful for a BulkEdit struct.
-func (a Availability) Ptr() *Availability {
-	return &a
-}
-
 // EditMovies allows bulk diting many movies at once.
 func (r *Radarr) EditMovies(editMovies *BulkEdit) ([]*Movie, error) {
 	return r.EditMoviesContext(context.Background(), editMovies)
