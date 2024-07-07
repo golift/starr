@@ -176,14 +176,14 @@ func (s *Sonarr) DeleteIndexerContext(ctx context.Context, indexerID int64) erro
 }
 
 // UpdateIndexers bulk updates indexers.
-func (s *Sonarr) UpdateIndexers(indexer *starr.BulkIndexer) (*IndexerOutput, error) {
+func (s *Sonarr) UpdateIndexers(indexer *starr.BulkIndexer) ([]*IndexerOutput, error) {
 	return s.UpdateIndexersContext(context.Background(), indexer)
 }
 
 // UpdateIndexersContext bulk updates indexers.
-func (s *Sonarr) UpdateIndexersContext(ctx context.Context, indexer *starr.BulkIndexer) (*IndexerOutput, error) {
+func (s *Sonarr) UpdateIndexersContext(ctx context.Context, indexer *starr.BulkIndexer) ([]*IndexerOutput, error) {
 	var (
-		output IndexerOutput
+		output []*IndexerOutput
 		body   bytes.Buffer
 	)
 
@@ -196,5 +196,5 @@ func (s *Sonarr) UpdateIndexersContext(ctx context.Context, indexer *starr.BulkI
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
-	return &output, nil
+	return output, nil
 }

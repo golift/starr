@@ -205,18 +205,18 @@ func (p *Prowlarr) DeleteIndexerContext(ctx context.Context, indexerID int64) er
 	return nil
 }
 
-// BulkIndexer is the input to UpdateIndexers.
+// BulkIndexer is the input to UpdateIndexers. Use the starr.Ptr(any) func to create the pointers.
 type BulkIndexer struct {
 	IDs            []int64         `json:"ids"`
-	Tags           []int           `json:"tags"`
-	ApplyTags      starr.ApplyTags `json:"applyTags"`
-	Enable         bool            `json:"enable"`
-	AppProfileID   int64           `json:"appProfileId"`
-	Priority       int64           `json:"priority"`
-	MinimumSeeders int             `json:"minimumSeeders"`
-	SeedRatio      int             `json:"seedRatio"`
-	SeedTime       int             `json:"seedTime"`
-	PackSeedTime   int             `json:"packSeedTime"`
+	Tags           []int           `json:"tags,omitempty"`
+	ApplyTags      starr.ApplyTags `json:"applyTags,omitempty"`
+	Enable         *bool           `json:"enable,omitempty"`
+	AppProfileID   *int64          `json:"appProfileId,omitempty"`
+	Priority       *int64          `json:"priority,omitempty"`
+	MinimumSeeders *int            `json:"minimumSeeders,omitempty"`
+	SeedRatio      *int            `json:"seedRatio,omitempty"`
+	SeedTime       *int            `json:"seedTime,omitempty"`
+	PackSeedTime   *int            `json:"packSeedTime,omitempty"`
 }
 
 // UpdateIndexers bulk updates indexers.

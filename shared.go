@@ -346,12 +346,13 @@ const (
 )
 
 // BulkIndexer is the input to UpdateIndexers on all apps except Prowlarr.
+// Use the starr.True/False/Int64() funcs to create the pointers.
 type BulkIndexer struct {
 	IDs                     []int64   `json:"ids"`
-	Tags                    []int     `json:"tags"`
-	ApplyTags               ApplyTags `json:"applyTags"`
-	EnableRss               bool      `json:"enableRss"`
-	EnableAutomaticSearch   bool      `json:"enableAutomaticSearch"`
-	EnableInteractiveSearch bool      `json:"enableInteractiveSearch"`
-	Priority                int64     `json:"priority"`
+	Tags                    []int     `json:"tags,omitempty"`
+	ApplyTags               ApplyTags `json:"applyTags,omitempty"`
+	EnableRss               *bool     `json:"enableRss,omitempty"`
+	EnableAutomaticSearch   *bool     `json:"enableAutomaticSearch,omitempty"`
+	EnableInteractiveSearch *bool     `json:"enableInteractiveSearch,omitempty"`
+	Priority                *int64    `json:"priority,omitempty"`
 }

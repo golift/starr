@@ -172,14 +172,14 @@ func (r *Radarr) DeleteIndexerContext(ctx context.Context, indexerID int64) erro
 }
 
 // UpdateIndexers bulk updates indexers.
-func (r *Radarr) UpdateIndexers(indexer *starr.BulkIndexer) (*IndexerOutput, error) {
+func (r *Radarr) UpdateIndexers(indexer *starr.BulkIndexer) ([]*IndexerOutput, error) {
 	return r.UpdateIndexersContext(context.Background(), indexer)
 }
 
 // UpdateIndexersContext bulk updates indexers.
-func (r *Radarr) UpdateIndexersContext(ctx context.Context, indexer *starr.BulkIndexer) (*IndexerOutput, error) {
+func (r *Radarr) UpdateIndexersContext(ctx context.Context, indexer *starr.BulkIndexer) ([]*IndexerOutput, error) {
 	var (
-		output IndexerOutput
+		output []*IndexerOutput
 		body   bytes.Buffer
 	)
 
@@ -192,5 +192,5 @@ func (r *Radarr) UpdateIndexersContext(ctx context.Context, indexer *starr.BulkI
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
 
-	return &output, nil
+	return output, nil
 }
