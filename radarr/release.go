@@ -78,27 +78,47 @@ func (r *Radarr) SearchReleaseContext(ctx context.Context, movieID int64) ([]*Re
 	return output, nil
 }
 
+// Grab attempts to download a release by GUID.
+func (r *Radarr) Grab(guid string, indexerID int64) (*Release, error) {
+	return r.GrabContext(context.Background(), guid, indexerID)
+}
+
+// GrabContext attempts to download a release by GUID.
+func (r *Radarr) GrabContext(ctx context.Context, guid string, indexerID int64) (*Release, error) {
+	return r.GrabReleaseContext(ctx, &Release{IndexerID: indexerID, GUID: guid})
+}
+
 // GrabRelease attempts to download a release for a movie from a search.
 // Pass the release for the item from the SearchRelease output, and the movie ID you want the grab associated with.
-// If the movieID is 0 then the MappedMovieID in the release is used, but that is not always set.
+// If the release.MovieID is 0 then release.MappedMovieID is used. Both may be 0, and that's OK unless ShouldOverride is true.
+// If release.ShouldOverride is true, then Languages, MovieID and Quality must be present in the release.
 func (r *Radarr) GrabRelease(release *Release) (*Release, error) {
 	return r.GrabReleaseContext(context.Background(), release)
 }
 
 // GrabReleaseContext attempts to download a release for a movie from a search.
 // Pass the release for the item from the SearchRelease output, and the movie ID you want the grab associated with.
-// If the movieID is 0 then the MappedMovieID in the release is used, but that is not always set.
+// If the release.MovieID is 0 then release.MappedMovieID is used. Both may be 0, and that's OK unless ShouldOverride is true.
+// If release.ShouldOverride is true, then Languages, MovieID and Quality must be present in the release.
 func (r *Radarr) GrabReleaseContext(ctx context.Context, release *Release) (*Release, error) {
 	grab := struct { // These are the required fields on the Radarr POST /release endpoint.
-		G string         `json:"guid"`
-		I int64          `json:"indexerId"`
-		L []*starr.Value `json:"languages,omitempty"`
-		S bool           `json:"shouldOverride"`
-		M int64          `json:"movieId,omitempty"`
-	}{G: release.GUID, I: release.IndexerID, L: release.Languages, S: true, M: release.MappedMovieID}
+		GUID     string         `json:"guid"`
+		Indexer  int64          `json:"indexerId"`
+		Override bool           `json:"shouldOverride"`
+		Language []*starr.Value `json:"languages,omitempty"`
+		MovieID  int64          `json:"movieId,omitempty"`
+		Quality  *starr.Quality `json:"quality,omitempty"`
+	}{
+		GUID:     release.GUID,
+		Indexer:  release.IndexerID,
+		Override: release.ShouldOverride,
+		Language: release.Languages,
+		MovieID:  release.MovieID,
+		Quality:  release.Quality,
+	}
 
-	if grab.M == 0 { // Best effort?
-		grab.M = release.MovieID
+	if grab.MovieID == 0 { // Best effort?
+		grab.MovieID = release.MappedMovieID
 	}
 
 	var body bytes.Buffer
