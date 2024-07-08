@@ -23,7 +23,7 @@ type Release struct {
 	Age                          int64                 `json:"age"`
 	AgeHours                     float64               `json:"ageHours"`
 	AgeMinutes                   float64               `json:"ageMinutes"`
-	Size                         int                   `json:"size"`
+	Size                         int64                 `json:"size"`
 	IndexerID                    int64                 `json:"indexerId"`
 	Indexer                      string                `json:"indexer"`
 	ReleaseGroup                 string                `json:"releaseGroup"`

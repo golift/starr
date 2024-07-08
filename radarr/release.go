@@ -80,7 +80,7 @@ func (r *Radarr) SearchReleaseContext(ctx context.Context, movieID int64) ([]*Re
 
 // Grab attempts to download a release by GUID.
 func (r *Radarr) Grab(guid string, indexerID int64) (*Release, error) {
-	return r.GrabContext(context.Background(), guid, indexerID)
+	return r.GrabReleaseContext(context.Background(), &Release{IndexerID: indexerID, GUID: guid})
 }
 
 // GrabContext attempts to download a release by GUID.
@@ -89,17 +89,19 @@ func (r *Radarr) GrabContext(ctx context.Context, guid string, indexerID int64) 
 }
 
 // GrabRelease attempts to download a release for a movie from a search.
-// Pass the release for the item from the SearchRelease output, and the movie ID you want the grab associated with.
-// If the release.MovieID is 0 then release.MappedMovieID is used. Both may be 0, and that's OK unless ShouldOverride is true.
-// If release.ShouldOverride is true, then Languages, MovieID and Quality must be present in the release.
+// Pass the release for the item from the SearchRelease output for the release you wish to download.
+// If the release.MovieID is 0 then release.MappedMovieID is used. Both may be 0, and that's OK unless
+// release.ShouldOverride is true. If release.ShouldOverride is true, then Languages, MovieID and Quality
+// must be present in the release.
 func (r *Radarr) GrabRelease(release *Release) (*Release, error) {
 	return r.GrabReleaseContext(context.Background(), release)
 }
 
 // GrabReleaseContext attempts to download a release for a movie from a search.
-// Pass the release for the item from the SearchRelease output, and the movie ID you want the grab associated with.
-// If the release.MovieID is 0 then release.MappedMovieID is used. Both may be 0, and that's OK unless ShouldOverride is true.
-// If release.ShouldOverride is true, then Languages, MovieID and Quality must be present in the release.
+// Pass the release for the item from the SearchRelease output for the release you wish to download.
+// If the release.MovieID is 0 then release.MappedMovieID is used. Both may be 0, and that's OK unless
+// release.ShouldOverride is true. If release.ShouldOverride is true, then Languages, MovieID and Quality
+// must be present in the release.
 func (r *Radarr) GrabReleaseContext(ctx context.Context, release *Release) (*Release, error) {
 	grab := struct { // These are the required fields on the Radarr POST /release endpoint.
 		GUID     string         `json:"guid"`

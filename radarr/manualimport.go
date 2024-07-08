@@ -35,7 +35,7 @@ type ManualImportOutput struct {
 	RelativePath      string                `json:"relativePath"`
 	FolderName        string                `json:"folderName"`
 	Name              string                `json:"name"`
-	Size              int                   `json:"size"`
+	Size              int64                 `json:"size"`
 	Movie             *Movie                `json:"movie"`
 	Quality           *starr.Quality        `json:"quality"`
 	Languages         []*starr.Value        `json:"languages"`
