@@ -84,8 +84,8 @@ func (p *Prowlarr) SearchContext(ctx context.Context, search SearchInput) ([]*Se
 	req := starr.Request{URI: bpSearch, Query: make(url.Values)}
 	req.Query.Set("query", search.Query)
 	req.Query.Set("type", search.Type)
-	req.Query.Set("limit", starr.Str(int64(search.Limit)))
-	req.Query.Set("offset", starr.Str(int64(search.Offset)))
+	req.Query.Set("limit", starr.Str(search.Limit))
+	req.Query.Set("offset", starr.Str(search.Offset))
 
 	for _, val := range search.Categories {
 		req.Query.Add("categories", starr.Str(val))

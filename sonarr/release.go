@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
-	"strconv"
 	"time"
 
 	"golift.io/starr"
@@ -113,7 +112,7 @@ func (s *Sonarr) SearchReleaseContext(ctx context.Context, input *SearchRelease)
 	req := starr.Request{URI: bpRelease, Query: make(url.Values)}
 	req.Query.Set("seriesId", starr.Str(input.SeriesID))
 	req.Query.Set("episodeId", starr.Str(input.EpisodeID))
-	req.Query.Set("seasonNumber", strconv.Itoa(input.SeasonNumber))
+	req.Query.Set("seasonNumber", starr.Str(input.SeasonNumber))
 
 	var output []*Release
 	if err := s.GetInto(ctx, req, &output); err != nil {
