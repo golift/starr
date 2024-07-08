@@ -81,7 +81,7 @@ func (r *Radarr) SearchReleaseContext(ctx context.Context, movieID int64) ([]*Re
 // GrabRelease attempts to download a release for a movie from a search.
 // Pass the release for the item from the SearchRelease output, and the movie ID you want the grab associated with.
 // If the movieID is 0 then the MappedMovieID in the release is used, but that is not always set.
-func (r *Radarr) GrabRelease(release *Release, movieID int64) (*Release, error) {
+func (r *Radarr) GrabRelease(release *Release) (*Release, error) {
 	return r.GrabReleaseContext(context.Background(), release)
 }
 
