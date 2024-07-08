@@ -174,3 +174,27 @@ func (s *Sonarr) DeleteIndexerContext(ctx context.Context, indexerID int64) erro
 
 	return nil
 }
+
+// UpdateIndexers bulk updates indexers.
+func (s *Sonarr) UpdateIndexers(indexer *starr.BulkIndexer) ([]*IndexerOutput, error) {
+	return s.UpdateIndexersContext(context.Background(), indexer)
+}
+
+// UpdateIndexersContext bulk updates indexers.
+func (s *Sonarr) UpdateIndexersContext(ctx context.Context, indexer *starr.BulkIndexer) ([]*IndexerOutput, error) {
+	var (
+		output []*IndexerOutput
+		body   bytes.Buffer
+	)
+
+	if err := json.NewEncoder(&body).Encode(indexer); err != nil {
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpIndexer, err)
+	}
+
+	req := starr.Request{URI: path.Join(bpIndexer, "bulk"), Body: &body}
+	if err := s.PutInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
+	}
+
+	return output, nil
+}

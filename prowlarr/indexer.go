@@ -204,3 +204,41 @@ func (p *Prowlarr) DeleteIndexerContext(ctx context.Context, indexerID int64) er
 
 	return nil
 }
+
+// BulkIndexer is the input to UpdateIndexers. Use the starr.Ptr(any) func to create the pointers.
+type BulkIndexer struct {
+	IDs            []int64         `json:"ids"`
+	Tags           []int           `json:"tags,omitempty"`
+	ApplyTags      starr.ApplyTags `json:"applyTags,omitempty"`
+	Enable         *bool           `json:"enable,omitempty"`
+	AppProfileID   *int64          `json:"appProfileId,omitempty"`
+	Priority       *int64          `json:"priority,omitempty"`
+	MinimumSeeders *int            `json:"minimumSeeders,omitempty"`
+	SeedRatio      *int            `json:"seedRatio,omitempty"`
+	SeedTime       *int            `json:"seedTime,omitempty"`
+	PackSeedTime   *int            `json:"packSeedTime,omitempty"`
+}
+
+// UpdateIndexers bulk updates indexers.
+func (p *Prowlarr) UpdateIndexers(indexer *BulkIndexer) (*IndexerOutput, error) {
+	return p.UpdateIndexersContext(context.Background(), indexer)
+}
+
+// UpdateIndexersContext bulk updates indexers.
+func (p *Prowlarr) UpdateIndexersContext(ctx context.Context, indexer *BulkIndexer) (*IndexerOutput, error) {
+	var (
+		output IndexerOutput
+		body   bytes.Buffer
+	)
+
+	if err := json.NewEncoder(&body).Encode(indexer); err != nil {
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpIndexer, err)
+	}
+
+	req := starr.Request{URI: path.Join(bpIndexer, "bulk"), Body: &body}
+	if err := p.PutInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
+	}
+
+	return &output, nil
+}

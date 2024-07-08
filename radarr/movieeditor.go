@@ -12,8 +12,7 @@ import (
 const bpMovieEditor = bpMovie + "/editor"
 
 // BulkEdit is the input for the bulk movie editor endpoint.
-// You may use starr.True(), starr.False(), starr.Int64(), and starr.String() to add data to the struct members.
-// Use Availability.Ptr() to add a value to minimum availability, and starr.ApplyTags.Ptr() for apply tags.
+// You may use starr.True(), starr.False(), and starr.Ptr() to add data to the pointer members.
 type BulkEdit struct {
 	MovieIDs            []int64         `json:"movieIds"`
 	Monitored           *bool           `json:"monitored,omitempty"`
