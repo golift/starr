@@ -34,7 +34,7 @@ type Search struct {
 	CommentURL   string         `json:"commentUrl"`
 	DownloadURL  string         `json:"downloadUrl"`
 	InfoURL      string         `json:"infoUrl"`
-	IndexerFlags []string       `json:"indexerFlags"`
+	IndexerFlags []string       `json:"indexerFlags,omitempty"`
 	Categories   []*Category    `json:"categories"`
 	Protocol     starr.Protocol `json:"protocol"`
 	FileName     string         `json:"fileName"`

@@ -15,6 +15,7 @@ const bpRelease = APIver + "/release"
 
 // Release is the output from the Radarr release endpoint.
 type Release struct {
+	ID                  int64          `json:"id"`
 	GUID                string         `json:"guid"`
 	Quality             *starr.Quality `json:"quality"`
 	CustomFormats       []any          `json:"customFormats"`
@@ -48,10 +49,15 @@ type Release struct {
 	Edition             string         `json:"edition"`
 	MagnetURL           string         `json:"magnetUrl"`
 	InfoHash            string         `json:"infoHash"`
+	SubGroup            string         `json:"subGroup"`
 	Seeders             int            `json:"seeders"`
 	Leechers            int            `json:"leechers"`
 	Protocol            starr.Protocol `json:"protocol"`
 	IndexerFlags        []string       `json:"indexerFlags,omitempty"`
+	MovieID             int64          `json:"movieId"`
+	DownloadClientID    int64          `json:"downloadClientId"`
+	DownloadClient      string         `json:"downloadClient"`
+	ShouldOverride      bool           `json:"shouldOverride"`
 }
 
 // SearchRelease searches for and returns a list releases available for download.
@@ -76,23 +82,23 @@ func (r *Radarr) SearchReleaseContext(ctx context.Context, movieID int64) ([]*Re
 // Pass the release for the item from the SearchRelease output, and the movie ID you want the grab associated with.
 // If the movieID is 0 then the MappedMovieID in the release is used, but that is not always set.
 func (r *Radarr) GrabRelease(release *Release, movieID int64) (*Release, error) {
-	return r.GrabReleaseContext(context.Background(), release, movieID)
+	return r.GrabReleaseContext(context.Background(), release)
 }
 
 // GrabReleaseContext attempts to download a release for a movie from a search.
 // Pass the release for the item from the SearchRelease output, and the movie ID you want the grab associated with.
 // If the movieID is 0 then the MappedMovieID in the release is used, but that is not always set.
-func (r *Radarr) GrabReleaseContext(ctx context.Context, release *Release, movieID int64) (*Release, error) {
+func (r *Radarr) GrabReleaseContext(ctx context.Context, release *Release) (*Release, error) {
 	grab := struct { // These are the required fields on the Radarr POST /release endpoint.
 		G string         `json:"guid"`
 		I int64          `json:"indexerId"`
-		L []*starr.Value `json:"languages"`
+		L []*starr.Value `json:"languages,omitempty"`
 		S bool           `json:"shouldOverride"`
-		M int64          `json:"movieId"`
-	}{G: release.GUID, I: release.IndexerID, L: release.Languages, S: true, M: movieID}
+		M int64          `json:"movieId,omitempty"`
+	}{G: release.GUID, I: release.IndexerID, L: release.Languages, S: true, M: release.MappedMovieID}
 
 	if grab.M == 0 { // Best effort?
-		grab.M = release.MappedMovieID
+		grab.M = release.MovieID
 	}
 
 	var body bytes.Buffer
