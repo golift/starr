@@ -21,8 +21,8 @@ type Release struct {
 	Quality                      starr.Quality         `json:"quality"`
 	QualityWeight                int64                 `json:"qualityWeight"`
 	Age                          int64                 `json:"age"`
-	AgeHours                     int                   `json:"ageHours"`
-	AgeMinutes                   int                   `json:"ageMinutes"`
+	AgeHours                     float64               `json:"ageHours"`
+	AgeMinutes                   float64               `json:"ageMinutes"`
 	Size                         int                   `json:"size"`
 	IndexerID                    int64                 `json:"indexerId"`
 	Indexer                      string                `json:"indexer"`
@@ -48,7 +48,7 @@ type Release struct {
 	TemporarilyRejected          bool                  `json:"temporarilyRejected"`
 	Rejected                     bool                  `json:"rejected"`
 	TvdbID                       int64                 `json:"tvdbId"`
-	TvRageID                     int                   `json:"tvRageId"`
+	TvRageID                     int64                 `json:"tvRageId"`
 	Rejections                   []string              `json:"rejections"`
 	PublishDate                  time.Time             `json:"publishDate"`
 	CommentURL                   string                `json:"commentUrl"`
@@ -65,7 +65,7 @@ type Release struct {
 	Seeders                      int                   `json:"seeders"`
 	Leechers                     int                   `json:"leechers"`
 	Protocol                     starr.Protocol        `json:"protocol"`
-	IndexerFlags                 int64                 `json:"indexerFlags"`
+	IndexerFlags                 int64                 `json:"indexerFlags,omitempty"`
 	IsDaily                      bool                  `json:"isDaily"`
 	IsAbsoluteNumbering          bool                  `json:"isAbsoluteNumbering"`
 	IsPossibleSpecialEpisode     bool                  `json:"isPossibleSpecialEpisode"`
@@ -123,56 +123,25 @@ func (s *Sonarr) SearchReleaseContext(ctx context.Context, input *SearchRelease)
 	return output, nil
 }
 
-// Grab is the output from the Grab* methods.
-type Grab struct {
-	Approved                 bool           `json:"approved"`
-	DownloadAllowed          bool           `json:"downloadAllowed"`
-	EpisodeRequested         bool           `json:"episodeRequested"`
-	FullSeason               bool           `json:"fullSeason"`
-	Special                  bool           `json:"special"`
-	TemporarilyRejected      bool           `json:"temporarilyRejected"`
-	IsAbsoluteNumbering      bool           `json:"isAbsoluteNumbering"`
-	IsDaily                  bool           `json:"isDaily"`
-	IsPossibleSpecialEpisode bool           `json:"isPossibleSpecialEpisode"`
-	Rejected                 bool           `json:"rejected"`
-	SceneSource              bool           `json:"sceneSource"`
-	AgeHours                 int            `json:"ageHours"`
-	AgeMinutes               int            `json:"ageMinutes"`
-	SeasonNumber             int            `json:"seasonNumber"`
-	Size                     int            `json:"size"`
-	Age                      int64          `json:"age"`
-	CustomFormatScore        int64          `json:"customFormatScore"`
-	IndexerFlags             int64          `json:"indexerFlags"`
-	IndexerID                int64          `json:"indexerId"`
-	LanguageWeight           int64          `json:"languageWeight"`
-	QualityWeight            int64          `json:"qualityWeight"`
-	ReleaseWeight            int64          `json:"releaseWeight"`
-	TvRageID                 int64          `json:"tvRageId"`
-	TvdbID                   int64          `json:"tvdbId"`
-	PublishDate              time.Time      `json:"publishDate"`
-	GUID                     string         `json:"guid"`
-	Protocol                 starr.Protocol `json:"protocol"`
-}
-
 // Grab adds a release and attempts to download it. Use this with Pr*wlarr search output.
-func (s *Sonarr) Grab(guid string, indexerID int64) (*Grab, error) {
+func (s *Sonarr) Grab(guid string, indexerID int64) (*Release, error) {
 	return s.GrabContext(context.Background(), guid, indexerID)
 }
 
 // GrabContext adds a release and attempts to download it. Use this with Pr*wlarr search output.
-func (s *Sonarr) GrabContext(ctx context.Context, guid string, indexerID int64) (*Grab, error) {
+func (s *Sonarr) GrabContext(ctx context.Context, guid string, indexerID int64) (*Release, error) {
 	return s.GrabReleaseContext(ctx, &Release{IndexerID: indexerID, GUID: guid})
 }
 
 // GrabRelease adds a release and attempts to download it.
 // Pass the release for the item from the SearchRelease output.
-func (s *Sonarr) GrabRelease(release *Release) (*Grab, error) {
+func (s *Sonarr) GrabRelease(release *Release) (*Release, error) {
 	return s.GrabReleaseContext(context.Background(), release)
 }
 
 // GrabReleaseContext adds a release and attempts to download it.
 // Pass the release for the item from the SearchRelease output.
-func (s *Sonarr) GrabReleaseContext(ctx context.Context, release *Release) (*Grab, error) {
+func (s *Sonarr) GrabReleaseContext(ctx context.Context, release *Release) (*Release, error) {
 	grab := struct { // We only use/need the guid and indexerID from the release.
 		G string `json:"guid"`
 		I int64  `json:"indexerId"`
@@ -183,7 +152,7 @@ func (s *Sonarr) GrabReleaseContext(ctx context.Context, release *Release) (*Gra
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpRelease, err)
 	}
 
-	var output Grab
+	var output Release
 
 	req := starr.Request{URI: bpRelease, Body: &body}
 	if err := s.PostInto(ctx, req, &output); err != nil {
