@@ -22,21 +22,23 @@ const (
 	ColonReplaceWithSpaceDash
 	ColonReplaceWithSpaceDashSpace
 	ColonSmartReplace
+	Custom
 )
 
 // Naming represents the config/naming endpoint in Sonarr.
 type Naming struct {
-	RenameEpisodes           bool   `json:"renameEpisodes,omitempty"`
-	ReplaceIllegalCharacters bool   `json:"replaceIllegalCharacters,omitempty"`
-	ColonReplacementFormat   CRF    `json:"colonReplacementFormat,omitempty"`
-	ID                       int64  `json:"id,omitempty"`
-	MultiEpisodeStyle        int64  `json:"multiEpisodeStyle,omitempty"`
-	DailyEpisodeFormat       string `json:"dailyEpisodeFormat,omitempty"`
-	AnimeEpisodeFormat       string `json:"animeEpisodeFormat,omitempty"`
-	SeriesFolderFormat       string `json:"seriesFolderFormat,omitempty"`
-	SeasonFolderFormat       string `json:"seasonFolderFormat,omitempty"`
-	SpecialsFolderFormat     string `json:"specialsFolderFormat,omitempty"`
-	StandardEpisodeFormat    string `json:"standardEpisodeFormat,omitempty"`
+	RenameEpisodes               bool   `json:"renameEpisodes"`
+	ReplaceIllegalCharacters     bool   `json:"replaceIllegalCharacters"`
+	ColonReplacementFormat       CRF    `json:"colonReplacementFormat"`
+	ID                           int64  `json:"id"`
+	MultiEpisodeStyle            int64  `json:"multiEpisodeStyle"`
+	DailyEpisodeFormat           string `json:"dailyEpisodeFormat"`
+	AnimeEpisodeFormat           string `json:"animeEpisodeFormat"`
+	SeriesFolderFormat           string `json:"seriesFolderFormat"`
+	SeasonFolderFormat           string `json:"seasonFolderFormat"`
+	SpecialsFolderFormat         string `json:"specialsFolderFormat"`
+	StandardEpisodeFormat        string `json:"standardEpisodeFormat"`
+	CustomColonReplacementFormat string `json:"customColonReplacementFormat"`
 }
 
 // GetNaming returns the naming.
