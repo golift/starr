@@ -23,6 +23,7 @@ const namingBody = `{
 	"seriesFolderFormat": "{Series Title}",
 	"seasonFolderFormat": "Season {season}",
 	"specialsFolderFormat": "Specials",
+	"customcolonReplacementFormat": "",
 	"id": 1
 }`
 
@@ -85,10 +86,23 @@ func TestUpdateNaming(t *testing.T) {
 			ExpectedMethod: "PUT",
 			ResponseStatus: 202,
 			WithRequest: &sonarr.Naming{
-				ReplaceIllegalCharacters: true,
+				RenameEpisodes:               true,
+				ReplaceIllegalCharacters:     true,
+				ColonReplacementFormat:       5,
+				ID:                           4,
+				MultiEpisodeStyle:            2,
+				DailyEpisodeFormat:           "a",
+				AnimeEpisodeFormat:           "b",
+				SeriesFolderFormat:           "c",
+				SeasonFolderFormat:           "d",
+				SpecialsFolderFormat:         "e",
+				StandardEpisodeFormat:        "f",
+				CustomColonReplacementFormat: "g",
 			},
-			ExpectedRequest: `{"replaceIllegalCharacters":true,"id":1}` + "\n",
-			ResponseBody:    namingBody,
+			ExpectedRequest: `{"renameEpisodes":true,"replaceIllegalCharacters":true,"colonReplacementFormat":5,` +
+				`"id":1,"multiEpisodeStyle":2,"dailyEpisodeFormat":"a","animeEpisodeFormat":"b","seriesFolderFormat":"c",` +
+				`"seasonFolderFormat":"d","specialsFolderFormat":"e","standardEpisodeFormat":"f","customColonReplacementFormat":"g"}` + "\n",
+			ResponseBody: namingBody,
 			WithResponse: &sonarr.Naming{
 				ID:                       1,
 				RenameEpisodes:           false,
@@ -103,6 +117,7 @@ func TestUpdateNaming(t *testing.T) {
 			},
 			WithError: nil,
 		},
+
 		{
 			Name:           "404",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config", "naming"),
@@ -110,11 +125,13 @@ func TestUpdateNaming(t *testing.T) {
 			WithRequest: &sonarr.Naming{
 				ReplaceIllegalCharacters: true,
 			},
-			ExpectedRequest: `{"replaceIllegalCharacters":true,"id":1}` + "\n",
-			ResponseStatus:  404,
-			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       &starr.ReqError{Code: http.StatusNotFound},
-			WithResponse:    (*sonarr.Naming)(nil),
+			ExpectedRequest: `{"renameEpisodes":false,"replaceIllegalCharacters":true,"colonReplacementFormat":0,` +
+				`"id":1,"multiEpisodeStyle":0,"dailyEpisodeFormat":"","animeEpisodeFormat":"","seriesFolderFormat":"",` +
+				`"seasonFolderFormat":"","specialsFolderFormat":"","standardEpisodeFormat":"","customColonReplacementFormat":""}` + "\n",
+			ResponseStatus: 404,
+			ResponseBody:   `{"message": "NotFound"}`,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
+			WithResponse:   (*sonarr.Naming)(nil),
 		},
 	}
 
