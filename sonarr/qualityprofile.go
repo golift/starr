@@ -15,15 +15,16 @@ const bpQualityProfile = APIver + "/qualityProfile"
 
 // QualityProfile is the /api/v3/qualityprofile endpoint.
 type QualityProfile struct {
-	UpgradeAllowed    bool                `json:"upgradeAllowed"`
-	ID                int64               `json:"id"`
-	Cutoff            int64               `json:"cutoff"`
-	Name              string              `json:"name"`
-	Qualities         []*starr.Quality    `json:"items"`
-	MinFormatScore    int64               `json:"minFormatScore"`        // v4 only.
-	CutoffFormatScore int64               `json:"cutoffFormatScore"`     // v4 only.
-	FormatItems       []*starr.FormatItem `json:"formatItems,omitempty"` // v4 only.
-	Language          *starr.Value        `json:"language,omitempty"`    // v4 only.
+	UpgradeAllowed        bool                `json:"upgradeAllowed"`
+	ID                    int64               `json:"id"`
+	Cutoff                int64               `json:"cutoff"`
+	Name                  string              `json:"name"`
+	Qualities             []*starr.Quality    `json:"items"`
+	MinFormatScore        int64               `json:"minFormatScore"`        // v4 only.
+	MinUpgradeFormatScore int64               `json:"minUpgradeFormatScore"` // v4 only.
+	CutoffFormatScore     int64               `json:"cutoffFormatScore"`     // v4 only.
+	FormatItems           []*starr.FormatItem `json:"formatItems,omitempty"` // v4 only.
+	Language              *starr.Value        `json:"language,omitempty"`    // v4 only.
 }
 
 // GetQualityProfiles returns all configured quality profiles.
