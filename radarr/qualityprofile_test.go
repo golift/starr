@@ -47,6 +47,7 @@ const (
 		  }
 		],
 		"minFormatScore": 0,
+		"minUpgradeFormatScore": 1,
 		"cutoffFormatScore": 0,
 		"formatItems": [],
 		"language": {
@@ -59,12 +60,12 @@ const (
 	addQualityProfileRequest = `{"name":"test","upgradeAllowed":false,"cutoff":1003,"items":[{"name":"WEB 2160p",` +
 		`"id":1003,"items":[{"quality":{"id":18,"name":"WEBDL-2160p","source":"webdl","resolution":2160,"modifier":"none"},` +
 		`"allowed":true},{"quality":{"id":17,"name":"WEBRip-2160p","source":"webrip","resolution":2160,"modifier":"none"},` +
-		`"allowed":true}],"allowed":true}],"minFormatScore":0,"cutoffFormatScore":0,"formatItems":null,` +
+		`"allowed":true}],"allowed":true}],"minFormatScore":0,"minUpgradeFormatScore":1,"cutoffFormatScore":0,"formatItems":null,` +
 		`"language":{"id":1,"name":"English"}}` + "\n"
 	updateQualityProfileRequest = `{"id":7,"name":"test","upgradeAllowed":false,"cutoff":1003,"items":` +
 		`[{"name":"WEB 2160p","id":1003,"items":[{"quality":{"id":18,"name":"WEBDL-2160p","source":"webdl",` +
 		`"resolution":2160,"modifier":"none"},"allowed":true},{"quality":{"id":17,"name":"WEBRip-2160p","source":"webrip",` +
-		`"resolution":2160,"modifier":"none"},"allowed":true}],"allowed":true}],"minFormatScore":0,` +
+		`"resolution":2160,"modifier":"none"},"allowed":true}],"allowed":true}],"minFormatScore":0,"minUpgradeFormatScore":1,` +
 		`"cutoffFormatScore":0,"formatItems":null,"language":{"id":1,"name":"English"}}` + "\n"
 )
 
@@ -114,8 +115,9 @@ func TestGetQualityProfiles(t *testing.T) {
 							Allowed: true,
 						},
 					},
-					MinFormatScore:    0,
-					CutoffFormatScore: 0,
+					MinFormatScore:        0,
+					MinUpgradeFormatScore: 1,
+					CutoffFormatScore:     0,
 					Language: &starr.Value{
 						ID:   1,
 						Name: "English",
@@ -194,8 +196,9 @@ func TestGetQualityProfile(t *testing.T) {
 						Allowed: true,
 					},
 				},
-				MinFormatScore:    0,
-				CutoffFormatScore: 0,
+				MinFormatScore:        0,
+				CutoffFormatScore:     0,
+				MinUpgradeFormatScore: 1,
 				Language: &starr.Value{
 					ID:   1,
 					Name: "English",
@@ -269,8 +272,9 @@ func TestAddQualityProfile(t *testing.T) {
 						Allowed: true,
 					},
 				},
-				MinFormatScore:    0,
-				CutoffFormatScore: 0,
+				MinFormatScore:        0,
+				MinUpgradeFormatScore: 1,
+				CutoffFormatScore:     0,
 				Language: &starr.Value{
 					ID:   1,
 					Name: "English",
@@ -313,8 +317,9 @@ func TestAddQualityProfile(t *testing.T) {
 						Allowed: true,
 					},
 				},
-				MinFormatScore:    0,
-				CutoffFormatScore: 0,
+				MinFormatScore:        0,
+				MinUpgradeFormatScore: 1,
+				CutoffFormatScore:     0,
 				Language: &starr.Value{
 					ID:   1,
 					Name: "English",
@@ -358,8 +363,9 @@ func TestAddQualityProfile(t *testing.T) {
 						Allowed: true,
 					},
 				},
-				MinFormatScore:    0,
-				CutoffFormatScore: 0,
+				MinFormatScore:        0,
+				MinUpgradeFormatScore: 1,
+				CutoffFormatScore:     0,
 				Language: &starr.Value{
 					ID:   1,
 					Name: "English",
@@ -427,8 +433,9 @@ func TestUpdateQualityProfile(t *testing.T) {
 						Allowed: true,
 					},
 				},
-				MinFormatScore:    0,
-				CutoffFormatScore: 0,
+				MinFormatScore:        0,
+				MinUpgradeFormatScore: 1,
+				CutoffFormatScore:     0,
 				Language: &starr.Value{
 					ID:   1,
 					Name: "English",
@@ -472,8 +479,9 @@ func TestUpdateQualityProfile(t *testing.T) {
 						Allowed: true,
 					},
 				},
-				MinFormatScore:    0,
-				CutoffFormatScore: 0,
+				MinFormatScore:        0,
+				MinUpgradeFormatScore: 1,
+				CutoffFormatScore:     0,
 				Language: &starr.Value{
 					ID:   1,
 					Name: "English",
@@ -517,8 +525,9 @@ func TestUpdateQualityProfile(t *testing.T) {
 						Allowed: true,
 					},
 				},
-				MinFormatScore:    0,
-				CutoffFormatScore: 0,
+				MinFormatScore:        0,
+				MinUpgradeFormatScore: 1,
+				CutoffFormatScore:     0,
 				Language: &starr.Value{
 					ID:   1,
 					Name: "English",
