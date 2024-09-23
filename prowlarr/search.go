@@ -1,7 +1,9 @@
 package prowlarr
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/url"
 	"time"
@@ -32,7 +34,7 @@ type Search struct {
 	CommentURL   string         `json:"commentUrl"`
 	DownloadURL  string         `json:"downloadUrl"`
 	InfoURL      string         `json:"infoUrl"`
-	IndexerFlags []string       `json:"indexerFlags"`
+	IndexerFlags []string       `json:"indexerFlags,omitempty"`
 	Categories   []*Category    `json:"categories"`
 	Protocol     starr.Protocol `json:"protocol"`
 	FileName     string         `json:"fileName"`
@@ -82,8 +84,8 @@ func (p *Prowlarr) SearchContext(ctx context.Context, search SearchInput) ([]*Se
 	req := starr.Request{URI: bpSearch, Query: make(url.Values)}
 	req.Query.Set("query", search.Query)
 	req.Query.Set("type", search.Type)
-	req.Query.Set("limit", starr.Str(int64(search.Limit)))
-	req.Query.Set("offset", starr.Str(int64(search.Offset)))
+	req.Query.Set("limit", starr.Str(search.Limit))
+	req.Query.Set("offset", starr.Str(search.Offset))
 
 	for _, val := range search.Categories {
 		req.Query.Add("categories", starr.Str(val))
@@ -99,4 +101,43 @@ func (p *Prowlarr) SearchContext(ctx context.Context, search SearchInput) ([]*Se
 	}
 
 	return output, nil
+}
+
+// Grab attempts to download a searched item by guid. Use this with Pr*wlarr search output.
+func (p *Prowlarr) Grab(guid string, indexerID int64) (*Search, error) {
+	return p.GrabContext(context.Background(), guid, indexerID)
+}
+
+// GrabContext attempts to download a searched item by guid. Use this with Pr*wlarr search output.
+func (p *Prowlarr) GrabContext(ctx context.Context, guid string, indexerID int64) (*Search, error) {
+	return p.GrabSearchContext(ctx, &Search{IndexerID: indexerID, GUID: guid})
+}
+
+// GrabSearch attempts to download an item returned from a search.
+// Pass the search for the item from the Search() output.
+func (p *Prowlarr) GrabSearch(search *Search) (*Search, error) {
+	return p.GrabSearchContext(context.Background(), search)
+}
+
+// GrabSearchContext attempts to download an item returned from a search.
+// Pass the search for the item from the Search() output.
+func (p *Prowlarr) GrabSearchContext(ctx context.Context, search *Search) (*Search, error) {
+	grab := struct { // We only use/need the guid and indexerID from the search.
+		G string `json:"guid"`
+		I int64  `json:"indexerId"`
+	}{G: search.GUID, I: search.IndexerID}
+
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(&grab); err != nil {
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpSearch, err)
+	}
+
+	var output Search
+
+	req := starr.Request{URI: bpSearch, Body: &body}
+	if err := p.PostInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
+	}
+
+	return &output, nil
 }

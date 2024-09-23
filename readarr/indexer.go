@@ -168,3 +168,27 @@ func (r *Readarr) DeleteIndexerContext(ctx context.Context, indexerID int64) err
 
 	return nil
 }
+
+// UpdateIndexers bulk updates indexers.
+func (r *Readarr) UpdateIndexers(indexer *starr.BulkIndexer) ([]*IndexerOutput, error) {
+	return r.UpdateIndexersContext(context.Background(), indexer)
+}
+
+// UpdateIndexersContext bulk updates indexers.
+func (r *Readarr) UpdateIndexersContext(ctx context.Context, indexer *starr.BulkIndexer) ([]*IndexerOutput, error) {
+	var (
+		output []*IndexerOutput
+		body   bytes.Buffer
+	)
+
+	if err := json.NewEncoder(&body).Encode(indexer); err != nil {
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpIndexer, err)
+	}
+
+	req := starr.Request{URI: path.Join(bpIndexer, "bulk"), Body: &body}
+	if err := r.PutInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
+	}
+
+	return output, nil
+}

@@ -37,7 +37,7 @@ type ManualImportOutput struct {
 	RelativePath      string                `json:"relativePath"`
 	FolderName        string                `json:"folderName"`
 	Name              string                `json:"name"`
-	Size              int                   `json:"size"`
+	Size              int64                 `json:"size"`
 	Series            *Series               `json:"series"`
 	SeasonNumber      int                   `json:"seasonNumber"`
 	Episodes          []*Episode            `json:"episodes"`
