@@ -28,7 +28,7 @@ linters:
 
 linters-settings:
   ireturn:
-    allow: generic,stdlib,error
+    allow: [generic,stdlib,error]
 # One day we'll fix all the field alignments. Anyone got a tool that just does it?
 #  govet:
 #    enable:
