@@ -139,7 +139,6 @@ func TestGetNotifications(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
@@ -216,7 +215,6 @@ func TestGetNotification(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
@@ -317,7 +315,6 @@ func TestAddNotification(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
@@ -420,7 +417,6 @@ func TestUpdateNotification(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
@@ -457,7 +453,6 @@ func TestDeleteNotification(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)

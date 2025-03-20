@@ -53,7 +53,6 @@ func TestGetDownloadClientConfig(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
@@ -114,7 +113,6 @@ func TestUpdateDownloadClientConfig(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)

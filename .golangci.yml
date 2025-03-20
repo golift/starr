@@ -17,14 +17,14 @@ linters:
   enable-all: true
   disable:
     # deprecated
-    - gomnd
-    - execinquery
+    - tenv
     # unused
     - tagliatelle
     - exhaustruct
     - dupl
     - nlreturn
     - musttag
+    - depguard
 
 linters-settings:
   ireturn:
