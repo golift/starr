@@ -17,8 +17,7 @@ linters:
   enable-all: true
   disable:
     # deprecated
-    - gomnd
-    - execinquery
+    - tenv
     # unused
     - tagliatelle
     - exhaustruct
@@ -28,7 +27,7 @@ linters:
 
 linters-settings:
   ireturn:
-    allow: generic,stdlib,error
+    allow: [generic,stdlib,error]
 # One day we'll fix all the field alignments. Anyone got a tool that just does it?
 #  govet:
 #    enable:
@@ -41,6 +40,8 @@ linters-settings:
         allow:
         - $gostd
         - github.com/stretchr/testify
+        - golift.io/starr
+        - golang.org/x/net
 
 run:
   timeout: 5m
