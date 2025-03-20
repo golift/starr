@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"net/url"
 	"path"
-	"strconv"
 	"time"
 
 	"golift.io/starr"
@@ -67,7 +66,7 @@ func (s *Sonarr) GetSeriesEpisodesContext(ctx context.Context, getEpisode *GetEp
 	}
 
 	if getEpisode.SeasonNumber > 0 {
-		params.Set("seasonNumber", strconv.Itoa(getEpisode.SeasonNumber))
+		params.Set("seasonNumber", starr.Str(getEpisode.SeasonNumber))
 	}
 
 	for _, id := range getEpisode.EpisodeIDs {

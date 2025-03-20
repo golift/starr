@@ -168,3 +168,27 @@ func (l *Lidarr) DeleteIndexerContext(ctx context.Context, indexerID int64) erro
 
 	return nil
 }
+
+// UpdateIndexers bulk updates indexers.
+func (l *Lidarr) UpdateIndexers(indexer *starr.BulkIndexer) (*IndexerOutput, error) {
+	return l.UpdateIndexersContext(context.Background(), indexer)
+}
+
+// UpdateIndexersContext bulk updates indexers.
+func (l *Lidarr) UpdateIndexersContext(ctx context.Context, indexer *starr.BulkIndexer) (*IndexerOutput, error) {
+	var (
+		output IndexerOutput
+		body   bytes.Buffer
+	)
+
+	if err := json.NewEncoder(&body).Encode(indexer); err != nil {
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpIndexer, err)
+	}
+
+	req := starr.Request{URI: path.Join(bpIndexer, "bulk"), Body: &body}
+	if err := l.PutInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
+	}
+
+	return &output, nil
+}

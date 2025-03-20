@@ -60,7 +60,7 @@ func (r *Radarr) GetCalendarID(calendarID int64) (*Movie, error) {
 func (r *Radarr) GetCalendarIDContext(ctx context.Context, calendarID int64) (*Movie, error) {
 	var output *Movie
 
-	req := starr.Request{URI: path.Join(bpCalendar, starr.Itoa(calendarID))}
+	req := starr.Request{URI: path.Join(bpCalendar, starr.Str(calendarID))}
 	if err := r.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
