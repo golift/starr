@@ -16,20 +16,20 @@ type Rename struct {
 	SeriesID       int64   `json:"seriesId"`
 	SeasonNumber   int64   `json:"seasonNumber"`
 	EpisodeNumbers []int64 `json:"episodeNumbers"`
-	EpisodeFileId  int64   `json:"episodeFileId"`
+	EpisodeFileID  int64   `json:"episodeFileID"`
 	ExistingPath   string  `json:"existingPath,omitempty"`
 	NewPath        string  `json:"newPath,omitempty"`
 }
 
-// GetRename checks if the episodes in the specified series (database ID) and season need to be renamed to
+// GetRenames checks if the episodes in the specified series (database ID) and season need to be renamed to
 // follow the naming format. If seasonNumber is set to -1, it will check all seasons at once.
-func (s *Sonarr) GetRename(seriesID int64, seasonNumber int64) ([]*Rename, error) {
-	return s.GetRenameContext(context.Background(), seriesID, seasonNumber)
+func (s *Sonarr) GetRenames(seriesID int64, seasonNumber int64) ([]*Rename, error) {
+	return s.GetRenamesContext(context.Background(), seriesID, seasonNumber)
 }
 
-// GetRenameContext checks if the episodes in the specified series (database ID) and season need to be renamed to
+// GetRenamesContext checks if the episodes in the specified series (database ID) and season need to be renamed to
 // follow the naming format. If seasonNumber is set to -1, it will check all seasons at once.
-func (s *Sonarr) GetRenameContext(ctx context.Context, seriesID int64, seasonNumber int64) ([]*Rename, error) {
+func (s *Sonarr) GetRenamesContext(ctx context.Context, seriesID int64, seasonNumber int64) ([]*Rename, error) {
 	params := make(url.Values)
 	params.Set("seriesId", starr.Str(seriesID))
 
@@ -46,3 +46,27 @@ func (s *Sonarr) GetRenameContext(ctx context.Context, seriesID int64, seasonNum
 
 	return output, nil
 }
+
+// GetSeriesRenames checks if the episodes in the specified series (database ID) need to be renamed to
+// follow the naming format.
+func (s *Sonarr) GetSeriesRenames(seriesID int64) ([]*Rename, error) {
+	return s.GetRenamesContext(context.Background(), seriesID, -1)
+}
+
+// GetSeriesRenamesContext checks if the episodes in the specified series (database ID) need to be renamed to
+// follow the naming format.
+func (s *Sonarr) GetSeriesRenamesContext(ctx context.Context, seriesID int64) ([]*Rename, error) {
+	return s.GetRenamesContext(ctx, seriesID, -1)
+}
+
+/* Doesn't exist yet
+// GetAllRenames checks if any episodes need to be renamed to follow the naming format.
+func (s *Sonarr) GetAllRenames() ([]*Rename, error) {
+	return s.GetRenamesContext(context.Background(), -1, -1)
+} */
+
+/* Doesn't exist yet
+// GetAllRenamesContext checks if any episodes need to be renamed to follow the naming format.
+func (s *Sonarr) GetAllRenamesContext(ctx context.Context) ([]*Rename, error) {
+	return s.GetRenamesContext(ctx, -1, -1)
+} */

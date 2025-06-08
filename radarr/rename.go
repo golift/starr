@@ -19,15 +19,15 @@ type Rename struct {
 	NewPath      string `json:"newPath,omitempty"`
 }
 
-// GetRename checks if the movie with the specified movieID (database ID) needs to be renamed to
+// GetRenames checks if the movie with the specified movieID (database ID) needs to be renamed to
 // follow the naming format.
-func (r *Radarr) GetRename(movieID int64) ([]*Rename, error) {
-	return r.GetRenameContext(context.Background(), movieID)
+func (r *Radarr) GetRenames(movieID int64) ([]*Rename, error) {
+	return r.GetRenamesContext(context.Background(), movieID)
 }
 
-// GetRenameContext checks if the movie with the specified movieID (database ID) needs to be renamed to
+// GetRenamesContext checks if the movie with the specified movieID (database ID) needs to be renamed to
 // follow the naming format.
-func (r *Radarr) GetRenameContext(ctx context.Context, movieID int64) ([]*Rename, error) {
+func (r *Radarr) GetRenamesContext(ctx context.Context, movieID int64) ([]*Rename, error) {
 	params := make(url.Values)
 	params.Set("movieId", starr.Str(movieID))
 
@@ -40,3 +40,15 @@ func (r *Radarr) GetRenameContext(ctx context.Context, movieID int64) ([]*Rename
 
 	return output, nil
 }
+
+/* Doesn't exist yet
+// GetAllRenames checks if any movies need to be renamed to follow the naming format.
+func (r *Radarr) GetAllRenames() ([]*Rename, error) {
+	return r.GetRenamesContext(context.Background(), -1)
+} */
+
+/* Doesn't exist yet
+// GetAllRenamesContext checks if any movies need to be renamed to follow the naming format.
+func (r *Radarr) GetAllRenamesContext(ctx context.Context) ([]*Rename, error) {
+	return r.GetRenamesContext(ctx, -1)
+} */

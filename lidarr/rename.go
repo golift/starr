@@ -21,15 +21,15 @@ type Rename struct {
 	NewPath      string  `json:"newPath,omitempty"`
 }
 
-// GetRename checks if the tracks by the specified artist (database ID) on the specified album (database ID)
+// GetRenames checks if the tracks by the specified artist (database ID) on the specified album (database ID)
 // need to be renamed to follow the naming format. If albumID is set to -1, it will check all albums at once.
-func (l *Lidarr) GetRename(artistID int64, albumID int64) ([]*Rename, error) {
-	return l.GetRenameContext(context.Background(), artistID, albumID)
+func (l *Lidarr) GetRenames(artistID int64, albumID int64) ([]*Rename, error) {
+	return l.GetRenamesContext(context.Background(), artistID, albumID)
 }
 
-// GetRenameContext checks if the tracks by the specified artist (database ID) on the specified album (database ID)
+// GetRenamesContext checks if the tracks by the specified artist (database ID) on the specified album (database ID)
 // need to be renamed to follow the naming format. If albumID is set to -1, it will check all albums at once.
-func (l *Lidarr) GetRenameContext(ctx context.Context, artistID int64, albumID int64) ([]*Rename, error) {
+func (l *Lidarr) GetRenamesContext(ctx context.Context, artistID int64, albumID int64) ([]*Rename, error) {
 	params := make(url.Values)
 	params.Set("artistId", starr.Str(artistID))
 
@@ -46,3 +46,27 @@ func (l *Lidarr) GetRenameContext(ctx context.Context, artistID int64, albumID i
 
 	return output, nil
 }
+
+// GetArtistRenames checks if the tracks by the specified artist (database ID) need to be renamed to
+// follow the naming format.
+func (l *Lidarr) GetArtistRenames(artistID int64) ([]*Rename, error) {
+	return l.GetRenamesContext(context.Background(), artistID, -1)
+}
+
+// GetArtistRenamesContext checks if the tracks by the specified artist (database ID) need to be renamed to
+// follow the naming format.
+func (l *Lidarr) GetArtistRenamesContext(ctx context.Context, artistID int64) ([]*Rename, error) {
+	return l.GetRenamesContext(ctx, artistID, -1)
+}
+
+/* Doesn't exist yet
+// GetAllRenames checks if any tracks need to be renamed to follow the naming format.
+func (l *Lidarr) GetAllRenames() ([]*Rename, error) {
+	return l.GetRenamesContext(context.Background(), -1, -1)
+} */
+
+/* Doesn't exist yet
+// GetAllRenamesContext checks if any tracks need to be renamed to follow the naming format.
+func (l *Lidarr) GetAllRenamesContext(ctx context.Context) ([]*Rename, error) {
+	return l.GetRenamesContext(ctx, -1, -1)
+} */
