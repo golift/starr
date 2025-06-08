@@ -16,7 +16,7 @@ type Rename struct {
 	SeriesID       int64   `json:"seriesId"`
 	SeasonNumber   int64   `json:"seasonNumber"`
 	EpisodeNumbers []int64 `json:"episodeNumbers"`
-	EpisodeFileID  int64   `json:"episodeFileID"`
+	EpisodeFileID  int64   `json:"episodeFileId"`
 	ExistingPath   string  `json:"existingPath,omitempty"`
 	NewPath        string  `json:"newPath,omitempty"`
 }
