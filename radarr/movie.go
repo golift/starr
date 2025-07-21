@@ -32,6 +32,7 @@ type Movie struct {
 	InCinemas             time.Time           `json:"inCinemas,omitempty"`
 	PhysicalRelease       time.Time           `json:"physicalRelease,omitempty"`
 	DigitalRelease        time.Time           `json:"digitalRelease,omitempty"`
+	ReleaseDate           time.Time           `json:"releaseDate,omitempty"`
 	Images                []*starr.Image      `json:"images,omitempty"`
 	Website               string              `json:"website,omitempty"`
 	Year                  int                 `json:"year,omitempty"`
