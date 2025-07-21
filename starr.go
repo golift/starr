@@ -17,7 +17,7 @@
 package starr
 
 import (
-	"fmt"
+	"errors"
 	"net/http"
 	"time"
 )
@@ -34,13 +34,13 @@ var (
 	// Find an example of errors.As in the Login() method.
 	ErrInvalidStatusCode = &ReqError{Code: -1}
 	// ErrNilClient is returned if you attempt a request with a nil http.Client.
-	ErrNilClient = fmt.Errorf("http.Client must not be nil")
+	ErrNilClient = errors.New("http.Client must not be nil")
 	// ErrNilInterface is returned by *Into() methods when a nil interface is provided.
-	ErrNilInterface = fmt.Errorf("cannot unmarshal data into a nil or empty interface")
+	ErrNilInterface = errors.New("cannot unmarshal data into a nil or empty interface")
 	// ErrInvalidAPIKey is returned if we know the API key didn't work.
-	ErrInvalidAPIKey = fmt.Errorf("API Key may be incorrect")
+	ErrInvalidAPIKey = errors.New("API Key may be incorrect")
 	// ErrRequestError is returned when bad input is provided.
-	ErrRequestError = fmt.Errorf("request error")
+	ErrRequestError = errors.New("request error")
 )
 
 // Config is the data needed to poll Radarr or Sonarr or Lidarr or Readarr.
@@ -48,13 +48,13 @@ var (
 // HTTPUser and HTTPPass are used for Basic HTTP auth, if enabled (not common).
 // Username and Password are for non-API paths with native authentication enabled.
 type Config struct {
-	APIKey   string       `json:"apiKey" toml:"api_key" xml:"api_key" yaml:"apiKey"`
-	URL      string       `json:"url" toml:"url" xml:"url" yaml:"url"`
+	APIKey   string       `json:"apiKey"   toml:"api_key"   xml:"api_key"   yaml:"apiKey"`
+	URL      string       `json:"url"      toml:"url"       xml:"url"       yaml:"url"`
 	HTTPPass string       `json:"httpPass" toml:"http_pass" xml:"http_pass" yaml:"httpPass"`
 	HTTPUser string       `json:"httpUser" toml:"http_user" xml:"http_user" yaml:"httpUser"`
-	Username string       `json:"username" toml:"username" xml:"username" yaml:"username"`
-	Password string       `json:"password" toml:"password" xml:"password" yaml:"password"`
-	Client   *http.Client `json:"-" toml:"-" xml:"-" yaml:"-"`
+	Username string       `json:"username" toml:"username"  xml:"username"  yaml:"username"`
+	Password string       `json:"password" toml:"password"  xml:"password"  yaml:"password"`
+	Client   *http.Client `json:"-"        toml:"-"         xml:"-"         yaml:"-"`
 	cookie   bool         // this probably doesn't work right.
 }
 

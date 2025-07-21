@@ -11,6 +11,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 )
 
 // Config is the input data for the logger.
@@ -46,6 +47,7 @@ type fakeCloser struct {
 	URL     string
 	Status  string
 	Header  http.Header
+	Elapsed time.Duration
 	*Config
 }
 
@@ -75,6 +77,8 @@ func (rt *LoggingRoundTripper) RoundTrip(req *http.Request) (*http.Response, err
 		defer req.Body.Close()
 	}
 
+	start := time.Now()
+
 	resp, err := rt.next.RoundTrip(req)
 	if err != nil {
 		if rt.config.Caller != nil {
@@ -85,12 +89,12 @@ func (rt *LoggingRoundTripper) RoundTrip(req *http.Request) (*http.Response, err
 		return resp, err //nolint:wrapcheck
 	}
 
-	resp.Body = rt.newFakeCloser(resp, &buf)
+	resp.Body = rt.newFakeCloser(resp, &buf, start)
 
 	return resp, nil
 }
 
-func (rt *LoggingRoundTripper) newFakeCloser(resp *http.Response, sent *bytes.Buffer) io.ReadCloser {
+func (rt *LoggingRoundTripper) newFakeCloser(resp *http.Response, sent *bytes.Buffer, start time.Time) io.ReadCloser {
 	var buf bytes.Buffer
 
 	return &fakeCloser{
@@ -102,6 +106,7 @@ func (rt *LoggingRoundTripper) newFakeCloser(resp *http.Response, sent *bytes.Bu
 		URL:     resp.Request.URL.String(),
 		Sent:    sent,
 		Header:  resp.Header,
+		Elapsed: time.Since(start),
 		Config:  rt.config,
 	}
 }
@@ -128,7 +133,7 @@ func (f *fakeCloser) logRequest() (int, int) {
 		sent = sent[:f.MaxBody] + " <data truncated>"
 	}
 
-	switch ctype := f.Header.Get("content-type"); {
+	switch ctype := f.Header.Get("Content-Type"); {
 	case !strings.Contains(ctype, "json"):
 		// We only log JSON. Need something else? Ask!
 		rcvd = "<data not logged, content-type: " + ctype + ">"
@@ -137,11 +142,13 @@ func (f *fakeCloser) logRequest() (int, int) {
 	}
 
 	if sentBytes > 0 {
-		f.redactLog("Sent (%s) %d bytes to %s: %s\n Response: %s %d bytes\n%s%s)",
-			f.Method, sentBytes, f.URL, sent, f.Status, rcvdBytes, f.headers(), rcvd)
+		f.redactLog("Sent (%s) %d bytes to %s in %s: %s\n Response: %s %d bytes\n%s%s)",
+			f.Method, sentBytes, f.URL, f.Elapsed.Round(time.Millisecond),
+			sent, f.Status, rcvdBytes, f.headers(), rcvd)
 	} else {
-		f.redactLog("Sent (%s) to %s, Response: %s %d bytes\n%s%s",
-			f.Method, f.URL, f.Status, rcvdBytes, f.headers(), rcvd)
+		f.redactLog("Sent (%s) to %s in %s, Response: %s %d bytes\n%s%s",
+			f.Method, f.URL, f.Elapsed.Round(time.Millisecond),
+			f.Status, rcvdBytes, f.headers(), rcvd)
 	}
 
 	return sentBytes, rcvdBytes

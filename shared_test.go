@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"golift.io/starr"
 )
 
@@ -14,7 +15,7 @@ func TestQueueDeleteOpts_Values(t *testing.T) {
 	var opts *starr.QueueDeleteOpts
 
 	params := opts.Values() // it's nil.
-	assert.Equal(params.Encode(), "removeFromClient=true",
+	require.Equal(t, "removeFromClient=true", params.Encode(),
 		"default queue delete parameters encoded incorrectly")
 
 	opts = &starr.QueueDeleteOpts{

@@ -31,8 +31,8 @@ func (r *Readarr) GetCalendarContext(ctx context.Context, filter Calendar) ([]*B
 	var output []*Book
 
 	req := starr.Request{URI: bpCalendar, Query: make(url.Values)}
-	req.Query.Add("unmonitored", fmt.Sprint(filter.Unmonitored))
-	req.Query.Add("includeAuthor", fmt.Sprint(filter.IncludeAuthor))
+	req.Query.Add("unmonitored", starr.Str(filter.Unmonitored))
+	req.Query.Add("includeAuthor", starr.Str(filter.IncludeAuthor))
 
 	if !filter.Start.IsZero() {
 		req.Query.Add("start", filter.Start.UTC().Format(starr.CalendarTimeFilterFormat))
@@ -58,7 +58,7 @@ func (r *Readarr) GetCalendarID(calendarID int64) (*Book, error) {
 func (r *Readarr) GetCalendarIDContext(ctx context.Context, calendarID int64) (*Book, error) {
 	var output *Book
 
-	req := starr.Request{URI: path.Join(bpCalendar, fmt.Sprint(calendarID))}
+	req := starr.Request{URI: path.Join(bpCalendar, starr.Str(calendarID))}
 	if err := r.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}

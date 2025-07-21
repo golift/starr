@@ -14,6 +14,7 @@ const bpMediaManagement = APIver + "/config/mediaManagement"
 
 // MediaManagement represents the /config/mediaManagement endpoint.
 type MediaManagement struct {
+	UseScriptImport                         bool   `json:"useScriptImport,omitempty"`
 	AutoRenameFolders                       bool   `json:"autoRenameFolders,omitempty"`
 	AutoUnmonitorPreviouslyDownloadedMovies bool   `json:"autoUnmonitorPreviouslyDownloadedMovies,omitempty"`
 	CopyUsingHardlinks                      bool   `json:"copyUsingHardlinks,omitempty"`
@@ -27,6 +28,7 @@ type MediaManagement struct {
 	ID                                      int64  `json:"id"`
 	MinimumFreeSpaceWhenImporting           int64  `json:"minimumFreeSpaceWhenImporting"` // 0 or empty not allowed
 	RecycleBinCleanupDays                   int64  `json:"recycleBinCleanupDays,omitempty"`
+	ScriptImportPath                        string `json:"scriptImportPath,omitempty"`
 	ChmodFolder                             string `json:"chmodFolder,omitempty"`
 	ChownGroup                              string `json:"chownGroup"` // empty string is valid
 	DownloadPropersAndRepacks               string `json:"downloadPropersAndRepacks,omitempty"`

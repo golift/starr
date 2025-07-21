@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"golift.io/starr"
 	"golift.io/starr/radarr"
 	"golift.io/starr/starrtest"
@@ -17,8 +18,6 @@ const namingBody = `{
 	"colonReplacementFormat": "delete",
 	"standardMovieFormat": "{Movie.Title}.{Release.Year}.{Quality.Title}",
 	"movieFolderFormat": "{Movie Title} ({Release Year})",
-	"includeQuality": true,
-	"replaceSpaces": true,
 	"id": 1
   }`
 
@@ -35,10 +34,8 @@ func TestGetNaming(t *testing.T) {
 			WithResponse: &radarr.Naming{
 				ID:                       1,
 				ReplaceIllegalCharacters: true,
-				IncludeQuality:           true,
-				ReplaceSpaces:            true,
 				RenameMovies:             true,
-				ColonReplacementFormat:   "delete",
+				ColonReplacementFormat:   radarr.ColonDelete,
 				StandardMovieFormat:      "{Movie.Title}.{Release.Year}.{Quality.Title}",
 				MovieFolderFormat:        "{Movie Title} ({Release Year})",
 			},
@@ -56,13 +53,12 @@ func TestGetNaming(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := radarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.GetNaming()
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
@@ -87,8 +83,6 @@ func TestUpdateNaming(t *testing.T) {
 			WithResponse: &radarr.Naming{
 				ID:                       1,
 				ReplaceIllegalCharacters: true,
-				IncludeQuality:           true,
-				ReplaceSpaces:            true,
 				RenameMovies:             true,
 				ColonReplacementFormat:   "delete",
 				StandardMovieFormat:      "{Movie.Title}.{Release.Year}.{Quality.Title}",
@@ -114,13 +108,12 @@ func TestUpdateNaming(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := radarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.UpdateNaming(test.WithRequest.(*radarr.Naming))
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "test.WithResponse does not match the actual response")
 		})
 	}

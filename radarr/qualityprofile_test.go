@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"golift.io/starr"
 	"golift.io/starr/radarr"
 	"golift.io/starr/starrtest"
@@ -46,6 +47,7 @@ const (
 		  }
 		],
 		"minFormatScore": 0,
+		"minUpgradeFormatScore": 1,
 		"cutoffFormatScore": 0,
 		"formatItems": [],
 		"language": {
@@ -58,12 +60,12 @@ const (
 	addQualityProfileRequest = `{"name":"test","upgradeAllowed":false,"cutoff":1003,"items":[{"name":"WEB 2160p",` +
 		`"id":1003,"items":[{"quality":{"id":18,"name":"WEBDL-2160p","source":"webdl","resolution":2160,"modifier":"none"},` +
 		`"allowed":true},{"quality":{"id":17,"name":"WEBRip-2160p","source":"webrip","resolution":2160,"modifier":"none"},` +
-		`"allowed":true}],"allowed":true}],"minFormatScore":0,"cutoffFormatScore":0,"formatItems":null,` +
+		`"allowed":true}],"allowed":true}],"minFormatScore":0,"minUpgradeFormatScore":1,"cutoffFormatScore":0,"formatItems":null,` +
 		`"language":{"id":1,"name":"English"}}` + "\n"
 	updateQualityProfileRequest = `{"id":7,"name":"test","upgradeAllowed":false,"cutoff":1003,"items":` +
 		`[{"name":"WEB 2160p","id":1003,"items":[{"quality":{"id":18,"name":"WEBDL-2160p","source":"webdl",` +
 		`"resolution":2160,"modifier":"none"},"allowed":true},{"quality":{"id":17,"name":"WEBRip-2160p","source":"webrip",` +
-		`"resolution":2160,"modifier":"none"},"allowed":true}],"allowed":true}],"minFormatScore":0,` +
+		`"resolution":2160,"modifier":"none"},"allowed":true}],"allowed":true}],"minFormatScore":0,"minUpgradeFormatScore":1,` +
 		`"cutoffFormatScore":0,"formatItems":null,"language":{"id":1,"name":"English"}}` + "\n"
 )
 
@@ -113,8 +115,9 @@ func TestGetQualityProfiles(t *testing.T) {
 							Allowed: true,
 						},
 					},
-					MinFormatScore:    0,
-					CutoffFormatScore: 0,
+					MinFormatScore:        0,
+					MinUpgradeFormatScore: 1,
+					CutoffFormatScore:     0,
 					Language: &starr.Value{
 						ID:   1,
 						Name: "English",
@@ -135,13 +138,12 @@ func TestGetQualityProfiles(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := radarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.GetQualityProfiles()
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
@@ -193,8 +195,9 @@ func TestGetQualityProfile(t *testing.T) {
 						Allowed: true,
 					},
 				},
-				MinFormatScore:    0,
-				CutoffFormatScore: 0,
+				MinFormatScore:        0,
+				CutoffFormatScore:     0,
+				MinUpgradeFormatScore: 1,
 				Language: &starr.Value{
 					ID:   1,
 					Name: "English",
@@ -215,13 +218,12 @@ func TestGetQualityProfile(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := radarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.GetQualityProfile(test.WithRequest.(int64))
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
@@ -268,8 +270,9 @@ func TestAddQualityProfile(t *testing.T) {
 						Allowed: true,
 					},
 				},
-				MinFormatScore:    0,
-				CutoffFormatScore: 0,
+				MinFormatScore:        0,
+				MinUpgradeFormatScore: 1,
+				CutoffFormatScore:     0,
 				Language: &starr.Value{
 					ID:   1,
 					Name: "English",
@@ -312,8 +315,9 @@ func TestAddQualityProfile(t *testing.T) {
 						Allowed: true,
 					},
 				},
-				MinFormatScore:    0,
-				CutoffFormatScore: 0,
+				MinFormatScore:        0,
+				MinUpgradeFormatScore: 1,
+				CutoffFormatScore:     0,
 				Language: &starr.Value{
 					ID:   1,
 					Name: "English",
@@ -357,8 +361,9 @@ func TestAddQualityProfile(t *testing.T) {
 						Allowed: true,
 					},
 				},
-				MinFormatScore:    0,
-				CutoffFormatScore: 0,
+				MinFormatScore:        0,
+				MinUpgradeFormatScore: 1,
+				CutoffFormatScore:     0,
 				Language: &starr.Value{
 					ID:   1,
 					Name: "English",
@@ -373,13 +378,12 @@ func TestAddQualityProfile(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := radarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.AddQualityProfile(test.WithRequest.(*radarr.QualityProfile))
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
@@ -426,8 +430,9 @@ func TestUpdateQualityProfile(t *testing.T) {
 						Allowed: true,
 					},
 				},
-				MinFormatScore:    0,
-				CutoffFormatScore: 0,
+				MinFormatScore:        0,
+				MinUpgradeFormatScore: 1,
+				CutoffFormatScore:     0,
 				Language: &starr.Value{
 					ID:   1,
 					Name: "English",
@@ -471,8 +476,9 @@ func TestUpdateQualityProfile(t *testing.T) {
 						Allowed: true,
 					},
 				},
-				MinFormatScore:    0,
-				CutoffFormatScore: 0,
+				MinFormatScore:        0,
+				MinUpgradeFormatScore: 1,
+				CutoffFormatScore:     0,
 				Language: &starr.Value{
 					ID:   1,
 					Name: "English",
@@ -516,8 +522,9 @@ func TestUpdateQualityProfile(t *testing.T) {
 						Allowed: true,
 					},
 				},
-				MinFormatScore:    0,
-				CutoffFormatScore: 0,
+				MinFormatScore:        0,
+				MinUpgradeFormatScore: 1,
+				CutoffFormatScore:     0,
 				Language: &starr.Value{
 					ID:   1,
 					Name: "English",
@@ -533,13 +540,12 @@ func TestUpdateQualityProfile(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := radarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.UpdateQualityProfile(test.WithRequest.(*radarr.QualityProfile))
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
@@ -571,13 +577,12 @@ func TestDeleteQualityProfile(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := radarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			err := client.DeleteQualityProfile(test.WithRequest.(int64))
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 		})
 	}
 }

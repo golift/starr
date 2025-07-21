@@ -15,15 +15,15 @@ const bpDelayProfile = APIver + "/delayProfile"
 
 // DelayProfile is the /api/v3/delayprofile endpoint.
 type DelayProfile struct {
-	EnableUsenet           bool   `json:"enableUsenet,omitempty"`
-	EnableTorrent          bool   `json:"enableTorrent,omitempty"`
-	BypassIfHighestQuality bool   `json:"bypassIfHighestQuality,omitempty"`
-	UsenetDelay            int64  `json:"usenetDelay,omitempty"`
-	TorrentDelay           int64  `json:"torrentDelay,omitempty"`
-	ID                     int64  `json:"id,omitempty"`
-	Order                  int64  `json:"order,omitempty"`
-	Tags                   []int  `json:"tags"`
-	PreferredProtocol      string `json:"preferredProtocol,omitempty"`
+	EnableUsenet           bool           `json:"enableUsenet,omitempty"`
+	EnableTorrent          bool           `json:"enableTorrent,omitempty"`
+	BypassIfHighestQuality bool           `json:"bypassIfHighestQuality,omitempty"`
+	UsenetDelay            int64          `json:"usenetDelay,omitempty"`
+	TorrentDelay           int64          `json:"torrentDelay,omitempty"`
+	ID                     int64          `json:"id,omitempty"`
+	Order                  int64          `json:"order,omitempty"`
+	Tags                   []int          `json:"tags"`
+	PreferredProtocol      starr.Protocol `json:"preferredProtocol,omitempty"`
 }
 
 // GetDelayProfiles returns all configured delay profiles.
@@ -52,7 +52,7 @@ func (s *Sonarr) GetDelayProfile(profileID int64) (*DelayProfile, error) {
 func (s *Sonarr) GetDelayProfileContext(ctx context.Context, profileID int64) (*DelayProfile, error) {
 	var output DelayProfile
 
-	req := starr.Request{URI: path.Join(bpDelayProfile, fmt.Sprint(profileID))}
+	req := starr.Request{URI: path.Join(bpDelayProfile, starr.Str(profileID))}
 	if err := s.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -98,7 +98,7 @@ func (s *Sonarr) UpdateDelayProfileContext(ctx context.Context, profile *DelayPr
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpDelayProfile, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpDelayProfile, fmt.Sprint(profile.ID)), Body: &body}
+	req := starr.Request{URI: path.Join(bpDelayProfile, starr.Str(profile.ID)), Body: &body}
 	if err := s.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
@@ -113,7 +113,7 @@ func (s *Sonarr) DeleteDelayProfile(profileID int64) error {
 
 // DeleteDelayProfileContext removes a single delay profile.
 func (s *Sonarr) DeleteDelayProfileContext(ctx context.Context, profileID int64) error {
-	req := starr.Request{URI: path.Join(bpDelayProfile, fmt.Sprint(profileID))}
+	req := starr.Request{URI: path.Join(bpDelayProfile, starr.Str(profileID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

@@ -34,7 +34,7 @@ type BlockListRecord struct {
 	ID            int64                 `json:"id"`
 	Date          time.Time             `json:"date"`
 	SourceTitle   string                `json:"sourceTitle"`
-	Protocol      string                `json:"protocol"`
+	Protocol      starr.Protocol        `json:"protocol"`
 	Indexer       string                `json:"indexer"`
 	Message       string                `json:"message"`
 }
@@ -100,7 +100,7 @@ func (r *Radarr) DeleteBlockList(listID int64) error {
 
 // DeleteBlockListContext removes a single block list item with a context.
 func (r *Radarr) DeleteBlockListContext(ctx context.Context, listID int64) error {
-	req := starr.Request{URI: path.Join(bpBlocklist, fmt.Sprint(listID))}
+	req := starr.Request{URI: path.Join(bpBlocklist, starr.Str(listID))}
 	if err := r.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

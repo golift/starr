@@ -34,8 +34,8 @@ func fillStructFromEnv(dataStruct interface{}) error {
 	}
 
 	t := field.Type().Elem()
-	for idx := 0; idx < t.NumField(); idx++ { // Loop each struct member
-		split := strings.SplitN(t.Field(idx).Tag.Get("env"), ",", 2) //nolint:gomnd
+	for idx := range t.NumField() { // Loop each struct member
+		split := strings.SplitN(t.Field(idx).Tag.Get("env"), ",", 2) //nolint:mnd
 
 		tag := strings.ToLower(split[0]) // lower to protect naming mistakes.
 		if !field.Elem().Field(idx).CanSet() || tag == "-" || tag == "" {
@@ -44,7 +44,7 @@ func fillStructFromEnv(dataStruct interface{}) error {
 
 		// If the tag has a comma, the value that follows is used to split strings into []string.
 		var splitVal string
-		if len(split) == 2 { //nolint:gomnd
+		if len(split) == 2 { //nolint:mnd
 			splitVal = split[1]
 		}
 

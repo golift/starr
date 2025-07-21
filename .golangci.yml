@@ -1,46 +1,50 @@
 issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
   exclude-rules:
-    # Exclude funlen for testing files.
-    - linters:
+    - path: 'starrcmd/'
+      linters:
         - nonamedreturns
-      path: 'starrcmd/'
-    - linters:
+    - path: '(.+)_test\.go'
+      linters:
         - gochecknoglobals
         - forcetypeassert
         - funlen
         - lll
         - maintidx # uhg.
-      path: '(.+)_test\.go'
-    - linters:
-        - lll
-      path: 'starrtest/'
 
 linters:
   enable-all: true
   disable:
     # deprecated
-    - maligned
-    - scopelint
-    - interfacer
-    - golint
-    - ifshort
-    - deadcode
-    - nosnakecase
-    - structcheck
-    - varcheck
+    - tenv
     # unused
     - tagliatelle
-    - exhaustivestruct
     - exhaustruct
     - dupl
     - nlreturn
-    - tagalign
-    - depguard
+    - musttag
 
-#linters-settings:
+linters-settings:
+  ireturn:
+    allow: [generic,stdlib,error]
+# One day we'll fix all the field alignments. Anyone got a tool that just does it?
 #  govet:
 #    enable:
-#      - fieldalignment
+#    - fieldalignment
+  depguard:
+    rules:
+      main:
+        files:
+        - $all
+        allow:
+        - $gostd
+        - github.com/stretchr/testify
+        - golift.io/starr
+        - golang.org/x/net
 
 run:
   timeout: 5m
+
+output:
+  sort-results: true

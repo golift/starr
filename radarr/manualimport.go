@@ -35,7 +35,7 @@ type ManualImportOutput struct {
 	RelativePath      string                `json:"relativePath"`
 	FolderName        string                `json:"folderName"`
 	Name              string                `json:"name"`
-	Size              int                   `json:"size"`
+	Size              int64                 `json:"size"`
 	Movie             *Movie                `json:"movie"`
 	Quality           *starr.Quality        `json:"quality"`
 	Languages         []*starr.Value        `json:"languages"`
@@ -74,8 +74,8 @@ func (r *Radarr) ManualImportContext(ctx context.Context, params *ManualImportPa
 	req := starr.Request{URI: bpManualImport, Query: make(url.Values)}
 	req.Query.Add("folder", params.Folder)
 	req.Query.Add("downloadId", params.DownloadID)
-	req.Query.Add("movieId", fmt.Sprint(params.MovieID))
-	req.Query.Add("filterExistingFiles", fmt.Sprint(params.FilterExistingFiles))
+	req.Query.Add("movieId", starr.Str(params.MovieID))
+	req.Query.Add("filterExistingFiles", starr.Str(params.FilterExistingFiles))
 
 	if err := r.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)

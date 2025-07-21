@@ -81,7 +81,7 @@ func (r *Readarr) GetImportList(importListID int64) (*ImportListOutput, error) {
 func (r *Readarr) GetImportListContext(ctx context.Context, importListID int64) (*ImportListOutput, error) {
 	var output ImportListOutput
 
-	req := starr.Request{URI: path.Join(bpImportList, fmt.Sprint(importListID))}
+	req := starr.Request{URI: path.Join(bpImportList, starr.Str(importListID))}
 	if err := r.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -89,21 +89,24 @@ func (r *Readarr) GetImportListContext(ctx context.Context, importListID int64) 
 	return &output, nil
 }
 
-// AddImportList creates a import list.
+// AddImportList creates an import list without testing it.
 func (r *Readarr) AddImportList(importList *ImportListInput) (*ImportListOutput, error) {
 	return r.AddImportListContext(context.Background(), importList)
 }
 
-// AddImportListContext creates a import list.
+// AddImportListContext creates an import list without testing it.
 func (r *Readarr) AddImportListContext(ctx context.Context, importList *ImportListInput) (*ImportListOutput, error) {
-	var output ImportListOutput
+	var (
+		output ImportListOutput
+		body   bytes.Buffer
+	)
 
-	var body bytes.Buffer
+	importList.ID = 0
 	if err := json.NewEncoder(&body).Encode(importList); err != nil {
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpImportList, err)
 	}
 
-	req := starr.Request{URI: bpImportList, Body: &body}
+	req := starr.Request{URI: bpImportList, Body: &body, Query: url.Values{"forceSave": []string{"true"}}}
 	if err := r.PostInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
@@ -152,9 +155,9 @@ func (r *Readarr) UpdateImportListContext(
 	}
 
 	req := starr.Request{
-		URI:   path.Join(bpImportList, fmt.Sprint(importList.ID)),
+		URI:   path.Join(bpImportList, starr.Str(importList.ID)),
 		Body:  &body,
-		Query: url.Values{"forceSave": []string{fmt.Sprint(force)}},
+		Query: url.Values{"forceSave": []string{starr.Str(force)}},
 	}
 	if err := r.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
@@ -170,7 +173,7 @@ func (r *Readarr) DeleteImportList(importListID int64) error {
 
 // DeleteImportListContext removes a single import list.
 func (r *Readarr) DeleteImportListContext(ctx context.Context, importListID int64) error {
-	req := starr.Request{URI: path.Join(bpImportList, fmt.Sprint(importListID))}
+	req := starr.Request{URI: path.Join(bpImportList, starr.Str(importListID))}
 	if err := r.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

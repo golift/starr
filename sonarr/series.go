@@ -81,11 +81,33 @@ type Series struct {
 
 // AddSeriesOptions is part of AddSeriesInput.
 type AddSeriesOptions struct {
-	SearchForMissingEpisodes     bool `json:"searchForMissingEpisodes"`
-	SearchForCutoffUnmetEpisodes bool `json:"searchForCutoffUnmetEpisodes,omitempty"`
-	IgnoreEpisodesWithFiles      bool `json:"ignoreEpisodesWithFiles,omitempty"`
-	IgnoreEpisodesWithoutFiles   bool `json:"ignoreEpisodesWithoutFiles,omitempty"`
+	SearchForMissingEpisodes     bool        `json:"searchForMissingEpisodes"`
+	SearchForCutoffUnmetEpisodes bool        `json:"searchForCutoffUnmetEpisodes,omitempty"`
+	IgnoreEpisodesWithFiles      bool        `json:"ignoreEpisodesWithFiles,omitempty"`
+	IgnoreEpisodesWithoutFiles   bool        `json:"ignoreEpisodesWithoutFiles,omitempty"`
+	Monitor                      MonitorType `json:"monitor,omitempty"`
 }
+
+// MonitorType is part of the AddSeriesOptions.
+type MonitorType string
+
+// These are the possible values for the monitor option when adding a new series.
+const (
+	MonitorUnknown           MonitorType = "unknown"
+	MonitorAll               MonitorType = "all"
+	MonitorFuture            MonitorType = "future"
+	MonitorMissing           MonitorType = "missing"
+	MonitorExisting          MonitorType = "existing"
+	MonitorFirstSeason       MonitorType = "firstSeason"
+	MonitorLastSeason        MonitorType = "lastSeason"
+	MonitorLatestSeason      MonitorType = "latestSeason" // obsolete
+	MonitorPilot             MonitorType = "pilot"
+	MonitorRecent            MonitorType = "recent"
+	MonitorMonitorSpecials   MonitorType = "monitorSpecials"
+	MonitorUnmonitorSpecials MonitorType = "unmonitorSpecials"
+	MonitorNone              MonitorType = "none"
+	MonitorSkip              MonitorType = "skip"
+)
 
 // AlternateTitle is part of a AddSeriesInput.
 type AlternateTitle struct {
@@ -109,6 +131,8 @@ type Statistics struct {
 	SizeOnDisk        int64     `json:"sizeOnDisk"`
 	PercentOfEpisodes float64   `json:"percentOfEpisodes"`
 	PreviousAiring    time.Time `json:"previousAiring"`
+	NextAiring        time.Time `json:"nextAiring"`
+	ReleaseGroups     []string  `json:"releaseGroups"`
 }
 
 // GetAllSeries returns all configured series.
@@ -134,7 +158,7 @@ func (s *Sonarr) GetSeriesContext(ctx context.Context, tvdbID int64) ([]*Series,
 
 	req := starr.Request{URI: bpSeries, Query: make(url.Values)}
 	if tvdbID != 0 {
-		req.Query.Add("tvdbId", fmt.Sprint(tvdbID))
+		req.Query.Add("tvdbId", starr.Str(tvdbID))
 	}
 
 	if err := s.GetInto(ctx, req, &output); err != nil {
@@ -159,11 +183,11 @@ func (s *Sonarr) UpdateSeriesContext(ctx context.Context, series *AddSeriesInput
 	var output Series
 
 	req := starr.Request{
-		URI:   path.Join(bpSeries, fmt.Sprint(series.ID)),
+		URI:   path.Join(bpSeries, starr.Str(series.ID)),
 		Query: make(url.Values),
 		Body:  &body,
 	}
-	req.Query.Add("moveFiles", fmt.Sprint(moveFiles))
+	req.Query.Add("moveFiles", starr.Str(moveFiles))
 
 	if err := s.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
@@ -203,7 +227,7 @@ func (s *Sonarr) GetSeriesByID(seriesID int64) (*Series, error) {
 func (s *Sonarr) GetSeriesByIDContext(ctx context.Context, seriesID int64) (*Series, error) {
 	var output Series
 
-	req := starr.Request{URI: path.Join(bpSeries, fmt.Sprint(seriesID))}
+	req := starr.Request{URI: path.Join(bpSeries, starr.Str(seriesID))}
 	if err := s.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -224,7 +248,7 @@ func (s *Sonarr) GetSeriesLookupContext(ctx context.Context, term string, tvdbID
 
 	req := starr.Request{URI: path.Join(bpSeries, "lookup"), Query: make(url.Values)}
 	if tvdbID > 0 {
-		req.Query.Add("term", "tvdbid:"+fmt.Sprint(tvdbID))
+		req.Query.Add("term", "tvdbid:"+starr.Str(tvdbID))
 	} else {
 		req.Query.Add("term", term)
 	}
@@ -259,9 +283,9 @@ func (s *Sonarr) DeleteSeries(seriesID int, deleteFiles bool, importExclude bool
 // deleteFiles flag defines the deleteFiles query parameter.
 // importExclude defines the addImportListExclusion query parameter.
 func (s *Sonarr) DeleteSeriesContext(ctx context.Context, seriesID int, deleteFiles bool, importExclude bool) error {
-	req := starr.Request{URI: path.Join(bpSeries, fmt.Sprint(seriesID)), Query: make(url.Values)}
-	req.Query.Add("deleteFiles", fmt.Sprint(deleteFiles))
-	req.Query.Add("addImportListExclusion", fmt.Sprint(importExclude))
+	req := starr.Request{URI: path.Join(bpSeries, starr.Str(seriesID)), Query: make(url.Values)}
+	req.Query.Add("deleteFiles", starr.Str(deleteFiles))
+	req.Query.Add("addImportListExclusion", starr.Str(importExclude))
 
 	if err := s.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)

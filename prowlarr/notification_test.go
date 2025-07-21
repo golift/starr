@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"golift.io/starr"
 	"golift.io/starr/prowlarr"
 	"golift.io/starr/starrtest"
@@ -98,8 +99,8 @@ func TestGetNotifications(t *testing.T) {
 						},
 					},
 					Message: struct {
-						Message string "json:\"message\""
-						Type    string "json:\"type\""
+						Message string `json:"message"`
+						Type    string `json:"type"`
 					}{
 						Message: "Testing will execute the script with the EventType set to Test",
 						Type:    "warning",
@@ -120,13 +121,12 @@ func TestGetNotifications(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := prowlarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.GetNotifications()
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
@@ -175,8 +175,8 @@ func TestGetNotification(t *testing.T) {
 					},
 				},
 				Message: struct {
-					Message string "json:\"message\""
-					Type    string "json:\"type\""
+					Message string `json:"message"`
+					Type    string `json:"type"`
 				}{
 					Message: "Testing will execute the script with the EventType set to Test",
 					Type:    "warning",
@@ -196,13 +196,12 @@ func TestGetNotification(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := prowlarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.GetNotification(1)
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
@@ -262,8 +261,8 @@ func TestAddNotification(t *testing.T) {
 					},
 				},
 				Message: struct {
-					Message string "json:\"message\""
-					Type    string "json:\"type\""
+					Message string `json:"message"`
+					Type    string `json:"type"`
 				}{
 					Message: "Testing will execute the script with the EventType set to Test",
 					Type:    "warning",
@@ -296,13 +295,12 @@ func TestAddNotification(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := prowlarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.AddNotification(test.WithRequest.(*prowlarr.NotificationInput))
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
@@ -363,8 +361,8 @@ func TestUpdateNotification(t *testing.T) {
 					},
 				},
 				Message: struct {
-					Message string "json:\"message\""
-					Type    string "json:\"type\""
+					Message string `json:"message"`
+					Type    string `json:"type"`
 				}{
 					Message: "Testing will execute the script with the EventType set to Test",
 					Type:    "warning",
@@ -398,13 +396,12 @@ func TestUpdateNotification(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := prowlarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.UpdateNotification(test.WithRequest.(*prowlarr.NotificationInput))
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
@@ -435,13 +432,12 @@ func TestDeleteNotification(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := prowlarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			err := client.DeleteNotification(test.WithRequest.(int64))
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 		})
 	}
 }

@@ -84,7 +84,7 @@ func (c *Config) Login(ctx context.Context) error {
 
 	closeResp(resp)
 
-	if u, _ := url.Parse(c.URL); strings.Contains(codeErr.Get("location"), "loginFailed") ||
+	if u, _ := url.Parse(c.URL); strings.Contains(codeErr.Get("Location"), "loginFailed") ||
 		len(c.Client.Jar.Cookies(u)) == 0 {
 		return fmt.Errorf("%w: authenticating as user '%s' failed", ErrRequestError, c.Username)
 	}
@@ -189,7 +189,7 @@ func readInitializeJS(input io.Reader) (*InitializeJS, error) { //nolint:cyclop
 
 	for scanner.Scan() {
 		switch split := strings.Fields(scanner.Text()); {
-		case len(split) < 2: //nolint:gomnd
+		case len(split) < 2: //nolint:mnd
 			continue
 		case split[0] == "apiRoot:":
 			output.APIRoot = strings.Trim(split[1], `"',`)

@@ -36,28 +36,28 @@ type HistoryRecord struct {
 	DownloadID           string         `json:"downloadId,omitempty"`
 	EventType            string         `json:"eventType"`
 	Data                 struct {
-		Age                string    `json:"age"`
-		AgeHours           string    `json:"ageHours"`
-		AgeMinutes         string    `json:"ageMinutes"`
-		DownloadClient     string    `json:"downloadClient"`
-		DownloadClientName string    `json:"downloadClientName"`
-		DownloadURL        string    `json:"downloadUrl"`
-		DroppedPath        string    `json:"droppedPath"`
-		FileID             string    `json:"fileId"`
-		GUID               string    `json:"guid"`
-		ImportedPath       string    `json:"importedPath"`
-		Indexer            string    `json:"indexer"`
-		Message            string    `json:"message"`
-		NzbInfoURL         string    `json:"nzbInfoUrl"`
-		PreferredWordScore string    `json:"preferredWordScore"`
-		Protocol           string    `json:"protocol"`
-		PublishedDate      time.Time `json:"publishedDate"`
-		Reason             string    `json:"reason"`
-		ReleaseGroup       string    `json:"releaseGroup"`
-		Size               string    `json:"size"`
-		TorrentInfoHash    string    `json:"torrentInfoHash"`
-		TvRageID           string    `json:"tvRageId"`
-		TvdbID             string    `json:"tvdbId"`
+		Age                string         `json:"age"`
+		AgeHours           string         `json:"ageHours"`
+		AgeMinutes         string         `json:"ageMinutes"`
+		DownloadClient     string         `json:"downloadClient"`
+		DownloadClientName string         `json:"downloadClientName"`
+		DownloadURL        string         `json:"downloadUrl"`
+		DroppedPath        string         `json:"droppedPath"`
+		FileID             string         `json:"fileId"`
+		GUID               string         `json:"guid"`
+		ImportedPath       string         `json:"importedPath"`
+		Indexer            string         `json:"indexer"`
+		Message            string         `json:"message"`
+		NzbInfoURL         string         `json:"nzbInfoUrl"`
+		PreferredWordScore string         `json:"preferredWordScore"`
+		Protocol           starr.Protocol `json:"protocol"`
+		PublishedDate      time.Time      `json:"publishedDate"`
+		Reason             string         `json:"reason"`
+		ReleaseGroup       string         `json:"releaseGroup"`
+		Size               string         `json:"size"`
+		TorrentInfoHash    string         `json:"torrentInfoHash"`
+		TvRageID           string         `json:"tvRageId"`
+		TvdbID             string         `json:"tvdbId"`
 	} `json:"data"`
 }
 
@@ -134,7 +134,7 @@ func (s *Sonarr) FailContext(ctx context.Context, historyID int64) error {
 	var output interface{} // any ok
 
 	// Strangely uses a POST without a payload.
-	req := starr.Request{URI: path.Join(bpHistory, "failed", fmt.Sprint(historyID))}
+	req := starr.Request{URI: path.Join(bpHistory, "failed", starr.Str(historyID))}
 	if err := s.PostInto(ctx, req, &output); err != nil {
 		return fmt.Errorf("api.Post(%s): %w", &req, err)
 	}

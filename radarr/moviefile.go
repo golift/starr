@@ -62,7 +62,7 @@ func (r *Radarr) GetMovieFile(movieID int64) ([]*MovieFile, error) {
 // GetMovieFileContext returns the movie file(s) for a movie.
 func (r *Radarr) GetMovieFileContext(ctx context.Context, movieID int64) ([]*MovieFile, error) {
 	req := starr.Request{URI: bpMovieFile, Query: make(url.Values)}
-	req.Query.Add("movieID", fmt.Sprint(movieID))
+	req.Query.Add("movieID", starr.Str(movieID))
 
 	var output []*MovieFile
 	if err := r.GetInto(ctx, req, &output); err != nil {
@@ -70,6 +70,23 @@ func (r *Radarr) GetMovieFileContext(ctx context.Context, movieID int64) ([]*Mov
 	}
 
 	return output, nil
+}
+
+// GetMovieFileByID grabs a movie from the database by DB [movieFile] ID.
+func (r *Radarr) GetMovieFileByID(movieFileID int64) (*MovieFile, error) {
+	return r.GetMovieFileByIDContext(context.Background(), movieFileID)
+}
+
+// GetMovieFileByIDContext grabs a movie from the database by DB [movieFile] ID.
+func (r *Radarr) GetMovieFileByIDContext(ctx context.Context, movieFileID int64) (*MovieFile, error) {
+	var output MovieFile
+
+	req := starr.Request{URI: path.Join(bpMovieFile, starr.Str(movieFileID))}
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
+	}
+
+	return &output, nil
 }
 
 // GetMovieFiles returns the movie file(s) requested.
@@ -81,7 +98,7 @@ func (r *Radarr) GetMovieFiles(movieFileIDs []int64) ([]*MovieFile, error) {
 func (r *Radarr) GetMovieFilesContext(ctx context.Context, movieFileIDs []int64) ([]*MovieFile, error) {
 	req := starr.Request{URI: bpMovieFile, Query: make(url.Values)}
 	for _, id := range movieFileIDs {
-		req.Query.Add("movieFileIds", fmt.Sprint(id))
+		req.Query.Add("movieFileIds", starr.Str(id))
 	}
 
 	var output []*MovieFile
@@ -106,7 +123,7 @@ func (r *Radarr) UpdateMovieFileContext(ctx context.Context, movieFile *MovieFil
 
 	var output *MovieFile
 
-	req := starr.Request{URI: path.Join(bpMovieFile, fmt.Sprint(movieFile.ID)), Body: &body}
+	req := starr.Request{URI: path.Join(bpMovieFile, starr.Str(movieFile.ID)), Body: &body}
 	if err := r.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}

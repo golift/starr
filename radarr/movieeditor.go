@@ -12,19 +12,18 @@ import (
 const bpMovieEditor = bpMovie + "/editor"
 
 // BulkEdit is the input for the bulk movie editor endpoint.
-// You may use starr.True(), starr.False(), starr.Int64(), and starr.String() to add data to the struct members.
-// Use Availability.Ptr() to add a value to minimum availability, and starr.ApplyTags.Ptr() for apply tags.
+// You may use starr.True(), starr.False(), and starr.Ptr() to add data to the pointer members.
 type BulkEdit struct {
-	MovieIDs            []int64          `json:"movieIds"`
-	Monitored           *bool            `json:"monitored,omitempty"`
-	QualityProfileID    *int64           `json:"qualityProfileId,omitempty"`
-	MinimumAvailability *Availability    `json:"minimumAvailability,omitempty"` // tba
-	RootFolderPath      *string          `json:"rootFolderPath,omitempty"`      // path
-	Tags                []int            `json:"tags,omitempty"`                // [0]
-	ApplyTags           *starr.ApplyTags `json:"applyTags,omitempty"`           // add
-	MoveFiles           *bool            `json:"moveFiles,omitempty"`
-	DeleteFiles         *bool            `json:"deleteFiles,omitempty"`        // delete only
-	AddImportExclusion  *bool            `json:"addImportExclusion,omitempty"` // delete only
+	MovieIDs            []int64         `json:"movieIds"`
+	Monitored           *bool           `json:"monitored,omitempty"`
+	QualityProfileID    *int64          `json:"qualityProfileId,omitempty"`
+	MinimumAvailability Availability    `json:"minimumAvailability,omitempty"` // tba
+	RootFolderPath      *string         `json:"rootFolderPath,omitempty"`      // path
+	Tags                []int           `json:"tags,omitempty"`                // [0]
+	ApplyTags           starr.ApplyTags `json:"applyTags,omitempty"`           // add
+	MoveFiles           *bool           `json:"moveFiles,omitempty"`
+	DeleteFiles         *bool           `json:"deleteFiles,omitempty"`        // delete only
+	AddImportExclusion  *bool           `json:"addImportExclusion,omitempty"` // delete only
 }
 
 // Availability is an enum used as MinimumAvailability in a few places throughout Radarr.
@@ -39,11 +38,6 @@ const (
 	AvailabilityReleased      Availability = "released"
 	AvailabilityDeleted       Availability = "deleted"
 )
-
-// Ptr returns a pointer to a minimum availability. Useful for a BulkEdit struct.
-func (a Availability) Ptr() *Availability {
-	return &a
-}
 
 // EditMovies allows bulk diting many movies at once.
 func (r *Radarr) EditMovies(editMovies *BulkEdit) ([]*Movie, error) {

@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"golift.io/starr"
 	"golift.io/starr/radarr"
 	"golift.io/starr/starrtest"
@@ -40,8 +41,8 @@ func TestEditMovies(t *testing.T) {
 			WithRequest: &radarr.BulkEdit{
 				MovieIDs:            []int64{17, 13},
 				Tags:                []int{44, 55, 66},
-				ApplyTags:           starr.TagsAdd.Ptr(),
-				MinimumAvailability: radarr.AvailabilityToBeAnnounced.Ptr(),
+				ApplyTags:           starr.TagsAdd,
+				MinimumAvailability: radarr.AvailabilityToBeAnnounced,
 			},
 			ExpectedRequest: `{"movieIds":[17,13],"minimumAvailability":"tba","tags":[44,55,66],"applyTags":"add"}` + "\n",
 			ExpectedMethod:  http.MethodPut,
@@ -53,13 +54,12 @@ func TestEditMovies(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := radarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.EditMovies(test.WithRequest.(*radarr.BulkEdit))
-			assert.ErrorIs(t, err, test.WithError, "the wrong error was returned")
+			require.ErrorIs(t, err, test.WithError, "the wrong error was returned")
 			assert.EqualValues(t, test.WithResponse, output, "make sure ResponseBody and WithResponse are a match")
 		})
 	}
@@ -85,13 +85,12 @@ func TestDeleteMovies(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := radarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			err := client.DeleteMovies(test.WithRequest.(*radarr.BulkEdit))
-			assert.ErrorIs(t, err, test.WithError, "the wrong error was returned")
+			require.ErrorIs(t, err, test.WithError, "the wrong error was returned")
 		})
 	}
 }

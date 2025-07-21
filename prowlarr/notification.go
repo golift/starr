@@ -87,7 +87,7 @@ func (p *Prowlarr) GetNotification(notificationID int) (*NotificationOutput, err
 func (p *Prowlarr) GetNotificationContext(ctx context.Context, notificationID int) (*NotificationOutput, error) {
 	var output NotificationOutput
 
-	req := starr.Request{URI: path.Join(bpNotification, fmt.Sprint(notificationID))}
+	req := starr.Request{URI: path.Join(bpNotification, starr.Str(notificationID))}
 	if err := p.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -133,7 +133,7 @@ func (p *Prowlarr) UpdateNotificationContext(ctx context.Context,
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpNotification, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpNotification, fmt.Sprint(client.ID)), Body: &body}
+	req := starr.Request{URI: path.Join(bpNotification, starr.Str(client.ID)), Body: &body}
 	if err := p.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
@@ -147,7 +147,7 @@ func (p *Prowlarr) DeleteNotification(notificationID int64) error {
 }
 
 func (p *Prowlarr) DeleteNotificationContext(ctx context.Context, notificationID int64) error {
-	req := starr.Request{URI: path.Join(bpNotification, fmt.Sprint(notificationID))}
+	req := starr.Request{URI: path.Join(bpNotification, starr.Str(notificationID))}
 	if err := p.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

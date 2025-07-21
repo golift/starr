@@ -72,23 +72,24 @@ func (r *Radarr) GetImportListsContext(ctx context.Context) ([]*ImportListOutput
 	return output, nil
 }
 
-// CreateImportList creates an import list in Radarr.
-func (r *Radarr) CreateImportList(list *ImportListInput) (*ImportListOutput, error) {
-	return r.CreateImportListContext(context.Background(), list)
+// AddImportList creates an import list in Radarr without testing it.
+func (r *Radarr) AddImportList(list *ImportListInput) (*ImportListOutput, error) {
+	return r.AddImportListContext(context.Background(), list)
 }
 
-// CreateImportListContext creates an import list in Radarr.
-func (r *Radarr) CreateImportListContext(ctx context.Context, list *ImportListInput) (*ImportListOutput, error) {
-	list.ID = 0
+// AddImportListContext creates an import list in Radarr without testing it.
+func (r *Radarr) AddImportListContext(ctx context.Context, list *ImportListInput) (*ImportListOutput, error) {
+	var (
+		output ImportListOutput
+		body   bytes.Buffer
+	)
 
-	var body bytes.Buffer
+	list.ID = 0
 	if err := json.NewEncoder(&body).Encode(list); err != nil {
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpImportList, err)
 	}
 
-	var output ImportListOutput
-
-	req := starr.Request{URI: bpImportList, Body: &body}
+	req := starr.Request{URI: bpImportList, Body: &body, Query: url.Values{"forceSave": []string{"true"}}}
 	if err := r.PostInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
@@ -106,7 +107,7 @@ func (r *Radarr) DeleteImportListContext(ctx context.Context, ids []int64) error
 	var errs string
 
 	for _, id := range ids {
-		req := starr.Request{URI: path.Join(bpImportList, fmt.Sprint(id))}
+		req := starr.Request{URI: path.Join(bpImportList, starr.Str(id))}
 		if err := r.DeleteAny(ctx, req); err != nil {
 			errs += fmt.Errorf("api.Delete(%s): %w", &req, err).Error() + " "
 		}
@@ -160,9 +161,9 @@ func (r *Radarr) UpdateImportListContext(
 	var output ImportListOutput
 
 	req := starr.Request{
-		URI:   path.Join(bpImportList, fmt.Sprint(importList.ID)),
+		URI:   path.Join(bpImportList, starr.Str(importList.ID)),
 		Body:  &body,
-		Query: url.Values{"forceSave": []string{fmt.Sprint(force)}},
+		Query: url.Values{"forceSave": []string{starr.Str(force)}},
 	}
 	if err := r.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)

@@ -15,15 +15,16 @@ const bpQualityProfile = APIver + "/qualityProfile"
 
 // QualityProfile is the /api/v3/qualityprofile endpoint.
 type QualityProfile struct {
-	UpgradeAllowed    bool                `json:"upgradeAllowed"`
-	ID                int64               `json:"id"`
-	Cutoff            int64               `json:"cutoff"`
-	Name              string              `json:"name"`
-	Qualities         []*starr.Quality    `json:"items"`
-	MinFormatScore    int64               `json:"minFormatScore"`        // v4 only.
-	CutoffFormatScore int64               `json:"cutoffFormatScore"`     // v4 only.
-	FormatItems       []*starr.FormatItem `json:"formatItems,omitempty"` // v4 only.
-	Language          *starr.Value        `json:"language,omitempty"`    // v4 only.
+	UpgradeAllowed        bool                `json:"upgradeAllowed"`
+	ID                    int64               `json:"id"`
+	Cutoff                int64               `json:"cutoff"`
+	Name                  string              `json:"name"`
+	Qualities             []*starr.Quality    `json:"items"`
+	MinFormatScore        int64               `json:"minFormatScore"`        // v4 only.
+	MinUpgradeFormatScore int64               `json:"minUpgradeFormatScore"` // v4 only.
+	CutoffFormatScore     int64               `json:"cutoffFormatScore"`     // v4 only.
+	FormatItems           []*starr.FormatItem `json:"formatItems,omitempty"` // v4 only.
+	Language              *starr.Value        `json:"language,omitempty"`    // v4 only.
 }
 
 // GetQualityProfiles returns all configured quality profiles.
@@ -52,7 +53,7 @@ func (s *Sonarr) GetQualityProfile(profileID int64) (*QualityProfile, error) {
 func (s *Sonarr) GetQualityProfileContext(ctx context.Context, profileID int64) (*QualityProfile, error) {
 	var output QualityProfile
 
-	req := starr.Request{URI: path.Join(bpQualityProfile, fmt.Sprint(profileID))}
+	req := starr.Request{URI: path.Join(bpQualityProfile, starr.Str(profileID))}
 	if err := s.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -67,9 +68,12 @@ func (s *Sonarr) AddQualityProfile(profile *QualityProfile) (*QualityProfile, er
 
 // AddQualityProfileContext creates a quality profile.
 func (s *Sonarr) AddQualityProfileContext(ctx context.Context, profile *QualityProfile) (*QualityProfile, error) {
-	var output QualityProfile
+	var (
+		output QualityProfile
+		body   bytes.Buffer
+	)
 
-	var body bytes.Buffer
+	profile.ID = 0
 	if err := json.NewEncoder(&body).Encode(profile); err != nil {
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpQualityProfile, err)
 	}
@@ -96,7 +100,7 @@ func (s *Sonarr) UpdateQualityProfileContext(ctx context.Context, profile *Quali
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpQualityProfile, err)
 	}
 
-	req := starr.Request{URI: path.Join(bpQualityProfile, fmt.Sprint(profile.ID)), Body: &body}
+	req := starr.Request{URI: path.Join(bpQualityProfile, starr.Str(profile.ID)), Body: &body}
 	if err := s.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
@@ -111,7 +115,7 @@ func (s *Sonarr) DeleteQualityProfile(profileID int64) error {
 
 // DeleteQualityProfileContext removes a single quality profile.
 func (s *Sonarr) DeleteQualityProfileContext(ctx context.Context, profileID int64) error {
-	req := starr.Request{URI: path.Join(bpQualityProfile, fmt.Sprint(profileID))}
+	req := starr.Request{URI: path.Join(bpQualityProfile, starr.Str(profileID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

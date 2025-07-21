@@ -40,7 +40,7 @@ func (l *Lidarr) GetTracks(trackID ...int64) ([]*Track, error) {
 func (l *Lidarr) GetTracksContext(ctx context.Context, trackID ...int64) ([]*Track, error) {
 	req := starr.Request{URI: bpTrack, Query: make(url.Values)}
 	for _, id := range trackID {
-		req.Query.Add("trackIds", fmt.Sprint(id))
+		req.Query.Add("trackIds", starr.Str(id))
 	}
 
 	var output []*Track
@@ -59,7 +59,7 @@ func (l *Lidarr) GetTracksByAlbum(albumID int64) ([]*Track, error) {
 // GetTracksByAlbumContext gets track files using an album ID.
 func (l *Lidarr) GetTracksByAlbumContext(ctx context.Context, albumID int64) ([]*Track, error) {
 	req := starr.Request{URI: bpTrack, Query: make(url.Values)}
-	req.Query.Add("albumId", fmt.Sprint(albumID))
+	req.Query.Add("albumId", starr.Str(albumID))
 
 	var output []*Track
 	if err := l.GetInto(ctx, req, &output); err != nil {
@@ -77,7 +77,7 @@ func (l *Lidarr) GetTracksByArtist(artistID int64) ([]*Track, error) {
 // GetTracksByAlbumRelease gets track files using an artist ID.
 func (l *Lidarr) GetTracksByArtistContext(ctx context.Context, artistID int64) ([]*Track, error) {
 	req := starr.Request{URI: bpTrack, Query: make(url.Values)}
-	req.Query.Add("artistId", fmt.Sprint(artistID))
+	req.Query.Add("artistId", starr.Str(artistID))
 
 	var output []*Track
 	if err := l.GetInto(ctx, req, &output); err != nil {
@@ -95,7 +95,7 @@ func (l *Lidarr) GetTracksByAlbumRelease(albumID int64) ([]*Track, error) {
 // GetTracksByAlbumReleaseContext gets track files using an album release ID.
 func (l *Lidarr) GetTracksByAlbumReleaseContext(ctx context.Context, albumReleaseID int64) ([]*Track, error) {
 	req := starr.Request{URI: bpTrack, Query: make(url.Values)}
-	req.Query.Add("albumReleaseId", fmt.Sprint(albumReleaseID))
+	req.Query.Add("albumReleaseId", starr.Str(albumReleaseID))
 
 	var output []*Track
 	if err := l.GetInto(ctx, req, &output); err != nil {

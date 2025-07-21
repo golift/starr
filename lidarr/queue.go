@@ -38,7 +38,7 @@ type QueueRecord struct {
 	TrackedDownloadStatus   string                 `json:"trackedDownloadStatus"`
 	StatusMessages          []*starr.StatusMessage `json:"statusMessages"`
 	DownloadID              string                 `json:"downloadId"`
-	Protocol                string                 `json:"protocol"`
+	Protocol                starr.Protocol         `json:"protocol"`
 	DownloadClient          string                 `json:"downloadClient"`
 	Indexer                 string                 `json:"indexer"`
 	OutputPath              string                 `json:"outputPath"`
@@ -116,7 +116,7 @@ func (l *Lidarr) DeleteQueue(queueID int64, opts *starr.QueueDeleteOpts) error {
 
 // DeleteQueueContext deletes an item from the Activity Queue.
 func (l *Lidarr) DeleteQueueContext(ctx context.Context, queueID int64, opts *starr.QueueDeleteOpts) error {
-	req := starr.Request{URI: path.Join(bpQueue, fmt.Sprint(queueID)), Query: opts.Values()}
+	req := starr.Request{URI: path.Join(bpQueue, starr.Str(queueID)), Query: opts.Values()}
 	if err := l.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

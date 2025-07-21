@@ -1,66 +1,14 @@
 package starr
 
 import (
-	"crypto/tls"
 	"encoding/json"
-	"fmt"
-	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
 	"time"
-
-	"golift.io/starr/debuglog"
 )
 
 /* This file contains shared structs or constants for all the *arr apps. */
-
-// App can be used to satisfy a context value key.
-// It is not used in this library; provided for convenience.
-type App string
-
-// These constants are just here for convenience.
-const (
-	Emby     App = "Emby"
-	Lidarr   App = "Lidarr"
-	Plex     App = "Plex"
-	Prowlarr App = "Prowlarr"
-	Radarr   App = "Radarr"
-	Readarr  App = "Readarr"
-	Sonarr   App = "Sonarr"
-	Whisparr App = "Whisparr"
-)
-
-// String turns an App name into a string.
-func (a App) String() string {
-	return string(a)
-}
-
-// Lower turns an App name into a lowercase string.
-func (a App) Lower() string {
-	return strings.ToLower(string(a))
-}
-
-// Client returns the default client, and is used if one is not passed in.
-func Client(timeout time.Duration, verifySSL bool) *http.Client {
-	return &http.Client{
-		Timeout: timeout,
-		CheckRedirect: func(r *http.Request, via []*http.Request) error {
-			return http.ErrUseLastResponse
-		},
-		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: !verifySSL}, //nolint:gosec
-		},
-	}
-}
-
-// ClientWithDebug returns an http client with a debug logger enabled.
-func ClientWithDebug(timeout time.Duration, verifySSL bool, logConfig debuglog.Config) *http.Client {
-	client := Client(timeout, verifySSL)
-	client.Transport = debuglog.NewLoggingRoundTripper(logConfig, client.Transport)
-
-	return client
-}
 
 // CalendarTimeFilterFormat is the Go time format the calendar expects the filter to be in.
 const CalendarTimeFilterFormat = "2006-01-02T03:04:05.000Z"
@@ -225,22 +173,15 @@ func (o *QueueDeleteOpts) Values() url.Values {
 		return params
 	}
 
-	params.Set("blocklist", fmt.Sprint(o.BlockList))
-	params.Set("skipRedownload", fmt.Sprint(o.SkipRedownload))
-	params.Set("changeCategory", fmt.Sprint(o.ChangeCategory))
+	params.Set("blocklist", Str(o.BlockList))
+	params.Set("skipRedownload", Str(o.SkipRedownload))
+	params.Set("changeCategory", Str(o.ChangeCategory))
 
 	if o.RemoveFromClient != nil {
-		params.Set("removeFromClient", fmt.Sprint(*o.RemoveFromClient))
+		params.Set("removeFromClient", Str(*o.RemoveFromClient))
 	}
 
 	return params
-}
-
-// PlayTime is used in at least Sonarr, maybe other places.
-// Holds a string duration converted from hh:mm:ss.
-type PlayTime struct { //nolint:musttag
-	Original string
-	time.Duration
 }
 
 // FormatItem is part of a quality profile.
@@ -250,17 +191,26 @@ type FormatItem struct {
 	Score  int64  `json:"score"`
 }
 
+// PlayTime is used in at least Sonarr, maybe other places.
+// Holds a string duration converted from hh:mm:ss.
+type PlayTime struct {
+	Original string
+	time.Duration
+}
+
+var _ json.Unmarshaler = (*PlayTime)(nil)
+
 // UnmarshalJSON parses a run time duration in format hh:mm:ss.
 func (d *PlayTime) UnmarshalJSON(b []byte) error {
 	d.Original = strings.Trim(string(b), `"'`)
 
 	switch parts := strings.Split(d.Original, ":"); len(parts) {
-	case 3: //nolint:gomnd // hh:mm:ss
+	case 3: //nolint:mnd // hh:mm:ss
 		h, _ := strconv.Atoi(parts[0])
 		m, _ := strconv.Atoi(parts[1])
 		s, _ := strconv.Atoi(parts[2])
 		d.Duration = (time.Hour * time.Duration(h)) + (time.Minute * time.Duration(m)) + (time.Second * time.Duration(s))
-	case 2: //nolint:gomnd // mm:ss
+	case 2: //nolint:mnd // mm:ss
 		m, _ := strconv.Atoi(parts[0])
 		s, _ := strconv.Atoi(parts[1])
 		d.Duration = (time.Minute * time.Duration(m)) + (time.Second * time.Duration(s))
@@ -276,8 +226,6 @@ func (d *PlayTime) MarshalJSON() ([]byte, error) {
 	return []byte(`"` + d.Original + `"`), nil
 }
 
-var _ json.Unmarshaler = (*PlayTime)(nil)
-
 // ApplyTags is an enum used as an input for Bulk editors, and perhaps other places.
 type ApplyTags string
 
@@ -288,11 +236,6 @@ const (
 	TagsRemove  ApplyTags = "remove"
 	TagsReplace ApplyTags = "replace"
 )
-
-// Ptr returns a pointer to an apply tags value. Useful for a BulkEdit struct.
-func (a ApplyTags) Ptr() *ApplyTags {
-	return &a
-}
 
 // TimeSpan is part of AudioTags and possibly used other places.
 type TimeSpan struct {
@@ -309,8 +252,24 @@ type TimeSpan struct {
 	TotalSeconds      int64 `json:"totalSeconds"`
 }
 
-// Itoa converts an int64 to a string.
-func Itoa(val int64) string {
-	const base10 = 10
-	return strconv.FormatInt(val, base10)
+// Protocol used to download media. Comes with enum constants.
+type Protocol string
+
+// These are all the starr-supported protocols.
+const (
+	ProtocolUnknown Protocol = "unknown"
+	ProtocolUsenet  Protocol = "usenet"
+	ProtocolTorrent Protocol = "torrent"
+)
+
+// BulkIndexer is the input to UpdateIndexers on all apps except Prowlarr.
+// Use the starr.True/False/Ptr() funcs to create the pointers.
+type BulkIndexer struct {
+	IDs                     []int64   `json:"ids"`
+	Tags                    []int     `json:"tags,omitempty"`
+	ApplyTags               ApplyTags `json:"applyTags,omitempty"`
+	EnableRss               *bool     `json:"enableRss,omitempty"`
+	EnableAutomaticSearch   *bool     `json:"enableAutomaticSearch,omitempty"`
+	EnableInteractiveSearch *bool     `json:"enableInteractiveSearch,omitempty"`
+	Priority                *int64    `json:"priority,omitempty"`
 }

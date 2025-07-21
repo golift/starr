@@ -24,7 +24,7 @@ type DownloadClientInput struct {
 	ConfigContract           string              `json:"configContract"`
 	Implementation           string              `json:"implementation"`
 	Name                     string              `json:"name"`
-	Protocol                 string              `json:"protocol"`
+	Protocol                 starr.Protocol      `json:"protocol"`
 	Tags                     []int               `json:"tags"`
 	Fields                   []*starr.FieldInput `json:"fields"`
 }
@@ -41,7 +41,7 @@ type DownloadClientOutput struct {
 	ImplementationName       string               `json:"implementationName"`
 	InfoLink                 string               `json:"infoLink"`
 	Name                     string               `json:"name"`
-	Protocol                 string               `json:"protocol"`
+	Protocol                 starr.Protocol       `json:"protocol"`
 	Tags                     []int                `json:"tags"`
 	Fields                   []*starr.FieldOutput `json:"fields"`
 }
@@ -72,7 +72,7 @@ func (r *Radarr) GetDownloadClient(downloadclientID int64) (*DownloadClientOutpu
 func (r *Radarr) GetDownloadClientContext(ctx context.Context, downloadclientID int64) (*DownloadClientOutput, error) {
 	var output DownloadClientOutput
 
-	req := starr.Request{URI: path.Join(bpDownloadClient, fmt.Sprint(downloadclientID))}
+	req := starr.Request{URI: path.Join(bpDownloadClient, starr.Str(downloadclientID))}
 	if err := r.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
@@ -80,23 +80,26 @@ func (r *Radarr) GetDownloadClientContext(ctx context.Context, downloadclientID 
 	return &output, nil
 }
 
-// AddDownloadClient creates a download client.
+// AddDownloadClient creates a download client without testing it.
 func (r *Radarr) AddDownloadClient(downloadclient *DownloadClientInput) (*DownloadClientOutput, error) {
 	return r.AddDownloadClientContext(context.Background(), downloadclient)
 }
 
-// AddDownloadClientContext creates a download client.
+// AddDownloadClientContext creates a download client without testing it.
 func (r *Radarr) AddDownloadClientContext(ctx context.Context,
 	client *DownloadClientInput,
 ) (*DownloadClientOutput, error) {
-	var output DownloadClientOutput
+	var (
+		output DownloadClientOutput
+		body   bytes.Buffer
+	)
 
-	var body bytes.Buffer
+	client.ID = 0
 	if err := json.NewEncoder(&body).Encode(client); err != nil {
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpDownloadClient, err)
 	}
 
-	req := starr.Request{URI: bpDownloadClient, Body: &body}
+	req := starr.Request{URI: bpDownloadClient, Body: &body, Query: url.Values{"forceSave": []string{"true"}}}
 	if err := r.PostInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
@@ -144,9 +147,9 @@ func (r *Radarr) UpdateDownloadClientContext(ctx context.Context,
 	}
 
 	req := starr.Request{
-		URI:   path.Join(bpDownloadClient, fmt.Sprint(client.ID)),
+		URI:   path.Join(bpDownloadClient, starr.Str(client.ID)),
 		Body:  &body,
-		Query: url.Values{"forceSave": []string{fmt.Sprint(force)}},
+		Query: url.Values{"forceSave": []string{starr.Str(force)}},
 	}
 	if err := r.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
@@ -162,7 +165,7 @@ func (r *Radarr) DeleteDownloadClient(downloadclientID int64) error {
 
 // DeleteDownloadClientContext removes a single download client.
 func (r *Radarr) DeleteDownloadClientContext(ctx context.Context, downloadclientID int64) error {
-	req := starr.Request{URI: path.Join(bpDownloadClient, fmt.Sprint(downloadclientID))}
+	req := starr.Request{URI: path.Join(bpDownloadClient, starr.Str(downloadclientID))}
 	if err := r.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

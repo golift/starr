@@ -1,7 +1,7 @@
 package starrcmd
 
 import (
-	"fmt"
+	"errors"
 	"os"
 
 	"golift.io/starr"
@@ -23,10 +23,10 @@ import (
 
 var (
 	// ErrInvalidEvent is returned if you invoke a procedure for the wrong event.
-	ErrInvalidEvent = fmt.Errorf("incorrect event type requested")
+	ErrInvalidEvent = errors.New("incorrect event type requested")
 	// ErrNoEventFound is returned if an event type is not found.
 	// This should only happen when testing and you forget a variable.
-	ErrNoEventFound = fmt.Errorf("no eventType environment variable found")
+	ErrNoEventFound = errors.New("no eventType environment variable found")
 )
 
 // DateFormat matches the date output from most apps.

@@ -6,12 +6,14 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"golift.io/starr"
 	"golift.io/starr/sonarr"
 	"golift.io/starr/starrtest"
 )
 
 const namingBody = `{
+	"colonReplacementFormat": 0,
 	"renameEpisodes": false,
 	"replaceIllegalCharacters": true,
 	"multiEpisodeStyle": 0,
@@ -21,12 +23,7 @@ const namingBody = `{
 	"seriesFolderFormat": "{Series Title}",
 	"seasonFolderFormat": "Season {season}",
 	"specialsFolderFormat": "Specials",
-	"includeSeriesTitle": true,
-	"includeEpisodeTitle": false,
-	"includeQuality": false,
-	"replaceSpaces": true,
-	"separator": " - ",
-	"numberStyle": "S{season:00}E{episode:00}",
+	"customcolonReplacementFormat": "",
 	"id": 1
 }`
 
@@ -51,12 +48,7 @@ func TestGetNaming(t *testing.T) {
 				SeriesFolderFormat:       "{Series Title}",
 				SeasonFolderFormat:       "Season {season}",
 				SpecialsFolderFormat:     "Specials",
-				IncludeSeriesTitle:       true,
-				IncludeEpisodeTitle:      false,
-				IncludeQuality:           false,
-				ReplaceSpaces:            true,
-				Separator:                " - ",
-				NumberStyle:              "S{season:00}E{episode:00}",
+				ColonReplacementFormat:   sonarr.ColonDelete,
 			},
 			WithError: nil,
 		},
@@ -72,13 +64,12 @@ func TestGetNaming(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := sonarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.GetNaming()
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}
@@ -94,10 +85,23 @@ func TestUpdateNaming(t *testing.T) {
 			ExpectedMethod: "PUT",
 			ResponseStatus: 202,
 			WithRequest: &sonarr.Naming{
-				ReplaceIllegalCharacters: true,
+				RenameEpisodes:               true,
+				ReplaceIllegalCharacters:     true,
+				ColonReplacementFormat:       5,
+				ID:                           4,
+				MultiEpisodeStyle:            2,
+				DailyEpisodeFormat:           "a",
+				AnimeEpisodeFormat:           "b",
+				SeriesFolderFormat:           "c",
+				SeasonFolderFormat:           "d",
+				SpecialsFolderFormat:         "e",
+				StandardEpisodeFormat:        "f",
+				CustomColonReplacementFormat: "g",
 			},
-			ExpectedRequest: `{"replaceIllegalCharacters":true}` + "\n",
-			ResponseBody:    namingBody,
+			ExpectedRequest: `{"renameEpisodes":true,"replaceIllegalCharacters":true,"colonReplacementFormat":5,` +
+				`"id":1,"multiEpisodeStyle":2,"dailyEpisodeFormat":"a","animeEpisodeFormat":"b","seriesFolderFormat":"c",` +
+				`"seasonFolderFormat":"d","specialsFolderFormat":"e","standardEpisodeFormat":"f","customColonReplacementFormat":"g"}` + "\n",
+			ResponseBody: namingBody,
 			WithResponse: &sonarr.Naming{
 				ID:                       1,
 				RenameEpisodes:           false,
@@ -109,15 +113,10 @@ func TestUpdateNaming(t *testing.T) {
 				SeriesFolderFormat:       "{Series Title}",
 				SeasonFolderFormat:       "Season {season}",
 				SpecialsFolderFormat:     "Specials",
-				IncludeSeriesTitle:       true,
-				IncludeEpisodeTitle:      false,
-				IncludeQuality:           false,
-				ReplaceSpaces:            true,
-				Separator:                " - ",
-				NumberStyle:              "S{season:00}E{episode:00}",
 			},
 			WithError: nil,
 		},
+
 		{
 			Name:           "404",
 			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "config", "naming"),
@@ -125,22 +124,23 @@ func TestUpdateNaming(t *testing.T) {
 			WithRequest: &sonarr.Naming{
 				ReplaceIllegalCharacters: true,
 			},
-			ExpectedRequest: `{"replaceIllegalCharacters":true}` + "\n",
-			ResponseStatus:  404,
-			ResponseBody:    `{"message": "NotFound"}`,
-			WithError:       &starr.ReqError{Code: http.StatusNotFound},
-			WithResponse:    (*sonarr.Naming)(nil),
+			ExpectedRequest: `{"renameEpisodes":false,"replaceIllegalCharacters":true,"colonReplacementFormat":0,` +
+				`"id":1,"multiEpisodeStyle":0,"dailyEpisodeFormat":"","animeEpisodeFormat":"","seriesFolderFormat":"",` +
+				`"seasonFolderFormat":"","specialsFolderFormat":"","standardEpisodeFormat":"","customColonReplacementFormat":""}` + "\n",
+			ResponseStatus: 404,
+			ResponseBody:   `{"message": "NotFound"}`,
+			WithError:      &starr.ReqError{Code: http.StatusNotFound},
+			WithResponse:   (*sonarr.Naming)(nil),
 		},
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := sonarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
 			output, err := client.UpdateNaming(test.WithRequest.(*sonarr.Naming))
-			assert.ErrorIs(t, err, test.WithError, "error is not the same as expected")
+			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, test.WithResponse, output, "response is not the same as expected")
 		})
 	}

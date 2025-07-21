@@ -14,14 +14,15 @@ const bpQualityProfile = APIver + "/qualityProfile"
 
 // QualityProfile is the /api/v1/qualityprofile endpoint.
 type QualityProfile struct {
-	ID                int64               `json:"id"`
-	Name              string              `json:"name"`
-	UpgradeAllowed    bool                `json:"upgradeAllowed"`
-	Cutoff            int64               `json:"cutoff"`
-	Qualities         []*starr.Quality    `json:"items"`
-	MinFormatScore    int64               `json:"minFormatScore"`
-	CutoffFormatScore int64               `json:"cutoffFormatScore"`
-	FormatItems       []*starr.FormatItem `json:"formatItems"`
+	ID                    int64               `json:"id"`
+	Name                  string              `json:"name"`
+	UpgradeAllowed        bool                `json:"upgradeAllowed"`
+	Cutoff                int64               `json:"cutoff"`
+	Qualities             []*starr.Quality    `json:"items"`
+	MinFormatScore        int64               `json:"minFormatScore"`
+	MinUpgradeFormatScore int64               `json:"minUpgradeFormatScore"`
+	CutoffFormatScore     int64               `json:"cutoffFormatScore"`
+	FormatItems           []*starr.FormatItem `json:"formatItems"`
 }
 
 // GetQualityProfiles returns the quality profiles.
@@ -48,12 +49,15 @@ func (l *Lidarr) AddQualityProfile(profile *QualityProfile) (int64, error) {
 
 // AddQualityProfileContext updates a quality profile in place.
 func (l *Lidarr) AddQualityProfileContext(ctx context.Context, profile *QualityProfile) (int64, error) {
-	var body bytes.Buffer
+	var (
+		output QualityProfile
+		body   bytes.Buffer
+	)
+
+	profile.ID = 0
 	if err := json.NewEncoder(&body).Encode(profile); err != nil {
 		return 0, fmt.Errorf("json.Marshal(%s): %w", bpQualityProfile, err)
 	}
-
-	var output QualityProfile
 
 	req := starr.Request{URI: bpQualityProfile, Body: &body}
 	if err := l.PostInto(ctx, req, &output); err != nil {
@@ -77,7 +81,7 @@ func (l *Lidarr) UpdateQualityProfileContext(ctx context.Context, profile *Quali
 
 	var output QualityProfile
 
-	req := starr.Request{URI: path.Join(bpQualityProfile, fmt.Sprint(profile.ID)), Body: &body}
+	req := starr.Request{URI: path.Join(bpQualityProfile, starr.Str(profile.ID)), Body: &body}
 	if err := l.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
@@ -92,7 +96,7 @@ func (l *Lidarr) DeleteQualityProfile(profileID int64) error {
 
 // DeleteQualityProfileContext deletes a quality profile.
 func (l *Lidarr) DeleteQualityProfileContext(ctx context.Context, profileID int64) error {
-	req := starr.Request{URI: path.Join(bpQualityProfile, fmt.Sprint(profileID))}
+	req := starr.Request{URI: path.Join(bpQualityProfile, starr.Str(profileID))}
 	if err := l.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}

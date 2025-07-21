@@ -1,4 +1,4 @@
-# Starr
+# Starr Library
 
 [![GoDoc](https://godoc.org/golift.io/starr/svc?status.svg)](https://pkg.go.dev/golift.io/starr)
 [![Go Report Card](https://goreportcard.com/badge/golift.io/starr)](https://goreportcard.com/report/golift.io/starr)
@@ -9,11 +9,11 @@
 
  **Go library to interact with APIs in all the Starr apps.**
 
--   [Lidarr](http://lidarr.audio) ([over 80 methods](https://pkg.go.dev/golift.io/starr@main/lidarr))
+-   [Lidarr](https://lidarr.audio) ([over 80 methods](https://pkg.go.dev/golift.io/starr@main/lidarr))
 -   [Prowlarr](https://prowlarr.com) ([over 20 methods](https://pkg.go.dev/golift.io/starr@main/prowlarr))
--   [Radarr](http://radarr.video) ([over 100 methods](https://pkg.go.dev/golift.io/starr@main/radarr))
--   [Readarr](http://readarr.com) ([over 70 methods](https://pkg.go.dev/golift.io/starr@main/readarr))
--   [Sonarr](http://sonarr.tv) ([over 100 methods](https://pkg.go.dev/golift.io/starr@main/sonarr))
+-   [Radarr](https://radarr.video) ([over 100 methods](https://pkg.go.dev/golift.io/starr@main/radarr))
+-   [Readarr](https://readarr.com) ([over 70 methods](https://pkg.go.dev/golift.io/starr@main/readarr))
+-   [Sonarr](https://sonarr.tv) ([over 100 methods](https://pkg.go.dev/golift.io/starr@main/sonarr))
 
 [Custom Scripts support](https://wiki.servarr.com/radarr/custom-scripts) is also included.
 [Check out the types and methods](https://pkg.go.dev/golift.io/starr@main/starrcmd) to get that data.
@@ -31,6 +31,7 @@ This library is currently in use by:
 -   [Notifiarr](https://github.com/Notifiarr/notifiarr/) (a lot of it)
 -   [Checkrr](https://github.com/aetaric/checkrr/)
 -   [telegram-bot](https://github.com/woiza/telegram-bot-radarr) (radarr)
+-   [telegram-bot2](https://github.com/woiza/telegram-bot-sonarr) (sonarr)
 
 # Usage
 
