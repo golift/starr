@@ -27,8 +27,9 @@ type Request struct {
 
 // ReqError is returned when a Starr app returns an invalid status code.
 type ReqError struct {
-	Err error // sub error, often nil, or not useful.
 	http.Header
+
+	Err  error // sub error, often nil, or not useful.
 	Msg  string
 	Name string
 	Body []byte

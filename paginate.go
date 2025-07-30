@@ -13,12 +13,13 @@ import (
 // PageReq is the input to search requests that have page-able responses.
 // These are turned into HTTP parameters.
 type PageReq struct {
-	PageSize   int       // 10 is default if not provided.
-	Page       int       // 1 is default if not provided.
-	SortKey    string    // date, timeleft, others?
-	SortDir    Sorting   // ascending, descending
-	Filter     Filtering // enums for eventTypes. App specific.
-	url.Values           // Additional values that may be set.
+	url.Values // Additional values that may be set.
+
+	PageSize int       // 10 is default if not provided.
+	Page     int       // 1 is default if not provided.
+	SortKey  string    // date, timeleft, others?
+	SortDir  Sorting   // ascending, descending
+	Filter   Filtering // enums for eventTypes. App specific.
 }
 
 // Sorting is used as a request parameter value to sort lists, like History and Queue.

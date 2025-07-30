@@ -40,11 +40,12 @@ type LoggingRoundTripper struct {
 
 type fakeCloser struct {
 	io.Reader
+	*Config
+
 	CloseFn func() error
 	Body    *bytes.Buffer
 	Sent    *bytes.Buffer
 	Header  http.Header
-	*Config
 	Method  string
 	URL     string
 	Status  string
