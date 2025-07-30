@@ -1,50 +1,68 @@
+version: '2'
+linters:
+  default: all
+  disable:
+    - dupl
+    - exhaustruct
+    - musttag
+    - nlreturn
+    - tagliatelle
+    - noinlineerr
+    - wsl
+  settings:
+    wsl_v5:
+      allow-first-in-block: true
+      allow-whole-block: false
+      branch-max-lines: 2
+    depguard:
+      rules:
+        main:
+          files:
+            - $all
+          allow:
+            - $gostd
+            - github.com/stretchr/testify
+            - golift.io/starr
+            - golang.org/x/net
+    ireturn:
+      allow:
+        - generic
+        - stdlib
+        - error
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - linters:
+          - nonamedreturns
+        path: starrcmd/
+      - linters:
+          - forcetypeassert
+          - funlen
+          - gochecknoglobals
+          - lll
+          - maintidx
+        path: (.+)_test\.go
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
 issues:
   max-issues-per-linter: 0
   max-same-issues: 0
-  exclude-rules:
-    - path: 'starrcmd/'
-      linters:
-        - nonamedreturns
-    - path: '(.+)_test\.go'
-      linters:
-        - gochecknoglobals
-        - forcetypeassert
-        - funlen
-        - lll
-        - maintidx # uhg.
-
-linters:
-  enable-all: true
-  disable:
-    # deprecated
-    - tenv
-    # unused
-    - tagliatelle
-    - exhaustruct
-    - dupl
-    - nlreturn
-    - musttag
-
-linters-settings:
-  ireturn:
-    allow: [generic,stdlib,error]
-# One day we'll fix all the field alignments. Anyone got a tool that just does it?
-#  govet:
-#    enable:
-#    - fieldalignment
-  depguard:
-    rules:
-      main:
-        files:
-        - $all
-        allow:
-        - $gostd
-        - github.com/stretchr/testify
-        - golift.io/starr
-        - golang.org/x/net
-
-run:
-  timeout: 5m
-
-output:
-  sort-results: true
+formatters:
+  enable:
+    - gci
+    - gofmt
+    - gofumpt
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
