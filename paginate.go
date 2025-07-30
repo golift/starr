@@ -122,8 +122,8 @@ func (r *PageReq) CheckSet(key, value string) { //nolint:cyclop
 			r.Values = make(url.Values)
 		}
 
-		if r.Values.Get(key) == "" {
-			r.Values.Set(key, value)
+		if r.Get(key) == "" {
+			r.Set(key, value)
 		}
 	}
 }

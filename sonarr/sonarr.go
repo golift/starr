@@ -13,7 +13,7 @@ const APIver = "v3"
 
 // Sonarr contains all the methods to interact with a Sonarr server.
 type Sonarr struct {
-	starr.APIer
+	starr.APIer `json:"-"`
 }
 
 // Filter values are integers. Given names for ease of discovery.

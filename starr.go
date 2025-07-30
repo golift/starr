@@ -48,13 +48,13 @@ var (
 // HTTPUser and HTTPPass are used for Basic HTTP auth, if enabled (not common).
 // Username and Password are for non-API paths with native authentication enabled.
 type Config struct {
+	Client   *http.Client `json:"-"        toml:"-"         xml:"-"         yaml:"-"`
 	APIKey   string       `json:"apiKey"   toml:"api_key"   xml:"api_key"   yaml:"apiKey"`
 	URL      string       `json:"url"      toml:"url"       xml:"url"       yaml:"url"`
 	HTTPPass string       `json:"httpPass" toml:"http_pass" xml:"http_pass" yaml:"httpPass"`
 	HTTPUser string       `json:"httpUser" toml:"http_user" xml:"http_user" yaml:"httpUser"`
 	Username string       `json:"username" toml:"username"  xml:"username"  yaml:"username"`
 	Password string       `json:"password" toml:"password"  xml:"password"  yaml:"password"`
-	Client   *http.Client `json:"-"        toml:"-"         xml:"-"         yaml:"-"`
 	cookie   bool         // this probably doesn't work right.
 }
 

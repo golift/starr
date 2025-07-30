@@ -20,19 +20,19 @@ const API = "api"
 
 // Request contains the GET and/or POST values for an HTTP request.
 type Request struct {
-	URI   string     // Required: path portion of the URL.
-	Query url.Values // GET parameters work for any request type.
 	Body  io.Reader  // Used in PUT, POST, DELETE. Not for GET.
+	Query url.Values // GET parameters work for any request type.
+	URI   string     // Required: path portion of the URL.
 }
 
 // ReqError is returned when a Starr app returns an invalid status code.
 type ReqError struct {
-	Code int
-	Body []byte
+	Err error // sub error, often nil, or not useful.
+	http.Header
 	Msg  string
 	Name string
-	Err  error // sub error, often nil, or not useful.
-	http.Header
+	Body []byte
+	Code int
 }
 
 // String turns a request into a string. Usually used in error messages.

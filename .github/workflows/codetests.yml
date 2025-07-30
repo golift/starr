@@ -2,7 +2,7 @@ name: test-and-lint
 on:
   pull_request:
     branches:
-    - main
+      - main
 permissions:
   contents: read
 jobs:
@@ -31,7 +31,7 @@ jobs:
         with:
           go-version: stable
       - name: go-test
-        run: 	go test -race -v -covermode=atomic  ./...
+        run: go test -race -v -covermode=atomic  ./...
   # Runs golangci-lint on macos against freebsd and macos.
   golangci-darwin:
     strategy:
@@ -47,9 +47,9 @@ jobs:
           go-version: stable
       - uses: actions/checkout@v4
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v8
         with:
-          version: v1.64
+          version: v2
   # Runs golangci-lint on linux against linux and windows.
   golangci-linux:
     strategy:
@@ -65,6 +65,6 @@ jobs:
           go-version: stable
       - uses: actions/checkout@v4
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v8
         with:
-          version: v1.64
+          version: v2

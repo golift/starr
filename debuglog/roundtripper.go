@@ -16,8 +16,6 @@ import (
 
 // Config is the input data for the logger.
 type Config struct {
-	// Limit logged JSON payloads to this many bytes. 0=unlimited
-	MaxBody int
 	// This is where logs go. If not set they go to log.Printf.
 	Debugf func(string, ...interface{})
 	// This can be used for byte counters, but is optional otherwise.
@@ -25,6 +23,8 @@ type Config struct {
 	// Any strings in this list are replaced with <recated> in the log output.
 	// Useful for hiding api keys and passwords from debug logs. String must be 4+ chars.
 	Redact []string
+	// Limit logged JSON payloads to this many bytes. 0=unlimited
+	MaxBody int
 }
 
 const minRedactChars = 4
@@ -43,12 +43,12 @@ type fakeCloser struct {
 	CloseFn func() error
 	Body    *bytes.Buffer
 	Sent    *bytes.Buffer
+	Header  http.Header
+	*Config
 	Method  string
 	URL     string
 	Status  string
-	Header  http.Header
 	Elapsed time.Duration
-	*Config
 }
 
 // NewLoggingRoundTripper returns a round tripper to log requests counts and response sizes.
