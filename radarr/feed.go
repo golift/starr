@@ -36,37 +36,35 @@ type Feed struct {
 	AsAllDay bool `json:"asAllDay"`
 }
 
+// GetFeed returns the Calendar ICS feed file.
 func (r *Radarr) GetFeed(filter Feed) ([]byte, error) {
 	return r.GetFeedContext(context.Background(), filter)
 }
 
-// GetFeedContext returns the Radarr Feed.
+// GetFeedContext returns the Calendar ICS feed file.
 func (r *Radarr) GetFeedContext(ctx context.Context, filter Feed) ([]byte, error) {
-	var (
-		releaseTypes []string
-		tags         []string
-	)
-
-	for _, tag := range filter.Tags {
-		tags = append(tags, strconv.Itoa(tag))
+	tags := make([]string, len(filter.Tags))
+	for idx, tag := range filter.Tags {
+		tags[idx] = strconv.Itoa(tag)
 	}
 
-	for _, releaseType := range filter.ReleaseTypes {
-		releaseTypes = append(releaseTypes, string(releaseType))
+	releaseTypes := make([]string, len(filter.ReleaseTypes))
+	for idx, releaseType := range filter.ReleaseTypes {
+		releaseTypes[idx] = string(releaseType)
 	}
 
-	query := url.Values{
+	req := starr.Request{URI: bpFeed, Query: url.Values{
 		"unmonitored":  {strconv.FormatBool(filter.Unmonitored)},
 		"pastDays":     {strconv.Itoa(filter.PastDays)},
 		"futureDays":   {strconv.Itoa(filter.FutureDays)},
 		"tags":         {strings.Join(tags, ",")},
 		"asAllDay":     {strconv.FormatBool(filter.AsAllDay)},
 		"releaseTypes": {strings.Join(releaseTypes, ",")},
-	}
+	}}
 
-	resp, err := r.Get(ctx, starr.Request{URI: bpFeed, Query: query})
+	resp, err := r.Get(ctx, req)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("http.Get(%s): %w", &req, err)
 	}
 	defer resp.Body.Close()
 
