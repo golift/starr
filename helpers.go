@@ -85,6 +85,26 @@ func Str[I int | int64 | float64 | bool](val I) string {
 	}
 }
 
+// None can be used to return only an error condition. The opposite of Must().
+// If the last argument is an error, that's what gets returned, otherwise nil.
+func None(input ...any) error {
+	if len(input) > 0 {
+		err, _ := input[len(input)-1].(error)
+		return err
+	}
+
+	return nil
+}
+
+// Must can be used to avoid checking an error you'll never run into.
+func Must[S any](input S, err error) S {
+	if err != nil {
+		panic("Must failed: " + err.Error())
+	}
+
+	return input
+}
+
 // Ptr returns a pointer to the provided "whatever".
 func Ptr[P any](p P) *P {
 	return &p
