@@ -13,6 +13,12 @@ import (
 // MockData allows generic testing of http inputs and outputs.
 // This is used by the submodule tests.
 type MockData struct {
+	// Caller's request.
+	WithRequest interface{}
+	// Caller's response.
+	WithResponse interface{}
+	// Caller's response.
+	WithError error
 	// A name for the test.
 	Name string
 	// The path expected in the request ie. /api/v1/thing
@@ -21,16 +27,10 @@ type MockData struct {
 	ExpectedRequest string
 	// The request method (GET/POST) expected from the caller.
 	ExpectedMethod string
-	// This is the status that gets returned the caller.
-	ResponseStatus int
 	// The (json) response body returned to caller.
 	ResponseBody string
-	// Caller's request.
-	WithRequest interface{}
-	// Caller's response.
-	WithResponse interface{}
-	// Caller's response.
-	WithError error
+	// This is the status that gets returned the caller.
+	ResponseStatus int
 }
 
 const (
@@ -47,15 +47,15 @@ func (test *MockData) GetMockServer(t *testing.T) *httptest.Server {
 	t.Helper()
 
 	return httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, req *http.Request) {
-		assert.EqualValues(t, test.ExpectedPath, req.URL.String(),
+		assert.Equal(t, test.ExpectedPath, req.URL.String(),
 			"test.ExpectedPath does not match the actual path")
 		writer.WriteHeader(test.ResponseStatus)
-		assert.EqualValues(t, test.ExpectedMethod, req.Method,
+		assert.Equal(t, test.ExpectedMethod, req.Method,
 			"test.ExpectedMethod does not match the actual method")
 
 		body, err := io.ReadAll(req.Body)
 		assert.NoError(t, err)
-		assert.EqualValues(t, test.ExpectedRequest, string(body),
+		assert.Equal(t, test.ExpectedRequest, string(body),
 			"test.ExpectedRequest does not match body for actual request")
 
 		_, err = writer.Write([]byte(test.ResponseBody))

@@ -13,7 +13,7 @@ const APIver = "v1"
 
 // Lidarr contains all the methods to interact with a Lidarr server.
 type Lidarr struct {
-	starr.APIer
+	starr.APIer `json:"-"`
 }
 
 // Filter values are integers. Given names for ease of discovery.

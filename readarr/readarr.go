@@ -13,7 +13,7 @@ const APIver = "v1"
 
 // Readarr contains all the methods to interact with a Readarr server.
 type Readarr struct {
-	starr.APIer
+	starr.APIer `json:"-"`
 }
 
 // Filter values are integers. Given names for ease of discovery.

@@ -83,7 +83,6 @@ func parseStructMember(field reflect.Value, value, splitVal string) error { //no
 			case "float64":
 				// uncomment float64 if needed.
 				var val float64
-				//nolint:gomnd
 				val, err = strconv.ParseFloat(value, 64)
 				field.SetFloat(val)
 			case "time.Duration":
@@ -194,7 +193,6 @@ func parseInt(intType, envval string) (int64, error) {
 		err error
 	)
 
-	//nolint:gomnd,nolintlint
 	switch intType {
 	default:
 		val, err = strconv.ParseInt(envval, 10, 0)

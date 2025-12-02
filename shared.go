@@ -194,8 +194,9 @@ type FormatItem struct {
 // PlayTime is used in at least Sonarr, maybe other places.
 // Holds a string duration converted from hh:mm:ss.
 type PlayTime struct {
-	Original string
 	time.Duration
+
+	Original string
 }
 
 var _ json.Unmarshaler = (*PlayTime)(nil)

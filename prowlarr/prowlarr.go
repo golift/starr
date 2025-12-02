@@ -10,7 +10,7 @@ import (
 
 // Prowlarr contains all the methods to interact with a Prowlarr server.
 type Prowlarr struct {
-	starr.APIer
+	starr.APIer `json:"-"`
 }
 
 // APIver is the Prowlarr API version supported by this library.

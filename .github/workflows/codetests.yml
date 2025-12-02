@@ -2,21 +2,21 @@ name: test-and-lint
 on:
   pull_request:
     branches:
-    - main
+      - main
 permissions:
   contents: read
 jobs:
   codespell:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: codespell-project/actions-codespell@v2
         with:
           skip: .git
   nopollution:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: no cross pollution
         run: make nopollution
   # Runs `go test` against 3 operating systems.
@@ -26,12 +26,12 @@ jobs:
         os: [macos, windows, ubuntu]
     runs-on: ${{ matrix.os }}-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
         with:
           go-version: stable
       - name: go-test
-        run: 	go test -race -v -covermode=atomic  ./...
+        run: go test -race -v -covermode=atomic  ./...
   # Runs golangci-lint on macos against freebsd and macos.
   golangci-darwin:
     strategy:
@@ -42,14 +42,14 @@ jobs:
     env:
       GOOS: ${{ matrix.os }}
     steps:
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
           go-version: stable
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v8
         with:
-          version: v1.64
+          version: v2.3
   # Runs golangci-lint on linux against linux and windows.
   golangci-linux:
     strategy:
@@ -60,11 +60,11 @@ jobs:
     env:
       GOOS: ${{ matrix.os }}
     steps:
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v6
         with:
           go-version: stable
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v8
         with:
-          version: v1.64
+          version: v2.3

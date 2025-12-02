@@ -13,7 +13,7 @@ const APIver = "v3"
 
 // Radarr contains all the methods to interact with a Radarr server.
 type Radarr struct {
-	starr.APIer
+	starr.APIer `json:"-"`
 }
 
 // Filter values are integers. Given names for ease of discovery.
