@@ -535,7 +535,7 @@ func TestGetAllSeries(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)
 			client := sonarr.New(starr.New("mockAPIkey", mockServer.URL, 0))
-			output, err := client.GetAllSeries()
+			output, err := client.GetAllSeries(false)
 			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 			assert.EqualValues(t, output, test.WithResponse, "response is not the same as expected")
 		})
@@ -666,7 +666,7 @@ func TestGetSeries(t *testing.T) {
 		},
 	}
 
-		for _, test := range tests {
+	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)

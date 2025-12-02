@@ -137,14 +137,14 @@ type Statistics struct {
 
 // GetAllSeries returns all configured series.
 // This may not deal well with pagination atm, let us know?
-func (s *Sonarr) GetAllSeries() ([]*Series, error) {
-	return s.GetAllSeriesContext(context.Background())
+func (s *Sonarr) GetAllSeries(includeSeasonImages bool) ([]*Series, error) {
+	return s.GetAllSeriesContext(context.Background(), includeSeasonImages)
 }
 
 // GetAllSeriesContext returns all configured series.
 // This may not deal well with pagination atm, let us know?
-func (s *Sonarr) GetAllSeriesContext(ctx context.Context) ([]*Series, error) {
-	return s.GetSeriesContext(ctx, 0, false)
+func (s *Sonarr) GetAllSeriesContext(ctx context.Context, includeSeasonImages bool) ([]*Series, error) {
+	return s.GetSeriesContext(ctx, 0, includeSeasonImages)
 }
 
 // GetSeries locates and returns a series by tvdbID. If tvdbID is 0, returns all series.
