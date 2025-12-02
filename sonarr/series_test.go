@@ -666,7 +666,7 @@ func TestGetSeries(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
+		for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {
 			t.Parallel()
 			mockServer := test.GetMockServer(t)

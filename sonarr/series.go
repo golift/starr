@@ -160,6 +160,9 @@ func (s *Sonarr) GetSeriesContext(ctx context.Context, tvdbID int64, includeSeas
 	if tvdbID != 0 {
 		req.Query.Add("tvdbId", starr.Str(tvdbID))
 	}
+	if includeSeasonImages {
+		req.Query.Add("includeSeasonImages", "true")
+	}
 
 	if includeSeasonImages {
 		req.Query.Add("includeSeasonImages", "true")
