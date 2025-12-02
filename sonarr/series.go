@@ -144,21 +144,24 @@ func (s *Sonarr) GetAllSeries() ([]*Series, error) {
 // GetAllSeriesContext returns all configured series.
 // This may not deal well with pagination atm, let us know?
 func (s *Sonarr) GetAllSeriesContext(ctx context.Context) ([]*Series, error) {
-	return s.GetSeriesContext(ctx, 0)
+	return s.GetSeriesContext(ctx, 0, false)
 }
 
 // GetSeries locates and returns a series by tvdbID. If tvdbID is 0, returns all series.
-func (s *Sonarr) GetSeries(tvdbID int64) ([]*Series, error) {
-	return s.GetSeriesContext(context.Background(), tvdbID)
+func (s *Sonarr) GetSeries(tvdbID int64, includeSeasonImages bool) ([]*Series, error) {
+	return s.GetSeriesContext(context.Background(), tvdbID, includeSeasonImages)
 }
 
 // GetSeriesContext locates and returns a series by tvdbID. If tvdbID is 0, returns all series.
-func (s *Sonarr) GetSeriesContext(ctx context.Context, tvdbID int64) ([]*Series, error) {
+func (s *Sonarr) GetSeriesContext(ctx context.Context, tvdbID int64, includeSeasonImages bool) ([]*Series, error) {
 	var output []*Series
 
 	req := starr.Request{URI: bpSeries, Query: make(url.Values)}
 	if tvdbID != 0 {
 		req.Query.Add("tvdbId", starr.Str(tvdbID))
+	}
+	if includeSeasonImages {
+		req.Query.Add("includeSeasonImages", "true")
 	}
 
 	if err := s.GetInto(ctx, req, &output); err != nil {
@@ -220,14 +223,17 @@ func (s *Sonarr) AddSeriesContext(ctx context.Context, series *AddSeriesInput) (
 
 // GetSeriesByID locates and returns a series by DB [series] ID.
 func (s *Sonarr) GetSeriesByID(seriesID int64) (*Series, error) {
-	return s.GetSeriesByIDContext(context.Background(), seriesID)
+	return s.GetSeriesByIDContext(context.Background(), seriesID, false)
 }
 
 // GetSeriesByIDContext locates and returns a series by DB [series] ID.
-func (s *Sonarr) GetSeriesByIDContext(ctx context.Context, seriesID int64) (*Series, error) {
+func (s *Sonarr) GetSeriesByIDContext(ctx context.Context, seriesID int64, includeSeasonImages bool) (*Series, error) {
 	var output Series
 
-	req := starr.Request{URI: path.Join(bpSeries, starr.Str(seriesID))}
+	req := starr.Request{URI: path.Join(bpSeries, starr.Str(seriesID)), Query: make(url.Values)}
+	if includeSeasonImages {
+		req.Query.Add("includeSeasonImages", "true")
+	}
 	if err := s.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
