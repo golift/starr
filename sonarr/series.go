@@ -117,9 +117,10 @@ type AlternateTitle struct {
 
 // Season is part of AddSeriesInput and Queue and used in a few places.
 type Season struct {
-	Monitored    bool        `json:"monitored"`
-	SeasonNumber int         `json:"seasonNumber"`
-	Statistics   *Statistics `json:"statistics,omitempty"`
+	Monitored    bool           `json:"monitored"`
+	SeasonNumber int            `json:"seasonNumber"`
+	Statistics   *Statistics    `json:"statistics,omitempty"`
+	Images       []*starr.Image `json:"images,omitempty"`
 }
 
 // Statistics is part of AddSeriesInput and Queue.
