@@ -92,10 +92,10 @@ type AddBookAuthor struct {
 
 // AddAuthorOptions is part of AddBookAuthor.
 type AddAuthorOptions struct {
-	SearchForMissingBooks bool    `json:"searchForMissingBooks"`
-	Monitored             bool    `json:"monitored"`
-	Monitor               string  `json:"monitor"`
-	BooksToMonitor        []int64 `json:"booksToMonitor"`
+	SearchForMissingBooks bool     `json:"searchForMissingBooks"`
+	Monitored             bool     `json:"monitored"`
+	Monitor               string   `json:"monitor"`
+	BooksToMonitor        []string `json:"booksToMonitor"`
 }
 
 // AddBookEdition is part of AddBookInput.
