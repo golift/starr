@@ -57,13 +57,10 @@ func (s *Sonarr) GetEpisodeFiles(episodeFileIDs ...int64) ([]*EpisodeFile, error
 
 // GetEpisodeFilesContext returns information about episode files by episode file IDs.
 func (s *Sonarr) GetEpisodeFilesContext(ctx context.Context, episodeFileIDs ...int64) ([]*EpisodeFile, error) {
-	var ids string
-	for _, efID := range episodeFileIDs {
-		ids += starr.Str(efID) + "," // the extra comma is ok.
-	}
-
 	req := starr.Request{URI: bpEpisodeFile, Query: make(url.Values)}
-	req.Query.Add("episodeFileIds", ids)
+	for _, efID := range episodeFileIDs {
+		req.Query.Add("episodeFileIds", starr.Str(efID))
+	}
 
 	var output []*EpisodeFile
 	if err := s.GetInto(ctx, req, &output); err != nil {
