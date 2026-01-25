@@ -275,7 +275,7 @@ func TestGetAllSeries(t *testing.T) {
 	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series") + "?includeSeasonImages=true",
 			ExpectedMethod: "GET",
 			ResponseStatus: 200,
 			ResponseBody:   listSeries,
@@ -521,7 +521,7 @@ func TestGetAllSeries(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series") + "?includeSeasonImages=true",
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   starrtest.BodyNotFound,
@@ -551,7 +551,7 @@ func TestGetSeries(t *testing.T) {
 	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series?tvdbId=360893"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series?tvdbId=360893") + "&includeSeasonImages=true",
 			ExpectedMethod: "GET",
 			ResponseStatus: 200,
 			ResponseBody:   "[" + secondSeries + "]",
@@ -656,7 +656,7 @@ func TestGetSeries(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series?tvdbId=360893"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series?tvdbId=360893") + "&includeSeasonImages=true",
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   starrtest.BodyNotFound,
@@ -687,7 +687,7 @@ func TestGetSeriesByID(t *testing.T) {
 	tests := []*starrtest.MockData{
 		{
 			Name:           "200",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series", "2"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series", "2") + "?includeSeasonImages=true",
 			ExpectedMethod: "GET",
 			ResponseStatus: 200,
 			ResponseBody:   secondSeries,
@@ -790,7 +790,7 @@ func TestGetSeriesByID(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series", "2"),
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series", "2") + "?includeSeasonImages=true",
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   starrtest.BodyNotFound,
