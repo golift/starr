@@ -656,7 +656,7 @@ func TestGetSeries(t *testing.T) {
 		},
 		{
 			Name:           "404",
-			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series?tvdbId=360893") + "&includeSeasonImages=true",
+			ExpectedPath:   path.Join("/", starr.API, sonarr.APIver, "series?tvdbId=360893&includeSeasonImages=true"),
 			ExpectedMethod: "GET",
 			ResponseStatus: 404,
 			ResponseBody:   starrtest.BodyNotFound,
