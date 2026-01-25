@@ -149,7 +149,7 @@ func (s *Sonarr) GetAllSeriesContext(ctx context.Context) ([]*Series, error) {
 }
 
 // GetSeries locates and returns a series by tvdbID. If tvdbID is 0, returns all series.
-func (s *Sonarr) GetSeries(tvdbID int64, includeSeasonImages bool) ([]*Series, error) {
+func (s *Sonarr) GetSeries(tvdbID int64) ([]*Series, error) {
 	return s.GetSeriesContext(context.Background(), tvdbID)
 }
 
@@ -223,17 +223,15 @@ func (s *Sonarr) AddSeriesContext(ctx context.Context, series *AddSeriesInput) (
 
 // GetSeriesByID locates and returns a series by DB [series] ID.
 func (s *Sonarr) GetSeriesByID(seriesID int64) (*Series, error) {
-	return s.GetSeriesByIDContext(context.Background(), seriesID, false)
+	return s.GetSeriesByIDContext(context.Background(), seriesID)
 }
 
 // GetSeriesByIDContext locates and returns a series by DB [series] ID.
-func (s *Sonarr) GetSeriesByIDContext(ctx context.Context, seriesID int64, includeSeasonImages bool) (*Series, error) {
+func (s *Sonarr) GetSeriesByIDContext(ctx context.Context, seriesID int64) (*Series, error) {
 	var output Series
 
 	req := starr.Request{URI: path.Join(bpSeries, starr.Str(seriesID)), Query: make(url.Values)}
-	if includeSeasonImages {
-		req.Query.Add("includeSeasonImages", "true")
-	}
+	req.Query.Add("includeSeasonImages", "true")
 
 	if err := s.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
