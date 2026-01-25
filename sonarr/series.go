@@ -138,23 +138,23 @@ type Statistics struct {
 
 // GetAllSeries returns all configured series.
 // This may not deal well with pagination atm, let us know?
-func (s *Sonarr) GetAllSeries(includeSeasonImages bool) ([]*Series, error) {
-	return s.GetAllSeriesContext(context.Background(), includeSeasonImages)
+func (s *Sonarr) GetAllSeries() ([]*Series, error) {
+	return s.GetAllSeriesContext(context.Background())
 }
 
 // GetAllSeriesContext returns all configured series.
 // This may not deal well with pagination atm, let us know?
-func (s *Sonarr) GetAllSeriesContext(ctx context.Context, includeSeasonImages bool) ([]*Series, error) {
-	return s.GetSeriesContext(ctx, 0, includeSeasonImages)
+func (s *Sonarr) GetAllSeriesContext(ctx context.Context) ([]*Series, error) {
+	return s.GetSeriesContext(ctx, 0)
 }
 
 // GetSeries locates and returns a series by tvdbID. If tvdbID is 0, returns all series.
 func (s *Sonarr) GetSeries(tvdbID int64, includeSeasonImages bool) ([]*Series, error) {
-	return s.GetSeriesContext(context.Background(), tvdbID, includeSeasonImages)
+	return s.GetSeriesContext(context.Background(), tvdbID)
 }
 
 // GetSeriesContext locates and returns a series by tvdbID. If tvdbID is 0, returns all series.
-func (s *Sonarr) GetSeriesContext(ctx context.Context, tvdbID int64, includeSeasonImages bool) ([]*Series, error) {
+func (s *Sonarr) GetSeriesContext(ctx context.Context, tvdbID int64) ([]*Series, error) {
 	var output []*Series
 
 	req := starr.Request{URI: bpSeries, Query: make(url.Values)}
@@ -162,9 +162,7 @@ func (s *Sonarr) GetSeriesContext(ctx context.Context, tvdbID int64, includeSeas
 		req.Query.Add("tvdbId", starr.Str(tvdbID))
 	}
 
-	if includeSeasonImages {
-		req.Query.Add("includeSeasonImages", "true")
-	}
+	req.Query.Add("includeSeasonImages", "true")
 
 	if err := s.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
