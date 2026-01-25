@@ -117,9 +117,10 @@ type AlternateTitle struct {
 
 // Season is part of AddSeriesInput and Queue and used in a few places.
 type Season struct {
-	Monitored    bool        `json:"monitored"`
-	SeasonNumber int         `json:"seasonNumber"`
-	Statistics   *Statistics `json:"statistics,omitempty"`
+	Monitored    bool           `json:"monitored"`
+	SeasonNumber int            `json:"seasonNumber"`
+	Statistics   *Statistics    `json:"statistics,omitempty"`
+	Images       []*starr.Image `json:"images,omitempty"`
 }
 
 // Statistics is part of AddSeriesInput and Queue.
@@ -160,6 +161,8 @@ func (s *Sonarr) GetSeriesContext(ctx context.Context, tvdbID int64) ([]*Series,
 	if tvdbID != 0 {
 		req.Query.Add("tvdbId", starr.Str(tvdbID))
 	}
+
+	req.Query.Add("includeSeasonImages", "true")
 
 	if err := s.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
@@ -227,7 +230,9 @@ func (s *Sonarr) GetSeriesByID(seriesID int64) (*Series, error) {
 func (s *Sonarr) GetSeriesByIDContext(ctx context.Context, seriesID int64) (*Series, error) {
 	var output Series
 
-	req := starr.Request{URI: path.Join(bpSeries, starr.Str(seriesID))}
+	req := starr.Request{URI: path.Join(bpSeries, starr.Str(seriesID)), Query: make(url.Values)}
+	req.Query.Add("includeSeasonImages", "true")
+
 	if err := s.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
