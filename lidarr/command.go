@@ -23,24 +23,46 @@ type CommandRequest struct {
 	ArtistID int64    `json:"artistId,omitempty"`
 }
 
+// ManualImportFile is one file in a ManualImport command request.
+type ManualImportFile struct {
+	Path                    string         `json:"path"`
+	ArtistID                int64          `json:"artistId"`
+	AlbumID                 int64          `json:"albumId"`
+	AlbumReleaseID          int64          `json:"albumReleaseId"`
+	TrackIDs                []int64        `json:"trackIds"`
+	Quality                 *starr.Quality `json:"quality"`
+	IndexerFlags            int            `json:"indexerFlags"`
+	DownloadID              string         `json:"downloadId"`
+	DisableReleaseSwitching bool           `json:"disableReleaseSwitching"`
+}
+
+// ManualImportCommandRequest is the body for the ManualImport command (POST /api/v1/command).
+// It triggers Lidarr to import the listed files.
+type ManualImportCommandRequest struct {
+	Name                 string              `json:"name"` // "ManualImport"
+	Files                []*ManualImportFile `json:"files"`
+	ImportMode           string              `json:"importMode"` // "auto"
+	ReplaceExistingFiles bool                `json:"replaceExistingFiles"`
+}
+
 // CommandResponse comes from the /api/v1/command endpoint.
 type CommandResponse struct {
-	ID                  int64                  `json:"id"`
-	Name                string                 `json:"name"`
-	CommandName         string                 `json:"commandName"`
-	Message             string                 `json:"message,omitempty"`
-	Priority            string                 `json:"priority"`
-	Status              string                 `json:"status"`
-	Queued              time.Time              `json:"queued"`
-	Started             time.Time              `json:"started,omitempty"`
-	Ended               time.Time              `json:"ended,omitempty"`
-	StateChangeTime     time.Time              `json:"stateChangeTime,omitempty"`
-	LastExecutionTime   time.Time              `json:"lastExecutionTime,omitempty"`
-	Duration            string                 `json:"duration,omitempty"`
-	Trigger             string                 `json:"trigger"`
-	SendUpdatesToClient bool                   `json:"sendUpdatesToClient"`
-	UpdateScheduledTask bool                   `json:"updateScheduledTask"`
-	Body                map[string]interface{} `json:"body"`
+	ID                  int64          `json:"id"`
+	Name                string         `json:"name"`
+	CommandName         string         `json:"commandName"`
+	Message             string         `json:"message,omitempty"`
+	Priority            string         `json:"priority"`
+	Status              string         `json:"status"`
+	Queued              time.Time      `json:"queued"`
+	Started             time.Time      `json:"started,omitempty"`
+	Ended               time.Time      `json:"ended,omitempty"`
+	StateChangeTime     time.Time      `json:"stateChangeTime,omitempty"`
+	LastExecutionTime   time.Time      `json:"lastExecutionTime,omitempty"`
+	Duration            string         `json:"duration,omitempty"`
+	Trigger             string         `json:"trigger"`
+	SendUpdatesToClient bool           `json:"sendUpdatesToClient"`
+	UpdateScheduledTask bool           `json:"updateScheduledTask"`
+	Body                map[string]any `json:"body"`
 }
 
 // GetCommands returns all available Lidarr commands.
@@ -102,6 +124,40 @@ func (l *Lidarr) GetCommandStatusContext(ctx context.Context, commandID int64) (
 	req := starr.Request{URI: path.Join(bpCommand, starr.Str(commandID))}
 	if err := l.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
+	}
+
+	return &output, nil
+}
+
+// SendManualImportCommand sends the ManualImport command to import the given files (e.g. after FLAC+CUE split).
+func (l *Lidarr) SendManualImportCommand(cmd *ManualImportCommandRequest) (*CommandResponse, error) {
+	return l.SendManualImportCommandContext(context.Background(), cmd)
+}
+
+// SendManualImportCommandContext sends the ManualImport command to import the given files.
+func (l *Lidarr) SendManualImportCommandContext(ctx context.Context, cmd *ManualImportCommandRequest) (*CommandResponse, error) {
+	var output CommandResponse
+
+	if cmd == nil || len(cmd.Files) == 0 {
+		return &output, nil
+	}
+
+	if cmd.Name == "" {
+		cmd.Name = "ManualImport"
+	}
+
+	if cmd.ImportMode == "" {
+		cmd.ImportMode = "auto"
+	}
+
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(cmd); err != nil {
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpCommand, err)
+	}
+
+	req := starr.Request{URI: bpCommand, Body: &buf}
+	if err := l.PostInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
 
 	return &output, nil

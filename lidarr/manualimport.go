@@ -69,13 +69,14 @@ type ManualImportParams struct {
 	FilterExistingFiles  bool
 }
 
-// ManualImport initiates a manual import (GET).
-func (l *Lidarr) ManualImport(params *ManualImportParams) (*ManualImportOutput, error) {
+// ManualImport returns the list of files available for manual import in the given folder (GET).
+// The Lidarr API returns an array of manual import items.
+func (l *Lidarr) ManualImport(params *ManualImportParams) ([]*ManualImportOutput, error) {
 	return l.ManualImportContext(context.Background(), params)
 }
 
-// ManualImportContext initiates a manual import (GET).
-func (l *Lidarr) ManualImportContext(ctx context.Context, params *ManualImportParams) (*ManualImportOutput, error) {
+// ManualImportContext returns the list of files available for manual import in the given folder (GET).
+func (l *Lidarr) ManualImportContext(ctx context.Context, params *ManualImportParams) ([]*ManualImportOutput, error) {
 	req := starr.Request{URI: bpManualImport, Query: make(url.Values)}
 	req.Query.Add("folder", params.Folder)
 	req.Query.Add("downloadId", params.DownloadID)
@@ -83,12 +84,73 @@ func (l *Lidarr) ManualImportContext(ctx context.Context, params *ManualImportPa
 	req.Query.Add("replaceExistingFiles", starr.Str(params.ReplaceExistingFiles))
 	req.Query.Add("filterExistingFiles", starr.Str(params.FilterExistingFiles))
 
-	var output ManualImportOutput
+	var output []*ManualImportOutput
 	if err := l.GetInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
-	return &output, nil
+	return output, nil
+}
+
+// ManualImportCommandFromOutputs builds a ManualImportCommandRequest from the GET manualimport response.
+// Use with SendManualImportCommand to trigger import of the listed files (e.g. after FLAC+CUE split).
+func ManualImportCommandFromOutputs(outputs []*ManualImportOutput, replaceExisting bool) *ManualImportCommandRequest {
+	if len(outputs) == 0 {
+		return nil
+	}
+
+	files := make([]*ManualImportFile, 0, len(outputs))
+
+	for _, o := range outputs {
+		if o == nil {
+			continue
+		}
+
+		artistID := int64(0)
+		if o.Artist != nil {
+			artistID = o.Artist.ID
+		}
+
+		albumID := int64(0)
+		if o.Album != nil {
+			albumID = o.Album.ID
+		}
+
+		trackIDs := make([]int64, 0, len(o.Tracks))
+		for _, t := range o.Tracks {
+			if t != nil {
+				trackIDs = append(trackIDs, t.ID)
+			}
+		}
+
+		quality := o.Quality
+		if quality == nil {
+			quality = &starr.Quality{}
+		}
+
+		files = append(files, &ManualImportFile{
+			Path:                    o.Path,
+			ArtistID:                artistID,
+			AlbumID:                 albumID,
+			AlbumReleaseID:          o.AlbumReleaseID,
+			TrackIDs:                trackIDs,
+			Quality:                 quality,
+			IndexerFlags:            0,
+			DownloadID:              o.DownloadID,
+			DisableReleaseSwitching: o.DisableReleaseSwitching,
+		})
+	}
+
+	if len(files) == 0 {
+		return nil
+	}
+
+	return &ManualImportCommandRequest{
+		Name:                 "ManualImport",
+		Files:                files,
+		ImportMode:           "auto",
+		ReplaceExistingFiles: replaceExisting,
+	}
 }
 
 // ManualImportReprocess reprocesses a manual import (POST).
