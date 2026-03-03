@@ -101,43 +101,43 @@ func ManualImportCommandFromOutputs(outputs []*ManualImportOutput, replaceExisti
 
 	files := make([]*ManualImportFile, 0, len(outputs))
 
-	for _, o := range outputs {
-		if o == nil {
+	for _, output := range outputs {
+		if output == nil {
 			continue
 		}
 
 		artistID := int64(0)
-		if o.Artist != nil {
-			artistID = o.Artist.ID
+		if output.Artist != nil {
+			artistID = output.Artist.ID
 		}
 
 		albumID := int64(0)
-		if o.Album != nil {
-			albumID = o.Album.ID
+		if output.Album != nil {
+			albumID = output.Album.ID
 		}
 
-		trackIDs := make([]int64, 0, len(o.Tracks))
-		for _, t := range o.Tracks {
+		trackIDs := make([]int64, 0, len(output.Tracks))
+		for _, t := range output.Tracks {
 			if t != nil {
 				trackIDs = append(trackIDs, t.ID)
 			}
 		}
 
-		quality := o.Quality
+		quality := output.Quality
 		if quality == nil {
 			quality = &starr.Quality{}
 		}
 
 		files = append(files, &ManualImportFile{
-			Path:                    o.Path,
+			Path:                    output.Path,
 			ArtistID:                artistID,
 			AlbumID:                 albumID,
-			AlbumReleaseID:          o.AlbumReleaseID,
+			AlbumReleaseID:          output.AlbumReleaseID,
 			TrackIDs:                trackIDs,
 			Quality:                 quality,
 			IndexerFlags:            0,
-			DownloadID:              o.DownloadID,
-			DisableReleaseSwitching: o.DisableReleaseSwitching,
+			DownloadID:              output.DownloadID,
+			DisableReleaseSwitching: output.DisableReleaseSwitching,
 		})
 	}
 

@@ -59,6 +59,7 @@ func ClientWithDebug(timeout time.Duration, verifySSL bool, logConfig debuglog.C
 }
 
 // Itoa converts an int64 to a string.
+//
 // Deprecated: Use starr.Str() instead.
 func Itoa(v int64) string {
 	return Str(v)
@@ -101,12 +102,14 @@ func False() *bool {
 }
 
 // String returns a pointer to a string.
+//
 // Deprecated: Use Ptr() function instead.
 func String(s string) *string {
 	return &s
 }
 
 // Int64 returns a pointer to the provided integer.
+//
 // Deprecated: Use Ptr() function instead.
 func Int64(s int64) *int64 {
 	return &s

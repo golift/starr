@@ -9,6 +9,10 @@ linters:
     - tagliatelle
     - noinlineerr
     - wsl
+    # fix these
+    - modernize
+    - perfsprint
+    - godoclint
   settings:
     wsl_v5:
       allow-first-in-block: true

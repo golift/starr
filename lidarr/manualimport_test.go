@@ -117,18 +117,21 @@ func TestManualImportCommandFromOutputs(t *testing.T) {
 
 	t.Run("nil_returns_nil", func(t *testing.T) {
 		t.Parallel()
+
 		out := lidarr.ManualImportCommandFromOutputs(nil, true)
 		assert.Nil(t, out)
 	})
 
 	t.Run("empty_slice_returns_nil", func(t *testing.T) {
 		t.Parallel()
+
 		out := lidarr.ManualImportCommandFromOutputs([]*lidarr.ManualImportOutput{}, true)
 		assert.Nil(t, out)
 	})
 
 	t.Run("all_nil_entries_returns_nil", func(t *testing.T) {
 		t.Parallel()
+
 		out := lidarr.ManualImportCommandFromOutputs([]*lidarr.ManualImportOutput{nil, nil}, true)
 		assert.Nil(t, out)
 	})

@@ -135,7 +135,9 @@ func (l *Lidarr) SendManualImportCommand(cmd *ManualImportCommandRequest) (*Comm
 }
 
 // SendManualImportCommandContext sends the ManualImport command to import the given files.
-func (l *Lidarr) SendManualImportCommandContext(ctx context.Context, cmd *ManualImportCommandRequest) (*CommandResponse, error) {
+func (l *Lidarr) SendManualImportCommandContext(
+	ctx context.Context, cmd *ManualImportCommandRequest,
+) (*CommandResponse, error) {
 	var output CommandResponse
 
 	if cmd == nil || len(cmd.Files) == 0 {
