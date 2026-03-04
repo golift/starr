@@ -201,23 +201,23 @@ type PlayTime struct {
 
 var _ json.Unmarshaler = (*PlayTime)(nil)
 
-// UnmarshalJSON parses a run time duration in format hh:mm:ss.
+// UnmarshalJSON parses a run time duration in format hh:mm:ss or hh:mm:ss.fraction.
 func (d *PlayTime) UnmarshalJSON(b []byte) error {
 	d.Original = strings.Trim(string(b), `"'`)
 
 	switch parts := strings.Split(d.Original, ":"); len(parts) {
-	case 3: //nolint:mnd // hh:mm:ss
+	case 3: //nolint:mnd // hh:mm:ss or hh:mm:ss.fraction
 		h, _ := strconv.Atoi(parts[0])
 		m, _ := strconv.Atoi(parts[1])
-		s, _ := strconv.Atoi(parts[2])
-		d.Duration = (time.Hour * time.Duration(h)) + (time.Minute * time.Duration(m)) + (time.Second * time.Duration(s))
-	case 2: //nolint:mnd // mm:ss
+		s, _ := strconv.ParseFloat(parts[2], 64)
+		d.Duration = (time.Hour * time.Duration(h)) + (time.Minute * time.Duration(m)) + time.Duration(s*float64(time.Second))
+	case 2: //nolint:mnd // mm:ss or mm:ss.fraction
 		m, _ := strconv.Atoi(parts[0])
-		s, _ := strconv.Atoi(parts[1])
-		d.Duration = (time.Minute * time.Duration(m)) + (time.Second * time.Duration(s))
-	case 1: // ss
-		s, _ := strconv.Atoi(parts[0])
-		d.Duration += (time.Second * time.Duration(s))
+		s, _ := strconv.ParseFloat(parts[1], 64)
+		d.Duration = (time.Minute * time.Duration(m)) + time.Duration(s*float64(time.Second))
+	case 1: // ss or ss.fraction
+		s, _ := strconv.ParseFloat(parts[0], 64)
+		d.Duration = time.Duration(s * float64(time.Second))
 	}
 
 	return nil
@@ -238,7 +238,8 @@ const (
 	TagsReplace ApplyTags = "replace"
 )
 
-// TimeSpan is part of AudioTags and possibly used other places.
+// TimeSpan is used when a starr API returns a duration as an object (ticks, days, hours, etc.).
+// For ParsedTrackInfo/audioTags, the APIs use a string with format "date-span" instead; use string there.
 type TimeSpan struct {
 	Ticks             int64 `json:"ticks"`
 	Days              int64 `json:"days"`

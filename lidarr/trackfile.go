@@ -60,7 +60,7 @@ type AudioTags struct {
 	Label           string           `json:"label"`
 	CatalogNumber   string           `json:"catalogNumber"`
 	Disambiguation  string           `json:"disambiguation"`
-	Duration        *starr.TimeSpan  `json:"duration"`
+	Duration        starr.PlayTime   `json:"duration"`
 	Quality         *starr.Quality   `json:"quality"`
 	MediaInfo       *AudioMediaInfo  `json:"mediaInfo"`
 	TrackNumbers    []int            `json:"trackNumbers"`
