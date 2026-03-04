@@ -2,6 +2,7 @@ package starr
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/url"
 	"strconv"
 	"strings"
@@ -199,7 +200,10 @@ type PlayTime struct {
 	Original string
 }
 
-var _ json.Unmarshaler = (*PlayTime)(nil)
+var (
+	_ json.Unmarshaler = (*PlayTime)(nil)
+	_ json.Marshaler   = (*PlayTime)(nil)
+)
 
 // UnmarshalJSON parses a run time duration in format hh:mm:ss or hh:mm:ss.fraction.
 func (d *PlayTime) UnmarshalJSON(b []byte) error {
@@ -223,8 +227,24 @@ func (d *PlayTime) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+//nolint:wrapcheck,mnd // no value added, seconds per hour, etc.
 func (d *PlayTime) MarshalJSON() ([]byte, error) {
-	return []byte(`"` + d.Original + `"`), nil
+	s := d.Original
+	if s != "" {
+		return json.Marshal(s)
+	}
+
+	// Format Duration as hh:mm:ss or hh:mm:ss.fraction to match API shape.
+	total := d.Seconds()
+	if total == 0 {
+		return json.Marshal("00:00:00")
+	}
+
+	hours := int(total / 3600)
+	mins := int((total - float64(hours*3600)) / 60)
+	secs := total - float64(hours*3600) - float64(mins*60)
+
+	return json.Marshal(fmt.Sprintf("%02d:%02d:%s", hours, mins, strconv.FormatFloat(secs, 'f', -1, 64)))
 }
 
 // ApplyTags is an enum used as an input for Bulk editors, and perhaps other places.
