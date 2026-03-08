@@ -127,7 +127,7 @@ func parseNon200(resp *http.Response) *ReqError {
 func closeResp(resp *http.Response) {
 	if resp != nil && resp.Body != nil {
 		_, _ = io.ReadAll(resp.Body)
-		resp.Body.Close()
+		_ = resp.Body.Close()
 	}
 }
 

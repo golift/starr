@@ -27,8 +27,6 @@ linters:
   exclusions:
     generated: lax
     presets:
-      - common-false-positives
-      - legacy
       - std-error-handling
     rules:
       - linters:
@@ -41,10 +39,7 @@ linters:
           - lll
           - maintidx
         path: (.+)_test\.go
-    paths:
-      - third_party$
-      - builtin$
-      - examples$
+
 issues:
   max-issues-per-linter: 0
   max-same-issues: 0
@@ -54,9 +49,3 @@ formatters:
     - gofmt
     - gofumpt
     - goimports
-  exclusions:
-    generated: lax
-    paths:
-      - third_party$
-      - builtin$
-      - examples$
