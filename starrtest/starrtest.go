@@ -34,11 +34,11 @@ type MockData struct {
 }
 
 const (
-	// Error body for 401 response.
+	// BodyUnauthorized is the error body for a 401 response.
 	BodyUnauthorized = `{"error": "Unauthorized"}`
-	// Error body for 404 response.
+	// BodyNotFound is the error body for a 404 response.
 	BodyNotFound = `{"message": "NotFound"}`
-	// Error body for 405 response.
+	// BodyMethodNotAllowed is the error body for a 405 response.
 	BodyMethodNotAllowed = `{"message": "MethodNotAllowed"}`
 )
 
