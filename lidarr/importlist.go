@@ -125,7 +125,7 @@ func (l *Lidarr) TestImportList(list *ImportListInput) error {
 
 // TestImportListContextt tests an import list.
 func (l *Lidarr) TestImportListContextt(ctx context.Context, list *ImportListInput) error {
-	var output interface{}
+	var output any
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(list); err != nil {

@@ -88,7 +88,7 @@ func (r *Readarr) TestIndexer(indexer *IndexerInput) error {
 
 // TestIndexerContext tests an indexer.
 func (r *Readarr) TestIndexerContext(ctx context.Context, indexer *IndexerInput) error {
-	var output interface{}
+	var output any
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(indexer); err != nil {

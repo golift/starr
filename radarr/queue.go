@@ -142,7 +142,7 @@ func (r *Radarr) QueueGrabContext(ctx context.Context, ids ...int64) error {
 		return fmt.Errorf("json.Marshal(%s): %w", bpQueue, err)
 	}
 
-	var output interface{} // any ok
+	var output any // any ok
 
 	req := starr.Request{URI: path.Join(bpQueue, "grab", "bulk"), Body: &body}
 	if err := r.PostInto(ctx, req, &output); err != nil {

@@ -27,22 +27,22 @@ type CommandRequest struct {
 
 // CommandResponse comes from the /api/v3/command endpoint.
 type CommandResponse struct {
-	ID                  int64                  `json:"id"`
-	Name                string                 `json:"name"`
-	CommandName         string                 `json:"commandName"`
-	Message             string                 `json:"message,omitempty"`
-	Priority            string                 `json:"priority"`
-	Status              string                 `json:"status"`
-	Queued              time.Time              `json:"queued"`
-	Started             time.Time              `json:"started,omitempty"`
-	Ended               time.Time              `json:"ended,omitempty"`
-	StateChangeTime     time.Time              `json:"stateChangeTime,omitempty"`
-	LastExecutionTime   time.Time              `json:"lastExecutionTime,omitempty"`
-	Duration            string                 `json:"duration,omitempty"`
-	Trigger             string                 `json:"trigger"`
-	SendUpdatesToClient bool                   `json:"sendUpdatesToClient"`
-	UpdateScheduledTask bool                   `json:"updateScheduledTask"`
-	Body                map[string]interface{} `json:"body"`
+	ID                  int64          `json:"id"`
+	Name                string         `json:"name"`
+	CommandName         string         `json:"commandName"`
+	Message             string         `json:"message,omitempty"`
+	Priority            string         `json:"priority"`
+	Status              string         `json:"status"`
+	Queued              time.Time      `json:"queued"`
+	Started             time.Time      `json:"started,omitzero"`
+	Ended               time.Time      `json:"ended,omitzero"`
+	StateChangeTime     time.Time      `json:"stateChangeTime,omitzero"`
+	LastExecutionTime   time.Time      `json:"lastExecutionTime,omitzero"`
+	Duration            string         `json:"duration,omitempty"`
+	Trigger             string         `json:"trigger"`
+	SendUpdatesToClient bool           `json:"sendUpdatesToClient"`
+	UpdateScheduledTask bool           `json:"updateScheduledTask"`
+	Body                map[string]any `json:"body"`
 }
 
 // GetCommands returns all available Sonarr commands.

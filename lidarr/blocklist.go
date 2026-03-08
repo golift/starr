@@ -28,7 +28,7 @@ type BlockList struct {
 type BlockListRecord struct {
 	Artist        *Artist        `json:"artist"`
 	Quality       *starr.Quality `json:"quality"`
-	CustomFormats []interface{}  `json:"customFormats"`
+	CustomFormats []any          `json:"customFormats"`
 	AlbumIDs      []int64        `json:"albumIds"`
 	ID            int64          `json:"id"`
 	ArtistID      int64          `json:"artistId"`

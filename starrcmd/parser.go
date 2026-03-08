@@ -14,7 +14,7 @@ import (
 
 // get offloads the error checking from all the other routines.
 // This is where our journey into the data truly begins.
-func (c *CmdEvent) get(wanted Event, output interface{}) error {
+func (c *CmdEvent) get(wanted Event, output any) error {
 	if c.Type != wanted {
 		return fmt.Errorf("%w: requested '%s' have '%s'", ErrInvalidEvent, wanted, c.Type)
 	}
@@ -27,7 +27,7 @@ func (c *CmdEvent) get(wanted Event, output interface{}) error {
 }
 
 // This does not traverse structs and will only stay on normal members.
-func fillStructFromEnv(dataStruct interface{}) error {
+func fillStructFromEnv(dataStruct any) error {
 	field := reflect.ValueOf(dataStruct)
 	if field.Kind() != reflect.Ptr || field.Elem().Kind() != reflect.Struct {
 		panic("yuh dun ate in sumthin bahd! This is a bug in the starrcmd library.")

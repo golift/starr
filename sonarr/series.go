@@ -66,10 +66,10 @@ type Series struct {
 	Title             string            `json:"title,omitempty"`
 	TitleSlug         string            `json:"titleSlug,omitempty"`
 	RootFolderPath    string            `json:"rootFolderPath,omitempty"`
-	Added             time.Time         `json:"added,omitempty"`
-	FirstAired        time.Time         `json:"firstAired,omitempty"`
-	NextAiring        time.Time         `json:"nextAiring,omitempty"`
-	PreviousAiring    time.Time         `json:"previousAiring,omitempty"`
+	Added             time.Time         `json:"added,omitzero"`
+	FirstAired        time.Time         `json:"firstAired,omitzero"`
+	NextAiring        time.Time         `json:"nextAiring,omitzero"`
+	PreviousAiring    time.Time         `json:"previousAiring,omitzero"`
 	Ratings           *starr.Ratings    `json:"ratings,omitempty"`
 	Statistics        *Statistics       `json:"statistics,omitempty"`
 	Tags              []int             `json:"tags,omitempty"`

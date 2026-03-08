@@ -54,10 +54,10 @@ type CommandResponse struct {
 	Priority            string         `json:"priority"`
 	Status              string         `json:"status"`
 	Queued              time.Time      `json:"queued"`
-	Started             time.Time      `json:"started,omitempty"`
-	Ended               time.Time      `json:"ended,omitempty"`
-	StateChangeTime     time.Time      `json:"stateChangeTime,omitempty"`
-	LastExecutionTime   time.Time      `json:"lastExecutionTime,omitempty"`
+	Started             time.Time      `json:"started,omitzero"`
+	Ended               time.Time      `json:"ended,omitzero"`
+	StateChangeTime     time.Time      `json:"stateChangeTime,omitzero"`
+	LastExecutionTime   time.Time      `json:"lastExecutionTime,omitzero"`
 	Duration            string         `json:"duration,omitempty"`
 	Trigger             string         `json:"trigger"`
 	SendUpdatesToClient bool           `json:"sendUpdatesToClient"`

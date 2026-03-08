@@ -49,7 +49,7 @@ func TestGetCommands(t *testing.T) {
 				Trigger:             "someTrigger",
 				SendUpdatesToClient: true,
 				UpdateScheduledTask: true,
-				Body:                map[string]interface{}{"mapstring": "mapinterface"},
+				Body:                map[string]any{"mapstring": "mapinterface"},
 			}},
 		},
 		{
@@ -116,7 +116,7 @@ func TestSendCommand(t *testing.T) {
 				Trigger:             "someTrigger",
 				SendUpdatesToClient: true,
 				UpdateScheduledTask: true,
-				Body:                map[string]interface{}{"mapstring": "mapinterface"},
+				Body:                map[string]any{"mapstring": "mapinterface"},
 			},
 		},
 		{
@@ -185,7 +185,7 @@ func TestGetCommandStatus(t *testing.T) {
 				Trigger:             "someTrigger",
 				SendUpdatesToClient: true,
 				UpdateScheduledTask: true,
-				Body:                map[string]interface{}{"mapstring": "mapinterface"},
+				Body:                map[string]any{"mapstring": "mapinterface"},
 			},
 		},
 		{

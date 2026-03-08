@@ -129,7 +129,7 @@ func (r *Radarr) FailContext(ctx context.Context, historyID int64) error {
 		return fmt.Errorf("%w: invalid history ID: %d", starr.ErrRequestError, historyID)
 	}
 
-	var output interface{} // any ok
+	var output any // any ok
 
 	// Strangely uses a POST without a payload.
 	req := starr.Request{URI: path.Join(bpHistory, "failed", starr.Str(historyID))}

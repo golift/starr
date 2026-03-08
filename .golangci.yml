@@ -9,8 +9,6 @@ linters:
     - tagliatelle
     - noinlineerr
     - wsl
-    # fix these
-    - modernize
   settings:
     wsl_v5:
       allow-first-in-block: true
@@ -28,7 +26,6 @@ linters:
             - golang.org/x/net
     ireturn:
       allow:
-        - generic
         - stdlib
         - error
   exclusions:

@@ -71,7 +71,7 @@ func (r *Readarr) DeleteExclusionsContext(ctx context.Context, ids []int64) erro
 	for _, id := range ids {
 		req := starr.Request{URI: path.Join(bpExclusions, starr.Str(id))}
 		if err := r.DeleteAny(ctx, req); err != nil {
-			errs.WriteString(fmt.Sprintf("api.Post(%s): %v ", &req, err))
+			fmt.Fprintf(&errs, "api.Post(%s): %v ", &req, err)
 		}
 	}
 

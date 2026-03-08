@@ -29,10 +29,10 @@ type APIer interface {
 	Put(ctx context.Context, req Request) (*http.Response, error)    // Put request; Params should contain io.Reader.
 	Delete(ctx context.Context, req Request) (*http.Response, error) // Delete request; Params are optional.
 	// Normal data, unmarshals into provided interface. Use these because they close the response body.
-	GetInto(ctx context.Context, req Request, output interface{}) error  // API GET Request.
-	PostInto(ctx context.Context, req Request, output interface{}) error // API POST Request.
-	PutInto(ctx context.Context, req Request, output interface{}) error  // API PUT Request.
-	DeleteAny(ctx context.Context, req Request) error                    // API Delete request.
+	GetInto(ctx context.Context, req Request, output any) error  // API GET Request.
+	PostInto(ctx context.Context, req Request, output any) error // API POST Request.
+	PutInto(ctx context.Context, req Request, output any) error  // API PUT Request.
+	DeleteAny(ctx context.Context, req Request) error            // API Delete request.
 }
 
 // Config must satisfy the APIer struct.
@@ -116,21 +116,21 @@ func (c *Config) Delete(ctx context.Context, req Request) (*http.Response, error
 
 // GetInto performs an HTTP GET against an API path and
 // unmarshals the payload into the provided pointer interface.
-func (c *Config) GetInto(ctx context.Context, req Request, output interface{}) error {
+func (c *Config) GetInto(ctx context.Context, req Request, output any) error {
 	resp, err := c.api(ctx, http.MethodGet, req)
 	return decode(output, resp, err)
 }
 
 // PostInto performs an HTTP POST against an API path and
 // unmarshals the payload into the provided pointer interface.
-func (c *Config) PostInto(ctx context.Context, req Request, output interface{}) error {
+func (c *Config) PostInto(ctx context.Context, req Request, output any) error {
 	resp, err := c.api(ctx, http.MethodPost, req)
 	return decode(output, resp, err)
 }
 
 // PutInto performs an HTTP PUT against an API path and
 // unmarshals the payload into the provided pointer interface.
-func (c *Config) PutInto(ctx context.Context, req Request, output interface{}) error {
+func (c *Config) PutInto(ctx context.Context, req Request, output any) error {
 	resp, err := c.api(ctx, http.MethodPut, req)
 	return decode(output, resp, err)
 }
@@ -144,7 +144,7 @@ func (c *Config) DeleteAny(ctx context.Context, req Request) error {
 }
 
 // decode is an extra procedure to check an error and decode the JSON resp.Body payload.
-func decode(output interface{}, resp *http.Response, err error) error {
+func decode(output any, resp *http.Response, err error) error {
 	if err != nil {
 		return err
 	} else if output == nil {

@@ -121,7 +121,7 @@ func (r *Readarr) TestImportList(list *ImportListInput) error {
 
 // TestImportListContextt tests an import list.
 func (r *Readarr) TestImportListContextt(ctx context.Context, list *ImportListInput) error {
-	var output interface{}
+	var output any
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(list); err != nil {

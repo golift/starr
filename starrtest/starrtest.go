@@ -14,9 +14,9 @@ import (
 // This is used by the submodule tests.
 type MockData struct {
 	// Caller's request.
-	WithRequest interface{}
+	WithRequest any
 	// Caller's response.
-	WithResponse interface{}
+	WithResponse any
 	// Caller's response.
 	WithError error
 	// A name for the test.
