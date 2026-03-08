@@ -58,7 +58,7 @@ func (s *Sonarr) GetQueue(records, perPage int) (*Queue, error) {
 	return s.GetQueueContext(context.Background(), records, perPage)
 }
 
-// GetQueue returns a single page from the Sonarr Queue (processing, but not yet imported).
+// GetQueueContext returns a single page from the Sonarr Queue (processing, but not yet imported).
 // If you need control over the page, use sonarr.GetQueuePageContext().
 func (s *Sonarr) GetQueueContext(ctx context.Context, records, perPage int) (*Queue, error) {
 	queue := &Queue{Records: []*QueueRecord{}}

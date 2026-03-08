@@ -70,7 +70,7 @@ func (s *Sonarr) GetEpisodeFilesContext(ctx context.Context, episodeFileIDs ...i
 	return output, nil
 }
 
-// GetSeriesEpisodeFile returns information about all episode files in a series.
+// GetSeriesEpisodeFiles returns information about all episode files in a series.
 func (s *Sonarr) GetSeriesEpisodeFiles(seriesID int64) ([]*EpisodeFile, error) {
 	return s.GetSeriesEpisodeFilesContext(context.Background(), seriesID)
 }
@@ -89,7 +89,7 @@ func (s *Sonarr) GetSeriesEpisodeFilesContext(ctx context.Context, seriesID int6
 	return output, nil
 }
 
-// UpdateEpisodeFile updates an episode file's quality. Use GetQualityProfiles() to find the available IDs.
+// UpdateEpisodeFileQuality updates an episode file's quality. Use GetQualityProfiles() to find the available IDs.
 func (s *Sonarr) UpdateEpisodeFileQuality(episodeFileID, qualityID int64) (*EpisodeFile, error) {
 	return s.UpdateEpisodeFileQualityContext(context.Background(), episodeFileID, qualityID)
 }

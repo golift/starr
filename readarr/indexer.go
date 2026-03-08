@@ -69,7 +69,7 @@ func (r *Readarr) GetIndexer(indexerID int64) (*IndexerOutput, error) {
 	return r.GetIndexerContext(context.Background(), indexerID)
 }
 
-// GetIndGetIndexerContextexer returns a single indexer.
+// GetIndexerContext returns a single indexer.
 func (r *Readarr) GetIndexerContext(ctx context.Context, indexerID int64) (*IndexerOutput, error) {
 	var output IndexerOutput
 

@@ -81,7 +81,7 @@ func (l *Lidarr) GetImportList(importListID int64) (*ImportListOutput, error) {
 	return l.GetImportListContext(context.Background(), importListID)
 }
 
-// GetIndGetImportListContextexer returns a single import list.
+// GetImportListContext returns a single import list.
 func (l *Lidarr) GetImportListContext(ctx context.Context, importListID int64) (*ImportListOutput, error) {
 	var output ImportListOutput
 

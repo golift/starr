@@ -83,7 +83,7 @@ func (s *Sonarr) UpdateQualityDefinitionContext(
 	return &output, nil
 }
 
-// UpdateQualityDefinition updates all quality definitions.
+// UpdateQualityDefinitions updates all quality definitions.
 func (s *Sonarr) UpdateQualityDefinitions(definitions []*QualityDefinition) ([]*QualityDefinition, error) {
 	return s.UpdateQualityDefinitionsContext(context.Background(), definitions)
 }

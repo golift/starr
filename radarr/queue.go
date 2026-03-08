@@ -93,7 +93,7 @@ func (r *Radarr) GetQueuePage(params *starr.PageReq) (*Queue, error) {
 	return r.GetQueuePageContext(context.Background(), params)
 }
 
-// GetQueuePage returns a single page from the Radarr Queue.
+// GetQueuePageContext returns a single page from the Radarr Queue.
 // The page size and number is configurable with the input request parameters.
 func (r *Radarr) GetQueuePageContext(ctx context.Context, params *starr.PageReq) (*Queue, error) {
 	var output Queue

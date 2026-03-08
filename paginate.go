@@ -26,9 +26,9 @@ type PageReq struct {
 type Sorting string
 
 const (
-	// SortAsc is the default, and sorts lists in ascending order.
+	// SortAscend is the default, and sorts lists in ascending order.
 	SortAscend Sorting = "ascending"
-	// SortDesc flips the sort order to descending.
+	// SortDescend flips the sort order to descending.
 	SortDescend Sorting = "descending"
 )
 

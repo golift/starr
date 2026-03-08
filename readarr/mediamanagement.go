@@ -40,7 +40,7 @@ func (r *Readarr) GetMediaManagement() (*MediaManagement, error) {
 	return r.GetMediaManagementContext(context.Background())
 }
 
-// GetMediaManagement returns the media management.
+// GetMediaManagementContext returns the media management.
 func (r *Readarr) GetMediaManagementContext(ctx context.Context) (*MediaManagement, error) {
 	var output MediaManagement
 

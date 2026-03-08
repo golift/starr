@@ -51,7 +51,7 @@ func (s *Sonarr) GetCommands() ([]*CommandResponse, error) {
 	return s.GetCommandsContext(context.Background())
 }
 
-// GetCommands returns all available Sonarr commands.
+// GetCommandsContext returns all available Sonarr commands.
 // These can be used with SendCommand.
 func (s *Sonarr) GetCommandsContext(ctx context.Context) ([]*CommandResponse, error) {
 	var output []*CommandResponse

@@ -42,7 +42,7 @@ func (r *Radarr) GetRestriction(restrictionID int64) (*Restriction, error) {
 	return r.GetRestrictionContext(context.Background(), restrictionID)
 }
 
-// GetIndGetRestrictionContextexer returns a single restriction.
+// GetRestrictionContext returns a single restriction.
 func (r *Radarr) GetRestrictionContext(ctx context.Context, restrictionID int64) (*Restriction, error) {
 	var output Restriction
 

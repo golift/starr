@@ -28,7 +28,7 @@ func (r *Readarr) GetDownloadClientConfig() (*DownloadClientConfig, error) {
 	return r.GetDownloadClientConfigContext(context.Background())
 }
 
-// GetDownloadClientConfig returns the download client config.
+// GetDownloadClientConfigContext returns the download client config.
 func (r *Readarr) GetDownloadClientConfigContext(ctx context.Context) (*DownloadClientConfig, error) {
 	var output DownloadClientConfig
 
@@ -45,7 +45,7 @@ func (r *Readarr) UpdateDownloadClientConfig(downloadConfig *DownloadClientConfi
 	return r.UpdateDownloadClientConfigContext(context.Background(), downloadConfig)
 }
 
-// UpdateDownloadClientConfig update the single download client config.
+// UpdateDownloadClientConfigContext update the single download client config.
 func (r *Readarr) UpdateDownloadClientConfigContext(ctx context.Context,
 	config *DownloadClientConfig,
 ) (*DownloadClientConfig, error) {

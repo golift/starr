@@ -74,7 +74,7 @@ func (l *Lidarr) GetTracksByArtist(artistID int64) ([]*Track, error) {
 	return l.GetTracksByArtistContext(context.Background(), artistID)
 }
 
-// GetTracksByAlbumRelease gets track files using an artist ID.
+// GetTracksByArtistContext gets track files using an artist ID.
 func (l *Lidarr) GetTracksByArtistContext(ctx context.Context, artistID int64) ([]*Track, error) {
 	req := starr.Request{URI: bpTrack, Query: make(url.Values)}
 	req.Query.Add("artistId", starr.Str(artistID))

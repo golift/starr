@@ -69,7 +69,7 @@ func (p *Prowlarr) GetBackupFiles() ([]*starr.BackupFile, error) {
 	return p.GetBackupFilesContext(context.Background())
 }
 
-// GetBackupFiles returns all available Prowlarr backup files.
+// GetBackupFilesContext returns all available Prowlarr backup files.
 // Use GetBody to download a file using BackupFile.Path.
 func (p *Prowlarr) GetBackupFilesContext(ctx context.Context) ([]*starr.BackupFile, error) {
 	var output []*starr.BackupFile

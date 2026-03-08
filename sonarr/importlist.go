@@ -77,7 +77,7 @@ func (s *Sonarr) GetImportList(importListID int64) (*ImportListOutput, error) {
 	return s.GetImportListContext(context.Background(), importListID)
 }
 
-// GetIndGetImportListContextexer returns a single import list.
+// GetImportListContext returns a single import list.
 func (s *Sonarr) GetImportListContext(ctx context.Context, importListID int64) (*ImportListOutput, error) {
 	var output ImportListOutput
 

@@ -271,7 +271,7 @@ func (s *Sonarr) Lookup(term string) ([]*Series, error) {
 	return s.LookupContext(context.Background(), term)
 }
 
-// Lookup will search for series matching the specified search term.
+// LookupContext will search for series matching the specified search term.
 // Searches for new shows on TheTVDB.com utilizing sonarr.tv's caching and augmentation proxy.
 func (s *Sonarr) LookupContext(ctx context.Context, term string) ([]*Series, error) {
 	return s.GetSeriesLookupContext(ctx, term, 0)
@@ -284,7 +284,7 @@ func (s *Sonarr) DeleteSeries(seriesID int, deleteFiles bool, importExclude bool
 	return s.DeleteSeriesContext(context.Background(), seriesID, deleteFiles, importExclude)
 }
 
-// DeleteSeries removes a single Series.
+// DeleteSeriesContext removes a single Series.
 // deleteFiles flag defines the deleteFiles query parameter.
 // importExclude defines the addImportListExclusion query parameter.
 func (s *Sonarr) DeleteSeriesContext(ctx context.Context, seriesID int, deleteFiles bool, importExclude bool) error {

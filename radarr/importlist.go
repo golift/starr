@@ -13,7 +13,7 @@ import (
 
 const bpImportList = APIver + "/importlist"
 
-// ImportList represents the api/v3/importlist endpoint.
+// ImportListInput represents the api/v3/importlist endpoint.
 type ImportListInput struct {
 	EnableAuto          bool                `json:"enableAuto"`
 	Enabled             bool                `json:"enabled"`
@@ -34,7 +34,7 @@ type ImportListInput struct {
 	Fields              []*starr.FieldInput `json:"fields,omitempty"`
 }
 
-// ImportList represents the api/v3/importlist endpoint.
+// ImportListOutput represents the api/v3/importlist endpoint.
 type ImportListOutput struct {
 	EnableAuto          bool                 `json:"enableAuto"`
 	Enabled             bool                 `json:"enabled"`

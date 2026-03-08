@@ -42,7 +42,7 @@ func (s *Sonarr) GetMediaManagement() (*MediaManagement, error) {
 	return s.GetMediaManagementContext(context.Background())
 }
 
-// GetMediaManagement returns the Media Management.
+// GetMediaManagementContext returns the Media Management.
 func (s *Sonarr) GetMediaManagementContext(ctx context.Context) (*MediaManagement, error) {
 	var output MediaManagement
 
