@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/url"
 	"path"
+	"strings"
 
 	"golift.io/starr"
 )
@@ -104,17 +105,17 @@ func (r *Radarr) DeleteImportList(ids []int64) error {
 
 // DeleteImportListContext removes an import list from Radarr.
 func (r *Radarr) DeleteImportListContext(ctx context.Context, ids []int64) error {
-	var errs string
+	var errs strings.Builder
 
 	for _, id := range ids {
 		req := starr.Request{URI: path.Join(bpImportList, starr.Str(id))}
 		if err := r.DeleteAny(ctx, req); err != nil {
-			errs += fmt.Errorf("api.Delete(%s): %w", &req, err).Error() + " "
+			errs.WriteString(fmt.Errorf("api.Delete(%s): %w", &req, err).Error() + " ")
 		}
 	}
 
-	if errs != "" {
-		return fmt.Errorf("%w: %s", starr.ErrRequestError, errs)
+	if errs.Len() > 0 {
+		return fmt.Errorf("%w: %s", starr.ErrRequestError, errs.String())
 	}
 
 	return nil

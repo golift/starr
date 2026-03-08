@@ -156,15 +156,15 @@ func (f *fakeCloser) logRequest() (int, int) {
 }
 
 func (f *fakeCloser) headers() string {
-	var headers string
+	var headers strings.Builder
 
 	for header, values := range f.Header {
 		for _, value := range values {
-			headers += header + ": " + value + "\n"
+			headers.WriteString(header + ": " + value + "\n")
 		}
 	}
 
-	return headers
+	return headers.String()
 }
 
 func (f *fakeCloser) redactLog(msg string, format ...interface{}) {
