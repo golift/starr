@@ -14,8 +14,10 @@ import (
 // This is not an /api path.
 const bpFeed = "feed/" + APIver + "/calendar/radarr.ics"
 
+// ReleaseType is the type of release, found in a calendar feed.
 type ReleaseType string
 
+// ReleaseType constants.
 const (
 	ReleaseTypeCinema   ReleaseType = "cinemaRelease"
 	ReleaseTypeDigital  ReleaseType = "digitalRelease"

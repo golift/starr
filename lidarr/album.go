@@ -25,7 +25,7 @@ type Album struct {
 	ProfileID      int64            `json:"profileId"`
 	Duration       int              `json:"duration"`
 	AlbumType      string           `json:"albumType"`
-	SecondaryTypes []interface{}    `json:"secondaryTypes"`
+	SecondaryTypes []any            `json:"secondaryTypes"`
 	MediumCount    int              `json:"mediumCount"`
 	Ratings        *starr.Ratings   `json:"ratings"`
 	ReleaseDate    time.Time        `json:"releaseDate"`

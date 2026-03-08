@@ -146,6 +146,7 @@ func (p *Prowlarr) DeleteNotification(notificationID int64) error {
 	return p.DeleteNotificationContext(context.Background(), notificationID)
 }
 
+// DeleteNotificationContext removes a single notification.
 func (p *Prowlarr) DeleteNotificationContext(ctx context.Context, notificationID int64) error {
 	req := starr.Request{URI: path.Join(bpNotification, starr.Str(notificationID))}
 	if err := p.DeleteAny(ctx, req); err != nil {

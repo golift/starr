@@ -103,7 +103,7 @@ func (p *Prowlarr) TestIndexer(indexer *IndexerInput) error {
 
 // TestIndexerContext tests an indexer.
 func (p *Prowlarr) TestIndexerContext(ctx context.Context, indexer *IndexerInput) error {
-	var output interface{}
+	var output any
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(indexer); err != nil {

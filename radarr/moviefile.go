@@ -131,12 +131,12 @@ func (r *Radarr) UpdateMovieFileContext(ctx context.Context, movieFile *MovieFil
 	return output, nil
 }
 
-// DeleteMovieFile deletes movie files by their IDs.
+// DeleteMovieFiles deletes movie files by their IDs.
 func (r *Radarr) DeleteMovieFiles(movieFileIDs ...int64) error {
 	return r.DeleteMovieFilesContext(context.Background(), movieFileIDs...)
 }
 
-// DeleteMovieFileContext deletes movie files by their IDs.
+// DeleteMovieFilesContext deletes movie files by their IDs.
 func (r *Radarr) DeleteMovieFilesContext(ctx context.Context, movieFileIDs ...int64) error {
 	postData := struct {
 		T []int64 `json:"movieFileIds"`

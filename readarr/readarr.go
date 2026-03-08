@@ -1,3 +1,4 @@
+// Package readarr is the SDK client for the Readarr API.
 package readarr
 
 import (

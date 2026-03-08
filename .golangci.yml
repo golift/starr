@@ -9,10 +9,6 @@ linters:
     - tagliatelle
     - noinlineerr
     - wsl
-    # fix these
-    - modernize
-    - perfsprint
-    - godoclint
   settings:
     wsl_v5:
       allow-first-in-block: true
@@ -28,17 +24,9 @@ linters:
             - github.com/stretchr/testify
             - golift.io/starr
             - golang.org/x/net
-    ireturn:
-      allow:
-        - generic
-        - stdlib
-        - error
   exclusions:
     generated: lax
     presets:
-      - comments
-      - common-false-positives
-      - legacy
       - std-error-handling
     rules:
       - linters:
@@ -51,10 +39,7 @@ linters:
           - lll
           - maintidx
         path: (.+)_test\.go
-    paths:
-      - third_party$
-      - builtin$
-      - examples$
+
 issues:
   max-issues-per-linter: 0
   max-same-issues: 0
@@ -64,9 +49,3 @@ formatters:
     - gofmt
     - gofumpt
     - goimports
-  exclusions:
-    generated: lax
-    paths:
-      - third_party$
-      - builtin$
-      - examples$

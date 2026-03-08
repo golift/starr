@@ -114,7 +114,7 @@ func (l *Lidarr) TestDownloadClient(client *DownloadClientInput) error {
 
 // TestDownloadClientContext tests a download client.
 func (l *Lidarr) TestDownloadClientContext(ctx context.Context, client *DownloadClientInput) error {
-	var output interface{}
+	var output any
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(client); err != nil {

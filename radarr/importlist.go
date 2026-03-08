@@ -7,13 +7,14 @@ import (
 	"fmt"
 	"net/url"
 	"path"
+	"strings"
 
 	"golift.io/starr"
 )
 
 const bpImportList = APIver + "/importlist"
 
-// ImportList represents the api/v3/importlist endpoint.
+// ImportListInput represents the api/v3/importlist endpoint.
 type ImportListInput struct {
 	EnableAuto          bool                `json:"enableAuto"`
 	Enabled             bool                `json:"enabled"`
@@ -34,7 +35,7 @@ type ImportListInput struct {
 	Fields              []*starr.FieldInput `json:"fields,omitempty"`
 }
 
-// ImportList represents the api/v3/importlist endpoint.
+// ImportListOutput represents the api/v3/importlist endpoint.
 type ImportListOutput struct {
 	EnableAuto          bool                 `json:"enableAuto"`
 	Enabled             bool                 `json:"enabled"`
@@ -104,17 +105,17 @@ func (r *Radarr) DeleteImportList(ids []int64) error {
 
 // DeleteImportListContext removes an import list from Radarr.
 func (r *Radarr) DeleteImportListContext(ctx context.Context, ids []int64) error {
-	var errs string
+	var errs strings.Builder
 
 	for _, id := range ids {
 		req := starr.Request{URI: path.Join(bpImportList, starr.Str(id))}
 		if err := r.DeleteAny(ctx, req); err != nil {
-			errs += fmt.Errorf("api.Delete(%s): %w", &req, err).Error() + " "
+			errs.WriteString(fmt.Errorf("api.Delete(%s): %w", &req, err).Error() + " ")
 		}
 	}
 
-	if errs != "" {
-		return fmt.Errorf("%w: %s", starr.ErrRequestError, errs)
+	if errs.Len() > 0 {
+		return fmt.Errorf("%w: %s", starr.ErrRequestError, errs.String())
 	}
 
 	return nil
@@ -127,7 +128,7 @@ func (r *Radarr) TestImportList(list *ImportListInput) error {
 
 // TestImportListContextt tests an import list.
 func (r *Radarr) TestImportListContextt(ctx context.Context, list *ImportListInput) error {
-	var output interface{} // any ok
+	var output any // any ok
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(list); err != nil {

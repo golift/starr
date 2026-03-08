@@ -17,7 +17,7 @@ import (
 // Config is the input data for the logger.
 type Config struct {
 	// This is where logs go. If not set they go to log.Printf.
-	Debugf func(string, ...interface{})
+	Debugf func(string, ...any)
 	// This can be used for byte counters, but is optional otherwise.
 	Caller Caller
 	// Any strings in this list are replaced with <recated> in the log output.
@@ -156,18 +156,18 @@ func (f *fakeCloser) logRequest() (int, int) {
 }
 
 func (f *fakeCloser) headers() string {
-	var headers string
+	var headers strings.Builder
 
 	for header, values := range f.Header {
 		for _, value := range values {
-			headers += header + ": " + value + "\n"
+			headers.WriteString(header + ": " + value + "\n")
 		}
 	}
 
-	return headers
+	return headers.String()
 }
 
-func (f *fakeCloser) redactLog(msg string, format ...interface{}) {
+func (f *fakeCloser) redactLog(msg string, format ...any) {
 	msg = fmt.Sprintf(msg, format...)
 
 	for _, redact := range f.Redact {

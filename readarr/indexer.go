@@ -69,7 +69,7 @@ func (r *Readarr) GetIndexer(indexerID int64) (*IndexerOutput, error) {
 	return r.GetIndexerContext(context.Background(), indexerID)
 }
 
-// GetIndGetIndexerContextexer returns a single indexer.
+// GetIndexerContext returns a single indexer.
 func (r *Readarr) GetIndexerContext(ctx context.Context, indexerID int64) (*IndexerOutput, error) {
 	var output IndexerOutput
 
@@ -88,7 +88,7 @@ func (r *Readarr) TestIndexer(indexer *IndexerInput) error {
 
 // TestIndexerContext tests an indexer.
 func (r *Readarr) TestIndexerContext(ctx context.Context, indexer *IndexerInput) error {
-	var output interface{}
+	var output any
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(indexer); err != nil {

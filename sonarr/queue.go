@@ -58,7 +58,7 @@ func (s *Sonarr) GetQueue(records, perPage int) (*Queue, error) {
 	return s.GetQueueContext(context.Background(), records, perPage)
 }
 
-// GetQueue returns a single page from the Sonarr Queue (processing, but not yet imported).
+// GetQueueContext returns a single page from the Sonarr Queue (processing, but not yet imported).
 // If you need control over the page, use sonarr.GetQueuePageContext().
 func (s *Sonarr) GetQueueContext(ctx context.Context, records, perPage int) (*Queue, error) {
 	queue := &Queue{Records: []*QueueRecord{}}
@@ -144,7 +144,7 @@ func (s *Sonarr) QueueGrabContext(ctx context.Context, ids ...int64) error {
 		return fmt.Errorf("json.Marshal(%s): %w", bpQueue, err)
 	}
 
-	var output interface{} // any ok
+	var output any // any ok
 
 	req := starr.Request{URI: path.Join(bpQueue, "grab", "bulk"), Body: &body}
 	if err := s.PostInto(ctx, req, &output); err != nil {

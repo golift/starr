@@ -18,7 +18,7 @@ const bpArtist = APIver + "/artist"
 type Artist struct {
 	ID                int64             `json:"id"`
 	Status            string            `json:"status,omitempty"`
-	LastInfoSync      time.Time         `json:"lastInfoSync,omitempty"`
+	LastInfoSync      time.Time         `json:"lastInfoSync,omitzero"`
 	ArtistName        string            `json:"artistName,omitempty"`
 	ForeignArtistID   string            `json:"foreignArtistId,omitempty"`
 	TadbID            int64             `json:"tadbId,omitempty"`
@@ -36,7 +36,7 @@ type Artist struct {
 	Images            []*starr.Image    `json:"images,omitempty"`
 	Genres            []string          `json:"genres,omitempty"`
 	Tags              []int             `json:"tags,omitempty"`
-	Added             time.Time         `json:"added,omitempty"`
+	Added             time.Time         `json:"added,omitzero"`
 	Ratings           *starr.Ratings    `json:"ratings,omitempty"`
 	Statistics        *Statistics       `json:"statistics,omitempty"`
 	LastAlbum         *Album            `json:"lastAlbum,omitempty"`

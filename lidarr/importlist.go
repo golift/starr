@@ -81,7 +81,7 @@ func (l *Lidarr) GetImportList(importListID int64) (*ImportListOutput, error) {
 	return l.GetImportListContext(context.Background(), importListID)
 }
 
-// GetIndGetImportListContextexer returns a single import list.
+// GetImportListContext returns a single import list.
 func (l *Lidarr) GetImportListContext(ctx context.Context, importListID int64) (*ImportListOutput, error) {
 	var output ImportListOutput
 
@@ -125,7 +125,7 @@ func (l *Lidarr) TestImportList(list *ImportListInput) error {
 
 // TestImportListContextt tests an import list.
 func (l *Lidarr) TestImportListContextt(ctx context.Context, list *ImportListInput) error {
-	var output interface{}
+	var output any
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(list); err != nil {

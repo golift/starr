@@ -93,7 +93,7 @@ var testCalendarStruct = lidarr.Album{
 	ArtistID:       163,
 	ForeignAlbumID: "95b28969-3252-45a7-9e1b-b2d8f59eee45",
 	ProfileID:      3,
-	SecondaryTypes: []interface{}{},
+	SecondaryTypes: []any{},
 	Duration:       3897000,
 	AlbumType:      "Album",
 	MediumCount:    1,

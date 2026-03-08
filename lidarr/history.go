@@ -128,7 +128,7 @@ func (l *Lidarr) FailContext(ctx context.Context, historyID int64) error {
 		return fmt.Errorf("%w: invalid history ID: %d", starr.ErrRequestError, historyID)
 	}
 
-	var output interface{}
+	var output any
 
 	req := starr.Request{
 		URI:  path.Join(bpHistory, "failed"),

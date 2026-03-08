@@ -149,6 +149,7 @@ func (l *Lidarr) DeleteNotification(notificationID int64) error {
 	return l.DeleteNotificationContext(context.Background(), notificationID)
 }
 
+// DeleteNotificationContext removes a single notification.
 func (l *Lidarr) DeleteNotificationContext(ctx context.Context, notificationID int64) error {
 	req := starr.Request{URI: path.Join(bpNotification, starr.Str(notificationID))}
 	if err := l.DeleteAny(ctx, req); err != nil {

@@ -31,7 +31,7 @@ type Author struct {
 	CleanName           string         `json:"cleanName,omitempty"`
 	SortName            string         `json:"sortName,omitempty"`
 	Tags                []int          `json:"tags,omitempty"`
-	Added               time.Time      `json:"added,omitempty"`
+	Added               time.Time      `json:"added,omitzero"`
 	Ratings             *starr.Ratings `json:"ratings,omitempty"`
 	Statistics          *Statistics    `json:"statistics,omitempty"`
 	LastBook            *AuthorBook    `json:"lastBook,omitempty"`

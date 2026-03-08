@@ -20,7 +20,7 @@ type BookFile struct {
 	BookID              int64          `json:"bookId"`
 	Path                string         `json:"path"`
 	Size                int            `json:"size,omitempty"`
-	DateAdded           time.Time      `json:"dateAdded,omitempty"`
+	DateAdded           time.Time      `json:"dateAdded,omitzero"`
 	Quality             *starr.Quality `json:"quality"`
 	QualityWeight       int            `json:"qualityWeight,omitempty"`
 	QualityCutoffNotMet bool           `json:"qualityCutoffNotMet"`

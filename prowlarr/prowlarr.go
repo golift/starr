@@ -1,3 +1,4 @@
+// Package prowlarr is the SDK client for the Prowlarr API.
 package prowlarr
 
 import (

@@ -116,14 +116,14 @@ type FieldOutput struct {
 	SelectOptionsProviderAction string          `json:"selectOptionsProviderAction,omitempty"`
 	Type                        string          `json:"type,omitempty"`
 	Privacy                     string          `json:"privacy"`
-	Value                       interface{}     `json:"value,omitempty"`
+	Value                       any             `json:"value,omitempty"`
 	SelectOptions               []*SelectOption `json:"selectOptions,omitempty"`
 }
 
 // FieldInput is generic Name/Value struct applied to a few places.
 type FieldInput struct {
-	Name  string      `json:"name"`
-	Value interface{} `json:"value,omitempty"`
+	Name  string `json:"name"`
+	Value any    `json:"value,omitempty"`
 }
 
 // SelectOption is part of Field.
@@ -227,6 +227,8 @@ func (d *PlayTime) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+// MarshalJSON marshals the PlayTime to JSON.
+//
 //nolint:wrapcheck,mnd // no value added, seconds per hour, etc.
 func (d *PlayTime) MarshalJSON() ([]byte, error) {
 	s := d.Original

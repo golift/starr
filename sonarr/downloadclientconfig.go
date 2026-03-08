@@ -26,7 +26,7 @@ func (s *Sonarr) GetDownloadClientConfig() (*DownloadClientConfig, error) {
 	return s.GetDownloadClientConfigContext(context.Background())
 }
 
-// GetDownloadClientConfig returns the download client config.
+// GetDownloadClientConfigContext returns the download client config.
 func (s *Sonarr) GetDownloadClientConfigContext(ctx context.Context) (*DownloadClientConfig, error) {
 	var output DownloadClientConfig
 
@@ -43,7 +43,7 @@ func (s *Sonarr) UpdateDownloadClientConfig(downloadClientConfig *DownloadClient
 	return s.UpdateDownloadClientConfigContext(context.Background(), downloadClientConfig)
 }
 
-// UpdateDownloadClientConfig update the single download client config.
+// UpdateDownloadClientConfigContext update the single download client config.
 func (s *Sonarr) UpdateDownloadClientConfigContext(ctx context.Context,
 	config *DownloadClientConfig,
 ) (*DownloadClientConfig, error) {

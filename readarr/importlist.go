@@ -77,7 +77,7 @@ func (r *Readarr) GetImportList(importListID int64) (*ImportListOutput, error) {
 	return r.GetImportListContext(context.Background(), importListID)
 }
 
-// GetIndGetImportListContextexer returns a single import list.
+// GetImportListContext returns a single import list.
 func (r *Readarr) GetImportListContext(ctx context.Context, importListID int64) (*ImportListOutput, error) {
 	var output ImportListOutput
 
@@ -121,7 +121,7 @@ func (r *Readarr) TestImportList(list *ImportListInput) error {
 
 // TestImportListContextt tests an import list.
 func (r *Readarr) TestImportListContextt(ctx context.Context, list *ImportListInput) error {
-	var output interface{}
+	var output any
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(list); err != nil {

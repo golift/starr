@@ -165,7 +165,7 @@ func (r *Readarr) UpdateBookContext(ctx context.Context, bookID int64, book *Boo
 	}
 	req.Query.Add("moveFiles", starr.Str(moveFiles))
 
-	var output interface{} // do not know what this looks like.
+	var output any // do not know what this looks like.
 
 	if err := r.PutInto(ctx, req, &output); err != nil {
 		return fmt.Errorf("api.Put(%s): %w", &req, err)

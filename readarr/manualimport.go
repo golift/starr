@@ -95,7 +95,7 @@ func (r *Readarr) ManualImportReprocess(manualimport *ManualImportInput) error {
 
 // ManualImportReprocessContext reprocesses a manual import (POST).
 func (r *Readarr) ManualImportReprocessContext(ctx context.Context, manualimport *ManualImportInput) error {
-	var output interface{}
+	var output any
 
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(manualimport); err != nil {

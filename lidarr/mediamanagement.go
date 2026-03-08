@@ -40,7 +40,7 @@ func (l *Lidarr) GetMediaManagement() (*MediaManagement, error) {
 	return l.GetMediaManagementContext(context.Background())
 }
 
-// GetMediaManagement returns the Media Management.
+// GetMediaManagementContext returns the Media Management.
 func (l *Lidarr) GetMediaManagementContext(ctx context.Context) (*MediaManagement, error) {
 	var output MediaManagement
 

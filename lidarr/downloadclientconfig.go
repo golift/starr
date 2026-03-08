@@ -26,7 +26,7 @@ func (l *Lidarr) GetDownloadClientConfig() (*DownloadClientConfig, error) {
 	return l.GetDownloadClientConfigContext(context.Background())
 }
 
-// GetDownloadClientConfig returns the download client config.
+// GetDownloadClientConfigContext returns the download client config.
 func (l *Lidarr) GetDownloadClientConfigContext(ctx context.Context) (*DownloadClientConfig, error) {
 	var output DownloadClientConfig
 
@@ -43,7 +43,7 @@ func (l *Lidarr) UpdateDownloadClientConfig(downloadClientConfig *DownloadClient
 	return l.UpdateDownloadClientConfigContext(context.Background(), downloadClientConfig)
 }
 
-// UpdateDownloadClientConfig update the single download client config.
+// UpdateDownloadClientConfigContext update the single download client config.
 func (l *Lidarr) UpdateDownloadClientConfigContext(ctx context.Context,
 	config *DownloadClientConfig,
 ) (*DownloadClientConfig, error) {

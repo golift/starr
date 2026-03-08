@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"path"
+	"strings"
 
 	"golift.io/starr"
 )
@@ -66,17 +67,17 @@ func (r *Radarr) DeleteExclusions(ids []int64) error {
 
 // DeleteExclusionsContext removes exclusions from Radarr.
 func (r *Radarr) DeleteExclusionsContext(ctx context.Context, ids []int64) error {
-	var errs string
+	var errs strings.Builder
 
 	for _, id := range ids {
 		req := starr.Request{URI: path.Join(bpExclusions, starr.Str(id))}
 		if err := r.DeleteAny(ctx, req); err != nil {
-			errs += fmt.Sprintf("api.Post(%s): %v ", &req, err)
+			fmt.Fprintf(&errs, "api.Post(%s): %v ", &req, err)
 		}
 	}
 
-	if errs != "" {
-		return fmt.Errorf("%w: %s", starr.ErrRequestError, errs)
+	if errs.Len() > 0 {
+		return fmt.Errorf("%w: %s", starr.ErrRequestError, errs.String())
 	}
 
 	return nil
@@ -98,7 +99,7 @@ func (r *Radarr) AddExclusionsContext(ctx context.Context, exclusions []*Exclusi
 		return fmt.Errorf("json.Marshal(%s): %w", bpExclusions, err)
 	}
 
-	var output interface{} // any ok
+	var output any // any ok
 
 	req := starr.Request{URI: path.Join(bpExclusions, "bulk"), Body: &body}
 	if err := r.PostInto(ctx, req, &output); err != nil {
