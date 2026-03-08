@@ -1,6 +1,3 @@
-// Package starrcmd provides the bindings to consume a custom script command hook from any Starr app.
-// Create these by going into Settings->Connect->Custom Script in Lidarr, Prowlarr, Radarr, Readarr, or Sonarr.
-// See the included example_test.go file for examples on how to use this module.
 package starrcmd
 
 import (

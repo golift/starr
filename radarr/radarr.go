@@ -1,3 +1,4 @@
+// Package radarr is the SDK client for the Radarr API.
 package radarr
 
 import (

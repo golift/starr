@@ -227,6 +227,8 @@ func (d *PlayTime) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+// MarshalJSON marshals the PlayTime to JSON.
+//
 //nolint:wrapcheck,mnd // no value added, seconds per hour, etc.
 func (d *PlayTime) MarshalJSON() ([]byte, error) {
 	s := d.Original

@@ -24,14 +24,9 @@ linters:
             - github.com/stretchr/testify
             - golift.io/starr
             - golang.org/x/net
-    ireturn:
-      allow:
-        - stdlib
-        - error
   exclusions:
     generated: lax
     presets:
-      - comments
       - common-false-positives
       - legacy
       - std-error-handling

@@ -1,3 +1,4 @@
+// Package sonarr is the SDK client for the Sonarr API.
 package sonarr
 
 import (

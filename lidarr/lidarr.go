@@ -1,3 +1,4 @@
+// Package lidarr is the SDK client for the Lidarr API.
 package lidarr
 
 import (

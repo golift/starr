@@ -152,6 +152,7 @@ func (r *Radarr) DeleteNotification(notificationID int64) error {
 	return r.DeleteNotificationContext(context.Background(), notificationID)
 }
 
+// DeleteNotificationContext removes a single notification.
 func (r *Radarr) DeleteNotificationContext(ctx context.Context, notificationID int64) error {
 	req := starr.Request{URI: path.Join(bpNotification, starr.Str(notificationID))}
 	if err := r.DeleteAny(ctx, req); err != nil {

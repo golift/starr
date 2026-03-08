@@ -95,6 +95,7 @@ func (p *Prowlarr) DeleteTag(tagID int) error {
 	return p.DeleteTagContext(context.Background(), tagID)
 }
 
+// DeleteTagContext removes a single tag.
 func (p *Prowlarr) DeleteTagContext(ctx context.Context, tagID int) error {
 	req := starr.Request{URI: path.Join(bpTag, starr.Str(tagID))}
 	if err := p.DeleteAny(ctx, req); err != nil {
