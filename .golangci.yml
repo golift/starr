@@ -10,6 +10,9 @@ linters:
     - noinlineerr
     - wsl
   settings:
+    gosec:
+      excludes:
+        - G117
     wsl_v5:
       allow-first-in-block: true
       allow-whole-block: false

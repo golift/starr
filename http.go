@@ -23,6 +23,8 @@ type Request struct {
 	Body  io.Reader  // Used in PUT, POST, DELETE. Not for GET.
 	Query url.Values // GET parameters work for any request type.
 	URI   string     // Required: path portion of the URL.
+	// Headers are optional extra HTTP headers merged after defaults (overrides Content-Type, Accept, etc.).
+	Headers http.Header
 }
 
 // ReqError is returned when a Starr app returns an invalid status code.
@@ -64,7 +66,7 @@ func (c *Config) req(ctx context.Context, method string, req Request) (*http.Res
 		return nil, fmt.Errorf("http.NewRequestWithContext(%s): %w", req.URI, err)
 	}
 
-	c.SetHeaders(httpReq)
+	c.SetHeaders(httpReq, req.Headers)
 
 	if req.Query != nil {
 		httpReq.URL.RawQuery = req.Query.Encode()
@@ -131,8 +133,9 @@ func closeResp(resp *http.Response) {
 	}
 }
 
-// SetHeaders sets all our request headers based on method and other data.
-func (c *Config) SetHeaders(req *http.Request) {
+// SetHeaders sets default request headers, merges localReq.Headers (which override defaults),
+// then forces application/x-www-form-urlencoded for native login POSTs.
+func (c *Config) SetHeaders(req *http.Request, headers http.Header) {
 	// This app allows http auth, in addition to api key (nginx proxy).
 	if auth := c.HTTPUser + ":" + c.HTTPPass; auth != ":" {
 		req.Header.Set("Authorization", "Basic "+base64.StdEncoding.EncodeToString([]byte(auth)))
@@ -142,9 +145,13 @@ func (c *Config) SetHeaders(req *http.Request) {
 		req.Header.Set("Content-Type", "application/json")
 	}
 
+	for key, vals := range headers {
+		req.Header[http.CanonicalHeaderKey(key)] = vals
+	}
+
 	if req.Method == http.MethodPost && strings.HasSuffix(req.URL.RequestURI(), "/login") {
 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	} else {
+	} else if req.Header.Get("Accept") == "" {
 		req.Header.Set("Accept", "application/json")
 	}
 
