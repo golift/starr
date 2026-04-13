@@ -2,7 +2,7 @@
 // Use this when you want to write an application that is executed by the Starr app through a
 // custom script command hook.
 // Create these by going into Settings->Connect->Custom Script in Lidarr, Prowlarr, Radarr, Readarr, or Sonarr.
-// See example_test.go for basic usage and dispatcher.go / dispatcher_on.go for optional
+// See example_test.go for basic usage and dispatcher.go / sonarr_test.go for optional
 // callback registration (Dispatcher).
 package starrcmd
 
