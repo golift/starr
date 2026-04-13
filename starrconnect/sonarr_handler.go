@@ -93,19 +93,11 @@ func (h *SonarrHandler) dispatchSonarrDownload(event *SonarrEvent, body []byte) 
 // sonarrIsImportCompleteBody reports whether the JSON is the batch import-complete shape (episodeFiles).
 func sonarrIsImportCompleteBody(body []byte) bool {
 	var keys map[string]json.RawMessage
-
 	if err := json.Unmarshal(body, &keys); err != nil {
 		return false
 	}
 
 	raw, exists := keys["episodeFiles"]
-	if !exists {
-		return false
-	}
 
-	if len(raw) == 0 || string(raw) == "null" {
-		return false
-	}
-
-	return string(raw) != "[]"
+	return exists && len(raw) > 0 && string(raw) != "null" && string(raw) != "[]"
 }

@@ -236,7 +236,7 @@ func ParseSonarr(body []byte) (*SonarrEvent, error) {
 
 // GetGrab decodes a Grab or Test payload (Test uses the same shape as Grab).
 func (e *SonarrEvent) GetGrab() (*SonarrGrab, error) {
-	return decodeWebhookPayloadEither[SonarrGrab](e.EventType, EventGrab, EventTest, e.body, "decoding SonarrGrab")
+	return decodeWebhookPayload[SonarrGrab](e.body, e.EventType, EventGrab, EventTest)
 }
 
 // GetDownload decodes a single-file Download payload (not import-complete batch).
@@ -249,7 +249,7 @@ func (e *SonarrEvent) GetDownload() (*SonarrDownload, error) {
 		return nil, fmt.Errorf("%w: payload is import-complete (episodeFiles), use GetImportComplete", ErrWrongEvent)
 	}
 
-	return decodeWebhookPayload[SonarrDownload](e.EventType, EventDownload, e.body, "decoding SonarrDownload")
+	return decodeWebhookPayload[SonarrDownload](e.body, e.EventType, EventDownload)
 }
 
 // GetImportComplete decodes a batch Download (import complete) payload.
@@ -262,48 +262,45 @@ func (e *SonarrEvent) GetImportComplete() (*SonarrImportComplete, error) {
 		return nil, fmt.Errorf("%w: payload is single-file import (episodeFile), use GetDownload", ErrWrongEvent)
 	}
 
-	return decodeWebhookPayload[SonarrImportComplete](e.EventType, EventDownload, e.body, "decoding SonarrImportComplete")
+	return decodeWebhookPayload[SonarrImportComplete](e.body, e.EventType, EventDownload)
 }
 
 // GetRename decodes a Rename payload.
 func (e *SonarrEvent) GetRename() (*SonarrRename, error) {
-	return decodeWebhookPayload[SonarrRename](e.EventType, EventRename, e.body, "decoding SonarrRename")
+	return decodeWebhookPayload[SonarrRename](e.body, e.EventType, EventRename)
 }
 
 // GetSeriesAdd decodes a SeriesAdd payload.
 func (e *SonarrEvent) GetSeriesAdd() (*SeriesAdd, error) {
-	return decodeWebhookPayload[SeriesAdd](e.EventType, EventSeriesAdd, e.body, "decoding SonarrSeriesAdd")
+	return decodeWebhookPayload[SeriesAdd](e.body, e.EventType, EventSeriesAdd)
 }
 
 // GetSeriesDelete decodes a SeriesDelete payload.
 func (e *SonarrEvent) GetSeriesDelete() (*SeriesDelete, error) {
-	return decodeWebhookPayload[SeriesDelete](e.EventType, EventSeriesDelete, e.body, "decoding SonarrSeriesDelete")
+	return decodeWebhookPayload[SeriesDelete](e.body, e.EventType, EventSeriesDelete)
 }
 
 // GetEpisodeFileDelete decodes an EpisodeFileDelete payload.
 func (e *SonarrEvent) GetEpisodeFileDelete() (*EpisodeFileDelete, error) {
-	return decodeWebhookPayload[EpisodeFileDelete](
-		e.EventType, EventEpisodeFileDelete, e.body, "decoding SonarrEpisodeFileDelete")
+	return decodeWebhookPayload[EpisodeFileDelete](e.body, e.EventType, EventEpisodeFileDelete)
 }
 
 // GetHealth decodes a Health payload.
 func (e *SonarrEvent) GetHealth() (*SonarrHealth, error) {
-	return decodeWebhookPayload[SonarrHealth](e.EventType, EventHealth, e.body, "decoding SonarrHealth")
+	return decodeWebhookPayload[SonarrHealth](e.body, e.EventType, EventHealth)
 }
 
 // GetHealthRestored decodes a HealthRestored payload.
 func (e *SonarrEvent) GetHealthRestored() (*SonarrHealth, error) {
-	return decodeWebhookPayload[SonarrHealth](e.EventType, EventHealthRestored, e.body, "decoding SonarrHealth")
+	return decodeWebhookPayload[SonarrHealth](e.body, e.EventType, EventHealthRestored)
 }
 
 // GetApplicationUpdate decodes an ApplicationUpdate payload.
 func (e *SonarrEvent) GetApplicationUpdate() (*SonarrApplicationUpdate, error) {
-	return decodeWebhookPayload[SonarrApplicationUpdate](
-		e.EventType, EventApplicationUpdate, e.body, "decoding SonarrApplicationUpdate")
+	return decodeWebhookPayload[SonarrApplicationUpdate](e.body, e.EventType, EventApplicationUpdate)
 }
 
 // GetManualInteraction decodes a ManualInteractionRequired payload.
 func (e *SonarrEvent) GetManualInteraction() (*SonarrManualInteraction, error) {
-	return decodeWebhookPayload[SonarrManualInteraction](
-		e.EventType, EventManualInteractionRequired, e.body, "decoding SonarrManualInteraction")
+	return decodeWebhookPayload[SonarrManualInteraction](e.body, e.EventType, EventManualInteractionRequired)
 }

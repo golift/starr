@@ -83,36 +83,35 @@ func ParseProwlarr(body []byte) (*ProwlarrEvent, error) {
 
 // GetGrab decodes a Grab payload.
 func (e *ProwlarrEvent) GetGrab() (*ProwlarrGrab, error) {
-	return decodeWebhookPayload[ProwlarrGrab](e.EventType, EventGrab, e.body, "decoding ProwlarrGrab")
+	return decodeWebhookPayload[ProwlarrGrab](e.body, e.EventType, EventGrab)
 }
 
 // GetTest decodes a Test payload.
 func (e *ProwlarrEvent) GetTest() (*ProwlarrTest, error) {
-	return decodeWebhookPayload[ProwlarrTest](e.EventType, EventTest, e.body, "decoding ProwlarrTest")
+	return decodeWebhookPayload[ProwlarrTest](e.body, e.EventType, EventTest)
 }
 
 // GetDownload decodes a Download payload (reserved; upstream may add fields later).
 func (e *ProwlarrEvent) GetDownload() (*ProwlarrDownload, error) {
-	return decodeWebhookPayload[ProwlarrDownload](e.EventType, EventDownload, e.body, "decoding ProwlarrDownload")
+	return decodeWebhookPayload[ProwlarrDownload](e.body, e.EventType, EventDownload)
 }
 
 // GetRename decodes a Rename payload (reserved; upstream may add fields later).
 func (e *ProwlarrEvent) GetRename() (*ProwlarrRename, error) {
-	return decodeWebhookPayload[ProwlarrRename](e.EventType, EventRename, e.body, "decoding ProwlarrRename")
+	return decodeWebhookPayload[ProwlarrRename](e.body, e.EventType, EventRename)
 }
 
 // GetHealth decodes a Health payload.
 func (e *ProwlarrEvent) GetHealth() (*ProwlarrHealth, error) {
-	return decodeWebhookPayload[ProwlarrHealth](e.EventType, EventHealth, e.body, "decoding ProwlarrHealth")
+	return decodeWebhookPayload[ProwlarrHealth](e.body, e.EventType, EventHealth)
 }
 
 // GetHealthRestored decodes a HealthRestored payload.
 func (e *ProwlarrEvent) GetHealthRestored() (*ProwlarrHealth, error) {
-	return decodeWebhookPayload[ProwlarrHealth](e.EventType, EventHealthRestored, e.body, "decoding ProwlarrHealth")
+	return decodeWebhookPayload[ProwlarrHealth](e.body, e.EventType, EventHealthRestored)
 }
 
 // GetApplicationUpdate decodes an ApplicationUpdate payload.
 func (e *ProwlarrEvent) GetApplicationUpdate() (*ProwlarrApplicationUpdate, error) {
-	return decodeWebhookPayload[ProwlarrApplicationUpdate](
-		e.EventType, EventApplicationUpdate, e.body, "decoding ProwlarrApplicationUpdate")
+	return decodeWebhookPayload[ProwlarrApplicationUpdate](e.body, e.EventType, EventApplicationUpdate)
 }

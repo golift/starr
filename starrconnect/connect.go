@@ -24,6 +24,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"reflect"
+	"slices"
 )
 
 const maxBodyBytes = 10 << 20 // 10 MiB
@@ -40,7 +42,7 @@ var (
 // EventType is the webhook eventType field (JSON string).
 type EventType string
 
-// EventType constants.
+// EventType constants: events from each app are listed here.
 const (
 	EventTest                      EventType = "Test"
 	EventGrab                      EventType = "Grab"
@@ -115,7 +117,6 @@ func readRequestBody(httpReq *http.Request) ([]byte, error) {
 	if httpReq.Body == nil {
 		return nil, fmt.Errorf("nil body: %w", io.ErrUnexpectedEOF)
 	}
-
 	defer httpReq.Body.Close()
 
 	data, err := io.ReadAll(io.LimitReader(httpReq.Body, maxBodyBytes+1))
@@ -130,31 +131,15 @@ func readRequestBody(httpReq *http.Request) ([]byte, error) {
 	return data, nil
 }
 
-// decodeWebhookPayload checks got == want, then unmarshals body into *T (Servarr Get* helpers).
-func decodeWebhookPayload[T any](got, want EventType, body []byte, decodeLabel string) (*T, error) {
-	if got != want {
-		return nil, fmt.Errorf("%w: got %q want %q", ErrWrongEvent, got, want)
+// decodeWebhookPayload checks got is in want, then unmarshals body into *T.
+func decodeWebhookPayload[T any](body []byte, got EventType, want ...EventType) (*T, error) {
+	if !slices.Contains(want, got) {
+		return nil, fmt.Errorf("%w: got %q want %v", ErrWrongEvent, got, want)
 	}
 
 	var out T
-
 	if err := json.Unmarshal(body, &out); err != nil {
-		return nil, fmt.Errorf("%s: %w", decodeLabel, err)
-	}
-
-	return &out, nil
-}
-
-// decodeWebhookPayloadEither checks got is a or b, then unmarshals body into *T (e.g. Grab + Test).
-func decodeWebhookPayloadEither[T any](got, a, b EventType, body []byte, decodeLabel string) (*T, error) {
-	if got != a && got != b { // Usually "Grab" or "Test"
-		return nil, fmt.Errorf("%w: got %q want %q or %q", ErrWrongEvent, got, a, b)
-	}
-
-	var out T
-
-	if err := json.Unmarshal(body, &out); err != nil {
-		return nil, fmt.Errorf("%s: %w", decodeLabel, err)
+		return nil, fmt.Errorf("decoding %s event as %s: %w", got, reflect.TypeFor[*T](), err)
 	}
 
 	return &out, nil
@@ -208,12 +193,12 @@ func runWebhookCallback[T any](callback func(*T) error, decode func() (*T, error
 		return nil
 	}
 
-	v, err := decode()
+	val, err := decode()
 	if err != nil {
 		return webhookErr(http.StatusInternalServerError, "handler error", err)
 	}
 
-	if err := callback(v); err != nil {
+	if err := callback(val); err != nil {
 		return webhookErr(http.StatusInternalServerError, "handler error", err)
 	}
 

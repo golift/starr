@@ -196,62 +196,60 @@ func ParseLidarr(body []byte) (*LidarrEvent, error) {
 
 // GetGrab decodes a Grab or Test payload.
 func (e *LidarrEvent) GetGrab() (*LidarrGrab, error) {
-	return decodeWebhookPayloadEither[LidarrGrab](e.EventType, EventGrab, EventTest, e.body, "decoding LidarrGrab")
+	return decodeWebhookPayload[LidarrGrab](e.body, e.EventType, EventGrab, EventTest)
 }
 
 // GetDownload decodes a Download payload.
 func (e *LidarrEvent) GetDownload() (*LidarrDownload, error) {
-	return decodeWebhookPayload[LidarrDownload](e.EventType, EventDownload, e.body, "decoding LidarrDownload")
+	return decodeWebhookPayload[LidarrDownload](e.body, e.EventType, EventDownload)
 }
 
 // GetImportFailure decodes an ImportFailure payload.
 func (e *LidarrEvent) GetImportFailure() (*LidarrImportFailure, error) {
-	return decodeWebhookPayload[LidarrDownload](e.EventType, EventImportFailure, e.body, "decoding LidarrImportFailure")
+	return decodeWebhookPayload[LidarrDownload](e.body, e.EventType, EventImportFailure)
 }
 
 // GetDownloadFailure decodes a DownloadFailure payload.
 func (e *LidarrEvent) GetDownloadFailure() (*LidarrDownloadFailure, error) {
-	return decodeWebhookPayload[LidarrDownloadFailure](
-		e.EventType, EventDownloadFailure, e.body, "decoding LidarrDownloadFailure")
+	return decodeWebhookPayload[LidarrDownloadFailure](e.body, e.EventType, EventDownloadFailure)
 }
 
 // GetRename decodes a Rename payload.
 func (e *LidarrEvent) GetRename() (*LidarrRename, error) {
-	return decodeWebhookPayload[LidarrRename](e.EventType, EventRename, e.body, "decoding LidarrRename")
+	return decodeWebhookPayload[LidarrRename](e.body, e.EventType, EventRename)
 }
 
 // GetRetag decodes a Retag payload.
 func (e *LidarrEvent) GetRetag() (*LidarrRetag, error) {
-	return decodeWebhookPayload[LidarrRetag](e.EventType, EventRetag, e.body, "decoding LidarrRetag")
+	return decodeWebhookPayload[LidarrRetag](e.body, e.EventType, EventRetag)
 }
 
 // GetArtistAdd decodes an ArtistAdd payload.
 func (e *LidarrEvent) GetArtistAdd() (*ArtistAdd, error) {
-	return decodeWebhookPayload[ArtistAdd](e.EventType, EventArtistAdd, e.body, "decoding LidarrArtistAdd")
+	return decodeWebhookPayload[ArtistAdd](e.body, e.EventType, EventArtistAdd)
 }
 
 // GetArtistDelete decodes an ArtistDelete payload.
 func (e *LidarrEvent) GetArtistDelete() (*ArtistDelete, error) {
-	return decodeWebhookPayload[ArtistDelete](e.EventType, EventArtistDelete, e.body, "decoding LidarrArtistDelete")
+	return decodeWebhookPayload[ArtistDelete](e.body, e.EventType, EventArtistDelete)
 }
 
 // GetAlbumDelete decodes an AlbumDelete payload.
 func (e *LidarrEvent) GetAlbumDelete() (*AlbumDelete, error) {
-	return decodeWebhookPayload[AlbumDelete](e.EventType, EventAlbumDelete, e.body, "decoding LidarrAlbumDelete")
+	return decodeWebhookPayload[AlbumDelete](e.body, e.EventType, EventAlbumDelete)
 }
 
 // GetHealth decodes a Health payload.
 func (e *LidarrEvent) GetHealth() (*LidarrHealth, error) {
-	return decodeWebhookPayload[LidarrHealth](e.EventType, EventHealth, e.body, "decoding LidarrHealth")
+	return decodeWebhookPayload[LidarrHealth](e.body, e.EventType, EventHealth)
 }
 
 // GetHealthRestored decodes a HealthRestored payload.
 func (e *LidarrEvent) GetHealthRestored() (*LidarrHealth, error) {
-	return decodeWebhookPayload[LidarrHealth](e.EventType, EventHealthRestored, e.body, "decoding LidarrHealth")
+	return decodeWebhookPayload[LidarrHealth](e.body, e.EventType, EventHealthRestored)
 }
 
 // GetApplicationUpdate decodes an ApplicationUpdate payload.
 func (e *LidarrEvent) GetApplicationUpdate() (*LidarrApplicationUpdate, error) {
-	return decodeWebhookPayload[LidarrApplicationUpdate](
-		e.EventType, EventApplicationUpdate, e.body, "decoding LidarrApplicationUpdate")
+	return decodeWebhookPayload[LidarrApplicationUpdate](e.body, e.EventType, EventApplicationUpdate)
 }

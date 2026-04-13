@@ -210,53 +210,50 @@ func ParseRadarr(body []byte) (*RadarrEvent, error) {
 
 // GetGrab decodes a Grab or Test payload.
 func (e *RadarrEvent) GetGrab() (*RadarrGrab, error) {
-	return decodeWebhookPayloadEither[RadarrGrab](e.EventType, EventGrab, EventTest, e.body, "decoding RadarrGrab")
+	return decodeWebhookPayload[RadarrGrab](e.body, e.EventType, EventGrab, EventTest)
 }
 
 // GetDownload decodes a Download payload.
 func (e *RadarrEvent) GetDownload() (*RadarrDownload, error) {
-	return decodeWebhookPayload[RadarrDownload](e.EventType, EventDownload, e.body, "decoding RadarrDownload")
+	return decodeWebhookPayload[RadarrDownload](e.body, e.EventType, EventDownload)
 }
 
 // GetRename decodes a Rename payload.
 func (e *RadarrEvent) GetRename() (*RadarrRename, error) {
-	return decodeWebhookPayload[RadarrRename](e.EventType, EventRename, e.body, "decoding RadarrRename")
+	return decodeWebhookPayload[RadarrRename](e.body, e.EventType, EventRename)
 }
 
 // GetMovieAdded decodes a MovieAdded payload.
 func (e *RadarrEvent) GetMovieAdded() (*MovieAdded, error) {
-	return decodeWebhookPayload[MovieAdded](e.EventType, EventMovieAdded, e.body, "decoding RadarrMovieAdded")
+	return decodeWebhookPayload[MovieAdded](e.body, e.EventType, EventMovieAdded)
 }
 
 // GetMovieDelete decodes a MovieDelete payload.
 func (e *RadarrEvent) GetMovieDelete() (*MovieDelete, error) {
-	return decodeWebhookPayload[MovieDelete](e.EventType, EventMovieDelete, e.body, "decoding RadarrMovieDelete")
+	return decodeWebhookPayload[MovieDelete](e.body, e.EventType, EventMovieDelete)
 }
 
 // GetMovieFileDelete decodes a MovieFileDelete payload.
 func (e *RadarrEvent) GetMovieFileDelete() (*MovieFileDelete, error) {
-	return decodeWebhookPayload[MovieFileDelete](
-		e.EventType, EventMovieFileDelete, e.body, "decoding RadarrMovieFileDelete")
+	return decodeWebhookPayload[MovieFileDelete](e.body, e.EventType, EventMovieFileDelete)
 }
 
 // GetHealth decodes a Health payload.
 func (e *RadarrEvent) GetHealth() (*RadarrHealth, error) {
-	return decodeWebhookPayload[RadarrHealth](e.EventType, EventHealth, e.body, "decoding RadarrHealth")
+	return decodeWebhookPayload[RadarrHealth](e.body, e.EventType, EventHealth)
 }
 
 // GetHealthRestored decodes a HealthRestored payload.
 func (e *RadarrEvent) GetHealthRestored() (*RadarrHealth, error) {
-	return decodeWebhookPayload[RadarrHealth](e.EventType, EventHealthRestored, e.body, "decoding RadarrHealth")
+	return decodeWebhookPayload[RadarrHealth](e.body, e.EventType, EventHealthRestored)
 }
 
 // GetApplicationUpdate decodes an ApplicationUpdate payload.
 func (e *RadarrEvent) GetApplicationUpdate() (*RadarrApplicationUpdate, error) {
-	return decodeWebhookPayload[RadarrApplicationUpdate](
-		e.EventType, EventApplicationUpdate, e.body, "decoding RadarrApplicationUpdate")
+	return decodeWebhookPayload[RadarrApplicationUpdate](e.body, e.EventType, EventApplicationUpdate)
 }
 
 // GetManualInteraction decodes a ManualInteractionRequired payload.
 func (e *RadarrEvent) GetManualInteraction() (*RadarrManualInteraction, error) {
-	return decodeWebhookPayload[RadarrManualInteraction](
-		e.EventType, EventManualInteractionRequired, e.body, "decoding RadarrManualInteraction")
+	return decodeWebhookPayload[RadarrManualInteraction](e.body, e.EventType, EventManualInteractionRequired)
 }
