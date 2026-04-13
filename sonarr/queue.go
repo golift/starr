@@ -177,7 +177,6 @@ func (s *Sonarr) GetQueueDetails(query url.Values) ([]byte, error) {
 // GetQueueDetailsContext returns the raw JSON array from /api/v3/queue/details.
 func (s *Sonarr) GetQueueDetailsContext(ctx context.Context, query url.Values) ([]byte, error) {
 	uri := starr.SetAPIPath(path.Join(bpQueue, "details"))
-
 	req := starr.Request{URI: uri, Query: query}
 
 	resp, err := s.Get(ctx, req)
@@ -225,16 +224,15 @@ func (s *Sonarr) DeleteQueueBulkContext(ctx context.Context, ids []int64, opts *
 		return fmt.Errorf("json.Marshal(%s): %w", bpQueue, err)
 	}
 
-	var deleteQuery url.Values
+	var params url.Values
 	if opts != nil {
-		deleteQuery = opts.Values()
+		params = opts.Values()
 	} else {
-		deleteQuery = (&starr.QueueDeleteOpts{}).Values()
+		params = (&starr.QueueDeleteOpts{}).Values()
 	}
 
 	uri := starr.SetAPIPath(path.Join(bpQueue, "bulk"))
-
-	req := starr.Request{URI: uri, Body: &body, Query: deleteQuery}
+	req := starr.Request{URI: uri, Body: &body, Query: params}
 
 	resp, err := s.Delete(ctx, req)
 	if err != nil {
