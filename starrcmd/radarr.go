@@ -8,6 +8,8 @@ https://github.com/Radarr/Radarr/blob/develop/src/NzbDrone.Core/Notifications/Cu
 
 import (
 	"time"
+
+	"golift.io/starr"
 )
 
 // RadarrApplicationUpdate is the ApplicationUpdate event.
@@ -159,4 +161,78 @@ func (c *CmdEvent) GetRadarrMovieDelete() (output RadarrMovieDelete, err error) 
 // GetRadarrRename returns the Rename event data.
 func (c *CmdEvent) GetRadarrRename() (output RadarrRename, err error) {
 	return output, c.get(EventRename, &output)
+}
+
+// -- Dispatcher --
+
+// OnRadarrApplicationUpdate registers a Radarr ApplicationUpdate callback.
+func (d *Dispatcher) OnRadarrApplicationUpdate(handler func(RadarrApplicationUpdate) error) {
+	if handler != nil {
+		d.Register(starr.Radarr, EventApplicationUpdate, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetRadarrApplicationUpdate, handler)
+		})
+	}
+}
+
+// OnRadarrDownload registers a Radarr Download callback.
+func (d *Dispatcher) OnRadarrDownload(handler func(RadarrDownload) error) {
+	if handler != nil {
+		d.Register(starr.Radarr, EventDownload, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetRadarrDownload, handler)
+		})
+	}
+}
+
+// OnRadarrGrab registers a Radarr Grab callback.
+func (d *Dispatcher) OnRadarrGrab(handler func(RadarrGrab) error) {
+	if handler != nil {
+		d.Register(starr.Radarr, EventGrab, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetRadarrGrab, handler)
+		})
+	}
+}
+
+// OnRadarrHealthIssue registers a Radarr HealthIssue callback.
+func (d *Dispatcher) OnRadarrHealthIssue(handler func(RadarrHealthIssue) error) {
+	if handler != nil {
+		d.Register(starr.Radarr, EventHealthIssue, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetRadarrHealthIssue, handler)
+		})
+	}
+}
+
+// OnRadarrMovieDelete registers a Radarr MovieDelete callback.
+func (d *Dispatcher) OnRadarrMovieDelete(handler func(RadarrMovieDelete) error) {
+	if handler != nil {
+		d.Register(starr.Radarr, EventMovieDelete, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetRadarrMovieDelete, handler)
+		})
+	}
+}
+
+// OnRadarrMovieFileDelete registers a Radarr MovieFileDelete callback.
+func (d *Dispatcher) OnRadarrMovieFileDelete(handler func(RadarrMovieFileDelete) error) {
+	if handler != nil {
+		d.Register(starr.Radarr, EventMovieFileDelete, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetRadarrMovieFileDelete, handler)
+		})
+	}
+}
+
+// OnRadarrRename registers a Radarr Rename callback.
+func (d *Dispatcher) OnRadarrRename(handler func(RadarrRename) error) {
+	if handler != nil {
+		d.Register(starr.Radarr, EventRename, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetRadarrRename, handler)
+		})
+	}
+}
+
+// OnRadarrTest registers a Radarr Test callback.
+func (d *Dispatcher) OnRadarrTest(handler func(RadarrTest) error) {
+	if handler != nil {
+		d.Register(starr.Radarr, EventTest, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetRadarrTest, handler)
+		})
+	}
 }

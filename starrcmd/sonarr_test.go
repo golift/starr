@@ -240,3 +240,45 @@ func TestSonarrEpisodeFileDelete(t *testing.T) {
 		t.Fatalf("got wrong ID? expected: 12345, got: %v", info.ID)
 	}
 }
+
+func TestDispatcher_OnSonarrGrab(t *testing.T) {
+	t.Setenv("sonarr_eventtype", string(starrcmd.EventGrab))
+	t.Setenv("sonarr_release_quality", "HDTV-720p")
+	t.Setenv("sonarr_series_title", "This Is Us")
+	t.Setenv("sonarr_release_qualityversion", "1")
+	t.Setenv("sonarr_series_id", "47")
+	t.Setenv("sonarr_release_episodenumbers", "4")
+	t.Setenv("sonarr_release_episodecount", "1")
+	t.Setenv("sonarr_download_client", "NZBGet")
+	t.Setenv("sonarr_release_episodeairdates", "2022-01-25")
+	t.Setenv("sonarr_release_episodetitles", "Don't Let Me Keep You")
+	t.Setenv("sonarr_release_title", "This.is.Us.S06E04.720p.HDTV.x264-SYNCOPY")
+	t.Setenv("sonarr_download_id", "a87bda3c0e7f40a1b8fa011b421a5201")
+	t.Setenv("sonarr_release_indexer", "Indexor (Prowlarr)")
+	t.Setenv("sonarr_series_type", "Standard")
+	t.Setenv("sonarr_release_size", "885369406")
+	t.Setenv("sonarr_series_tvdbid", "311714")
+	t.Setenv("sonarr_series_tvmazeid", "17128")
+	t.Setenv("sonarr_release_releasegroup", "SYNCOPY")
+	t.Setenv("sonarr_release_seasonnumber", "6")
+	t.Setenv("sonarr_release_absoluteepisodenumbers", "92")
+	t.Setenv("sonarr_series_imdbid", "tt5555260")
+	t.Setenv("sonarr_release_episodeairdatesutc", "1/26/2022 2:00:00 AM")
+
+	var sawTitle string
+
+	registry := starrcmd.NewDispatcher()
+	registry.OnSonarrGrab(func(grab starrcmd.SonarrGrab) error {
+		sawTitle = grab.Title
+
+		return nil
+	})
+
+	if err := registry.Run(); err != nil {
+		t.Fatal(err)
+	}
+
+	if sawTitle != "This Is Us" {
+		t.Fatalf("OnSonarrGrab title: %q", sawTitle)
+	}
+}

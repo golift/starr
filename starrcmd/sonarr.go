@@ -8,6 +8,8 @@ https://github.com/Sonarr/Sonarr/blob/develop/src/NzbDrone.Core/Notifications/Cu
 
 import (
 	"time"
+
+	"golift.io/starr"
 )
 
 // SonarrApplicationUpdate is the ApplicationUpdate event.
@@ -177,4 +179,78 @@ func (c *CmdEvent) GetSonarrSeriesDelete() (output SonarrSeriesDelete, err error
 // GetSonarrEpisodeFileDelete returns the EpisodeFileDelete event data.
 func (c *CmdEvent) GetSonarrEpisodeFileDelete() (output SonarrEpisodeFileDelete, err error) {
 	return output, c.get(EventEpisodeFileDelete, &output)
+}
+
+// -- Dispatcher --
+
+// OnSonarrApplicationUpdate registers a Sonarr ApplicationUpdate callback.
+func (d *Dispatcher) OnSonarrApplicationUpdate(handler func(SonarrApplicationUpdate) error) {
+	if handler != nil {
+		d.Register(starr.Sonarr, EventApplicationUpdate, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetSonarrApplicationUpdate, handler)
+		})
+	}
+}
+
+// OnSonarrDownload registers a Sonarr Download callback.
+func (d *Dispatcher) OnSonarrDownload(handler func(SonarrDownload) error) {
+	if handler != nil {
+		d.Register(starr.Sonarr, EventDownload, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetSonarrDownload, handler)
+		})
+	}
+}
+
+// OnSonarrEpisodeFileDelete registers a Sonarr EpisodeFileDelete callback.
+func (d *Dispatcher) OnSonarrEpisodeFileDelete(handler func(SonarrEpisodeFileDelete) error) {
+	if handler != nil {
+		d.Register(starr.Sonarr, EventEpisodeFileDelete, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetSonarrEpisodeFileDelete, handler)
+		})
+	}
+}
+
+// OnSonarrGrab registers a Sonarr Grab callback.
+func (d *Dispatcher) OnSonarrGrab(handler func(SonarrGrab) error) {
+	if handler != nil {
+		d.Register(starr.Sonarr, EventGrab, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetSonarrGrab, handler)
+		})
+	}
+}
+
+// OnSonarrHealthIssue registers a Sonarr HealthIssue callback.
+func (d *Dispatcher) OnSonarrHealthIssue(handler func(SonarrHealthIssue) error) {
+	if handler != nil {
+		d.Register(starr.Sonarr, EventHealthIssue, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetSonarrHealthIssue, handler)
+		})
+	}
+}
+
+// OnSonarrRename registers a Sonarr Rename callback.
+func (d *Dispatcher) OnSonarrRename(handler func(SonarrRename) error) {
+	if handler != nil {
+		d.Register(starr.Sonarr, EventRename, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetSonarrRename, handler)
+		})
+	}
+}
+
+// OnSonarrSeriesDelete registers a Sonarr SeriesDelete callback.
+func (d *Dispatcher) OnSonarrSeriesDelete(handler func(SonarrSeriesDelete) error) {
+	if handler != nil {
+		d.Register(starr.Sonarr, EventSeriesDelete, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetSonarrSeriesDelete, handler)
+		})
+	}
+}
+
+// OnSonarrTest registers a Sonarr Test callback.
+func (d *Dispatcher) OnSonarrTest(handler func(SonarrTest) error) {
+	if handler != nil {
+		d.Register(starr.Sonarr, EventTest, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetSonarrTest, handler)
+		})
+	}
 }

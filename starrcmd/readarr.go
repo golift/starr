@@ -8,6 +8,8 @@ https://github.com/Readarr/Readarr/blob/develop/src/NzbDrone.Core/Notifications/
 
 import (
 	"time"
+
+	"golift.io/starr"
 )
 
 // ReadarrApplicationUpdate is the ApplicationUpdate event.
@@ -183,4 +185,94 @@ func (c *CmdEvent) GetReadarrTrackRetag() (output ReadarrTrackRetag, err error) 
 // GetReadarrTest returns the ApplicationUpdate event data.
 func (c *CmdEvent) GetReadarrTest() (output ReadarrTest, err error) {
 	return output, c.get(EventTest, &output)
+}
+
+// OnReadarrApplicationUpdate registers a Readarr ApplicationUpdate callback.
+func (d *Dispatcher) OnReadarrApplicationUpdate(handler func(ReadarrApplicationUpdate) error) {
+	if handler != nil {
+		d.Register(starr.Readarr, EventApplicationUpdate, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetReadarrApplicationUpdate, handler)
+		})
+	}
+}
+
+// OnReadarrAuthorDelete registers a Readarr AuthorDelete callback.
+func (d *Dispatcher) OnReadarrAuthorDelete(handler func(ReadarrAuthorDelete) error) {
+	if handler != nil {
+		d.Register(starr.Readarr, EventAuthorDelete, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetReadarrAuthorDelete, handler)
+		})
+	}
+}
+
+// OnReadarrBookDelete registers a Readarr BookDelete callback.
+func (d *Dispatcher) OnReadarrBookDelete(handler func(ReadarrBookDelete) error) {
+	if handler != nil {
+		d.Register(starr.Readarr, EventBookDelete, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetReadarrBookDelete, handler)
+		})
+	}
+}
+
+// OnReadarrBookFileDelete registers a Readarr BookFileDelete callback.
+func (d *Dispatcher) OnReadarrBookFileDelete(handler func(ReadarrBookFileDelete) error) {
+	if handler != nil {
+		d.Register(starr.Readarr, EventBookFileDelete, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetReadarrBookFileDelete, handler)
+		})
+	}
+}
+
+// OnReadarrDownload registers a Readarr Download callback.
+func (d *Dispatcher) OnReadarrDownload(handler func(ReadarrDownload) error) {
+	if handler != nil {
+		d.Register(starr.Readarr, EventDownload, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetReadarrDownload, handler)
+		})
+	}
+}
+
+// OnReadarrGrab registers a Readarr Grab callback.
+func (d *Dispatcher) OnReadarrGrab(handler func(ReadarrGrab) error) {
+	if handler != nil {
+		d.Register(starr.Readarr, EventGrab, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetReadarrGrab, handler)
+		})
+	}
+}
+
+// OnReadarrHealthIssue registers a Readarr HealthIssue callback.
+func (d *Dispatcher) OnReadarrHealthIssue(handler func(ReadarrHealthIssue) error) {
+	if handler != nil {
+		d.Register(starr.Readarr, EventHealthIssue, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetReadarrHealthIssue, handler)
+		})
+	}
+}
+
+// OnReadarrRename registers a Readarr Rename callback.
+func (d *Dispatcher) OnReadarrRename(handler func(ReadarrRename) error) {
+	if handler != nil {
+		d.Register(starr.Readarr, EventRename, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetReadarrRename, handler)
+		})
+	}
+}
+
+// OnReadarrTest registers a Readarr Test callback.
+func (d *Dispatcher) OnReadarrTest(handler func(ReadarrTest) error) {
+	if handler != nil {
+		d.Register(starr.Readarr, EventTest, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetReadarrTest, handler)
+		})
+	}
+}
+
+// OnReadarrTrackRetag registers a Readarr TrackRetag callback.
+func (d *Dispatcher) OnReadarrTrackRetag(handler func(ReadarrTrackRetag) error) {
+	if handler != nil {
+		d.Register(starr.Readarr, EventTrackRetag, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetReadarrTrackRetag, handler)
+		})
+	}
 }

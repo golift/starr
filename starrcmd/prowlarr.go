@@ -1,5 +1,7 @@
 package starrcmd
 
+import "golift.io/starr"
+
 /*
 Prowlarr only has 3 events, all accounted for; 1/30/2022.
 https://github.com/Prowlarr/Prowlarr/blob/develop/src/NzbDrone.Core/Notifications/CustomScript/CustomScript.cs
@@ -36,4 +38,33 @@ func (c *CmdEvent) GetProwlarrHealthIssue() (output ProwlarrHealthIssue, err err
 // GetProwlarrTest returns the ApplicationUpdate event data.
 func (c *CmdEvent) GetProwlarrTest() (output ProwlarrTest, err error) {
 	return output, c.get(EventTest, &output)
+}
+
+// -- Dispatcher --
+
+// OnProwlarrApplicationUpdate registers a Prowlarr ApplicationUpdate callback.
+func (d *Dispatcher) OnProwlarrApplicationUpdate(handler func(ProwlarrApplicationUpdate) error) {
+	if handler != nil {
+		d.Register(starr.Prowlarr, EventApplicationUpdate, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetProwlarrApplicationUpdate, handler)
+		})
+	}
+}
+
+// OnProwlarrHealthIssue registers a Prowlarr HealthIssue callback.
+func (d *Dispatcher) OnProwlarrHealthIssue(handler func(ProwlarrHealthIssue) error) {
+	if handler != nil {
+		d.Register(starr.Prowlarr, EventHealthIssue, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetProwlarrHealthIssue, handler)
+		})
+	}
+}
+
+// OnProwlarrTest registers a Prowlarr Test callback.
+func (d *Dispatcher) OnProwlarrTest(handler func(ProwlarrTest) error) {
+	if handler != nil {
+		d.Register(starr.Prowlarr, EventTest, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetProwlarrTest, handler)
+		})
+	}
 }
