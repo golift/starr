@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"path"
 
 	"golift.io/starr"
@@ -119,4 +120,24 @@ func (r *Radarr) DeleteDelayProfileContext(ctx context.Context, profileID int64)
 	}
 
 	return nil
+}
+
+// ReorderDelayProfile moves a delay profile relative to another profile.
+func (r *Radarr) ReorderDelayProfile(id, afterID int64) ([]*DelayProfile, error) {
+	return r.ReorderDelayProfileContext(context.Background(), id, afterID)
+}
+
+// ReorderDelayProfileContext moves a delay profile relative to another profile.
+func (r *Radarr) ReorderDelayProfileContext(ctx context.Context, id, afterID int64) ([]*DelayProfile, error) {
+	var output []*DelayProfile
+
+	req := starr.Request{
+		URI:   path.Join(bpDelayProfile, "reorder", starr.Str(id)),
+		Query: url.Values{"after": []string{starr.Str(afterID)}},
+	}
+	if err := r.PutInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
+	}
+
+	return output, nil
 }

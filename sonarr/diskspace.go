@@ -5,18 +5,13 @@ import (
 	"fmt"
 
 	"golift.io/starr"
+	"golift.io/starr/starrshared"
 )
 
 const bpDiskSpace = APIver + "/diskspace"
 
 // DiskSpace is the /api/v3/diskspace resource.
-type DiskSpace struct {
-	ID         int    `json:"id"`
-	Path       string `json:"path,omitempty"`
-	Label      string `json:"label,omitempty"`
-	FreeSpace  int64  `json:"freeSpace"`
-	TotalSpace int64  `json:"totalSpace"`
-}
+type DiskSpace = starrshared.DiskSpace
 
 // GetDiskSpace returns disk space information for Sonarr paths.
 func (s *Sonarr) GetDiskSpace() ([]*DiskSpace, error) {

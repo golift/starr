@@ -104,3 +104,51 @@ func (p *Prowlarr) DeleteTagContext(ctx context.Context, tagID int) error {
 
 	return nil
 }
+
+// TagDetails is the /api/v1/tag/detail resource.
+type TagDetails struct {
+	ID                int    `json:"id"`
+	Label             string `json:"label,omitempty"`
+	DelayProfileIDs   []int  `json:"delayProfileIds,omitempty"`
+	ImportListIDs     []int  `json:"importListIds,omitempty"`
+	NotificationIDs   []int  `json:"notificationIds,omitempty"`
+	IndexerIDs        []int  `json:"indexerIds,omitempty"`
+	DownloadClientIDs []int  `json:"downloadClientIds,omitempty"`
+	AutoTagIDs        []int  `json:"autoTagIds,omitempty"`
+	ApplicationIDs    []int  `json:"applicationIds,omitempty"`
+	IndexerProxyIDs   []int  `json:"indexerProxyIds,omitempty"`
+}
+
+// GetTagDetails returns tag usage details for all tags.
+func (p *Prowlarr) GetTagDetails() ([]*TagDetails, error) {
+	return p.GetTagDetailsContext(context.Background())
+}
+
+// GetTagDetailsContext returns tag usage details for all tags.
+func (p *Prowlarr) GetTagDetailsContext(ctx context.Context) ([]*TagDetails, error) {
+	var output []*TagDetails
+
+	req := starr.Request{URI: path.Join(bpTag, "detail")}
+	if err := p.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
+	}
+
+	return output, nil
+}
+
+// GetTagDetail returns tag usage details for a single tag.
+func (p *Prowlarr) GetTagDetail(tagID int) (*TagDetails, error) {
+	return p.GetTagDetailContext(context.Background(), tagID)
+}
+
+// GetTagDetailContext returns tag usage details for a single tag.
+func (p *Prowlarr) GetTagDetailContext(ctx context.Context, tagID int) (*TagDetails, error) {
+	var output TagDetails
+
+	req := starr.Request{URI: path.Join(bpTag, "detail", starr.Str(tagID))}
+	if err := p.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
+	}
+
+	return &output, nil
+}

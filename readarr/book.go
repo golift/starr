@@ -242,3 +242,33 @@ func (r *Readarr) DeleteBookContext(ctx context.Context, bookID int64, deleteFil
 
 	return nil
 }
+
+// BooksMonitoredInput is the body for PUT /book/monitor.
+type BooksMonitoredInput struct {
+	BookIDs   []int64 `json:"bookIds"`
+	Monitored bool    `json:"monitored"`
+}
+
+// MonitorBooks sets monitored state for the given book IDs.
+func (r *Readarr) MonitorBooks(bookIDs []int64, monitored bool) ([]*Book, error) {
+	return r.MonitorBooksContext(context.Background(), bookIDs, monitored)
+}
+
+// MonitorBooksContext sets monitored state for the given book IDs.
+func (r *Readarr) MonitorBooksContext(ctx context.Context, bookIDs []int64, monitored bool) ([]*Book, error) {
+	in := BooksMonitoredInput{BookIDs: bookIDs, Monitored: monitored}
+
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(&in); err != nil {
+		return nil, fmt.Errorf("json.Marshal(%s): %w", path.Join(bpBook, "monitor"), err)
+	}
+
+	var output []*Book
+
+	req := starr.Request{URI: path.Join(bpBook, "monitor"), Body: &body}
+	if err := r.PutInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
+	}
+
+	return output, nil
+}

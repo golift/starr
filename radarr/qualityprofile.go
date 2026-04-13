@@ -60,6 +60,23 @@ func (r *Radarr) GetQualityProfileContext(ctx context.Context, profileID int64) 
 	return &output, nil
 }
 
+// GetQualityProfileSchema returns the template/schema quality profiles.
+func (r *Radarr) GetQualityProfileSchema() ([]*QualityProfile, error) {
+	return r.GetQualityProfileSchemaContext(context.Background())
+}
+
+// GetQualityProfileSchemaContext returns the template/schema quality profiles.
+func (r *Radarr) GetQualityProfileSchemaContext(ctx context.Context) ([]*QualityProfile, error) {
+	var output []*QualityProfile
+
+	req := starr.Request{URI: path.Join(bpQualityProfile, "schema")}
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
+	}
+
+	return output, nil
+}
+
 // AddQualityProfile updates a quality profile in place.
 func (r *Radarr) AddQualityProfile(profile *QualityProfile) (*QualityProfile, error) {
 	return r.AddQualityProfileContext(context.Background(), profile)

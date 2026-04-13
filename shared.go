@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-/* This file contains shared structs or constants for all the *arr apps. */
+/* This file contains shared structs and constants for all the Starr apps. */
 
 // CalendarTimeFilterFormat is the Go time format the calendar expects the filter to be in.
 const CalendarTimeFilterFormat = "2006-01-02T03:04:05.000Z"

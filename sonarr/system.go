@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"golift.io/starr"
+	"golift.io/starr/starrshared"
 )
 
 const bpSystem = APIver + "/system"
@@ -84,21 +85,10 @@ func (s *Sonarr) GetBackupFilesContext(ctx context.Context) ([]*starr.BackupFile
 }
 
 // SystemTask is a scheduled task from /api/v3/system/task.
-type SystemTask struct {
-	ID            int       `json:"id,omitempty"`
-	Name          string    `json:"name,omitempty"`
-	TaskName      string    `json:"taskName,omitempty"`
-	Interval      int       `json:"interval,omitempty"`
-	LastExecution time.Time `json:"lastExecution,omitzero"`
-	LastStartTime time.Time `json:"lastStartTime,omitzero"`
-	NextExecution time.Time `json:"nextExecution,omitzero"`
-	LastDuration  string    `json:"lastDuration,omitempty"`
-}
+type SystemTask = starrshared.SystemTask
 
 // BackupRestoreResponse is returned when restoring a backup.
-type BackupRestoreResponse struct {
-	RestartRequired bool `json:"restartRequired"`
-}
+type BackupRestoreResponse = starrshared.BackupRestoreResponse
 
 // DeleteBackup deletes a backup file by ID.
 func (s *Sonarr) DeleteBackup(id int64) error {

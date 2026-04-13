@@ -14,6 +14,71 @@ import (
 
 const bpAuthor = APIver + "/author"
 
+// GetAuthors returns all authors in the library.
+func (r *Readarr) GetAuthors() ([]*Author, error) {
+	return r.GetAuthorsContext(context.Background())
+}
+
+// GetAuthorsContext returns all authors in the library.
+func (r *Readarr) GetAuthorsContext(ctx context.Context) ([]*Author, error) {
+	var output []*Author
+
+	req := starr.Request{URI: bpAuthor, Query: make(url.Values)}
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
+	}
+
+	return output, nil
+}
+
+// AddAuthor adds a new author to Readarr.
+func (r *Readarr) AddAuthor(author *Author) (*Author, error) {
+	return r.AddAuthorContext(context.Background(), author)
+}
+
+// AddAuthorContext adds a new author to Readarr.
+func (r *Readarr) AddAuthorContext(ctx context.Context, author *Author) (*Author, error) {
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(author); err != nil {
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpAuthor, err)
+	}
+
+	var output Author
+
+	req := starr.Request{URI: bpAuthor, Query: make(url.Values), Body: &body}
+	if err := r.PostInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
+	}
+
+	return &output, nil
+}
+
+// LookupAuthor searches for authors matching the specified search term.
+func (r *Readarr) LookupAuthor(term string) ([]*Author, error) {
+	return r.LookupAuthorContext(context.Background(), term)
+}
+
+// LookupAuthorContext searches for authors matching the specified search term.
+func (r *Readarr) LookupAuthorContext(ctx context.Context, term string) ([]*Author, error) {
+	var output []*Author
+
+	if term == "" {
+		return output, nil
+	}
+
+	req := starr.Request{
+		URI:   path.Join(bpAuthor, "lookup"),
+		Query: make(url.Values),
+	}
+	req.Query.Set("term", term)
+
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
+	}
+
+	return output, nil
+}
+
 // Author is the /api/v1/author endpoint.
 type Author struct {
 	ID                  int64          `json:"id"`

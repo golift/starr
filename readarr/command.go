@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"path"
 	"time"
 
 	"golift.io/starr"
@@ -80,6 +81,27 @@ func (r *Readarr) SendCommandContext(ctx context.Context, cmd *CommandRequest) (
 	req := starr.Request{URI: bpCommand, Body: &body}
 	if err := r.PostInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
+	}
+
+	return &output, nil
+}
+
+// GetCommandStatus returns the status of an already started command.
+func (r *Readarr) GetCommandStatus(commandID int64) (*CommandResponse, error) {
+	return r.GetCommandStatusContext(context.Background(), commandID)
+}
+
+// GetCommandStatusContext returns the status of an already started command.
+func (r *Readarr) GetCommandStatusContext(ctx context.Context, commandID int64) (*CommandResponse, error) {
+	var output CommandResponse
+
+	if commandID == 0 {
+		return &output, nil
+	}
+
+	req := starr.Request{URI: path.Join(bpCommand, starr.Str(commandID))}
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
 	return &output, nil

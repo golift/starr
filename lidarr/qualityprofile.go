@@ -42,6 +42,23 @@ func (l *Lidarr) GetQualityProfilesContext(ctx context.Context) ([]*QualityProfi
 	return output, nil
 }
 
+// GetQualityProfile returns a single quality profile.
+func (l *Lidarr) GetQualityProfile(profileID int64) (*QualityProfile, error) {
+	return l.GetQualityProfileContext(context.Background(), profileID)
+}
+
+// GetQualityProfileContext returns a single quality profile.
+func (l *Lidarr) GetQualityProfileContext(ctx context.Context, profileID int64) (*QualityProfile, error) {
+	var output QualityProfile
+
+	req := starr.Request{URI: path.Join(bpQualityProfile, starr.Str(profileID))}
+	if err := l.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
+	}
+
+	return &output, nil
+}
+
 // AddQualityProfile updates a quality profile in place.
 func (l *Lidarr) AddQualityProfile(profile *QualityProfile) (int64, error) {
 	return l.AddQualityProfileContext(context.Background(), profile)
