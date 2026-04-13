@@ -18,10 +18,10 @@
 ### Webhooks & Scripts
 
 - [Custom Scripts support](https://wiki.servarr.com/radarr/custom-scripts) is also included.
-- [Check out the types and methods](https://pkg.go.dev/golift.io/starr@main/starrcmd) to get that data.
+- [Check out the types and methods](https://pkg.go.dev/golift.io/starr@main/starrcmd) to get that data. For a fuller walkthrough, see [starrcmd/README.md](starrcmd/README.md).
 - [Webhook Connect http handlers](https://wiki.servarr.com/en/sonarr/settings#connections) are available too.
 - [Check out the types and methods](https://pkg.go.dev/golift.io/starr@main/starrconnect) to setup a webhook handler.
-  For a fuller walkthrough, see [starrconnect README](starrconnect).
+  For a fuller walkthrough, see [starrconnect/README.md](starrconnect/README.md).
 
 ## One 🌟 To Rule Them All
 
@@ -40,7 +40,7 @@ This library is currently in use by:
 
 ## Usage
 
-- See [Starr Command](starrcmd) and [Starr Connect](starrconnect) for their examples.
+- See [Starr Command](starrcmd) ([README](starrcmd/README.md)) and [Starr Connect](starrconnect) ([README](starrconnect/README.md)) for their examples.
 - See below for simple **Starr API** example:
 
 Get it:

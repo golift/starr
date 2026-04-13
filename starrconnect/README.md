@@ -8,7 +8,7 @@
 - **`Get*()` methods** on the parsed event — decode the full payload for that event (with `errors.Is` / `errors.As` against **`ErrWrongEvent`** if you call the wrong getter).
 - **`*Handler` types** — implement **`http.Handler`** and dispatch POST bodies to optional **`On…`** callbacks.
 
-For **Custom Script** env-based payloads, use package **`starrcmd`** instead.
+For **Custom Script** env-based payloads, use package **`starrcmd`** instead ([README](../starrcmd/README.md)).
 
 Smaller examples live in [example_test.go](example_test.go).
 

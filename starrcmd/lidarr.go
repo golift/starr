@@ -8,6 +8,8 @@ https://github.com/Lidarr/Lidarr/blob/develop/src/NzbDrone.Core/Notifications/Cu
 
 import (
 	"time"
+
+	"golift.io/starr"
 )
 
 // LidarrApplicationUpdate is the ApplicationUpdate event.
@@ -133,4 +135,69 @@ func (c *CmdEvent) GetLidarrTrackRetag() (output LidarrTrackRetag, err error) {
 // GetLidarrTest returns the ApplicationUpdate event data.
 func (c *CmdEvent) GetLidarrTest() (output LidarrTest, err error) {
 	return output, c.get(EventTest, &output)
+}
+
+// -- Dispatcher --
+
+// OnLidarrApplicationUpdate registers a Lidarr ApplicationUpdate callback.
+func (d *Dispatcher) OnLidarrApplicationUpdate(handler func(LidarrApplicationUpdate) error) {
+	if handler != nil {
+		d.Register(starr.Lidarr, EventApplicationUpdate, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetLidarrApplicationUpdate, handler)
+		})
+	}
+}
+
+// OnLidarrHealthIssue registers a Lidarr HealthIssue callback.
+func (d *Dispatcher) OnLidarrHealthIssue(handler func(LidarrHealthIssue) error) {
+	if handler != nil {
+		d.Register(starr.Lidarr, EventHealthIssue, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetLidarrHealthIssue, handler)
+		})
+	}
+}
+
+// OnLidarrGrab registers a Lidarr Grab callback.
+func (d *Dispatcher) OnLidarrGrab(handler func(LidarrGrab) error) {
+	if handler != nil {
+		d.Register(starr.Lidarr, EventGrab, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetLidarrGrab, handler)
+		})
+	}
+}
+
+// OnLidarrAlbumDownload registers a Lidarr AlbumDownload callback.
+func (d *Dispatcher) OnLidarrAlbumDownload(handler func(LidarrAlbumDownload) error) {
+	if handler != nil {
+		d.Register(starr.Lidarr, EventAlbumDownload, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetLidarrAlbumDownload, handler)
+		})
+	}
+}
+
+// OnLidarrRename registers a Lidarr Rename callback.
+func (d *Dispatcher) OnLidarrRename(handler func(LidarrRename) error) {
+	if handler != nil {
+		d.Register(starr.Lidarr, EventRename, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetLidarrRename, handler)
+		})
+	}
+}
+
+// OnLidarrTrackRetag registers a Lidarr TrackRetag callback.
+func (d *Dispatcher) OnLidarrTrackRetag(handler func(LidarrTrackRetag) error) {
+	if handler != nil {
+		d.Register(starr.Lidarr, EventTrackRetag, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetLidarrTrackRetag, handler)
+		})
+	}
+}
+
+// OnLidarrTest registers a Lidarr Test callback.
+func (d *Dispatcher) OnLidarrTest(handler func(LidarrTest) error) {
+	if handler != nil {
+		d.Register(starr.Lidarr, EventTest, func(cmd *CmdEvent) error {
+			return executeGet(cmd, (*CmdEvent).GetLidarrTest, handler)
+		})
+	}
 }
