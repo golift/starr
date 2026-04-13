@@ -21,6 +21,7 @@
 - [Check out the types and methods](https://pkg.go.dev/golift.io/starr@main/starrcmd) to get that data.
 - [Webhook Connect http handlers](https://wiki.servarr.com/en/sonarr/settings#connections) are available too.
 - [Check out the types and methods](https://pkg.go.dev/golift.io/starr@main/starrconnect) to setup a webhook handler.
+  For a fuller walkthrough, see [starrconnect README](starrconnect).
 
 ## One 🌟 To Rule Them All
 
