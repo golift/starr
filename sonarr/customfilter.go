@@ -8,17 +8,13 @@ import (
 	"path"
 
 	"golift.io/starr"
+	"golift.io/starr/starrshared"
 )
 
 const bpCustomFilter = APIver + "/customfilter"
 
 // CustomFilter is the /api/v3/customfilter resource.
-type CustomFilter struct {
-	ID      int               `json:"id,omitempty"`
-	Type    string            `json:"type,omitempty"`
-	Label   string            `json:"label,omitempty"`
-	Filters []json.RawMessage `json:"filters,omitempty"`
-}
+type CustomFilter = starrshared.CustomFilter
 
 // GetCustomFilters returns all custom filters.
 func (s *Sonarr) GetCustomFilters() ([]*CustomFilter, error) {

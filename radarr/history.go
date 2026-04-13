@@ -3,6 +3,7 @@ package radarr
 import (
 	"context"
 	"fmt"
+	"net/url"
 	"path"
 	"time"
 
@@ -116,6 +117,60 @@ func (r *Radarr) GetHistoryPageContext(ctx context.Context, params *starr.PageRe
 	}
 
 	return &output, nil
+}
+
+// GetHistoryByMovieID returns history records for a movie.
+func (r *Radarr) GetHistoryByMovieID(movieID int64, eventType string, includeMovie bool) ([]*HistoryRecord, error) {
+	return r.GetHistoryByMovieIDContext(context.Background(), movieID, eventType, includeMovie)
+}
+
+// GetHistoryByMovieIDContext returns history records for a movie.
+func (r *Radarr) GetHistoryByMovieIDContext(
+	ctx context.Context, movieID int64, eventType string, includeMovie bool,
+) ([]*HistoryRecord, error) {
+	params := make(url.Values)
+	params.Set("movieId", starr.Str(movieID))
+	params.Set("includeMovie", starr.Str(includeMovie))
+
+	if eventType != "" {
+		params.Set("eventType", eventType)
+	}
+
+	var output []*HistoryRecord
+
+	req := starr.Request{URI: path.Join(bpHistory, "movie"), Query: params}
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
+	}
+
+	return output, nil
+}
+
+// GetHistorySince returns history records since a date.
+func (r *Radarr) GetHistorySince(date time.Time, eventType string, includeMovie bool) ([]*HistoryRecord, error) {
+	return r.GetHistorySinceContext(context.Background(), date, eventType, includeMovie)
+}
+
+// GetHistorySinceContext returns history records since a date.
+func (r *Radarr) GetHistorySinceContext(
+	ctx context.Context, date time.Time, eventType string, includeMovie bool,
+) ([]*HistoryRecord, error) {
+	params := make(url.Values)
+	params.Set("date", date.UTC().Format(time.RFC3339))
+	params.Set("includeMovie", starr.Str(includeMovie))
+
+	if eventType != "" {
+		params.Set("eventType", eventType)
+	}
+
+	var output []*HistoryRecord
+
+	req := starr.Request{URI: path.Join(bpHistory, "since"), Query: params}
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
+	}
+
+	return output, nil
 }
 
 // Fail marks the given history item as failed by id.

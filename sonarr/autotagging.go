@@ -8,29 +8,16 @@ import (
 	"path"
 
 	"golift.io/starr"
+	"golift.io/starr/starrshared"
 )
 
 const bpAutoTagging = APIver + "/autotagging"
 
 // AutoTagging is the /api/v3/autotagging resource.
-type AutoTagging struct {
-	ID                      int                         `json:"id,omitempty"`
-	Name                    string                      `json:"name,omitempty"`
-	RemoveTagsAutomatically bool                        `json:"removeTagsAutomatically"`
-	Tags                    []int                       `json:"tags,omitempty"`
-	Specifications          []*AutoTaggingSpecification `json:"specifications,omitempty"`
-}
+type AutoTagging = starrshared.AutoTagging
 
 // AutoTaggingSpecification is one rule inside an AutoTagging definition.
-type AutoTaggingSpecification struct {
-	ID                 int                 `json:"id,omitempty"`
-	Name               string              `json:"name,omitempty"`
-	Implementation     string              `json:"implementation,omitempty"`
-	ImplementationName string              `json:"implementationName,omitempty"`
-	Negate             bool                `json:"negate"`
-	Required           bool                `json:"required"`
-	Fields             []*starr.FieldInput `json:"fields,omitempty"`
-}
+type AutoTaggingSpecification = starrshared.AutoTaggingSpecification
 
 // GetAutoTaggings returns all auto tagging configurations.
 func (s *Sonarr) GetAutoTaggings() ([]*AutoTagging, error) {

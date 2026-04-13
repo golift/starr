@@ -79,6 +79,14 @@ type Categories struct {
 	SubCategories []*Categories `json:"subCategories"`
 }
 
+// IndexerDefaultCategory is a category from GetIndexerCategories (default category tree).
+type IndexerDefaultCategory struct {
+	ID            int64                     `json:"id"`
+	Name          string                    `json:"name,omitempty"`
+	Description   string                    `json:"description,omitempty"`
+	SubCategories []*IndexerDefaultCategory `json:"subCategories,omitempty"`
+}
+
 // GetIndexers returns all configured indexers.
 func (p *Prowlarr) GetIndexers() ([]*IndexerOutput, error) {
 	return p.GetIndexersContext(context.Background())
@@ -241,4 +249,41 @@ func (p *Prowlarr) UpdateIndexersContext(ctx context.Context, indexer *BulkIndex
 	}
 
 	return &output, nil
+}
+
+// DeleteIndexers bulk-deletes indexers.
+func (p *Prowlarr) DeleteIndexers(bulk *BulkIndexer) error {
+	return p.DeleteIndexersContext(context.Background(), bulk)
+}
+
+// DeleteIndexersContext bulk-deletes indexers.
+func (p *Prowlarr) DeleteIndexersContext(ctx context.Context, bulk *BulkIndexer) error {
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(bulk); err != nil {
+		return fmt.Errorf("json.Marshal(%s): %w", path.Join(bpIndexer, "bulk"), err)
+	}
+
+	req := starr.Request{URI: path.Join(bpIndexer, "bulk"), Body: &body}
+	if err := p.DeleteAny(ctx, req); err != nil {
+		return fmt.Errorf("api.Delete(%s): %w", &req, err)
+	}
+
+	return nil
+}
+
+// GetIndexerCategories returns the default indexer category tree.
+func (p *Prowlarr) GetIndexerCategories() ([]*IndexerDefaultCategory, error) {
+	return p.GetIndexerCategoriesContext(context.Background())
+}
+
+// GetIndexerCategoriesContext returns the default indexer category tree.
+func (p *Prowlarr) GetIndexerCategoriesContext(ctx context.Context) ([]*IndexerDefaultCategory, error) {
+	var output []*IndexerDefaultCategory
+
+	req := starr.Request{URI: path.Join(bpIndexer, "categories")}
+	if err := p.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
+	}
+
+	return output, nil
 }

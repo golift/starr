@@ -49,7 +49,7 @@ type Movie struct {
 	Added                 time.Time           `json:"added,omitzero"`
 	Ratings               starr.OpenRatings   `json:"ratings,omitempty"`
 	MovieFile             *MovieFile          `json:"movieFile,omitempty"`
-	Collection            *Collection         `json:"collection,omitempty"`
+	Collection            *MovieCollection    `json:"collection,omitempty"`
 	HasFile               bool                `json:"hasFile,omitempty"`
 	IsAvailable           bool                `json:"isAvailable,omitempty"`
 	Monitored             bool                `json:"monitored"`
@@ -58,8 +58,8 @@ type Movie struct {
 	AddOptions            *AddMovieOptions    `json:"addOptions,omitempty"` // only available upon adding a movie.
 }
 
-// Collection belongs to a Movie.
-type Collection struct {
+// MovieCollection is the collection summary embedded in a Movie payload.
+type MovieCollection struct {
 	Name   string         `json:"name"`
 	TmdbID int64          `json:"tmdbId"`
 	Images []*starr.Image `json:"images"`
@@ -291,4 +291,26 @@ func (r *Radarr) DeleteMovieContext(ctx context.Context, movieID int64, deleteFi
 	}
 
 	return nil
+}
+
+// ImportMovies imports movies from the provided resources (POST /movie/import).
+func (r *Radarr) ImportMovies(movies []*Movie) ([]*Movie, error) {
+	return r.ImportMoviesContext(context.Background(), movies)
+}
+
+// ImportMoviesContext imports movies from the provided resources.
+func (r *Radarr) ImportMoviesContext(ctx context.Context, movies []*Movie) ([]*Movie, error) {
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(movies); err != nil {
+		return nil, fmt.Errorf("json.Marshal(%s): %w", path.Join(bpMovie, "import"), err)
+	}
+
+	var output []*Movie
+
+	req := starr.Request{URI: path.Join(bpMovie, "import"), Body: &body}
+	if err := r.PostInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
+	}
+
+	return output, nil
 }

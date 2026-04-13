@@ -9,11 +9,11 @@
 
  **Go library to interact with APIs in all the Starr apps.**
 
-- [Lidarr](https://lidarr.audio) ([over 80 methods](https://pkg.go.dev/golift.io/starr@main/lidarr))
-- [Prowlarr](https://prowlarr.com) ([over 20 methods](https://pkg.go.dev/golift.io/starr@main/prowlarr))
-- [Radarr](https://radarr.video) ([over 100 methods](https://pkg.go.dev/golift.io/starr@main/radarr))
-- [Readarr](https://readarr.com) ([over 70 methods](https://pkg.go.dev/golift.io/starr@main/readarr))
-- [Sonarr](https://sonarr.tv) ([over 120 methods](https://pkg.go.dev/golift.io/starr@main/sonarr))
+- [Lidarr](https://lidarr.audio) ([view Go ref](https://pkg.go.dev/golift.io/starr@main/lidarr))
+- [Prowlarr](https://prowlarr.com) ([view Go ref](https://pkg.go.dev/golift.io/starr@main/prowlarr))
+- [Radarr](https://radarr.video) ([view Go ref](https://pkg.go.dev/golift.io/starr@main/radarr))
+- [Readarr](https://readarr.com) ([view Go ref](https://pkg.go.dev/golift.io/starr@main/readarr))
+- [Sonarr](https://sonarr.tv) ([view Go ref](https://pkg.go.dev/golift.io/starr@main/sonarr))
 
 ### Webhooks & Scripts
 
@@ -25,9 +25,9 @@
 
 ## One 🌟 To Rule Them All
 
-This library is slowly updated as new methods are needed or requested. If you have
-specific needs this library doesn't currently meet, but should or could, please
-[let us know](https://github.com/golift/starr/issues/new)!
+Pretty much all the API methods are available. Plus Connections: Webhooks and Custom Scripts.
+If you have specific needs this library doesn't currently meet,
+but should or could, please [let us know](https://github.com/golift/starr/issues/new)!
 
 This library is currently in use by:
 

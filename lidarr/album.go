@@ -241,3 +241,78 @@ func (l *Lidarr) DeleteAlbumContext(ctx context.Context, albumID int64, deleteFi
 
 	return nil
 }
+
+const bpAlbumStudio = APIver + "/albumstudio"
+
+// AlbumsMonitoredInput is the body for PUT /album/monitor.
+type AlbumsMonitoredInput struct {
+	AlbumIDs  []int64 `json:"albumIds"`
+	Monitored bool    `json:"monitored"`
+}
+
+// MonitoringOptions configures album studio monitoring.
+type MonitoringOptions struct {
+	Monitor         string   `json:"monitor,omitempty"`
+	AlbumsToMonitor []string `json:"albumsToMonitor,omitempty"`
+	Monitored       bool     `json:"monitored,omitempty"`
+}
+
+// AlbumStudioArtist is one artist block for album studio.
+type AlbumStudioArtist struct {
+	ID        int64    `json:"id"`
+	Monitored bool     `json:"monitored,omitempty"`
+	Albums    []*Album `json:"albums,omitempty"`
+}
+
+// AlbumStudioInput is the body for POST /albumstudio.
+type AlbumStudioInput struct {
+	Artist            []*AlbumStudioArtist `json:"artist,omitempty"`
+	MonitoringOptions *MonitoringOptions   `json:"monitoringOptions,omitempty"`
+	MonitorNewItems   string               `json:"monitorNewItems,omitempty"`
+}
+
+// MonitorAlbums sets monitored state for the given album IDs.
+func (l *Lidarr) MonitorAlbums(albumIDs []int64, monitored bool) ([]*Album, error) {
+	return l.MonitorAlbumsContext(context.Background(), albumIDs, monitored)
+}
+
+// MonitorAlbumsContext sets monitored state for the given album IDs.
+func (l *Lidarr) MonitorAlbumsContext(ctx context.Context, albumIDs []int64, monitored bool) ([]*Album, error) {
+	in := AlbumsMonitoredInput{AlbumIDs: albumIDs, Monitored: monitored}
+
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(&in); err != nil {
+		return nil, fmt.Errorf("json.Marshal(%s): %w", path.Join(bpAlbum, "monitor"), err)
+	}
+
+	var output []*Album
+
+	req := starr.Request{URI: path.Join(bpAlbum, "monitor"), Body: &body}
+	if err := l.PutInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
+	}
+
+	return output, nil
+}
+
+// AlbumStudio triggers album studio actions (monitoring) for artists/albums.
+func (l *Lidarr) AlbumStudio(in *AlbumStudioInput) error {
+	return l.AlbumStudioContext(context.Background(), in)
+}
+
+// AlbumStudioContext triggers album studio actions (monitoring) for artists/albums.
+func (l *Lidarr) AlbumStudioContext(ctx context.Context, in *AlbumStudioInput) error {
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(in); err != nil {
+		return fmt.Errorf("json.Marshal(%s): %w", bpAlbumStudio, err)
+	}
+
+	var output any
+
+	req := starr.Request{URI: bpAlbumStudio, Body: &body}
+	if err := l.PostInto(ctx, req, &output); err != nil {
+		return fmt.Errorf("api.Post(%s): %w", &req, err)
+	}
+
+	return nil
+}

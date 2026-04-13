@@ -5,18 +5,13 @@ import (
 	"fmt"
 
 	"golift.io/starr"
+	"golift.io/starr/starrshared"
 )
 
 const bpHealth = APIver + "/health"
 
 // Health is the /api/v3/health resource.
-type Health struct {
-	ID      int    `json:"id"`
-	Source  string `json:"source,omitempty"`
-	Type    string `json:"type,omitempty"`
-	Message string `json:"message,omitempty"`
-	WikiURL string `json:"wikiUrl,omitempty"`
-}
+type Health = starrshared.Health
 
 // GetHealth returns current health check messages.
 func (s *Sonarr) GetHealth() ([]*Health, error) {

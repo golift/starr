@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"path"
 	"time"
 
@@ -130,4 +131,24 @@ func (r *Radarr) DeleteBlockListsContext(ctx context.Context, ids []int64) error
 	}
 
 	return nil
+}
+
+// GetBlocklistByMovieID returns blocklist entries for a movie.
+func (r *Radarr) GetBlocklistByMovieID(movieID int64) ([]*BlockListRecord, error) {
+	return r.GetBlocklistByMovieIDContext(context.Background(), movieID)
+}
+
+// GetBlocklistByMovieIDContext returns blocklist entries for a movie.
+func (r *Radarr) GetBlocklistByMovieIDContext(ctx context.Context, movieID int64) ([]*BlockListRecord, error) {
+	params := make(url.Values)
+	params.Set("movieId", starr.Str(movieID))
+
+	var output []*BlockListRecord
+
+	req := starr.Request{URI: path.Join(bpBlocklist, "movie"), Query: params}
+	if err := r.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
+	}
+
+	return output, nil
 }

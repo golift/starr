@@ -14,6 +14,21 @@ import (
 
 const bpArtist = APIver + "/artist"
 
+// ArtistEditorInput is the request body for PUT and DELETE /artist/editor.
+type ArtistEditorInput struct {
+	ArtistIDs              []int           `json:"artistIds,omitempty"`
+	Monitored              *bool           `json:"monitored,omitempty"`
+	MonitorNewItems        string          `json:"monitorNewItems,omitempty"`
+	QualityProfileID       *int            `json:"qualityProfileId,omitempty"`
+	MetadataProfileID      *int            `json:"metadataProfileId,omitempty"`
+	RootFolderPath         string          `json:"rootFolderPath,omitempty"`
+	Tags                   []int           `json:"tags,omitempty"`
+	ApplyTags              starr.ApplyTags `json:"applyTags,omitempty"`
+	MoveFiles              bool            `json:"moveFiles,omitempty"`
+	DeleteFiles            bool            `json:"deleteFiles,omitempty"`
+	AddImportListExclusion bool            `json:"addImportListExclusion,omitempty"`
+}
+
 // Artist represents the /api/v1/artist endpoint, and it's part of an Album.
 type Artist struct {
 	ID                int64             `json:"id"`
@@ -158,4 +173,81 @@ func (l *Lidarr) DeleteArtistContext(ctx context.Context, artistID int64, delete
 	}
 
 	return nil
+}
+
+// LookupArtist searches for artists matching the specified search term.
+func (l *Lidarr) LookupArtist(term string) ([]*Artist, error) {
+	return l.LookupArtistContext(context.Background(), term)
+}
+
+// LookupArtistContext searches for artists matching the specified search term.
+func (l *Lidarr) LookupArtistContext(ctx context.Context, term string) ([]*Artist, error) {
+	var output []*Artist
+
+	if term == "" {
+		return output, nil
+	}
+
+	req := starr.Request{
+		URI:   path.Join(bpArtist, "lookup"),
+		Query: make(url.Values),
+	}
+	req.Query.Set("term", term)
+
+	if err := l.GetInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
+	}
+
+	return output, nil
+}
+
+// EditArtists applies bulk edits to artists.
+func (l *Lidarr) EditArtists(in *ArtistEditorInput) ([]*Artist, error) {
+	return l.EditArtistsContext(context.Background(), in)
+}
+
+// EditArtistsContext applies bulk edits to artists.
+func (l *Lidarr) EditArtistsContext(ctx context.Context, in *ArtistEditorInput) ([]*Artist, error) {
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(in); err != nil {
+		return nil, fmt.Errorf("json.Marshal(%s): %w", path.Join(bpArtist, "editor"), err)
+	}
+
+	var output []*Artist
+
+	req := starr.Request{URI: path.Join(bpArtist, "editor"), Body: &body}
+	if err := l.PutInto(ctx, req, &output); err != nil {
+		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
+	}
+
+	return output, nil
+}
+
+// DeleteArtists applies bulk deletes to artists.
+func (l *Lidarr) DeleteArtists(in *ArtistEditorInput) ([]*Artist, error) {
+	return l.DeleteArtistsContext(context.Background(), in)
+}
+
+// DeleteArtistsContext applies bulk deletes to artists.
+func (l *Lidarr) DeleteArtistsContext(ctx context.Context, in *ArtistEditorInput) ([]*Artist, error) {
+	var body bytes.Buffer
+	if err := json.NewEncoder(&body).Encode(in); err != nil {
+		return nil, fmt.Errorf("json.Marshal(%s): %w", path.Join(bpArtist, "editor"), err)
+	}
+
+	req := starr.Request{URI: starr.SetAPIPath(path.Join(bpArtist, "editor")), Body: &body}
+
+	resp, err := l.Delete(ctx, req)
+	if err != nil {
+		return nil, fmt.Errorf("api.Delete(%s): %w", &req, err)
+	}
+	defer resp.Body.Close()
+
+	var output []*Artist
+
+	if err := json.NewDecoder(resp.Body).Decode(&output); err != nil {
+		return nil, fmt.Errorf("decoding response from %s: %w", &req, err)
+	}
+
+	return output, nil
 }
