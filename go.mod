@@ -2,7 +2,7 @@ module golift.io/starr
 
 go 1.25.7
 
-toolchain go1.26.0
+toolchain go1.26.2
 
 require golang.org/x/net v0.49.0 // publicsuffix, cookiejar.
 
