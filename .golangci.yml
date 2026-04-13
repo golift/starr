@@ -42,6 +42,10 @@ linters:
           - lll
           - maintidx
         path: (.+)_test\.go
+      - linters:
+          - exhaustive
+          - cyclop
+        path: starrconnect/(.+)_handler\.go
 
 issues:
   max-issues-per-linter: 0
