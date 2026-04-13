@@ -145,9 +145,6 @@ func (c *Config) SetHeaders(req *http.Request, headers http.Header) {
 		req.Header.Set("Content-Type", "application/json")
 	}
 
-	req.Header.Set("User-Agent", "go-starr: https://"+reflect.TypeFor[Config]().PkgPath())
-	req.Header.Set("X-Api-Key", c.APIKey)
-
 	for key, vals := range headers {
 		req.Header[http.CanonicalHeaderKey(key)] = vals
 	}
@@ -157,6 +154,9 @@ func (c *Config) SetHeaders(req *http.Request, headers http.Header) {
 	} else if req.Header.Get("Accept") == "" {
 		req.Header.Set("Accept", "application/json")
 	}
+
+	req.Header.Set("User-Agent", "go-starr: https://"+reflect.TypeFor[Config]().PkgPath())
+	req.Header.Set("X-Api-Key", c.APIKey)
 }
 
 // SetAPIPath makes sure the path starts with /api.
