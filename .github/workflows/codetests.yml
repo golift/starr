@@ -27,7 +27,7 @@ jobs:
     runs-on: ${{ matrix.os }}-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-go@v6
+      - uses: actions/setup-go@v7
         with:
           go-version: stable
       - name: go-test
@@ -42,7 +42,7 @@ jobs:
     env:
       GOOS: ${{ matrix.os }}
     steps:
-      - uses: actions/setup-go@v6
+      - uses: actions/setup-go@v7
         with:
           go-version: stable
       - uses: actions/checkout@v6
@@ -60,7 +60,7 @@ jobs:
     env:
       GOOS: ${{ matrix.os }}
     steps:
-      - uses: actions/setup-go@v6
+      - uses: actions/setup-go@v7
         with:
           go-version: stable
       - uses: actions/checkout@v6
