@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/url"
 	"path"
 
 	"golift.io/starr"
@@ -120,7 +119,7 @@ func (r *Readarr) AddIndexerContext(ctx context.Context, indexer *IndexerInput) 
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpIndexer, err)
 	}
 
-	req := starr.Request{URI: bpIndexer, Body: &body, Query: url.Values{"forceSave": []string{"true"}}}
+	req := starr.Request{URI: bpIndexer, Body: &body, Query: starr.ForceSave(true)}
 	if err := r.PostInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
@@ -145,7 +144,7 @@ func (r *Readarr) UpdateIndexerContext(ctx context.Context, indexer *IndexerInpu
 	req := starr.Request{
 		URI:   path.Join(bpIndexer, starr.Str(indexer.ID)),
 		Body:  &body,
-		Query: url.Values{"forceSave": []string{starr.Str(force)}},
+		Query: starr.ForceSave(force),
 	}
 	if err := r.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)

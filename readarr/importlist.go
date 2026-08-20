@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/url"
 	"path"
 
 	"golift.io/starr"
@@ -106,7 +105,7 @@ func (r *Readarr) AddImportListContext(ctx context.Context, importList *ImportLi
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpImportList, err)
 	}
 
-	req := starr.Request{URI: bpImportList, Body: &body, Query: url.Values{"forceSave": []string{"true"}}}
+	req := starr.Request{URI: bpImportList, Body: &body, Query: starr.ForceSave(true)}
 	if err := r.PostInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
@@ -157,7 +156,7 @@ func (r *Readarr) UpdateImportListContext(
 	req := starr.Request{
 		URI:   path.Join(bpImportList, starr.Str(importList.ID)),
 		Body:  &body,
-		Query: url.Values{"forceSave": []string{starr.Str(force)}},
+		Query: starr.ForceSave(force),
 	}
 	if err := r.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)

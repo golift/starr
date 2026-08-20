@@ -112,12 +112,7 @@ func (s *Sonarr) AddMetadataContext(
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpMetadata, err)
 	}
 
-	q := url.Values{}
-	if forceSave {
-		q.Set("forceSave", "true")
-	}
-
-	req := starr.Request{URI: bpMetadata, Body: &body, Query: q}
+	req := starr.Request{URI: bpMetadata, Body: &body, Query: starr.ForceSave(forceSave)}
 	if err := s.PostInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
@@ -141,14 +136,9 @@ func (s *Sonarr) UpdateMetadataContext(
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpMetadata, err)
 	}
 
-	params := url.Values{}
-	if forceSave {
-		params.Set("forceSave", "true")
-	}
-
 	uri := path.Join(bpMetadata, starr.Str(input.ID))
 
-	req := starr.Request{URI: uri, Body: &body, Query: params}
+	req := starr.Request{URI: uri, Body: &body, Query: starr.ForceSave(forceSave)}
 	if err := s.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}

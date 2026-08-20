@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/url"
 	"path"
 
 	"golift.io/starr"
@@ -96,7 +95,7 @@ func (r *Readarr) AddDownloadClientContext(ctx context.Context,
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpDownloadClient, err)
 	}
 
-	req := starr.Request{URI: bpDownloadClient, Body: &body, Query: url.Values{"forceSave": []string{"true"}}}
+	req := starr.Request{URI: bpDownloadClient, Body: &body, Query: starr.ForceSave(true)}
 	if err := r.PostInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
@@ -146,7 +145,7 @@ func (r *Readarr) UpdateDownloadClientContext(ctx context.Context,
 	req := starr.Request{
 		URI:   path.Join(bpDownloadClient, starr.Str(client.ID)),
 		Body:  &body,
-		Query: url.Values{"forceSave": []string{starr.Str(force)}},
+		Query: starr.ForceSave(force),
 	}
 	if err := r.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
