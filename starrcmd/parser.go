@@ -26,7 +26,7 @@ func (c *CmdEvent) get(wanted Event, output any) error {
 // This does not traverse structs and will only stay on normal members.
 func fillStructFromEnv(dataStruct any) error {
 	field := reflect.ValueOf(dataStruct)
-	if field.Kind() != reflect.Ptr || field.Elem().Kind() != reflect.Struct {
+	if field.Kind() != reflect.Pointer || field.Elem().Kind() != reflect.Struct {
 		panic("yuh dun ate in sumthin bahd! This is a bug in the starrcmd library.")
 	}
 

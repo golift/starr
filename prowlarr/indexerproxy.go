@@ -104,7 +104,7 @@ func (p *Prowlarr) AddIndexerProxyContext(
 	req := starr.Request{
 		URI:   bpIndexerProxy,
 		Body:  &body,
-		Query: url.Values{"forceSave": []string{starr.Str(forceSave)}},
+		Query: starr.ForceSave(forceSave),
 	}
 	if err := p.PostInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
@@ -134,7 +134,7 @@ func (p *Prowlarr) UpdateIndexerProxyContext(
 	req := starr.Request{
 		URI:   path.Join(bpIndexerProxy, starr.Str(proxy.ID)),
 		Body:  &body,
-		Query: url.Values{"forceSave": []string{starr.Str(forceSave)}},
+		Query: starr.ForceSave(forceSave),
 	}
 	if err := p.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)

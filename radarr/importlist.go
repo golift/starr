@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/url"
 	"path"
 	"strings"
 
@@ -90,7 +89,7 @@ func (r *Radarr) AddImportListContext(ctx context.Context, list *ImportListInput
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpImportList, err)
 	}
 
-	req := starr.Request{URI: bpImportList, Body: &body, Query: url.Values{"forceSave": []string{"true"}}}
+	req := starr.Request{URI: bpImportList, Body: &body, Query: starr.ForceSave(true)}
 	if err := r.PostInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
@@ -164,7 +163,7 @@ func (r *Radarr) UpdateImportListContext(
 	req := starr.Request{
 		URI:   path.Join(bpImportList, starr.Str(importList.ID)),
 		Body:  &body,
-		Query: url.Values{"forceSave": []string{starr.Str(force)}},
+		Query: starr.ForceSave(force),
 	}
 	if err := r.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)

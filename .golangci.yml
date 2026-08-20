@@ -4,6 +4,7 @@ linters:
   disable:
     - dupl
     - exhaustruct
+    - exhaustruct_v5
     - musttag
     - nlreturn
     - tagliatelle
@@ -40,6 +41,7 @@ linters:
           - funlen
           - gochecknoglobals
           - lll
+          - goconst
           - maintidx
         path: (.+)_test\.go
       - linters:

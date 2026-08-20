@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -63,6 +64,11 @@ func ClientWithDebug(timeout time.Duration, verifySSL bool, logConfig debuglog.C
 // Deprecated: Use starr.Str() instead.
 func Itoa(v int64) string {
 	return Str(v)
+}
+
+// ForceSave returns the query values used by Starr apps to force-save a resource.
+func ForceSave(force bool) url.Values {
+	return url.Values{"forceSave": []string{Str(force)}}
 }
 
 // Str converts numbers and booleans to a string.
