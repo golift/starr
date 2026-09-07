@@ -141,7 +141,7 @@ func parseSlices(field reflect.Value, value, splitVal string) (bool, error) { //
 		for idx, val := range split {
 			if vals[idx], err = time.Parse(DateFormat, val); err != nil {
 				var err2 error // check another format if the first one fails.
-				if vals[idx], err2 = time.Parse(DateFormat2, value); err2 != nil {
+				if vals[idx], err2 = time.Parse(DateFormat2, val); err2 != nil {
 					return false, fmt.Errorf("error1: %v, error2: %w", err, err2) //nolint:errorlint
 				}
 
