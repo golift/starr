@@ -88,8 +88,8 @@ func (l *Lidarr) GetTracksByArtistContext(ctx context.Context, artistID int64) (
 }
 
 // GetTracksByAlbumRelease gets track files using an album release ID.
-func (l *Lidarr) GetTracksByAlbumRelease(albumID int64) ([]*Track, error) {
-	return l.GetTracksByAlbumContext(context.Background(), albumID)
+func (l *Lidarr) GetTracksByAlbumRelease(albumReleaseID int64) ([]*Track, error) {
+	return l.GetTracksByAlbumReleaseContext(context.Background(), albumReleaseID)
 }
 
 // GetTracksByAlbumReleaseContext gets track files using an album release ID.

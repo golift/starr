@@ -1,7 +1,6 @@
 package lidarr
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"path"
@@ -128,12 +127,10 @@ func (l *Lidarr) FailContext(ctx context.Context, historyID int64) error {
 		return fmt.Errorf("%w: invalid history ID: %d", starr.ErrRequestError, historyID)
 	}
 
-	var output any
+	var output any // any ok
 
-	req := starr.Request{
-		URI:  path.Join(bpHistory, "failed"),
-		Body: bytes.NewBufferString("id=" + starr.Str(historyID)),
-	}
+	// Strangely uses a POST without a payload.
+	req := starr.Request{URI: path.Join(bpHistory, "failed", starr.Str(historyID))}
 	if err := l.PostInto(ctx, req, &output); err != nil {
 		return fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
