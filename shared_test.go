@@ -10,6 +10,29 @@ import (
 	"golift.io/starr"
 )
 
+func TestCalendarTimeFilterFormat(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name  string
+		input time.Time
+		want  string
+	}{
+		{"midnight", time.Date(2020, 2, 20, 0, 30, 0, 0, time.UTC), "2020-02-20T00:30:00.000Z"},
+		{"afternoon", time.Date(2020, 2, 20, 15, 4, 5, 0, time.UTC), "2020-02-20T15:04:05.000Z"},
+		{"last minute", time.Date(2020, 2, 20, 23, 59, 59, 0, time.UTC), "2020-02-20T23:59:59.000Z"},
+		{"noon", time.Date(2020, 2, 20, 12, 0, 0, 0, time.UTC), "2020-02-20T12:00:00.000Z"},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			// The apps read this filter as a 24 hour clock; a 12 hour format shifts afternoon times by 12 hours.
+			assert.Equal(t, test.want, test.input.UTC().Format(starr.CalendarTimeFilterFormat))
+		})
+	}
+}
+
 func TestQueueDeleteOpts_Values(t *testing.T) {
 	t.Parallel()
 	assert := assert.New(t)

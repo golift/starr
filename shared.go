@@ -12,7 +12,8 @@ import (
 /* This file contains shared structs and constants for all the Starr apps. */
 
 // CalendarTimeFilterFormat is the Go time format the calendar expects the filter to be in.
-const CalendarTimeFilterFormat = "2006-01-02T03:04:05.000Z"
+// The apps parse this with a 24 hour clock; using "03" shifts afternoon times by 12 hours.
+const CalendarTimeFilterFormat = "2006-01-02T15:04:05.000Z"
 
 // StatusMessage represents the status of the item. All apps use this.
 type StatusMessage struct {
