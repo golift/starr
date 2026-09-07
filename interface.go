@@ -164,7 +164,7 @@ func decode(output any, resp *http.Response, err error) error {
 // GetInitializeJS returns the data from the initialize.js file.
 // If the instance requires authentication, you must call Login() before this method.
 func (c *Config) GetInitializeJS(ctx context.Context) (*InitializeJS, error) {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, c.URL+"initialize.js", nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, strings.TrimSuffix(c.URL, "/")+"/initialize.js", nil)
 	if err != nil {
 		return nil, fmt.Errorf("http.NewRequestWithContext(initialize.js): %w", err)
 	}
