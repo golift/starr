@@ -4,6 +4,7 @@ package starrcmd_test
 import (
 	"os"
 	"testing"
+	"time"
 
 	"golift.io/starr/starrcmd"
 )
@@ -261,5 +262,27 @@ func TestReadarrTrackRetag(t *testing.T) {
 		t.Fatalf("got an unexpected error: %s", err)
 	case info.AuthorName != "write here":
 		t.Fatalf("got an wrong author name? wanted: 'write here', got: %v", info.AuthorName)
+	}
+}
+
+// A Grab event can list more than one release date. Each one gets parsed on its own;
+// the 24 hour format is only reachable in the second of the two parse attempts.
+func TestReadarrGrabMultipleReleaseDates(t *testing.T) {
+	t.Setenv("readarr_eventtype", string(starrcmd.EventGrab))
+	t.Setenv("readarr_author_name", "J.K. Rowling")
+	t.Setenv("readarr_release_bookreleasedates", "07/10/2003 07:00:00,07/11/2003 08:00:00")
+
+	cmd, err := starrcmd.New()
+	if err != nil {
+		t.Fatalf("got an unexpected error: %s", err)
+	}
+
+	switch info, err := cmd.GetReadarrGrab(); {
+	case err != nil:
+		t.Fatalf("got an unexpected error: %s", err)
+	case len(info.ReleaseDates) != 2:
+		t.Fatalf("got the wrong number of release dates? %v", info.ReleaseDates)
+	case info.ReleaseDates[1] != info.ReleaseDates[0].Add(25*time.Hour):
+		t.Fatalf("got the wrong second release date? wanted 07/11/2003 08:00:00, got %v", info.ReleaseDates[1])
 	}
 }
