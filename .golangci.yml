@@ -3,13 +3,14 @@ linters:
   default: all
   disable:
     - dupl
-    - exhaustruct
+    - exhaustruct # deprecated
     - exhaustruct_v5
     - musttag
     - nlreturn
     - tagliatelle
     - noinlineerr
     - wsl
+    - gomodguard # deprecated
   settings:
     gosec:
       excludes:

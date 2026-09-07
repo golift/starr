@@ -49,6 +49,7 @@ func TestFail(t *testing.T) {
 
 	t.Run("invalidID", func(t *testing.T) {
 		t.Parallel()
+
 		client := lidarr.New(starr.New("mockAPIkey", "http://127.0.0.1", 0))
 		err := client.Fail(0)
 		require.ErrorIs(t, err, starr.ErrRequestError, "invalid history ID should not hit the API")
