@@ -1,6 +1,7 @@
 package radarr_test
 
 import (
+	"encoding/json"
 	"net/http"
 	"path"
 	"testing"
@@ -461,4 +462,18 @@ func TestDeleteNotification(t *testing.T) {
 			require.ErrorIs(t, err, test.WithError, "error is not the same as expected")
 		})
 	}
+}
+
+// The API returns camelCase property names. Go matches JSON keys case-insensitively,
+// so a typo in this direction is invisible while decoding but wrong while encoding.
+func TestNotificationOutputFieldNames(t *testing.T) {
+	t.Parallel()
+
+	data, err := json.Marshal(&radarr.NotificationOutput{})
+	require.NoError(t, err)
+
+	var fields map[string]any
+
+	require.NoError(t, json.Unmarshal(data, &fields))
+	assert.Contains(t, fields, "supportsOnMovieDelete")
 }

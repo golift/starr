@@ -51,7 +51,7 @@ type NotificationOutput struct {
 	SupportsOnUpgrade                   bool                 `json:"supportsOnUpgrade"`
 	SupportsOnRename                    bool                 `json:"supportsOnRename"`
 	SupportsOnMovieAdded                bool                 `json:"supportsOnMovieAdded"`
-	SupportsOnMovieDelete               bool                 `json:"SupportsOnMovieDelete"`
+	SupportsOnMovieDelete               bool                 `json:"supportsOnMovieDelete"`
 	SupportsOnMovieFileDelete           bool                 `json:"supportsOnMovieFileDelete"`
 	SupportsOnMovieFileDeleteForUpgrade bool                 `json:"supportsOnMovieFileDeleteForUpgrade"`
 	SupportsOnHealthIssue               bool                 `json:"supportsOnHealthIssue"`
