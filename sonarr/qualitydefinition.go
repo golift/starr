@@ -71,7 +71,7 @@ func (s *Sonarr) UpdateQualityDefinitionContext(
 	var output QualityDefinition
 
 	var body bytes.Buffer
-	if err := json.NewEncoder(&body).Encode(definition); err != nil {
+	if err := json.NewEncoder(&body).Encode(definition.writeBody()); err != nil {
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpQualityDefinition, err)
 	}
 
@@ -96,7 +96,7 @@ func (s *Sonarr) UpdateQualityDefinitionsContext(
 	var output []*QualityDefinition
 
 	var body bytes.Buffer
-	if err := json.NewEncoder(&body).Encode(definitions); err != nil {
+	if err := json.NewEncoder(&body).Encode(qualityDefinitionsWrite(definitions)); err != nil {
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpQualityDefinition, err)
 	}
 
@@ -106,4 +106,35 @@ func (s *Sonarr) UpdateQualityDefinitionsContext(
 	}
 
 	return output, nil
+}
+
+// qualityDefinitionWrite is the body sent on update.
+// Size fields are omitted because a v3 update that includes them overwrites every profile.
+type qualityDefinitionWrite struct {
+	ID      int64              `json:"id,omitempty"`
+	Weight  int64              `json:"weight"`
+	Title   string             `json:"title"`
+	Quality *starr.BaseQuality `json:"quality"`
+}
+
+func (d *QualityDefinition) writeBody() *qualityDefinitionWrite {
+	if d == nil {
+		return nil
+	}
+
+	return &qualityDefinitionWrite{
+		ID:      d.ID,
+		Weight:  d.Weight,
+		Title:   d.Title,
+		Quality: d.Quality,
+	}
+}
+
+func qualityDefinitionsWrite(definitions []*QualityDefinition) []*qualityDefinitionWrite {
+	bodies := make([]*qualityDefinitionWrite, len(definitions))
+	for idx, definition := range definitions {
+		bodies[idx] = definition.writeBody()
+	}
+
+	return bodies
 }

@@ -14,16 +14,22 @@ import (
 const bpReleaseProfile = APIver + "/releaseProfile"
 
 // ReleaseProfile defines a release profile's data from Sonarr.
+// IndexerIDs empty means all indexers. Zero is never a valid indexer id.
 type ReleaseProfile struct {
-	Name            string            `json:"name"`
-	Enabled         bool              `json:"enabled"`
-	Required        []string          `json:"required"`
-	Ignored         []string          `json:"ignored"`
-	IndexerID       int64             `json:"indexerId"`
-	Tags            []int             `json:"tags"`
-	ID              int64             `json:"id,omitempty"`
-	IncPrefOnRename *bool             `json:"includePreferredWhenRenaming,omitempty"` // V3 only, removed from v4.
-	Preferred       []*starr.KeyValue `json:"preferred,omitempty"`                    // V3 only, removed from v4.
+	Name                                   string            `json:"name"`
+	Enabled                                bool              `json:"enabled"`
+	AirDateRestriction                     bool              `json:"airDateRestriction,omitempty"`
+	AllowSeasonPackWithoutAllEpisodesAired bool              `json:"allowSeasonPackWithoutAllEpisodesAired,omitempty"`
+	Required                               []string          `json:"required"`
+	Ignored                                []string          `json:"ignored"`
+	IndexerID                              int64             `json:"indexerId"`
+	IndexerIDs                             []int64           `json:"indexerIds,omitempty"`
+	AirDateGracePeriod                     int               `json:"airDateGracePeriod,omitempty"`
+	Tags                                   []int             `json:"tags"`
+	ExcludedTags                           []int             `json:"excludedTags,omitempty"`
+	ID                                     int64             `json:"id,omitempty"`
+	IncPrefOnRename                        *bool             `json:"includePreferredWhenRenaming,omitempty"` // v3 only.
+	Preferred                              []*starr.KeyValue `json:"preferred,omitempty"`                    // v3 only.
 }
 
 // GetReleaseProfiles returns all configured release profiles.
@@ -69,12 +75,12 @@ func (s *Sonarr) AddReleaseProfile(profile *ReleaseProfile) (*ReleaseProfile, er
 func (s *Sonarr) AddReleaseProfileContext(ctx context.Context, profile *ReleaseProfile) (*ReleaseProfile, error) {
 	var output ReleaseProfile
 
-	var body bytes.Buffer
-	if err := json.NewEncoder(&body).Encode(profile); err != nil {
-		return nil, fmt.Errorf("json.Marshal(%s): %w", bpReleaseProfile, err)
+	body, err := s.releaseProfileBody(profile)
+	if err != nil {
+		return nil, err
 	}
 
-	req := starr.Request{URI: bpReleaseProfile, Body: &body}
+	req := starr.Request{URI: bpReleaseProfile, Body: body}
 	if err := s.PostInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Post(%s): %w", &req, err)
 	}
@@ -91,12 +97,12 @@ func (s *Sonarr) UpdateReleaseProfile(profile *ReleaseProfile) (*ReleaseProfile,
 func (s *Sonarr) UpdateReleaseProfileContext(ctx context.Context, profile *ReleaseProfile) (*ReleaseProfile, error) {
 	var output ReleaseProfile
 
-	var body bytes.Buffer
-	if err := json.NewEncoder(&body).Encode(profile); err != nil {
-		return nil, fmt.Errorf("json.Marshal(%s): %w", bpReleaseProfile, err)
+	body, err := s.releaseProfileBody(profile)
+	if err != nil {
+		return nil, err
 	}
 
-	req := starr.Request{URI: path.Join(bpReleaseProfile, starr.Str(profile.ID)), Body: &body}
+	req := starr.Request{URI: path.Join(bpReleaseProfile, starr.Str(profile.ID)), Body: body}
 	if err := s.PutInto(ctx, req, &output); err != nil {
 		return nil, fmt.Errorf("api.Put(%s): %w", &req, err)
 	}
@@ -117,4 +123,137 @@ func (s *Sonarr) DeleteReleaseProfileContext(ctx context.Context, profileID int6
 	}
 
 	return nil
+}
+
+func (s *Sonarr) releaseProfileBody(profile *ReleaseProfile) (*bytes.Buffer, error) {
+	var (
+		body    bytes.Buffer
+		payload any = profile.v3Payload()
+	)
+
+	if s.APIVersion() == APIv5 {
+		payload = profile.v5Payload()
+	}
+
+	if err := json.NewEncoder(&body).Encode(payload); err != nil {
+		return nil, fmt.Errorf("json.Marshal(%s): %w", bpReleaseProfile, err)
+	}
+
+	return &body, nil
+}
+
+// UnmarshalJSON accepts indexerId and indexerIds. Zero is dropped so "all indexers" stays empty.
+func (p *ReleaseProfile) UnmarshalJSON(data []byte) error {
+	type profile ReleaseProfile
+
+	var raw profile
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return fmt.Errorf("json.Unmarshal(releaseProfile): %w", err)
+	}
+
+	*p = ReleaseProfile(raw)
+	p.IndexerIDs = normalizeIndexerIDs(p.IndexerIDs, p.IndexerID)
+
+	return nil
+}
+
+// v3Payload sends indexerId and keeps the v3-only preferred fields.
+func (p *ReleaseProfile) v3Payload() *ReleaseProfile {
+	if p == nil {
+		return nil
+	}
+
+	clone := *p
+	clone.IndexerIDs = nil
+
+	return &clone
+}
+
+// v5Payload sends indexerIds and never indexerId. An empty list means all indexers.
+func (p *ReleaseProfile) v5Payload() releaseProfileV5 {
+	if p == nil {
+		return releaseProfileV5{
+			IndexerIDs:   []int64{},
+			Required:     []string{},
+			Ignored:      []string{},
+			Tags:         []int{},
+			ExcludedTags: []int{},
+		}
+	}
+
+	return releaseProfileV5{
+		Name:                                   p.Name,
+		Enabled:                                p.Enabled,
+		Required:                               nonNilStrings(p.Required),
+		Ignored:                                nonNilStrings(p.Ignored),
+		IndexerIDs:                             p.indexerIDs(),
+		Tags:                                   nonNilInts(p.Tags),
+		ExcludedTags:                           nonNilInts(p.ExcludedTags),
+		ID:                                     p.ID,
+		AirDateRestriction:                     p.AirDateRestriction,
+		AirDateGracePeriod:                     p.AirDateGracePeriod,
+		AllowSeasonPackWithoutAllEpisodesAired: p.AllowSeasonPackWithoutAllEpisodesAired,
+	}
+}
+
+func (p *ReleaseProfile) indexerIDs() []int64 {
+	if p == nil {
+		return []int64{}
+	}
+
+	ids := normalizeIndexerIDs(p.IndexerIDs, p.IndexerID)
+	if len(ids) == 0 {
+		return []int64{}
+	}
+
+	return ids
+}
+
+type releaseProfileV5 struct {
+	Name                                   string   `json:"name"`
+	Enabled                                bool     `json:"enabled"`
+	AirDateRestriction                     bool     `json:"airDateRestriction"`
+	AllowSeasonPackWithoutAllEpisodesAired bool     `json:"allowSeasonPackWithoutAllEpisodesAired"`
+	Required                               []string `json:"required"`
+	Ignored                                []string `json:"ignored"`
+	IndexerIDs                             []int64  `json:"indexerIds"`
+	AirDateGracePeriod                     int      `json:"airDateGracePeriod"`
+	Tags                                   []int    `json:"tags"`
+	ExcludedTags                           []int    `json:"excludedTags"`
+	ID                                     int64    `json:"id,omitempty"`
+}
+
+func normalizeIndexerIDs(ids []int64, single int64) []int64 {
+	cleaned := make([]int64, 0, len(ids))
+	for _, id := range ids {
+		if id > 0 {
+			cleaned = append(cleaned, id)
+		}
+	}
+
+	if len(cleaned) == 0 && single > 0 {
+		return []int64{single}
+	}
+
+	if len(cleaned) == 0 {
+		return nil
+	}
+
+	return cleaned
+}
+
+func nonNilInts(vals []int) []int {
+	if vals == nil {
+		return []int{}
+	}
+
+	return vals
+}
+
+func nonNilStrings(vals []string) []string {
+	if vals == nil {
+		return []string{}
+	}
+
+	return vals
 }

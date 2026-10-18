@@ -9,12 +9,17 @@ import (
 	"golift.io/starr"
 )
 
-// APIver is the Sonarr API version supported by this library.
+// APIver is the default Sonarr API version. New stays on v3 so older servers keep working.
 const APIver = "v3"
+
+// APIv5 is the Sonarr 5 API version used by NewV5, WithAPI, and ForServer.
+const APIv5 = "v5"
 
 // Sonarr contains all the methods to interact with a Sonarr server.
 type Sonarr struct {
 	starr.APIer `json:"-"`
+
+	apiVer string
 }
 
 // Filter values are integers. Given names for ease of discovery.
@@ -40,7 +45,7 @@ func New(config *starr.Config) *Sonarr {
 
 	config.URL = strings.TrimSuffix(config.URL, "/")
 
-	return &Sonarr{APIer: config}
+	return &Sonarr{APIer: config, apiVer: APIver}
 }
 
 // bp means base path. You'll see it a lot in these files.

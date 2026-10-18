@@ -160,3 +160,210 @@ func (s *Sonarr) GrabReleaseContext(ctx context.Context, release *Release) (*Rel
 
 	return &output, nil
 }
+
+// UnmarshalJSON accepts a flat v3 release and the nested v5 release resource.
+func (r *Release) UnmarshalJSON(data []byte) error {
+	if releaseIsV5(data) {
+		decoded, err := releaseFromV5(data)
+		if err != nil {
+			return err
+		}
+
+		*r = decoded
+
+		return nil
+	}
+
+	return r.unmarshalFlat(data)
+}
+
+func (r *Release) unmarshalFlat(data []byte) error {
+	type flat Release
+
+	var decoded flat
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return fmt.Errorf("json.Unmarshal(release): %w", err)
+	}
+
+	*r = Release(decoded)
+
+	return nil
+}
+
+func releaseIsV5(data []byte) bool {
+	var probe struct {
+		Release json.RawMessage `json:"release"`
+	}
+
+	if err := json.Unmarshal(data, &probe); err != nil {
+		return false
+	}
+
+	raw := bytes.TrimSpace(probe.Release)
+
+	return len(raw) > 0 && raw[0] == '{'
+}
+
+func releaseFromV5(data []byte) (Release, error) {
+	var body v5Release
+	if err := json.Unmarshal(data, &body); err != nil {
+		return Release{}, fmt.Errorf("json.Unmarshal(release): %w", err)
+	}
+
+	return body.toRelease(), nil
+}
+
+type v5Release struct {
+	ID                           int64                 `json:"id"`
+	QualityWeight                int64                 `json:"qualityWeight"`
+	Languages                    []*starr.Value        `json:"languages"`
+	MappedSeasonNumber           int                   `json:"mappedSeasonNumber"`
+	MappedEpisodeNumbers         []int                 `json:"mappedEpisodeNumbers"`
+	MappedAbsoluteEpisodeNumbers []int                 `json:"mappedAbsoluteEpisodeNumbers"`
+	MappedSeriesID               int64                 `json:"mappedSeriesId"`
+	MappedEpisodeInfo            []*ReleaseEpisodeInfo `json:"mappedEpisodeInfo"`
+	EpisodeRequested             bool                  `json:"episodeRequested"`
+	DownloadAllowed              bool                  `json:"downloadAllowed"`
+	ReleaseWeight                int64                 `json:"releaseWeight"`
+	CustomFormats                []*CustomFormatOutput `json:"customFormats"`
+	CustomFormatScore            int64                 `json:"customFormatScore"`
+	SceneMapping                 ReleaseSceneMapping   `json:"sceneMapping"`
+	Release                      v5ReleaseInfo         `json:"release"`
+	ParsedInfo                   v5ParsedEpisode       `json:"parsedInfo"`
+	Decision                     v5ReleaseDecision     `json:"decision"`
+}
+
+type v5ReleaseInfo struct {
+	GUID         string         `json:"guid"`
+	Age          int64          `json:"age"`
+	AgeHours     float64        `json:"ageHours"`
+	AgeMinutes   float64        `json:"ageMinutes"`
+	Size         int64          `json:"size"`
+	IndexerID    int64          `json:"indexerId"`
+	Indexer      string         `json:"indexer"`
+	Title        string         `json:"title"`
+	TvdbID       int64          `json:"tvdbId"`
+	TvRageID     int64          `json:"tvRageId"`
+	PublishDate  time.Time      `json:"publishDate"`
+	CommentURL   string         `json:"commentUrl"`
+	DownloadURL  string         `json:"downloadUrl"`
+	InfoURL      string         `json:"infoUrl"`
+	MagnetURL    string         `json:"magnetUrl"`
+	InfoHash     string         `json:"infoHash"`
+	Seeders      int            `json:"seeders"`
+	Leechers     int            `json:"leechers"`
+	Protocol     starr.Protocol `json:"protocol"`
+	IndexerFlags int64          `json:"indexerFlags"`
+}
+
+type v5ParsedEpisode struct {
+	Quality                starr.Quality `json:"quality"`
+	SeasonNumber           int           `json:"seasonNumber"`
+	EpisodeNumbers         []int         `json:"episodeNumbers"`
+	AbsoluteEpisodeNumbers []int         `json:"absoluteEpisodeNumbers"`
+	SeriesTitle            string        `json:"seriesTitle"`
+	ReleaseGroup           string        `json:"releaseGroup"`
+	FullSeason             bool          `json:"fullSeason"`
+	AirDate                string        `json:"airDate"`
+	ReleaseHash            string        `json:"releaseHash"`
+	IsDaily                bool          `json:"isDaily"`
+	IsAbsoluteNumbering    bool          `json:"isAbsoluteNumbering"`
+	Special                bool          `json:"special"`
+}
+
+type v5ReleaseDecision struct {
+	Approved            bool            `json:"approved"`
+	TemporarilyRejected bool            `json:"temporarilyRejected"`
+	Rejected            bool            `json:"rejected"`
+	Rejections          json.RawMessage `json:"rejections"`
+}
+
+func (body v5Release) toRelease() Release {
+	info := body.Release
+	parsed := body.ParsedInfo
+
+	return Release{
+		ID:                           body.ID,
+		GUID:                         info.GUID,
+		Quality:                      parsed.Quality,
+		QualityWeight:                body.QualityWeight,
+		Age:                          info.Age,
+		AgeHours:                     info.AgeHours,
+		AgeMinutes:                   info.AgeMinutes,
+		Size:                         info.Size,
+		IndexerID:                    info.IndexerID,
+		Indexer:                      info.Indexer,
+		ReleaseGroup:                 parsed.ReleaseGroup,
+		ReleaseHash:                  parsed.ReleaseHash,
+		Title:                        info.Title,
+		FullSeason:                   parsed.FullSeason,
+		SeasonNumber:                 parsed.SeasonNumber,
+		Languages:                    body.Languages,
+		AirDate:                      parsed.AirDate,
+		SeriesTitle:                  parsed.SeriesTitle,
+		EpisodeNumbers:               parsed.EpisodeNumbers,
+		AbsoluteEpisodeNumbers:       parsed.AbsoluteEpisodeNumbers,
+		MappedSeasonNumber:           body.MappedSeasonNumber,
+		MappedEpisodeNumbers:         body.MappedEpisodeNumbers,
+		MappedAbsoluteEpisodeNumbers: body.MappedAbsoluteEpisodeNumbers,
+		MappedSeriesID:               body.MappedSeriesID,
+		MappedEpisodeInfo:            body.MappedEpisodeInfo,
+		Approved:                     body.Decision.Approved,
+		TemporarilyRejected:          body.Decision.TemporarilyRejected,
+		Rejected:                     body.Decision.Rejected,
+		TvdbID:                       info.TvdbID,
+		TvRageID:                     info.TvRageID,
+		Rejections:                   rejectionMessages(body.Decision.Rejections),
+		PublishDate:                  info.PublishDate,
+		CommentURL:                   info.CommentURL,
+		DownloadURL:                  info.DownloadURL,
+		InfoURL:                      info.InfoURL,
+		EpisodeRequested:             body.EpisodeRequested,
+		DownloadAllowed:              body.DownloadAllowed,
+		ReleaseWeight:                body.ReleaseWeight,
+		CustomFormats:                body.CustomFormats,
+		CustomFormatScore:            body.CustomFormatScore,
+		SceneMapping:                 body.SceneMapping,
+		MagnetURL:                    info.MagnetURL,
+		InfoHash:                     info.InfoHash,
+		Seeders:                      info.Seeders,
+		Leechers:                     info.Leechers,
+		Protocol:                     info.Protocol,
+		IndexerFlags:                 info.IndexerFlags,
+		IsDaily:                      parsed.IsDaily,
+		IsAbsoluteNumbering:          parsed.IsAbsoluteNumbering,
+		Special:                      parsed.Special,
+	}
+}
+
+func rejectionMessages(raw json.RawMessage) []string {
+	raw = bytes.TrimSpace(raw)
+	if len(raw) == 0 || bytes.Equal(raw, []byte("null")) {
+		return nil
+	}
+
+	var texts []string
+	if err := json.Unmarshal(raw, &texts); err == nil {
+		return texts
+	}
+
+	var objects []struct {
+		Message string `json:"message"`
+		Reason  string `json:"reason"`
+	}
+	if err := json.Unmarshal(raw, &objects); err != nil {
+		return nil
+	}
+
+	messages := make([]string, 0, len(objects))
+	for _, object := range objects {
+		switch {
+		case object.Message != "":
+			messages = append(messages, object.Message)
+		case object.Reason != "":
+			messages = append(messages, object.Reason)
+		}
+	}
+
+	return messages
+}

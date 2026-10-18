@@ -35,6 +35,14 @@ type AddSeriesInput struct {
 	Tags              []int          `json:"tags,omitempty"`
 	Seasons           []*Season      `json:"seasons,omitempty"`
 	Images            []*starr.Image `json:"images,omitempty"`
+	SeasonType        string         `json:"seasonType,omitempty"`
+	OriginalCountry   string         `json:"originalCountry,omitempty"`
+	MonitorNewItems   string         `json:"monitorNewItems,omitempty"`
+	TmdbID            int64          `json:"tmdbId,omitempty"`
+	Language          *starr.Value   `json:"language,omitempty"`
+	OriginalLanguage  *starr.Value   `json:"originalLanguage,omitempty"`
+	MalIDs            []int64        `json:"malIds,omitempty"`
+	AniListIDs        []int64        `json:"aniListIds,omitempty"`
 	// to be used only on POST, not for PUT
 	AddOptions *AddSeriesOptions `json:"addOptions,omitempty"`
 }
@@ -77,6 +85,14 @@ type Series struct {
 	AlternateTitles   []*AlternateTitle `json:"alternateTitles,omitempty"`
 	Seasons           []*Season         `json:"seasons,omitempty"`
 	Images            []*starr.Image    `json:"images,omitempty"`
+	SeasonType        string            `json:"seasonType,omitempty"`
+	OriginalCountry   string            `json:"originalCountry,omitempty"`
+	MonitorNewItems   string            `json:"monitorNewItems,omitempty"`
+	TmdbID            int64             `json:"tmdbId,omitempty"`
+	Language          *starr.Value      `json:"language,omitempty"`
+	OriginalLanguage  *starr.Value      `json:"originalLanguage,omitempty"`
+	MalIDs            []int64           `json:"malIds,omitempty"`
+	AniListIDs        []int64           `json:"aniListIds,omitempty"`
 }
 
 // AddSeriesOptions is part of AddSeriesInput.
@@ -207,7 +223,7 @@ func (s *Sonarr) AddSeries(series *AddSeriesInput) (*Series, error) {
 // AddSeriesContext adds a new series to Sonarr.
 func (s *Sonarr) AddSeriesContext(ctx context.Context, series *AddSeriesInput) (*Series, error) {
 	var body bytes.Buffer
-	if err := json.NewEncoder(&body).Encode(series); err != nil {
+	if err := json.NewEncoder(&body).Encode(s.seriesCreateBody(series)); err != nil {
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpSeries, err)
 	}
 
@@ -302,4 +318,29 @@ func (s *Sonarr) DeleteSeriesContext(ctx context.Context, seriesID int, deleteFi
 // DeleteSeriesDefault defines the behaviour to set deleteFiles to true and addImportListExclusion to false.
 func (s *Sonarr) DeleteSeriesDefault(seriesID int) error {
 	return s.DeleteSeriesContext(context.Background(), seriesID, true, false)
+}
+
+const (
+	seasonTypeOfficial  = "official"
+	englishLanguageName = "English"
+	englishLanguageID   = 1
+)
+
+// seriesCreateBody defaults seasonType and language on Sonarr 5 creates only.
+// Updates must keep whatever the caller sent, including an empty language.
+func (s *Sonarr) seriesCreateBody(series *AddSeriesInput) *AddSeriesInput {
+	if s.APIVersion() != APIv5 || series == nil {
+		return series
+	}
+
+	clone := *series
+	if clone.SeasonType == "" {
+		clone.SeasonType = seasonTypeOfficial
+	}
+
+	if clone.Language == nil {
+		clone.Language = &starr.Value{ID: englishLanguageID, Name: englishLanguageName}
+	}
+
+	return &clone
 }
