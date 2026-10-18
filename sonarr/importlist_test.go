@@ -15,6 +15,7 @@ import (
 const importListResponseBody = `{
 	"enableAutomaticAdd": false,
 	"shouldMonitor": "all",
+	"tagExisting": "sync",
 	"rootFolderPath": "/config",
 	"qualityProfileId": 1,
 	"seriesType": "standard",
@@ -49,9 +50,9 @@ const importListResponseBody = `{
 	"id": 4
   }`
 
-const addImportList = `{"enableAutomaticAdd":false,"seasonFolder":true,"listOrder":0,"qualityProfileId":1,"configContract":"PlexListSettings","implementation":"PlexImport","name":"PlexImport","rootFolderPath":"/config","seriesType":"standard","shouldMonitor":"all","fields":[{"name":"accessToken","value":"test"}]}`
+const addImportList = `{"enableAutomaticAdd":false,"seasonFolder":true,"listOrder":0,"qualityProfileId":1,"configContract":"PlexListSettings","implementation":"PlexImport","name":"PlexImport","rootFolderPath":"/config","seriesType":"standard","shouldMonitor":"all","tagExisting":"sync","fields":[{"name":"accessToken","value":"test"}]}`
 
-const updateImportList = `{"enableAutomaticAdd":false,"seasonFolder":true,"listOrder":0,"qualityProfileId":1,"id":4,"configContract":"PlexListSettings","implementation":"PlexImport","name":"PlexImport","rootFolderPath":"/config","seriesType":"standard","shouldMonitor":"all","fields":[{"name":"accessToken","value":"test"}]}`
+const updateImportList = `{"enableAutomaticAdd":false,"seasonFolder":true,"listOrder":0,"qualityProfileId":1,"id":4,"configContract":"PlexListSettings","implementation":"PlexImport","name":"PlexImport","rootFolderPath":"/config","seriesType":"standard","shouldMonitor":"all","tagExisting":"sync","fields":[{"name":"accessToken","value":"test"}]}`
 
 func TestGetImportLists(t *testing.T) {
 	t.Parallel()
@@ -69,6 +70,7 @@ func TestGetImportLists(t *testing.T) {
 				{
 					EnableAutomaticAdd: false,
 					ShouldMonitor:      "all",
+					TagExisting:        "sync",
 					RootFolderPath:     "/config",
 					QualityProfileID:   1,
 					SeriesType:         "standard",
@@ -143,6 +145,7 @@ func TestGetImportList(t *testing.T) {
 			WithResponse: &sonarr.ImportListOutput{
 				EnableAutomaticAdd: false,
 				ShouldMonitor:      "all",
+				TagExisting:        "sync",
 				RootFolderPath:     "/config",
 				QualityProfileID:   1,
 				SeriesType:         "standard",
@@ -213,6 +216,7 @@ func TestAddImportList(t *testing.T) {
 			WithRequest: &sonarr.ImportListInput{
 				EnableAutomaticAdd: false,
 				ShouldMonitor:      "all",
+				TagExisting:        "sync",
 				RootFolderPath:     "/config",
 				QualityProfileID:   1,
 				SeriesType:         "standard",
@@ -233,6 +237,7 @@ func TestAddImportList(t *testing.T) {
 			WithResponse: &sonarr.ImportListOutput{
 				EnableAutomaticAdd: false,
 				ShouldMonitor:      "all",
+				TagExisting:        "sync",
 				RootFolderPath:     "/config",
 				QualityProfileID:   1,
 				SeriesType:         "standard",
@@ -276,6 +281,7 @@ func TestAddImportList(t *testing.T) {
 			WithRequest: &sonarr.ImportListInput{
 				EnableAutomaticAdd: false,
 				ShouldMonitor:      "all",
+				TagExisting:        "sync",
 				RootFolderPath:     "/config",
 				QualityProfileID:   1,
 				SeriesType:         "standard",
@@ -322,6 +328,7 @@ func TestUpdateImportList(t *testing.T) {
 			WithRequest: &sonarr.ImportListInput{
 				EnableAutomaticAdd: false,
 				ShouldMonitor:      "all",
+				TagExisting:        "sync",
 				RootFolderPath:     "/config",
 				QualityProfileID:   1,
 				SeriesType:         "standard",
@@ -343,6 +350,7 @@ func TestUpdateImportList(t *testing.T) {
 			WithResponse: &sonarr.ImportListOutput{
 				EnableAutomaticAdd: false,
 				ShouldMonitor:      "all",
+				TagExisting:        "sync",
 				RootFolderPath:     "/config",
 				QualityProfileID:   1,
 				SeriesType:         "standard",
@@ -386,6 +394,7 @@ func TestUpdateImportList(t *testing.T) {
 			WithRequest: &sonarr.ImportListInput{
 				EnableAutomaticAdd: false,
 				ShouldMonitor:      "all",
+				TagExisting:        "sync",
 				RootFolderPath:     "/config",
 				QualityProfileID:   1,
 				SeriesType:         "standard",
