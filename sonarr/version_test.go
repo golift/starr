@@ -86,7 +86,7 @@ func TestV5Paths(t *testing.T) {
 	assert.Equal(t, "/ping", gotPath)
 }
 
-func TestV3QualityDefinitionOmitsSizes(t *testing.T) {
+func TestV3QualityDefinitionSendsSizes(t *testing.T) {
 	t.Parallel()
 
 	var gotPath, gotBody string
@@ -100,19 +100,92 @@ func TestV3QualityDefinitionOmitsSizes(t *testing.T) {
 		gotBody = string(body)
 
 		writer.WriteHeader(http.StatusOK)
+
+		if req.Method == http.MethodPut && req.URL.Path != "/api/v3/qualityDefinition/update" {
+			_, _ = writer.Write([]byte(`{}`))
+			return
+		}
+
 		_, _ = writer.Write([]byte(`[]`))
 	}))
 	t.Cleanup(server.Close)
 
 	client := sonarr.New(starr.New("k", server.URL, 0))
-	_, err := client.UpdateQualityDefinitions([]*sonarr.QualityDefinition{{
-		ID:      3,
-		Title:   "HDTV",
-		MinSize: 1,
-	}})
+	definition := &sonarr.QualityDefinition{ID: 3, Title: "HDTV", MinSize: 1, MaxSize: 2, PrefSize: 1.5}
+
+	_, err := client.UpdateQualityDefinitions([]*sonarr.QualityDefinition{definition})
 	require.NoError(t, err)
 	assert.Equal(t, "/api/v3/qualityDefinition/update", gotPath)
+	assert.Contains(t, gotBody, `"minSize":1`)
+	assert.Contains(t, gotBody, `"maxSize":2`)
+	assert.Contains(t, gotBody, `"preferredSize":1.5`)
+
+	_, err = client.UpdateQualityDefinition(definition)
+	require.NoError(t, err)
+	assert.Equal(t, "/api/v3/qualityDefinition/3", gotPath)
+	assert.Contains(t, gotBody, `"minSize":1`)
+	assert.Contains(t, gotBody, `"maxSize":2`)
+	assert.Contains(t, gotBody, `"preferredSize":1.5`)
+}
+
+func TestV5QualityDefinitionOmitsSizes(t *testing.T) {
+	t.Parallel()
+
+	var gotPath, gotBody string
+
+	server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, req *http.Request) {
+		gotPath = req.URL.RequestURI()
+
+		body, err := io.ReadAll(req.Body)
+		assert.NoError(t, err)
+
+		gotBody = string(body)
+
+		writer.WriteHeader(http.StatusOK)
+
+		if req.URL.Path == "/api/v5/qualityDefinition/3" {
+			_, _ = writer.Write([]byte(`{}`))
+			return
+		}
+
+		_, _ = writer.Write([]byte(`[]`))
+	}))
+	t.Cleanup(server.Close)
+
+	client := sonarr.NewV5(starr.New("k", server.URL, 0))
+	definition := &sonarr.QualityDefinition{ID: 3, Title: "HDTV", MinSize: 1, MaxSize: 2, PrefSize: 1.5}
+
+	_, err := client.UpdateQualityDefinition(definition)
+	require.NoError(t, err)
+	assert.Equal(t, "/api/v5/qualityDefinition/3", gotPath)
 	assert.NotContains(t, gotBody, "minSize")
+	assert.NotContains(t, gotBody, "maxSize")
+	assert.NotContains(t, gotBody, "preferredSize")
+	assert.Contains(t, gotBody, `"title":"HDTV"`)
+}
+
+func TestQualityProfileItemSizesRoundTrip(t *testing.T) {
+	t.Parallel()
+
+	const payload = `{"name":"HD","allowed":true,"minSize":1.5,"maxSize":9,"preferredSize":4.25,` +
+		`"quality":{"id":4,"name":"HDTV-720p"}}`
+
+	var item starr.Quality
+	require.NoError(t, json.Unmarshal([]byte(payload), &item))
+	require.NotNil(t, item.MinSize)
+	require.NotNil(t, item.MaxSize)
+	require.NotNil(t, item.PreferredSize)
+	assert.InDelta(t, 1.5, *item.MinSize, 0)
+	assert.InDelta(t, 9.0, *item.MaxSize, 0)
+	assert.InDelta(t, 4.25, *item.PreferredSize, 0)
+
+	out, err := json.Marshal(&item)
+	require.NoError(t, err)
+	assert.JSONEq(t, payload, string(out))
+
+	bare, err := json.Marshal(&starr.Quality{Name: "x"})
+	require.NoError(t, err)
+	assert.NotContains(t, string(bare), "Size")
 }
 
 func TestV5QueueDeleteQuery(t *testing.T) {
