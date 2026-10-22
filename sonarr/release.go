@@ -257,18 +257,19 @@ type v5ReleaseInfo struct {
 }
 
 type v5ParsedEpisode struct {
-	Quality                starr.Quality `json:"quality"`
-	SeasonNumber           int           `json:"seasonNumber"`
-	EpisodeNumbers         []int         `json:"episodeNumbers"`
-	AbsoluteEpisodeNumbers []int         `json:"absoluteEpisodeNumbers"`
-	SeriesTitle            string        `json:"seriesTitle"`
-	ReleaseGroup           string        `json:"releaseGroup"`
-	FullSeason             bool          `json:"fullSeason"`
-	AirDate                string        `json:"airDate"`
-	ReleaseHash            string        `json:"releaseHash"`
-	IsDaily                bool          `json:"isDaily"`
-	IsAbsoluteNumbering    bool          `json:"isAbsoluteNumbering"`
-	Special                bool          `json:"special"`
+	Quality                  starr.Quality `json:"quality"`
+	SeasonNumber             int           `json:"seasonNumber"`
+	EpisodeNumbers           []int         `json:"episodeNumbers"`
+	AbsoluteEpisodeNumbers   []int         `json:"absoluteEpisodeNumbers"`
+	SeriesTitle              string        `json:"seriesTitle"`
+	ReleaseGroup             string        `json:"releaseGroup"`
+	FullSeason               bool          `json:"fullSeason"`
+	AirDate                  string        `json:"airDate"`
+	ReleaseHash              string        `json:"releaseHash"`
+	IsDaily                  bool          `json:"isDaily"`
+	IsAbsoluteNumbering      bool          `json:"isAbsoluteNumbering"`
+	IsPossibleSpecialEpisode bool          `json:"isPossibleSpecialEpisode"`
+	Special                  bool          `json:"special"`
 }
 
 type v5ReleaseDecision struct {
@@ -332,6 +333,7 @@ func (body v5Release) toRelease() Release {
 		IndexerFlags:                 info.IndexerFlags,
 		IsDaily:                      parsed.IsDaily,
 		IsAbsoluteNumbering:          parsed.IsAbsoluteNumbering,
+		IsPossibleSpecialEpisode:     parsed.IsPossibleSpecialEpisode,
 		Special:                      parsed.Special,
 	}
 }

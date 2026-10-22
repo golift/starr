@@ -296,6 +296,18 @@ func TestReleaseProfileWrite(t *testing.T) {
 		assert.NotContains(t, body, `"indexerId"`)
 	})
 
+	t.Run("v5 explicit empty list ignores legacy id", func(t *testing.T) {
+		t.Parallel()
+
+		body := releaseProfileBody(t, sonarr.NewV5, &sonarr.ReleaseProfile{
+			Name:       "all",
+			IndexerID:  4,
+			IndexerIDs: []int64{},
+		})
+		assert.Contains(t, body, `"indexerIds":[]`)
+		assert.NotContains(t, body, `"indexerIds":[4]`)
+	})
+
 	t.Run("v3 keeps indexerId", func(t *testing.T) {
 		t.Parallel()
 
@@ -334,7 +346,7 @@ func TestReleaseUnmarshal(t *testing.T) {
 
 	err := json.Unmarshal([]byte(`{
 		"release":{"guid":"g1","title":"Show.S01E01","indexerId":2,"size":10},
-		"parsedInfo":{"seriesTitle":"Show","seasonNumber":1,"quality":{"quality":{"id":1,"name":"HDTV"}}},
+		"parsedInfo":{"seriesTitle":"Show","seasonNumber":1,"isPossibleSpecialEpisode":true,"quality":{"quality":{"id":1,"name":"HDTV"}}},
 		"decision":{"approved":true,"rejections":[{"message":"nope"}]}
 	}`), &nested)
 	require.NoError(t, err)
@@ -344,15 +356,17 @@ func TestReleaseUnmarshal(t *testing.T) {
 	assert.Equal(t, []string{"nope"}, nested.Rejections)
 	assert.Equal(t, "Show", nested.SeriesTitle)
 	assert.Equal(t, int64(2), nested.IndexerID)
+	assert.True(t, nested.IsPossibleSpecialEpisode)
 
 	var flat sonarr.Release
 
-	err = json.Unmarshal([]byte(`{"guid":"flat","title":"Old","approved":true,"indexerId":4}`), &flat)
+	err = json.Unmarshal([]byte(`{"guid":"flat","title":"Old","approved":true,"indexerId":4,"isPossibleSpecialEpisode":true}`), &flat)
 	require.NoError(t, err)
 	assert.Equal(t, "flat", flat.GUID)
 	assert.Equal(t, "Old", flat.Title)
 	assert.True(t, flat.Approved)
 	assert.Equal(t, int64(4), flat.IndexerID)
+	assert.True(t, flat.IsPossibleSpecialEpisode)
 }
 
 func TestReleaseProfileUnmarshalDropsZeroIndexer(t *testing.T) {
@@ -371,6 +385,24 @@ func TestReleaseProfileUnmarshalDropsZeroIndexer(t *testing.T) {
 	err = json.Unmarshal([]byte(`{"indexerId":3}`), &profile)
 	require.NoError(t, err)
 	assert.Equal(t, []int64{3}, profile.IndexerIDs)
+
+	err = json.Unmarshal([]byte(`{"indexerId":4,"indexerIds":[]}`), &profile)
+	require.NoError(t, err)
+	assert.NotNil(t, profile.IndexerIDs)
+	assert.Empty(t, profile.IndexerIDs)
+
+	body := releaseProfileBody(t, sonarr.NewV5, &profile)
+	assert.Contains(t, body, `"indexerIds":[]`)
+	assert.NotContains(t, body, `"indexerIds":[4]`)
+
+	err = json.Unmarshal([]byte(`{"name":"legacy","indexerId":4}`), &profile)
+	require.NoError(t, err)
+	assert.Equal(t, []int64{4}, profile.IndexerIDs)
+
+	profile.IndexerIDs = []int64{}
+	body = releaseProfileBody(t, sonarr.NewV5, &profile)
+	assert.Contains(t, body, `"indexerIds":[]`)
+	assert.NotContains(t, body, `"indexerIds":[4]`)
 }
 
 func TestForServer(t *testing.T) {

@@ -14,7 +14,8 @@ import (
 const bpReleaseProfile = APIver + "/releaseProfile"
 
 // ReleaseProfile defines a release profile's data from Sonarr.
-// IndexerIDs empty means all indexers. Zero is never a valid indexer id.
+// A nil IndexerIDs falls back to IndexerID. An empty list means all indexers.
+// Zero is never a valid indexer id.
 type ReleaseProfile struct {
 	Name                                   string            `json:"name"`
 	Enabled                                bool              `json:"enabled"`
@@ -223,20 +224,23 @@ type releaseProfileV5 struct {
 	ID                                     int64    `json:"id,omitempty"`
 }
 
+// normalizeIndexerIDs drops non-positive ids. A nil list falls back to single
+// when that id is positive. A non-nil list is kept as given, so an explicit
+// empty list stays empty and means all indexers.
 func normalizeIndexerIDs(ids []int64, single int64) []int64 {
+	if ids == nil {
+		if single > 0 {
+			return []int64{single}
+		}
+
+		return nil
+	}
+
 	cleaned := make([]int64, 0, len(ids))
 	for _, id := range ids {
 		if id > 0 {
 			cleaned = append(cleaned, id)
 		}
-	}
-
-	if len(cleaned) == 0 && single > 0 {
-		return []int64{single}
-	}
-
-	if len(cleaned) == 0 {
-		return nil
 	}
 
 	return cleaned
