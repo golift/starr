@@ -56,6 +56,11 @@ type HostConfig struct {
 	BackupInterval            int    `json:"backupInterval"`
 	BackupRetention           int    `json:"backupRetention"`
 	TrustCgnatIPAddresses     bool   `json:"trustCgnatIpAddresses"`
+	OIDCAuthority             string `json:"oidcAuthority,omitempty"`
+	OIDCClientID              string `json:"oidcClientId,omitempty"`
+	OIDCClientSecret          string `json:"oidcClientSecret,omitempty"`
+	OIDCUserIdentifier        string `json:"oidcUserIdentifier,omitempty"`
+	OIDCScopes                string `json:"oidcScopes,omitempty"`
 }
 
 // UIConfig is the /api/v3/config/ui resource.

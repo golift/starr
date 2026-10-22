@@ -71,7 +71,7 @@ func (s *Sonarr) UpdateQualityDefinitionContext(
 	var output QualityDefinition
 
 	var body bytes.Buffer
-	if err := json.NewEncoder(&body).Encode(definition); err != nil {
+	if err := json.NewEncoder(&body).Encode(definition.writeBody(s.APIVersion())); err != nil {
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpQualityDefinition, err)
 	}
 
@@ -96,7 +96,7 @@ func (s *Sonarr) UpdateQualityDefinitionsContext(
 	var output []*QualityDefinition
 
 	var body bytes.Buffer
-	if err := json.NewEncoder(&body).Encode(definitions); err != nil {
+	if err := json.NewEncoder(&body).Encode(qualityDefinitionsWrite(definitions, s.APIVersion())); err != nil {
 		return nil, fmt.Errorf("json.Marshal(%s): %w", bpQualityDefinition, err)
 	}
 
@@ -106,4 +106,36 @@ func (s *Sonarr) UpdateQualityDefinitionsContext(
 	}
 
 	return output, nil
+}
+
+// qualityDefinitionWrite is the body sent to Sonarr 5.
+// Size fields are omitted because a v5 update that includes them overwrites every profile.
+type qualityDefinitionWrite struct {
+	ID      int64              `json:"id,omitempty"`
+	Weight  int64              `json:"weight"`
+	Title   string             `json:"title"`
+	Quality *starr.BaseQuality `json:"quality"`
+}
+
+// writeBody returns the definition as-is for v3 and a size-free copy for v5.
+func (d *QualityDefinition) writeBody(apiVer string) any {
+	if d == nil || apiVer != APIv5 {
+		return d
+	}
+
+	return &qualityDefinitionWrite{
+		ID:      d.ID,
+		Weight:  d.Weight,
+		Title:   d.Title,
+		Quality: d.Quality,
+	}
+}
+
+func qualityDefinitionsWrite(definitions []*QualityDefinition, apiVer string) []any {
+	bodies := make([]any, len(definitions))
+	for idx, definition := range definitions {
+		bodies[idx] = definition.writeBody(apiVer)
+	}
+
+	return bodies
 }
