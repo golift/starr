@@ -6,30 +6,75 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 
 	"golift.io/starr"
 )
+
+// apiVersion is the API this client sends. Callers share one *Sonarr, so the
+// version is guarded and UseAPI is visible to every copy of that pointer.
+type apiVersion struct {
+	mu  sync.Mutex
+	ver string
+}
+
+func (a *apiVersion) get() string {
+	if a == nil {
+		return APIver
+	}
+
+	a.mu.Lock()
+	defer a.mu.Unlock()
+
+	if a.ver == "" {
+		return APIver
+	}
+
+	return a.ver
+}
+
+func (a *apiVersion) set(version string) {
+	if version != APIv5 {
+		version = APIver
+	}
+
+	a.mu.Lock()
+	a.ver = version
+	a.mu.Unlock()
+}
 
 // ErrUnsupported is returned when the selected Sonarr API has no such route.
 var ErrUnsupported = errors.New("sonarr api version does not support this call")
 
 // APIVersion returns the API version this client sends, v3 or v5.
 func (s *Sonarr) APIVersion() string {
-	if s == nil || s.apiVer == "" {
+	if s == nil {
 		return APIver
 	}
 
-	return s.apiVer
+	return s.api.get()
 }
 
 // WithAPI returns a client that shares this server config and uses version.
 // version must be v3 or v5. Any other value selects v3.
+// The returned client has its own version, so later UseAPI calls on either client stay separate.
 func (s *Sonarr) WithAPI(version string) *Sonarr {
 	if version != APIv5 {
 		version = APIver
 	}
 
-	return &Sonarr{APIer: s.APIer, apiVer: version}
+	return &Sonarr{APIer: s.APIer, api: &apiVersion{ver: version}}
+}
+
+// UseAPI changes the API version this client sends.
+// version must be v3 or v5. Any other value selects v3.
+// Copies of this pointer see the change.
+func (s *Sonarr) UseAPI(version string) {
+	if s == nil || s.api == nil {
+		return
+	}
+
+	s.api.set(version)
 }
 
 // NewV5 returns a Sonarr client that calls /api/v5.

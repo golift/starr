@@ -12,14 +12,14 @@ import (
 // APIver is the default Sonarr API version. New stays on v3 so older servers keep working.
 const APIver = "v3"
 
-// APIv5 is the Sonarr 5 API version used by NewV5, WithAPI, and ForServer.
+// APIv5 is the Sonarr 5 API version used by NewV5, WithAPI, UseAPI, and ForServer.
 const APIv5 = "v5"
 
 // Sonarr contains all the methods to interact with a Sonarr server.
 type Sonarr struct {
 	starr.APIer `json:"-"`
 
-	apiVer string
+	api *apiVersion
 }
 
 // Filter values are integers. Given names for ease of discovery.
@@ -45,7 +45,7 @@ func New(config *starr.Config) *Sonarr {
 
 	config.URL = strings.TrimSuffix(config.URL, "/")
 
-	return &Sonarr{APIer: config, apiVer: APIver}
+	return &Sonarr{APIer: config, api: &apiVersion{ver: APIver}}
 }
 
 // bp means base path. You'll see it a lot in these files.

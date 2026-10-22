@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -22,6 +23,58 @@ func TestAPIVersionConstructors(t *testing.T) {
 	assert.Equal(t, sonarr.APIv5, client.WithAPI(sonarr.APIv5).APIVersion())
 	assert.Equal(t, sonarr.APIver, client.WithAPI("nope").APIVersion())
 	assert.Equal(t, sonarr.APIv5, sonarr.NewV5(starr.New("k", "http://sonarr", 0)).APIVersion())
+
+	separate := client.WithAPI(sonarr.APIv5)
+	client.UseAPI(sonarr.APIv5)
+	assert.Equal(t, sonarr.APIv5, client.APIVersion())
+	client.UseAPI("nope")
+	assert.Equal(t, sonarr.APIver, client.APIVersion())
+	assert.Equal(t, sonarr.APIv5, separate.APIVersion())
+}
+
+func TestUseAPIConcurrent(t *testing.T) {
+	t.Parallel()
+
+	client := sonarr.New(starr.New("k", "http://sonarr", 0))
+
+	var wait sync.WaitGroup
+	for range 32 {
+		wait.Go(func() {
+			client.UseAPI(sonarr.APIv5)
+			_ = client.APIVersion()
+			client.UseAPI(sonarr.APIver)
+		})
+	}
+
+	wait.Wait()
+	assert.Equal(t, sonarr.APIver, client.APIVersion())
+}
+
+func TestUseAPIRewritesTheNextRequest(t *testing.T) {
+	t.Parallel()
+
+	var path string
+
+	server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, req *http.Request) {
+		path = req.URL.Path
+		_, _ = writer.Write([]byte(`[]`))
+	}))
+	t.Cleanup(server.Close)
+
+	client := sonarr.New(starr.New("k", server.URL, 0))
+	_, err := client.GetQualityProfiles()
+	require.NoError(t, err)
+	assert.Equal(t, "/api/v3/qualityProfile", path)
+
+	client.UseAPI(sonarr.APIv5)
+	_, err = client.GetQualityProfiles()
+	require.NoError(t, err)
+	assert.Equal(t, "/api/v5/qualityProfile", path)
+
+	client.UseAPI(sonarr.APIver)
+	_, err = client.GetQualityProfiles()
+	require.NoError(t, err)
+	assert.Equal(t, "/api/v3/qualityProfile", path)
 }
 
 func TestV5Paths(t *testing.T) {
