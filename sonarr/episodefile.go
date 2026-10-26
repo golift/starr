@@ -26,6 +26,7 @@ type EpisodeFile struct {
 	SceneName            string                `json:"sceneName"`
 	ReleaseGroup         string                `json:"releaseGroup"`
 	Language             *starr.Value          `json:"language"`
+	Languages            []*starr.Value        `json:"languages,omitempty"`
 	Quality              *starr.Quality        `json:"quality"`
 	MediaInfo            *MediaInfo            `json:"mediaInfo"`
 	QualityCutoffNotMet  bool                  `json:"qualityCutoffNotMet"`
@@ -35,19 +36,42 @@ type EpisodeFile struct {
 
 // MediaInfo is part of an EpisodeFile.
 type MediaInfo struct {
-	AudioBitrate     int            `json:"audioBitrate"`
-	AudioChannels    float64        `json:"audioChannels"`
-	AudioCodec       string         `json:"audioCodec"`
-	AudioLanguages   string         `json:"audioLanguages"`
-	AudioStreamCount int            `json:"audioStreamCount"`
-	VideoBitDepth    int            `json:"videoBitDepth"`
-	VideoBitrate     int            `json:"videoBitrate"`
-	VideoCodec       string         `json:"videoCodec"`
-	VideoFPS         float64        `json:"videoFps"`
-	Resolution       string         `json:"resolution"`
-	RunTime          starr.PlayTime `json:"runTime"`
-	ScanType         string         `json:"scanType"`
-	Subtitles        string         `json:"subtitles"`
+	AudioBitrate     int               `json:"audioBitrate"`
+	AudioChannels    float64           `json:"audioChannels"`
+	AudioCodec       string            `json:"audioCodec"`
+	AudioLanguages   string            `json:"audioLanguages"`
+	AudioStreamCount int               `json:"audioStreamCount"`
+	VideoBitDepth    int               `json:"videoBitDepth"`
+	VideoBitrate     int               `json:"videoBitrate"`
+	VideoCodec       string            `json:"videoCodec"`
+	VideoFPS         float64           `json:"videoFps"`
+	Resolution       string            `json:"resolution"`
+	RunTime          starr.PlayTime    `json:"runTime"`
+	ScanType         string            `json:"scanType"`
+	Subtitles        string            `json:"subtitles"`
+	AudioStreams     []*AudioStream    `json:"audioStreams,omitempty"`
+	SubtitleStreams  []*SubtitleStream `json:"subtitleStreams,omitempty"`
+}
+
+// AudioStream is one audio track on a v5 episode file.
+type AudioStream struct {
+	Language         string  `json:"language,omitempty"`
+	Codec            string  `json:"codec,omitempty"`
+	CodecID          string  `json:"codecId,omitempty"`
+	Profile          string  `json:"profile,omitempty"`
+	Title            string  `json:"title,omitempty"`
+	ChannelPositions string  `json:"channelPositions,omitempty"`
+	Bitrate          int64   `json:"bitrate,omitempty"`
+	Channels         float64 `json:"channels,omitempty"`
+}
+
+// SubtitleStream is one subtitle track on a v5 episode file.
+type SubtitleStream struct {
+	Language        string `json:"language,omitempty"`
+	Format          string `json:"format,omitempty"`
+	Title           string `json:"title,omitempty"`
+	Forced          *bool  `json:"forced,omitempty"`
+	HearingImpaired *bool  `json:"hearingImpaired,omitempty"`
 }
 
 // GetEpisodeFiles returns information about episode files by episode file IDs.

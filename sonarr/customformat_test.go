@@ -72,14 +72,14 @@ const customFormatResponseBody = `{
 }`
 
 const addCustomFormat = `{"name":"test","includeCustomFormatWhenRenaming":false,"specifications":` +
-	`[{"name":"Surround Sound","implementation":"ReleaseTitleSpecification","negate":false,"required":false,"fields":` +
+	`[{"name":"Surround Sound","implementation":"ReleaseTitleSpecification","implementationName":"","infoLink":"","negate":false,"required":false,"fields":` +
 	`[{"name":"value","value":"DTS.?(HD|ES|X(?!\\D))|TRUEHD|ATMOS|DD(\\+|P).?([5-9])|EAC3.?([5-9])"}]},{"name":"Arabic",` +
-	`"implementation":"LanguageSpecification","negate":false,"required":false,"fields":[{"name":"value","value":31}]}]}`
+	`"implementation":"LanguageSpecification","implementationName":"","infoLink":"","negate":false,"required":false,"fields":[{"name":"value","value":31}]}]}`
 
 const updateCustomFormat = `{"id":1,"name":"test","includeCustomFormatWhenRenaming":false,"specifications":` +
-	`[{"name":"Surround Sound","implementation":"ReleaseTitleSpecification","negate":false,"required":false,"fields":` +
+	`[{"name":"Surround Sound","implementation":"ReleaseTitleSpecification","implementationName":"","infoLink":"","negate":false,"required":false,"fields":` +
 	`[{"name":"value","value":"DTS.?(HD|ES|X(?!\\D))|TRUEHD|ATMOS|DD(\\+|P).?([5-9])|EAC3.?([5-9])"}]},{"name":"Arabic",` +
-	`"implementation":"LanguageSpecification","negate":false,"required":false,"fields":[{"name":"value","value":31}]}]}`
+	`"implementation":"LanguageSpecification","implementationName":"","infoLink":"","negate":false,"required":false,"fields":[{"name":"value","value":31}]}]}`
 
 func TestGetCustomFormats(t *testing.T) {
 	t.Parallel()

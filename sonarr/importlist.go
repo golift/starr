@@ -14,44 +14,52 @@ const bpImportList = APIver + "/importList"
 
 // ImportListInput is the input for a new or updated import list.
 type ImportListInput struct {
-	EnableAutomaticAdd bool                `json:"enableAutomaticAdd"`
-	SeasonFolder       bool                `json:"seasonFolder"`
-	ListOrder          int                 `json:"listOrder"`
-	QualityProfileID   int64               `json:"qualityProfileId,omitempty"`
-	ID                 int64               `json:"id,omitempty"` // update only.
-	ConfigContract     string              `json:"configContract,omitempty"`
-	Implementation     string              `json:"implementation,omitempty"`
-	ImplementationName string              `json:"implementationName,omitempty"`
-	InfoLink           string              `json:"infoLink,omitempty"`
-	ListType           string              `json:"listType,omitempty"`
-	MinRefreshInterval string              `json:"minRefreshInterval,omitempty"`
-	Name               string              `json:"name,omitempty"`
-	RootFolderPath     string              `json:"rootFolderPath,omitempty"`
-	SeriesType         string              `json:"seriesType,omitempty"`
-	ShouldMonitor      string              `json:"shouldMonitor,omitempty"`
-	Tags               []int               `json:"tags,omitempty"`
-	Fields             []*starr.FieldInput `json:"fields,omitempty"`
+	EnableAutomaticAdd       bool                `json:"enableAutomaticAdd"`
+	SeasonFolder             bool                `json:"seasonFolder"`
+	ListOrder                int                 `json:"listOrder"`
+	QualityProfileID         int64               `json:"qualityProfileId,omitempty"`
+	ID                       int64               `json:"id,omitempty"` // update only.
+	ConfigContract           string              `json:"configContract,omitempty"`
+	Implementation           string              `json:"implementation,omitempty"`
+	ImplementationName       string              `json:"implementationName,omitempty"`
+	InfoLink                 string              `json:"infoLink,omitempty"`
+	ListType                 string              `json:"listType,omitempty"`
+	MinRefreshInterval       string              `json:"minRefreshInterval,omitempty"`
+	Name                     string              `json:"name,omitempty"`
+	RootFolderPath           string              `json:"rootFolderPath,omitempty"`
+	SeriesType               string              `json:"seriesType,omitempty"`
+	ShouldMonitor            string              `json:"shouldMonitor,omitempty"`
+	Tags                     []int               `json:"tags,omitempty"`
+	Fields                   []*starr.FieldInput `json:"fields,omitempty"`
+	TagExisting              string              `json:"tagExisting,omitempty"`
+	MonitorNewItems          string              `json:"monitorNewItems,omitempty"`
+	SearchForMissingEpisodes bool                `json:"searchForMissingEpisodes,omitempty"`
+	Language                 *starr.Value        `json:"language,omitempty"`
 }
 
 // ImportListOutput is the output from the import list methods.
 type ImportListOutput struct {
-	EnableAutomaticAdd bool                 `json:"enableAutomaticAdd"`
-	SeasonFolder       bool                 `json:"seasonFolder"`
-	QualityProfileID   int64                `json:"qualityProfileId"`
-	ListOrder          int64                `json:"listOrder"`
-	ID                 int64                `json:"id"`
-	ConfigContract     string               `json:"configContract"`
-	Implementation     string               `json:"implementation"`
-	ImplementationName string               `json:"implementationName"`
-	InfoLink           string               `json:"infoLink"`
-	ListType           string               `json:"listType"`
-	MinRefreshInterval string               `json:"minRefreshInterval"`
-	Name               string               `json:"name"`
-	RootFolderPath     string               `json:"rootFolderPath"`
-	SeriesType         string               `json:"seriesType"`
-	ShouldMonitor      string               `json:"shouldMonitor"`
-	Tags               []int                `json:"tags"`
-	Fields             []*starr.FieldOutput `json:"fields"`
+	EnableAutomaticAdd       bool                 `json:"enableAutomaticAdd"`
+	SeasonFolder             bool                 `json:"seasonFolder"`
+	QualityProfileID         int64                `json:"qualityProfileId"`
+	ListOrder                int64                `json:"listOrder"`
+	ID                       int64                `json:"id"`
+	ConfigContract           string               `json:"configContract"`
+	Implementation           string               `json:"implementation"`
+	ImplementationName       string               `json:"implementationName"`
+	InfoLink                 string               `json:"infoLink"`
+	ListType                 string               `json:"listType"`
+	MinRefreshInterval       string               `json:"minRefreshInterval"`
+	Name                     string               `json:"name"`
+	RootFolderPath           string               `json:"rootFolderPath"`
+	SeriesType               string               `json:"seriesType"`
+	ShouldMonitor            string               `json:"shouldMonitor"`
+	Tags                     []int                `json:"tags"`
+	Fields                   []*starr.FieldOutput `json:"fields"`
+	TagExisting              string               `json:"tagExisting,omitempty"`
+	MonitorNewItems          string               `json:"monitorNewItems,omitempty"`
+	SearchForMissingEpisodes bool                 `json:"searchForMissingEpisodes,omitempty"`
+	Language                 *starr.Value         `json:"language,omitempty"`
 }
 
 // GetImportLists returns all configured import lists.
