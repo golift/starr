@@ -29,6 +29,7 @@ type ImportListInput struct {
 	RootFolderPath     string              `json:"rootFolderPath,omitempty"`
 	SeriesType         string              `json:"seriesType,omitempty"`
 	ShouldMonitor      string              `json:"shouldMonitor,omitempty"`
+	TagExisting        string              `json:"tagExisting,omitempty"` // none, add, sync
 	Tags               []int               `json:"tags,omitempty"`
 	Fields             []*starr.FieldInput `json:"fields,omitempty"`
 }
@@ -50,6 +51,7 @@ type ImportListOutput struct {
 	RootFolderPath     string               `json:"rootFolderPath"`
 	SeriesType         string               `json:"seriesType"`
 	ShouldMonitor      string               `json:"shouldMonitor"`
+	TagExisting        string               `json:"tagExisting"` // none, add, sync
 	Tags               []int                `json:"tags"`
 	Fields             []*starr.FieldOutput `json:"fields"`
 }
