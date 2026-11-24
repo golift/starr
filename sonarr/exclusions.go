@@ -5,7 +5,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"path"
+	"strconv"
 	"strings"
 
 	"golift.io/starr"
@@ -27,14 +29,38 @@ func (s *Sonarr) GetExclusions() ([]*Exclusion, error) {
 
 // GetExclusionsContext returns all configured exclusions from Sonarr.
 func (s *Sonarr) GetExclusionsContext(ctx context.Context) ([]*Exclusion, error) {
-	var output []*Exclusion
+	const pageSize = 1000
 
-	req := starr.Request{URI: bpExclusions}
-	if err := s.GetInto(ctx, req, &output); err != nil {
-		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
+	uri := path.Join(bpExclusions, "paged")
+	if s.APIVersion() == APIv5 {
+		// v5's collection GET is already a paging envelope. /paged does not exist there.
+		uri = bpExclusions
 	}
 
-	return output, nil
+	var all []*Exclusion
+
+	for page := 1; ; page++ {
+		params := url.Values{}
+		params.Set("page", strconv.Itoa(page))
+		params.Set("pageSize", strconv.Itoa(pageSize))
+
+		var envelope struct {
+			Records      []*Exclusion `json:"records"`
+			TotalRecords int          `json:"totalRecords"`
+		}
+
+		req := starr.Request{URI: uri, Query: params}
+		if err := s.GetInto(ctx, req, &envelope); err != nil {
+			return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
+		}
+
+		all = append(all, envelope.Records...)
+		if len(envelope.Records) == 0 || len(all) >= envelope.TotalRecords {
+			break
+		}
+	}
+
+	return all, nil
 }
 
 // UpdateExclusion changes an exclusions in Sonarr.

@@ -252,6 +252,7 @@ func TestGetEpisodeByID(t *testing.T) {
 							Monitored:    true,
 						},
 					},
+					OriginalLanguage: &starr.Value{ID: 1, Name: "English"},
 					Images: []*starr.Image{
 						{
 							CoverType: "banner",

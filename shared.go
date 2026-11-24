@@ -34,12 +34,15 @@ type BaseQuality struct {
 // It may contain 1 or more profiles.
 // Sonarr nor Readarr use Name or ID in this struct.
 type Quality struct {
-	Name     string           `json:"name,omitempty"`
-	ID       int              `json:"id,omitempty"`
-	Quality  *BaseQuality     `json:"quality,omitempty"`
-	Items    []*Quality       `json:"items,omitempty"`
-	Allowed  bool             `json:"allowed"`
-	Revision *QualityRevision `json:"revision,omitempty"` // Not sure which app had this....
+	Name          string           `json:"name,omitempty"`
+	ID            int              `json:"id,omitempty"`
+	Quality       *BaseQuality     `json:"quality,omitempty"`
+	Items         []*Quality       `json:"items,omitempty"`
+	Allowed       bool             `json:"allowed"`
+	MinSize       *float64         `json:"minSize,omitempty"`
+	MaxSize       *float64         `json:"maxSize,omitempty"`
+	PreferredSize *float64         `json:"preferredSize,omitempty"`
+	Revision      *QualityRevision `json:"revision,omitempty"` // Not sure which app had this....
 }
 
 // QualityRevision is probably used in Sonarr.

@@ -28,9 +28,11 @@ type Queue struct {
 // QueueRecord is part of Queue.
 type QueueRecord struct {
 	HasPostImportCategory   bool                   `json:"downloadClientHasPostImportCategory"`
+	IsFullSeason            bool                   `json:"isFullSeason,omitempty"`
 	ID                      int64                  `json:"id"`
 	SeriesID                int64                  `json:"seriesId"`
 	EpisodeID               int64                  `json:"episodeId"`
+	EpisodesWithFilesCount  int                    `json:"episodesWithFilesCount,omitempty"`
 	Language                *starr.Value           `json:"language"`
 	Quality                 *starr.Quality         `json:"quality"`
 	Size                    float64                `json:"size"`
@@ -48,6 +50,10 @@ type QueueRecord struct {
 	Indexer                 string                 `json:"indexer"`
 	OutputPath              string                 `json:"outputPath"`
 	ErrorMessage            string                 `json:"errorMessage"`
+	EpisodeIDs              []int64                `json:"episodeIds,omitempty"`
+	SeasonNumbers           []int                  `json:"seasonNumbers,omitempty"`
+	Languages               []*starr.Value         `json:"languages,omitempty"`
+	Episodes                []*Episode             `json:"episodes,omitempty"`
 }
 
 // QueueStatus is the aggregate queue status from /api/v3/queue/status.
@@ -122,7 +128,20 @@ func (s *Sonarr) GetQueuePageContext(ctx context.Context, params *starr.PageReq)
 		return nil, fmt.Errorf("api.Get(%s): %w", &req, err)
 	}
 
+	for _, record := range output.Records {
+		record.fillEpisodeID()
+	}
+
 	return &output, nil
+}
+
+// fillEpisodeID copies the first v5 episodeIds entry when the v3 episodeId is absent.
+func (r *QueueRecord) fillEpisodeID() {
+	if r == nil || r.EpisodeID != 0 || len(r.EpisodeIDs) == 0 {
+		return
+	}
+
+	r.EpisodeID = r.EpisodeIDs[0]
 }
 
 // DeleteQueue deletes an item from the Activity Queue.
@@ -132,7 +151,7 @@ func (s *Sonarr) DeleteQueue(queueID int64, opts *starr.QueueDeleteOpts) error {
 
 // DeleteQueueContext deletes an item from the Activity Queue.
 func (s *Sonarr) DeleteQueueContext(ctx context.Context, queueID int64, opts *starr.QueueDeleteOpts) error {
-	req := starr.Request{URI: path.Join(bpQueue, starr.Str(queueID)), Query: opts.Values()}
+	req := starr.Request{URI: path.Join(bpQueue, starr.Str(queueID)), Query: s.queueDeleteQuery(opts)}
 	if err := s.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)
 	}
@@ -224,12 +243,7 @@ func (s *Sonarr) DeleteQueueBulkContext(ctx context.Context, ids []int64, opts *
 		return fmt.Errorf("json.Marshal(%s): %w", bpQueue, err)
 	}
 
-	var params url.Values
-	if opts != nil {
-		params = opts.Values()
-	} else {
-		params = (&starr.QueueDeleteOpts{}).Values()
-	}
+	params := s.queueDeleteQuery(opts)
 
 	uri := starr.SetAPIPath(path.Join(bpQueue, "bulk"))
 	req := starr.Request{URI: uri, Body: &body, Query: params}
@@ -260,4 +274,57 @@ func (s *Sonarr) QueueGrabOneContext(ctx context.Context, queueID int64) error {
 	}
 
 	return nil
+}
+
+// queueDeleteQuery returns v3 delete flags, or the v5 removalMethod and blocklistMethod pair.
+// Sonarr 5 rejects the v3 flag names.
+func (s *Sonarr) queueDeleteQuery(opts *starr.QueueDeleteOpts) url.Values {
+	if s.APIVersion() != APIv5 {
+		return opts.Values()
+	}
+
+	return v5QueueDeleteQuery(opts)
+}
+
+func v5QueueDeleteQuery(opts *starr.QueueDeleteOpts) url.Values {
+	const (
+		removeFromClient = "RemoveFromClient"
+		changeCategory   = "ChangeCategory"
+		ignore           = "Ignore"
+		doNotBlocklist   = "DoNotBlocklist"
+		blockAndSearch   = "BlocklistAndSearch"
+		blockOnly        = "BlocklistOnly"
+	)
+
+	if opts == nil {
+		opts = &starr.QueueDeleteOpts{}
+	}
+
+	remove := true
+	if opts.RemoveFromClient != nil {
+		remove = *opts.RemoveFromClient
+	}
+
+	removal := ignore
+
+	switch {
+	case remove:
+		removal = removeFromClient
+	case opts.ChangeCategory:
+		removal = changeCategory
+	}
+
+	blocklist := doNotBlocklist
+	if opts.BlockList {
+		blocklist = blockAndSearch
+		if opts.SkipRedownload {
+			blocklist = blockOnly
+		}
+	}
+
+	params := url.Values{}
+	params.Set("removalMethod", removal)
+	params.Set("blocklistMethod", blocklist)
+
+	return params
 }

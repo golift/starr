@@ -12,7 +12,7 @@ import (
 )
 
 // This is not an /api path.
-const bpFeed = "feed/" + APIver + "/calendar/sonarr.ics"
+const bpFeed = "/feed/" + APIver + "/calendar/sonarr.ics"
 
 // Feed is the /feed/v3/calendar endpoint.
 type Feed struct {

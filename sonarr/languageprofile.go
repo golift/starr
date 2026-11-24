@@ -10,6 +10,14 @@ import (
 	"golift.io/starr"
 )
 
+func (s *Sonarr) languageProfilesSupported() error {
+	if s.APIVersion() == APIv5 {
+		return fmt.Errorf("%w: language profiles", ErrUnsupported)
+	}
+
+	return nil
+}
+
 // Define Base Path for Language Profile calls.
 const bpLanguageProfile = APIver + "/languageProfile"
 
@@ -35,6 +43,10 @@ func (s *Sonarr) GetLanguageProfiles() ([]*LanguageProfile, error) {
 
 // GetLanguageProfilesContext returns all configured language profiles.
 func (s *Sonarr) GetLanguageProfilesContext(ctx context.Context) ([]*LanguageProfile, error) {
+	if err := s.languageProfilesSupported(); err != nil {
+		return nil, err
+	}
+
 	var output []*LanguageProfile
 
 	req := starr.Request{URI: bpLanguageProfile}
@@ -52,6 +64,10 @@ func (s *Sonarr) GetLanguageProfile(profileID int64) (*LanguageProfile, error) {
 
 // GetLanguageProfileContext returns a single language profile.
 func (s *Sonarr) GetLanguageProfileContext(ctx context.Context, profileID int64) (*LanguageProfile, error) {
+	if err := s.languageProfilesSupported(); err != nil {
+		return nil, err
+	}
+
 	var output LanguageProfile
 
 	req := starr.Request{URI: path.Join(bpLanguageProfile, starr.Str(profileID))}
@@ -69,6 +85,10 @@ func (s *Sonarr) AddLanguageProfile(profile *LanguageProfile) (*LanguageProfile,
 
 // AddLanguageProfileContext creates a language profile.
 func (s *Sonarr) AddLanguageProfileContext(ctx context.Context, profile *LanguageProfile) (*LanguageProfile, error) {
+	if err := s.languageProfilesSupported(); err != nil {
+		return nil, err
+	}
+
 	var output LanguageProfile
 
 	var body bytes.Buffer
@@ -91,6 +111,10 @@ func (s *Sonarr) UpdateLanguageProfile(profile *LanguageProfile) (*LanguageProfi
 
 // UpdateLanguageProfileContext updates the language profile.
 func (s *Sonarr) UpdateLanguageProfileContext(ctx context.Context, profile *LanguageProfile) (*LanguageProfile, error) {
+	if err := s.languageProfilesSupported(); err != nil {
+		return nil, err
+	}
+
 	var output LanguageProfile
 
 	var body bytes.Buffer
@@ -113,6 +137,10 @@ func (s *Sonarr) DeleteLanguageProfile(profileID int64) error {
 
 // DeleteLanguageProfileContext removes a single language profile.
 func (s *Sonarr) DeleteLanguageProfileContext(ctx context.Context, profileID int64) error {
+	if err := s.languageProfilesSupported(); err != nil {
+		return err
+	}
+
 	req := starr.Request{URI: path.Join(bpLanguageProfile, starr.Str(profileID))}
 	if err := s.DeleteAny(ctx, req); err != nil {
 		return fmt.Errorf("api.Delete(%s): %w", &req, err)

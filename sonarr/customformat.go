@@ -24,12 +24,16 @@ type CustomFormatInput struct {
 }
 
 // CustomFormatInputSpec is part of a CustomFormatInput.
+// ImplementationName and InfoLink are not omitempty: Sonarr 5 requires both
+// properties on every condition, and an empty string satisfies that.
 type CustomFormatInputSpec struct {
-	Name           string              `json:"name"`
-	Implementation string              `json:"implementation"`
-	Negate         bool                `json:"negate"`
-	Required       bool                `json:"required"`
-	Fields         []*starr.FieldInput `json:"fields"`
+	Name               string              `json:"name"`
+	Implementation     string              `json:"implementation"`
+	ImplementationName string              `json:"implementationName"`
+	InfoLink           string              `json:"infoLink"`
+	Negate             bool                `json:"negate"`
+	Required           bool                `json:"required"`
+	Fields             []*starr.FieldInput `json:"fields"`
 }
 
 // CustomFormatOutput is the output from the CustomFormat methods.
